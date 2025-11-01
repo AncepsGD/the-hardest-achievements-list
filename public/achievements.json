@@ -5785,6 +5785,38 @@
     ]
   },
   {
+    "name": "Eyes in the Water",
+    "id": "eyes-in-the-water",
+    "player": "LordVadercraft",
+    "levelID": 95851008,
+    "date": "2023-10-29",
+    "length": 92,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/yvLwiOy3KEA",
+    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Eyes in the Water (Netermind)",
+    "id": "eyes-in-the-water-netermind",
+    "player": "Netermind",
+    "date": "2023-10-18",
+    "length": 92,
+    "version": 2.1,
+    "video": "https://youtu.be/UMOqidVTMmk",
+    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
+    "submitter": "Tr1bto",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "KOSETSU",
     "id": "kosetsu",
     "player": "Taiago",
@@ -6311,38 +6343,6 @@
       "Challenge",
       "Progress",
       "CBF"
-    ]
-  },
-  {
-    "name": "Eyes in the Water",
-    "id": "eyes-in-the-water",
-    "player": "LordVadercraft",
-    "levelID": 95851008,
-    "date": "2023-10-29",
-    "length": 92,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/yvLwiOy3KEA",
-    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Eyes in the Water (Netermind)",
-    "id": "eyes-in-the-water-netermind",
-    "player": "Netermind",
-    "date": "2023-10-18",
-    "length": 92,
-    "version": 2.1,
-    "video": "https://youtu.be/UMOqidVTMmk",
-    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
-    "submitter": "Tr1bto",
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -10717,8 +10717,3 @@
     ]
   }
 ]
-
-
-
-
-
