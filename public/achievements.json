@@ -8117,8 +8117,8 @@
     "id": "migraine-48-100",
     "player": "Hover",
     "date": "2025-07-07",
-    "length": "46",
-    "version": "2.2",
+    "length": 46,
+    "version": 2.2,
     "video": "https://youtu.be/rAxT71yjkcU&t=105",
     "showcaseVideo": "https://youtu.be/yM3p_sJRv3I",
     "submitter": "TYATYAPKA",
@@ -8535,6 +8535,24 @@
     ]
   },
   {
+    "name": "Thinking Redux II 72%",
+    "id": "thinking-redux-ii-72",
+    "player": "Liamkn08",
+    "length": 47,
+    "version": 2.2,
+    "video": "https://youtu.be/CTPIVDiM818",
+    "showcaseVideo": "https://youtu.be/7xZ-xgeDyuc",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
+    "date": "2025-05-24",
+    "submitter": "tmtsps12",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ],
+    "levelID": null
+  },
+  {
     "name": "Midnight",
     "id": "midnight",
     "player": "nei",
@@ -8775,6 +8793,25 @@
     "tags": [
       "Level",
       "Consistency"
+    ]
+  },
+  {
+    "name": "Verdant Landscape 120hz Mobile 44-100%",
+    "id": "verdant-landscape-120hz-mobile-44-100",
+    "player": "Que2Yo",
+    "date": "2025-11-01",
+    "length": 89,
+    "version": 2.2,
+    "levelID": 76543324,
+    "video": "https://youtu.be/Qo9Kewrt7EI",
+    "showcaseVideo": "https://youtu.be/dSbox0NKuXs",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
     ]
   },
   {
@@ -10384,6 +10421,25 @@
     ]
   },
   {
+    "name": "Kyouki 120hz Mobile 72-100%",
+    "id": "kyouki-120hz-mobile-72-100",
+    "player": "flarinova",
+    "levelID": 86018142,
+    "date": "2025-11-01",
+    "length": 26,
+    "version": 2.2,
+    "submitter": "Excryst",
+    "video": "https://www.youtube.com/live/s4SXrL-It-Q?&t=7375",
+    "showcaseVideo": "https://youtu.be/RBeyMGug3J0",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Coalescence",
     "id": "coalescence",
     "player": "Amplitron",
@@ -10717,5 +10773,6 @@
   }
 
 ]
+
 
 
