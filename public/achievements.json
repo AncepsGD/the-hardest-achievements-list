@@ -18,10 +18,10 @@
     "levelID": 126242564
   },
   {
-    "name": "GRIEF 79%",
-    "id": "grief-79",
+    "name": "GRIEF 83%",
+    "id": "grief-83",
     "player": "Doggie",
-    "video": "https://www.youtube.com/live/RInlxRwyjI4?t=7756",
+    "video": "https://www.youtube.com/watch?v=VT2KCduj_O8&t=6818",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
     "tags": [
       "Level",
@@ -29,10 +29,10 @@
       "2P",
       "CBF"
     ],
-    "date": "2025-10-29",
-    "length": 133,
+    "date": "2025-11-02",
+    "length": 136,
     "version": 2.2,
-    "submitter": "TTB18",
+    "submitter": "kittycatiscute",
     "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png"
   },
   {
@@ -124,24 +124,6 @@
     "version": 2.2,
     "submitter": "TYATYAPKA",
     "levelID": 119550490
-  },
-  {
-    "name": "GRIEF (Old) 80%",
-    "id": "grief-old-80",
-    "player": "Doggie",
-    "video": "https://youtu.be/5gx07ZNiuJY",
-    "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
-    "tags": [
-      "Level",
-      "Progress",
-      "2P",
-      "CBF"
-    ],
-    "date": "2024-11-24",
-    "length": 134,
-    "version": 2.2,
-    "submitter": "Swift",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png"
   },
   {
     "name": "Flamewall",
@@ -10716,4 +10698,5 @@
       "Rated"
     ]
   }
+
 ]
