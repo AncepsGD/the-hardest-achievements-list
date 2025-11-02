@@ -453,8 +453,8 @@
     ]
   },
   {
-    "name": "Vehemence 47-100%",
-    "id": "vehemence-47-100",
+    "name": "Vehemence (Wpopoff old) 47-100%",
+    "id": "vehemence-wpopoff-old-47-100",
     "player": "wPopoff",
     "levelID": 96572223,
     "date": "2025-08-31",
@@ -517,8 +517,8 @@
     ]
   },
   {
-    "name": "Vehemence 39%",
-    "id": "vehemence-39",
+    "name": "Vehemence (Wpopoff old) 39%",
+    "id": "vehemence-wpopoff-old-39",
     "player": "wPopoff",
     "length": 61,
     "version": 2.2,
@@ -4487,8 +4487,8 @@
     ]
   },
   {
-    "name": "Vehemence 33-60%",
-    "id": "vehemence-33-60",
+    "name": "Vehemence (Wpopoff old) 33-60%",
+    "id": "vehemence-wpopoff-olf-33-60",
     "player": "wPopoff",
     "date": "2025-07-15",
     "length": 90,
@@ -5025,8 +5025,8 @@
     ]
   },
   {
-    "name": "Vehemence 24-55%",
-    "id": "vehemence-24-55",
+    "name": "Vehemence (Wpopoff old) 24-55%",
+    "id": "vehemence-wpopoff-old-24-55",
     "player": "wPopoff",
     "date": "2025-07-21",
     "length": 32,
@@ -7556,6 +7556,22 @@
     ]
   },
   {
+    "name": "BRITNEY NO SCLEARS",
+    "id": "britney-no-sclears",
+    "player": "Scotchtape",
+    "date": "2025-08-29",
+    "levelID": 125317359,
+    "length": 79,
+    "version": 2.2,
+    "video": "https://youtu.be/ff_mQSXwjhU",
+    "showcaseVideo": "https://youtu.be/UPZJHVYJyhw",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "kinesthetipendence 51%",
     "id": "kinesthetipendence-51",
     "player": "Aurorae",
@@ -7769,22 +7785,6 @@
       "Speedhack",
       "Progress",
       "Rated"
-    ]
-  },
-  {
-    "name": "BRITNEY NO SCLEARS",
-    "id": "britney-no-sclears",
-    "player": "Scotchtape",
-    "date": "2025-08-29",
-    "levelID": 125317359,
-    "length": 79,
-    "version": 2.2,
-    "video": "https://youtu.be/ff_mQSXwjhU",
-    "showcaseVideo": "https://youtu.be/UPZJHVYJyhw",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -10700,3 +10700,4 @@
   }
 
 ]
+
