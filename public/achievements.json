@@ -368,6 +368,23 @@
     ]
   },
   {
+    "name": "Banshee 10-79%",
+    "id": "banshee-10-79",
+    "player": "spcreat",
+    "video": "https://www.youtube.com/live/dckUEM7QwRE?t=1592",
+    "tags": [
+      "Level",
+      "Progress",
+      "Tentative"
+    ],
+    "date": "2025-10-03",
+    "submitter": "TYATYAPKA",
+    "length": 68,
+    "version": 2.2,
+    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
+    "showcaseVideo": "https://youtu.be/h14lmGH31_M"
+  },
+  {
     "name": "Nullscapes",
     "id": "nullscapes",
     "player": "Zoink",
@@ -1082,6 +1099,23 @@
       "Level",
       "Consistency",
       "Rated"
+    ]
+  },
+  {
+    "name": "Vehemence 33-59%",
+    "id": "vehemence-33-59",
+    "player": "A6",
+    "length": 48,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=eUT71RqNVBA&t=12032s",
+    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
+    "date": "2025-09-19",
+    "submitter": "Exiled_shade",
+    "levelID": null,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -1882,6 +1916,23 @@
     ]
   },
   {
+    "name": "Ashley Wave Trials",
+    "id": "ashley-wave-trials",
+    "player": "Zoink",
+    "levelID": 123119196,
+    "date": "2024-11-01",
+    "length": 126,
+    "version": 2.2,
+    "video": "https://youtu.be/aTxt76U3e2Q",
+    "showcaseVideo": "https://youtu.be/1H0UpLzDEQw",
+    "submitter": "shortweekly",
+    "tags": [
+      "Level",
+      "Verified",
+      "CBF"
+    ]
+  },
+  {
     "name": "Menace",
     "id": "menace",
     "player": "Whizkid05",
@@ -1932,6 +1983,39 @@
       "Level",
       "Consistency",
       "CBF"
+    ]
+  },
+  {
+    "name": "Abyss of Darkness",
+    "id": "abyss-of-darkness",
+    "player": "Cursed",
+    "levelID": 49896559,
+    "date": "2022-04-03",
+    "length": 125,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/ejJkpqcMMCY",
+    "showcaseVideo": "https://youtu.be/A7i2m-yL-mA",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Old AoD",
+    "id": "old-aod",
+    "player": "Dils thik",
+    "levelID": 76680844,
+    "date": "2023-03-20",
+    "length": 125,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/9xnaAgxqqJs",
+    "showcaseVideo": "https://youtu.be/RWBEfS4mLbw&t=2177s",
+    "tags": [
+      "Level",
+      "Verified"
     ]
   },
   {
@@ -1996,23 +2080,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "Ashley Wave Trials",
-    "id": "ashley-wave-trials",
-    "player": "Zoink",
-    "levelID": 123119196,
-    "date": "2024-11-01",
-    "length": 126,
-    "version": 2.2,
-    "video": "https://youtu.be/aTxt76U3e2Q",
-    "showcaseVideo": "https://youtu.be/1H0UpLzDEQw",
-    "submitter": "shortweekly",
-    "tags": [
-      "Level",
-      "Verified",
-      "CBF"
     ]
   },
   {
@@ -2090,39 +2157,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "Abyss of Darkness",
-    "id": "abyss-of-darkness",
-    "player": "Cursed",
-    "levelID": 49896559,
-    "date": "2022-04-03",
-    "length": 125,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/ejJkpqcMMCY",
-    "showcaseVideo": "https://youtu.be/A7i2m-yL-mA",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Old AoD",
-    "id": "old-aod",
-    "player": "Dils thik",
-    "levelID": 76680844,
-    "date": "2023-03-20",
-    "length": 125,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/9xnaAgxqqJs",
-    "showcaseVideo": "https://youtu.be/RWBEfS4mLbw&t=2177s",
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -2628,6 +2662,23 @@
     ]
   },
   {
+    "name": "Vehemence 20%",
+    "id": "vehemence-20",
+    "player": "A6",
+    "length": 39,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/eUT71RqNVBA?t=10168",
+    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
+    "date": "2025-11-01",
+    "submitter": "Excryst",
+    "levelID": null,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "christmashouse",
     "id": "christmashouse",
     "player": "Zoink",
@@ -2834,9 +2885,9 @@
     "length": 30,
     "version": 2.1,
     "levelID": 64815983,
-    "showcaseVideo": "https://www.dropbox.com/scl/fi/n5rsxv8g5eptsk7pxypju/Day-295.mp4?rlkey=633t477vfcqdwb35mjraigw70&st=jij4zb7u&dl=0",
-    "video": "https://youtu.be/FNRBXG2KC1U",
     "submitter": "aytch0008",
+    "video": "https://youtu.be/MBP_VUt8wHI",
+    "showcaseVideo": "https://youtu.be/OyFvsJ0RRKE",
     "tags": [
       "Challenge",
       "Consistency"
@@ -10773,6 +10824,7 @@
   }
 
 ]
+
 
 
 
