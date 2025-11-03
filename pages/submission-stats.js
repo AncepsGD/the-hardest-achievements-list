@@ -82,6 +82,9 @@ export default function SubmissionStats() {
       <main className="main-content">
         {!isMobile && <Sidebar />}
         <section id="submission-stats-section" className="leaderboard-container" style={{flexGrow: 1, padding: '2rem'}}>
+          <p style={{marginTop: 0, marginBottom: '1rem'}}>
+            <a href="https://forms.gle/kzjRLkD1JgqzgfKp8" target="_blank" rel="noopener noreferrer">Click here to submit an achievement (or join the discord server)</a>
+          </p>
           <table className="leaderboard-table" style={{width: '100%', borderCollapse: 'collapse'}}>
             <thead>
               <tr>
