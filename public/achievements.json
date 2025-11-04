@@ -1,23 +1,5 @@
 [
   {
-    "name": "Flamewall 73%, 100% in a row",
-    "id": "flamewall-73-100-in-a-row",
-    "player": "Cuatrocientos",
-    "video": "https://youtu.be/18ixmjwoG6Q",
-    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "date": "2025-09-21",
-    "length": 714,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
-    "levelID": 126242564
-  },
-  {
     "name": "GRIEF 83%",
     "id": "grief-83",
     "player": "Doggie",
@@ -36,8 +18,8 @@
     "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png"
   },
   {
-    "name": "GRIEF (Old) 56-100%, 67% in a row",
-    "id": "grief-old-56-100-67-in-a-row",
+    "name": "GRIEF (Unbuffed) 56-100%, 67% in a row",
+    "id": "grief-unbuffed-56-100-67-in-a-row",
     "player": "Doggie",
     "video": "https://youtu.be/aqg-2kThaSc",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
@@ -70,6 +52,24 @@
       "CBF",
       "Tentative"
     ]
+  },
+  {
+    "name": "Flamewall 73%, 100% in a row",
+    "id": "flamewall-73-100-in-a-row",
+    "player": "Cuatrocientos",
+    "video": "https://youtu.be/18ixmjwoG6Q",
+    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "date": "2025-09-21",
+    "length": 714,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
+    "levelID": 126242564
   },
   {
     "name": "GRIEF 25-98%",
@@ -144,8 +144,8 @@
     "levelID": 126242564
   },
   {
-    "name": "GRIEF (Old) 25-100%",
-    "id": "grief-old-25-100",
+    "name": "GRIEF (Unbuffed) 25-100%",
+    "id": "grief-25-100",
     "player": "Doggie",
     "video": "https://youtu.be/JZ6rLQoP7Y0",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
@@ -156,14 +156,14 @@
       "CBF"
     ],
     "date": "2025-02-26",
-    "length": "117",
-    "version": "2.2",
+    "length": 117,
+    "version": 2.2,
     "submitter": "ScorchBTD",
     "thumbnail": "https://tjcsucht.net/levelthumbs/102303428.png"
   },
   {
-    "name": "GRIEF (Old) 17-92%",
-    "id": "grief-old-17-92",
+    "name": "GRIEF (Unbuffed) 17-92%",
+    "id": "grief-unbuffed-17-92",
     "player": "Doggie",
     "video": "https://youtu.be/ssE2G3-y5dE",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
@@ -10747,4 +10747,3 @@
     ]
   }
 ]
-
