@@ -6906,6 +6906,23 @@
     ]
   },
   {
+    "name": "Edge of Destiny",
+    "id": "edge-of-destiny",
+    "player": "polterghast",
+    "levelID": 89187968,
+    "date": "2023-03-09",
+    "length": 126,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/rUphe3H59yU",
+    "showcaseVideo": "https://youtu.be/At8bF2pw-qk",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
     "name": "Solar Flare",
     "id": "solar-flare",
     "player": "swiborg",
@@ -7284,22 +7301,6 @@
     ]
   },
   {
-    "name": "Dredlethal VantamaxX",
-    "id": "dredlethal-vantamaxx",
-    "player": "KyuPlays",
-    "date": "2025-08-14",
-    "levelID": "108671100",
-    "length": "26",
-    "version": "2.2",
-    "video": "https://youtu.be/jAASLdLcdHA",
-    "showcaseVideo": "https://youtu.be/kWDtcMvXRyw",
-    "submitter": "goofygdplayer",
-    "tags": [
-      "Challenge",
-      "Verified"
-    ]
-  },
-  {
     "name": "BRITNEY NO SCLEARS (Old) 74%",
     "id": "britney-no-sclears-Old-74",
     "player": "Scotchtape",
@@ -7412,23 +7413,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "Edge of Destiny",
-    "id": "edge-of-destiny",
-    "player": "polterghast",
-    "levelID": 89187968,
-    "date": "2023-03-09",
-    "length": 126,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/rUphe3H59yU",
-    "showcaseVideo": "https://youtu.be/At8bF2pw-qk",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
     ]
   },
   {
@@ -7854,6 +7838,22 @@
       "Level",
       "Verified",
       "Rated"
+    ]
+  },
+  {
+    "name": "Dredlethal VantamaxX",
+    "id": "dredlethal-vantamaxx",
+    "player": "KyuPlays",
+    "date": "2025-08-14",
+    "levelID": "108671100",
+    "length": "26",
+    "version": "2.2",
+    "video": "https://youtu.be/jAASLdLcdHA",
+    "showcaseVideo": "https://youtu.be/kWDtcMvXRyw",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Challenge",
+      "Verified"
     ]
   },
   {
@@ -10731,3 +10731,4 @@
     ]
   }
 ]
+
