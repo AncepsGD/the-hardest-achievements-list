@@ -45,6 +45,21 @@
     ]
   },
   {
+	"name": "Kyoto",
+    "id": "kyoto",
+    "player": "scorchtape",
+    "levelID": 127734228,
+    "date": "2025-11-04",
+    "version": 2.2,
+    "submitter": "Exiled_shade",
+    "video": "https://youtu.be/uLyBjVP5AKM",
+    "showcaseVideo": "https://youtu.be/JDEOGkyJrlQ",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
 	"name": "Silent Silhouette",
     "id": "silent-silhouette",
     "player": "ROZE",
@@ -101,23 +116,6 @@
     "tags": [
       "Challenge",
       "Verified"
-    ]
-  },
-  {
-	"name": "BPATA MPAKA 144hz 76%",
-    "id": "bpata-mpaka-144hz-76",
-    "player": "Melted",
-    "date": "2025-03-01",
-    "version": 2.2,
-    "levelID": 109947627,
-    "video": "https://youtu.be/EzPTMKfE-gg",
-    "showcaseVideo": "https://youtu.be/SlpYDNeZP8w",
-    "submitter": "jak",
-    "tags": [
-      "Level",
-      "Low Hertz",
-	  "Progress",
-      "Rated"
     ]
   }
 ]
