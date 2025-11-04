@@ -568,23 +568,6 @@
     ]
   },
   {
-    "name": "Every End",
-    "id": "every-end",
-    "player": "HamiltonHqmy",
-    "length": 447,
-    "version": 2.2,
-    "video": "https://youtu.be/AO--mVVFtKI",
-    "showcaseVideo": "https://youtu.be/f-O_TnxIZBA",
-    "date": "2025-03-16",
-    "submitter": "vaughn",
-    "levelID": 116174063,
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
     "name": "Exasperation 67%",
     "id": "exasperation-67",
     "player": "Zoink",
@@ -619,21 +602,6 @@
     ]
   },
   {
-    "name": "Sweeping Demon 2 (Taiago) 21-87%",
-    "id": "sweeping-demon-2-taiago-21-87",
-    "player": "Taiago",
-    "date": "2025-09-19",
-    "length": 44,
-    "version": 2.2,
-    "video": "https://youtu.be/0tFBzVMAORQ",
-    "showcaseVideo": "https://youtu.be/J73lxPI-9dI",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "SARY NEVER CLEAR (Old)",
     "id": "sary-never-clear-old",
     "player": "Glow",
@@ -647,6 +615,38 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "Every End",
+    "id": "every-end",
+    "player": "HamiltonHqmy",
+    "length": 447,
+    "version": 2.2,
+    "video": "https://youtu.be/AO--mVVFtKI",
+    "showcaseVideo": "https://youtu.be/f-O_TnxIZBA",
+    "date": "2025-03-16",
+    "submitter": "vaughn",
+    "levelID": 116174063,
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Sweeping Demon 2 (Taiago) 21-87%",
+    "id": "sweeping-demon-2-taiago-21-87",
+    "player": "Taiago",
+    "date": "2025-09-19",
+    "length": 44,
+    "version": 2.2,
+    "video": "https://youtu.be/0tFBzVMAORQ",
+    "showcaseVideo": "https://youtu.be/J73lxPI-9dI",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
