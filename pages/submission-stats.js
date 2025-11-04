@@ -41,25 +41,44 @@ export default function SubmissionStats() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   useEffect(() => {
-    fetch('/achievements.json')
-      .then(res => res.json())
-      .then(achievements => {
-        const submitterStats = {};
+    const orderedFiles = [
+      'achievements.json',
+      'legacy.json',
+      'timeline.json',
+      'platformers.json',
+      'platformertimeline.json',
+      'removed.json'
+    ];
+    const extraFiles = ['pending.json'];
+    const filesToFetch = [...orderedFiles, ...extraFiles];
+
+    Promise.all(filesToFetch.map(fname =>
+      fetch(`/${fname}`)
+        .then(res => (res.ok ? res.json().catch(() => null) : null))
+        .catch(() => null)
+    ))
+    .then(results => {
+      const submitterStats = {};
+      results.forEach((achievements, idx) => {
+        if (!Array.isArray(achievements)) return;
+        const source = filesToFetch[idx];
         achievements.forEach(achievement => {
           const submitter = achievement.submitter;
           if (!submitter) return;
+          const item = Object.assign({}, achievement, { __source: source });
           if (submitterStats[submitter]) {
             submitterStats[submitter].count += 1;
-            submitterStats[submitter].achievements.push(achievement);
+            submitterStats[submitter].achievements.push(item);
           } else {
-            submitterStats[submitter] = { count: 1, achievements: [achievement] };
+            submitterStats[submitter] = { count: 1, achievements: [item] };
           }
         });
-        const sortedSubmitters = Object.entries(submitterStats)
-          .sort(([, a], [, b]) => b.count - a.count)
-          .map(([submitter, stats], index) => ({ submitter, ...stats, rank: index + 1 }));
-        setSubmitters(sortedSubmitters);
       });
+      const sortedSubmitters = Object.entries(submitterStats)
+        .sort(([, a], [, b]) => b.count - a.count)
+        .map(([submitter, stats], index) => ({ submitter, ...stats, rank: index + 1 }));
+      setSubmitters(sortedSubmitters);
+    });
   }, []);
   return (
     <>
