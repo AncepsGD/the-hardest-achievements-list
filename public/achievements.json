@@ -1575,6 +1575,23 @@
     ]
   },
   {
+    "name": "Azure Flare (VERTOP) 44-100%",
+    "id": "azure-flare-vertop-44-100",
+    "player": "VERTOP",
+    "date": "2025-11-03",
+    "length": 32,
+    "version": 2.2,
+    "video": "https://youtu.be/5C4xbt-yIeQ",
+    "levelID": 97429207,
+    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
+    "submitter": "axelssl",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "Aerial Gleam (Unnerfed) 144hz Mobile",
     "id": "aerial-gleam-unnerfed-144hz-mobile",
     "player": "VERTOP",
@@ -3369,22 +3386,6 @@
     ]
   },
   {
-    "name": "Azure Flare (VERTOP) 44-90%",
-    "id": "azure-flare-vertop-44-90",
-    "player": "VERTOP",
-    "date": "2023-11-04",
-    "length": 27,
-    "version": 2.1,
-    "video": "https://youtu.be/DEiKsJ8SPu0",
-    "levelID": 97429207,
-    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
-    "submitter": "Arcadie",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "Gayouki 83%",
     "id": "gayouki-83",
     "player": "Kaza",
@@ -3604,15 +3605,15 @@
     ]
   },
   {
-    "name": "Old Orochi 63%",
-    "id": "old-orochi-63",
+    "name": "Old Orochi 67%",
+    "id": "old-orochi-67",
     "player": "SeptaGon7",
-    "date": "2025-10-10",
-    "length": 54,
+    "date": "2025-11-03",
+    "length": 57,
     "version": 2.2,
-    "video": "https://youtu.be/ozOOAJ7Hixw",
+    "video": "https://youtu.be/9Q5E-lz_elo",
     "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
-    "submitter": "Exiled_shade",
+    "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Progress",
@@ -5818,23 +5819,6 @@
     ]
   },
   {
-    "name": "Azure Flare (VERTOP) 53-100%",
-    "id": "azure-flare-vertop-53-100",
-    "player": "VERTOP",
-    "date": "2025-10-30",
-    "length": 26,
-    "version": 2.2,
-    "video": "https://youtu.be/Yfts_A6u9Uk",
-    "levelID": 97429207,
-    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
     "name": "Eyes in the Water",
     "id": "eyes-in-the-water",
     "player": "LordVadercraft",
@@ -5894,25 +5878,6 @@
     "date": "2025-05-22",
     "submitter": "finn",
     "levelID": "91351939",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Trueffet 144hz Mobile 74%",
-    "id": "trueffet-144hz-mobile-74",
-    "player": "bemj80",
-    "levelID": 71434979,
-    "date": "2024-11-09",
-    "length": 53,
-    "version": 2.2,
-    "video": "https://youtu.be/6cRn5Uk9gI0",
-    "showcaseVideo": "https://youtu.be/qkQidB9aPLA",
-    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Low Hertz",
@@ -6143,6 +6108,25 @@
       "Level",
       "Low Hertz",
       "Mobile",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Trueffet 144hz Mobile 74%",
+    "id": "trueffet-144hz-mobile-74",
+    "player": "bemj80",
+    "levelID": 71434979,
+    "date": "2024-11-09",
+    "length": 53,
+    "version": 2.2,
+    "video": "https://youtu.be/6cRn5Uk9gI0",
+    "showcaseVideo": "https://youtu.be/qkQidB9aPLA",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
       "Rated"
     ]
   },
@@ -8456,24 +8440,6 @@
     "showcaseVideo": "https://youtu.be/K5MFdFgfdto"
   },
   {
-    "name": "Cannon Bay 120hz Mobile 34-92%",
-    "id": "cannon-bay-120hz-mobile-34-92",
-    "player": "Que2Yo",
-    "date": "2024-06-28",
-    "length": "41",
-    "version": "2.2",
-    "levelID": "83403926",
-    "video": "https://youtu.be/3aUi8QXmXIY",
-    "showcaseVideo": "https://youtu.be/wez4Dd3cDBg",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress"
-    ]
-  },
-  {
     "name": "Fertane Never Clear",
     "id": "fertane-never-clear",
     "player": "jeyk",
@@ -8844,25 +8810,6 @@
     "tags": [
       "Level",
       "Consistency"
-    ]
-  },
-  {
-    "name": "Verdant Landscape 120hz Mobile 44-100%",
-    "id": "verdant-landscape-120hz-mobile-44-100",
-    "player": "Que2Yo",
-    "date": "2025-11-01",
-    "length": 89,
-    "version": 2.2,
-    "levelID": 76543324,
-    "video": "https://youtu.be/Qo9Kewrt7EI",
-    "showcaseVideo": "https://youtu.be/dSbox0NKuXs",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
     ]
   },
   {
@@ -9740,25 +9687,6 @@
     ]
   },
   {
-    "name": "Kyouki 120hz Mobile 30%",
-    "id": "kyouki-120hz-mobile-30",
-    "player": "flarinova",
-    "levelID": 86018142,
-    "date": "2025-10-11",
-    "length": 33,
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/BjGkRpaxQAg",
-    "showcaseVideo": "https://youtu.be/RBeyMGug3J0",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
     "name": "Gamma 60hz",
     "id": "gamma-60hz",
     "player": "Samamba",
@@ -10472,25 +10400,6 @@
     ]
   },
   {
-    "name": "Kyouki 120hz Mobile 72-100%",
-    "id": "kyouki-120hz-mobile-72-100",
-    "player": "flarinova",
-    "levelID": 86018142,
-    "date": "2025-11-01",
-    "length": 26,
-    "version": 2.2,
-    "submitter": "Excryst",
-    "video": "https://www.youtube.com/live/s4SXrL-It-Q?&t=7375",
-    "showcaseVideo": "https://youtu.be/RBeyMGug3J0",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
     "name": "Coalescence",
     "id": "coalescence",
     "player": "Amplitron",
@@ -10823,3 +10732,4 @@
     ]
   }
 ]
+
