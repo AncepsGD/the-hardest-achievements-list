@@ -799,21 +799,21 @@
     ]
   },
   {
-    "name": "Silent clubstep 16%, 95% in a row",
-    "id": "silent-clubstep-16-95-in-a-row",
-    "player": "faukkk",
-    "length": 75,
-    "version": 2.2,
-    "video": "https://youtu.be/Cf3e8FtEKSc",
-    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E",
-    "date": "2024-11-29",
-    "submitter": "TYATYAPKA",
-    "levelID": 4125776,
+    "name": "Silent clubstep 5-25%x2, 5-64%",
+    "id": "silent-clubstep-5-25x2-5-64",
+    "player": "Vision",
     "tags": [
       "Level",
       "Consistency",
       "Rated"
-    ]
+    ],
+    "length": 90,
+    "version": 2.1,
+    "date": "2023-01-02",
+    "levelID": 4125776,
+    "submitter": "Juls",
+    "video": "https://youtu.be/fKN9T_w5wnE",
+    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E"
   },
   {
     "name": "Renevant 60hz",
@@ -10732,5 +10732,6 @@
     ]
   }
 ]
+
 
 
