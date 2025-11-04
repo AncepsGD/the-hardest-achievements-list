@@ -1,57 +1,25 @@
 [
   {
-    "name": "Flamewall 73%, 100%",
-    "id": "flamewall-73-100",
-    "player": "Cuatrocientos",
-    "video": "https://www.youtube.com/live/18ixmjwoG6Q?si=OpJuJI6tQMyVC0xb&t=5622s",
-    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k?si=N4tdbiQeCnbaEYMV",
+    "id": "grief-83",
+    "name": "GRIEF 83%",
+    "player": "Doggie",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png",
     "tags": [
       "Level",
-      "Consistency",
-      "Rated"
+      "Progress",
+      "2P",
+      "CBF"
     ],
-    "date": "2025-09-21",
-    "length": 714,
+    "length": 136,
     "version": 2.2,
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg"
+    "date": "2025-11-01",
+    "video": "https://www.youtube.com/watch?v=mp8TSHLoW8Q",
+    "showcaseVideo": "https://youtu.be/bQXnREyaO34",
+    "submitter": "kittycatiscute"
   },
   {
-    "name": "Flamewall 24-100%, 24-91% in a row",
-    "id": "flamewall-24-100-24-91-in-a-row",
-    "player": "Cuatrocientos",
-    "video": "https://www.youtube.com/live/iivSAgP6w8M?t=15320",
-    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k?si=N4tdbiQeCnbaEYMV",
-    "levelID": "126242564",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "date": "2025-09-06",
-    "length": 615,
-    "version": 2.2,
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg"
-  },
-  {
-    "name": "Flamewall 50%, 99%",
-    "id": "flamewall-50-99",
-    "player": "Cuatrocientos",
-    "video": "https://www.youtube.com/live/8WPfiV3aD4w?t=4046s",
-    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k?si=N4tdbiQeCnbaEYMV",
-    "levelID": "126242564",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "date": "2025-08-31",
-    "length": 600,
-    "version": 2.2,
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg"
-  },
-  {
-    "id": "grief-old-56-100-67-in-a-row",
-    "name": "GRIEF (Old) 56-100%, 67% in a row",
+    "id": "grief-unbuffed-56-100-67-in-a-row",
+    "name": "GRIEF (Unbuffed) 56-100%, 67% in a row",
     "player": "Doggie",
     "thumbnail": "https://tjcsucht.net/levelthumbs/103524537.png",
     "tags": [
@@ -67,8 +35,8 @@
     "showcaseVideo": "https://youtu.be/bQXnREyaO34"
   },
   {
-    "name": "Thinking Space II (Old) 79%",
-    "id": "thinking-space-ii-old-79",
+    "name": "Thinking Space II (Unbuffed) 79%",
+    "id": "thinking-space-ii-unbuffed-79",
     "player": "Zoink",
     "length": 65,
     "version": 2.2,
@@ -82,8 +50,8 @@
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii1.webp"
   },
   {
-    "id": "thinking-space-ii-old-77",
-    "name": "Thinking Space II (Old) 77%",
+    "id": "thinking-space-ii-unbuffed-77",
+    "name": "Thinking Space II (Unbuffed) 77%",
     "player": "Zoink",
     "tags": [
       "Level",
@@ -92,13 +60,13 @@
     "length": 61,
     "version": 2.2,
     "date": "2025-02-13",
-    "video": "https://www.youtube.com/live/_hsc3cvQIn4?t=3546",
+    "video": "https://www.youtube.com/watch?v=_hsc3cvQIn4&t=3546",
     "showcaseVideo": "https://youtu.be/F05aMR0F6YM",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii1.webp"
   },
   {
-    "id": "grief-old-80",
-    "name": "GRIEF (Old) 80%",
+    "id": "grief-unbuffed-80-copy",
+    "name": "GRIEF (Unbuffed) 80%",
     "player": "Doggie",
     "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png",
     "tags": [
@@ -1482,4 +1450,3 @@
     "video": "https://youtu.be/727pUHwWSVg"
   }
 ]
-
