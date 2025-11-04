@@ -5352,6 +5352,22 @@
     ]
   },
   {
+    "name": "FINAL DESTINATION 240hz 50%, 50%, 64%",
+    "id": "final-destination-240hz-50-50-64",
+    "player": "aytch0008",
+    "date": "2025-10-27",
+    "length": 20,
+    "version": 2.1,
+    "levelID": null,
+    "video": "https://youtu.be/UpBmMZbEzRY",
+    "showcaseVideo": null,
+    "submitter": "aytch0008",
+    "tags": [
+      "Challenge",
+      "Progress"
+    ]
+  },
+  {
     "name": "last stop 55%",
     "id": "last-stop-55",
     "player": "aytch0008",
@@ -10731,4 +10747,5 @@
     ]
   }
 ]
+
 
