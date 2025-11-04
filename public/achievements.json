@@ -368,6 +368,22 @@
     ]
   },
   {
+    "name": "SARY NEVER CLEAR (Old)",
+    "id": "sary-never-clear-old",
+    "player": "Glow",
+    "length": 75,
+    "version": 2.1,
+    "video": "https://youtu.be/Hpo77uVq75M",
+    "showcaseVideo": "https://youtu.be/a-xQc7_GnA8",
+    "date": "2025-10-05",
+    "submitter": "Exiled_Shade",
+    "levelID": 609629,
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Banshee 10-79%",
     "id": "banshee-10-79",
     "player": "spcreat",
@@ -599,22 +615,6 @@
       "Level",
       "Verified",
       "Tentative"
-    ]
-  },
-  {
-    "name": "SARY NEVER CLEAR (Old)",
-    "id": "sary-never-clear-old",
-    "player": "Glow",
-    "length": 75,
-    "version": 2.1,
-    "video": "https://youtu.be/Hpo77uVq75M",
-    "showcaseVideo": "https://youtu.be/a-xQc7_GnA8",
-    "date": "2025-10-05",
-    "submitter": "Exiled_Shade",
-    "levelID": 609629,
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -10747,5 +10747,3 @@
     ]
   }
 ]
-
-
