@@ -402,23 +402,6 @@
     "submitter": "kyle1saurus"
   },
   {
-    "name": "Subsuming Vortex (Renn241) 37-75%, 37-68% in a row",
-    "id": "subsuming-vortex-renn241-37-75-37-68-in-a-row",
-    "player": "Wity",
-    "date": "2025-08-03",
-    "length": 55,
-    "version": 2.2,
-    "video": "https://youtu.be/9V8mSuYmgOU",
-    "showcaseVideo": "https://youtu.be/3dKj12cQSII",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/subsuming-vortex-renn241-1.webp",
-    "submitter": "goofygdplayer",
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ]
-  },
-  {
     "name": "Banshee 77%",
     "id": "banshee-77",
     "player": "spcreat",
@@ -565,6 +548,23 @@
       "Level",
       "Verified",
       "Rated"
+    ]
+  },
+  {
+    "name": "Subsuming Vortex (Renn241) 37-75%, 37-68% in a row",
+    "id": "subsuming-vortex-renn241-37-75-37-68-in-a-row",
+    "player": "Wity",
+    "date": "2025-08-03",
+    "length": 55,
+    "version": 2.2,
+    "video": "https://youtu.be/9V8mSuYmgOU",
+    "showcaseVideo": "https://youtu.be/3dKj12cQSII",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/subsuming-vortex-renn241-1.webp",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Level",
+      "Consistency",
+      "CBF"
     ]
   },
   {
@@ -1169,23 +1169,6 @@
     ]
   },
   {
-    "name": "Determination Dance 144hz Mobile",
-    "id": "determination-dance-144hz-mobile",
-    "player": "sydno",
-    "levelID": 74015661,
-    "date": "2025-10-28",
-    "length": 24,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/oixgxM8U508",
-    "showcaseVideo": "https://youtu.be/gHIt5LX6JrM",
-    "tags": [
-      "Challenge",
-      "Low Hertz",
-      "Mobile"
-    ]
-  },
-  {
     "name": "Aquamarine",
     "id": "aquamarine",
     "player": "seels",
@@ -1236,25 +1219,6 @@
     ]
   },
   {
-    "name": "Sakupen Circles 144hz Mobile 37-100%",
-    "id": "sakupen-circles-144hz-mobile-37-100",
-    "player": "sydno",
-    "levelID": 76962930,
-    "date": "2025-10-20",
-    "length": 28,
-    "version": 2.2,
-    "video": "https://youtu.be/Nj5q3q29ni0",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
     "name": "Firework 144hz Mobile",
     "id": "firework-144hz-mobile",
     "player": "MAXDASH07",
@@ -1272,25 +1236,6 @@
       "Rated"
     ],
     "thumbnail": "https://tjcsucht.net/levelthumbs/75206202.png"
-  },
-  {
-    "name": "Sakupen Circles 144hz Mobile 70%",
-    "id": "sakupen-circles-144hz-mobile-70",
-    "player": "sydno",
-    "levelID": 76962930,
-    "date": "2025-10-22",
-    "length": 36,
-    "version": 2.2,
-    "video": "https://youtu.be/lmgDE10_ZyY",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
   },
   {
     "name": "Sinister Silence 75hz",
@@ -1349,13 +1294,13 @@
     "name": "Subsuming Vortex (Renn241) 35-100%",
     "id": "subsuming-vortex-renn241-35-100",
     "player": "Cursed",
-    "length": "33",
-    "version": "2.2",
+    "length": 33,
+    "version": 2.2,
     "video": "https://youtu.be/CmvC8zW9QOM&t=68",
     "showcaseVideo": "https://youtu.be/jvAIOmx4zi8",
     "date": "2025-07-05",
     "submitter": "SeptaGon7",
-    "levelID": "66422816",
+    "levelID": 66422816,
     "tags": [
       "Level",
       "Progress"
@@ -1409,6 +1354,23 @@
       "Level",
       "Verified",
       "Outdated Version"
+    ]
+  },
+  {
+    "name": "Determination Dance 144hz Mobile",
+    "id": "determination-dance-144hz-mobile",
+    "player": "sydno",
+    "levelID": 74015661,
+    "date": "2025-10-28",
+    "length": 24,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/oixgxM8U508",
+    "showcaseVideo": "https://youtu.be/gHIt5LX6JrM",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
     ]
   },
   {
@@ -1607,6 +1569,44 @@
       "Low Hertz",
       "Mobile",
       "Outdated Version"
+    ]
+  },
+  {
+    "name": "Sakupen Circles 144hz Mobile 37-100%",
+    "id": "sakupen-circles-144hz-mobile-37-100",
+    "player": "sydno",
+    "levelID": 76962930,
+    "date": "2025-10-20",
+    "length": 28,
+    "version": 2.2,
+    "video": "https://youtu.be/Nj5q3q29ni0",
+    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Sakupen Circles 144hz Mobile 70%",
+    "id": "sakupen-circles-144hz-mobile-70",
+    "player": "sydno",
+    "levelID": 76962930,
+    "date": "2025-10-22",
+    "length": 36,
+    "version": 2.2,
+    "video": "https://youtu.be/lmgDE10_ZyY",
+    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
     ]
   },
   {
@@ -9499,16 +9499,16 @@
     ]
   },
   {
-    "name": "Silent Circles (Starchman) 62-89%, 62-96%",
-    "id": "silent-circles-starchman-62-89-62-96",
+    "name": "Silent Circles (Starchman) 62-88%, 62-97%",
+    "id": "silent-circles-starchman-62-88-62-97",
     "player": "Juls",
     "levelID": null,
-    "date": "2025-10-25",
+    "date": "2025-10-31",
     "length": 59,
     "version": 2.2,
-    "video": "https://www.youtube.com/live/8EZ_bmKDNsA?t=4682",
+    "video": "https://youtube.com/clip/UgkxzHE66ZUdNxwXBislDRFT_fL7dW18Ee9W",
     "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "submitter": "Excryst",
+    "submitter": "BlooCubed",
     "tags": [
       "Level",
       "Consistency",
@@ -10732,4 +10732,5 @@
     ]
   }
 ]
+
 
