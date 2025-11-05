@@ -145,7 +145,7 @@
   },
   {
     "name": "GRIEF (Unbuffed) 25-100%",
-    "id": "grief-25-100",
+    "id": "grief-unbuffed-25-100",
     "player": "Doggie",
     "video": "https://youtu.be/JZ6rLQoP7Y0",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
@@ -178,6 +178,23 @@
     "length": 116,
     "version": 2.2,
     "thumbnail": "https://tjcsucht.net/levelthumbs/103524537.png"
+  },
+  {
+    "name": "Tidal Wave 35%, 131%",
+    "id": "tidal-wave-35-131",
+    "player": "Netermind",
+    "video": "https://www.youtube.com/live/Zbp_m7rLJ1Q?t=6890s",
+    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "submitter": "TYATYAPKA",
+    "levelID": 86407629,
+    "date": "2025-11-05",
+    "length": 181,
+    "version": 2.2
   },
   {
     "name": "KOCMOC UNLEASHED 14-78%",
@@ -10876,6 +10893,7 @@
     ]
   }
 ]
+
 
 
 
