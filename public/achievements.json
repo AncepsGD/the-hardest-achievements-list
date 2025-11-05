@@ -5402,6 +5402,23 @@
     ]
   },
   {
+    "name": "Unnerfed unknown 21%, 30%",
+    "id": "unnerfed-unknown-21-30",
+    "player": "Emp",
+    "levelID": 70003258,
+    "date": "2025-11-04",
+    "length": 19,
+    "version": 2.2,
+    "video": "https://youtu.be/m-whLITT8cI",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "Emp",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "Hard Machine 144hz Mobile",
     "id": "hard-machine-144hz-mobile",
     "player": "MAXDASH07",
@@ -6214,6 +6231,25 @@
     ]
   },
   {
+    "name": "Avernus 480hz Mobile 58-91%",
+    "id": "avernus-480hz-mobile-58-91",
+    "player": "Prmak",
+    "length": 40,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/qVQbCYxQKic",
+    "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
+    "date": "2025-09-08",
+    "levelID": 89496627,
+    "tags": [
+      "Level",
+      "Mobile",
+      "CBF",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Saul Goodman",
     "id": "saul-goodman",
     "player": "Jori",
@@ -6728,6 +6764,25 @@
     ]
   },
   {
+    "name": "Avernus 480hz Mobile 33%",
+    "id": "avernus-480hz-mobile-33",
+    "player": "Prmak",
+    "length": 40,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/16Zh8jssanc",
+    "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
+    "date": "2025-09-15",
+    "levelID": 89496627,
+    "tags": [
+      "Level",
+      "Mobile",
+      "CBF",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "SLH Enhanced",
     "id": "slh-enhanced",
     "player": "MostDefinitelyAlbert",
@@ -7187,6 +7242,25 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "Avernus 480hz Mobile 47-77%",
+    "id": "avernus-480hz-mobile-47-77",
+    "player": "Prmak",
+    "length": 34,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/qzN58Elwl-Y?t=67",
+    "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
+    "date": "2025-09-15",
+    "levelID": 89496627,
+    "tags": [
+      "Level",
+      "Mobile",
+      "CBF",
+      "Progress",
+      "Rated"
     ]
   },
   {
@@ -10381,13 +10455,32 @@
     ]
   },
   {
+    "name": "Avernus 480hz Mobile 75-100%",
+    "id": "avernus-480hz-mobile-75-100",
+    "player": "Prmak",
+    "length": 23,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/qzN58Elwl-Y?t=99",
+    "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
+    "date": "2025-09-15",
+    "levelID": 89496627,
+    "tags": [
+      "Level",
+      "Mobile",
+      "CBF",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Spectrum Cyclone 60hz Mobile",
     "id": "spectrum-cyclone-60hz-mobile",
     "player": "Cedric22",
     "date": "2025-09-07",
-    "length": "124",
-    "version": "2.2",
-    "levelID": "59209010",
+    "length": 124,
+    "version": 2.2,
+    "levelID": 59209010,
     "video": "https://youtu.be/_FUGfutLgUs",
     "showcaseVideo": "https://youtu.be/wvNwc4NaJaw",
     "submitter": "kyle1saurus",
@@ -10403,9 +10496,9 @@
     "id": "widestep-60hz-31-91",
     "player": "Th3on3C",
     "date": "2025-03-31",
-    "length": "52",
-    "version": "2.2",
-    "levelID": "69289606",
+    "length": 52,
+    "version": 2.2,
+    "levelID": 69289606,
     "video": "https://youtu.be/RQvHmSkyznw&t=78",
     "showcaseVideo": "https://youtu.be/uAwHbCTkmzc",
     "submitter": "kyle1saurus",
@@ -10783,5 +10876,6 @@
     ]
   }
 ]
+
 
 
