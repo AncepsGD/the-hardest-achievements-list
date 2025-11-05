@@ -5581,6 +5581,21 @@
     ]
   },
   {
+    "name": "Eclipse (kyy)",
+    "id": "eclipse-kyy",
+    "player": "kyy",
+    "date": "2025-08-16",
+	  "levelID": 124722258,
+    "version": 2.2,
+    "video": "https://youtu.be/xLm0ClnvCNE",
+    "showcaseVideo": "https://youtu.be/jP_LDMw0xHk",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "CHIL",
     "id": "chil",
     "player": "Coco",
@@ -7081,6 +7096,21 @@
     ]
   },
   {
+    "name": "Make Paul Dance",
+    "id": "make-paul-dance",
+    "player": "AiriCloud",
+    "levelID": 115860808,
+    "date": "2025-10-08",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/XQoF35hNKpg",
+    "showcaseVideo": "https://youtu.be/yOqxB9aWhIE",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Paraballa 60hz Mobile",
     "id": "paraballa-60hz-mobile",
     "player": "cring",
@@ -8306,6 +8336,21 @@
     ]
   },
   {
+    "name": "Kyoto",
+    "id": "kyoto",
+    "player": "scorchtape",
+    "levelID": 127734228,
+    "date": "2025-11-04",
+    "version": 2.2,
+    "submitter": "Exiled_shade",
+    "video": "https://youtu.be/uLyBjVP5AKM",
+    "showcaseVideo": "https://youtu.be/JDEOGkyJrlQ",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "PSYCHOPATH",
     "id": "psychopath",
     "player": "BONN",
@@ -8532,6 +8577,22 @@
     ]
   },
   {
+    "name": "Endless Travel",
+    "id": "endless-travel",
+    "player": "TyakyoFyai",
+    "length": 3957,
+    "version": 2.1,
+    "video": "https://youtu.be/RzNL0RBL1-s",
+    "date": "2021-04-24",
+    "showcaseVideo": "https://youtu.be/0Y0bg_L1F0A",
+    "levelID": 63917440,
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Verified"
+        ]
+    },
+    {
     "name": "SARYYX NEVER CLEAR",
     "id": "saryyx-never-clear",
     "player": "skzyl",
@@ -8568,6 +8629,7 @@
     "name": "Fertane Never Clear",
     "id": "fertane-never-clear",
     "player": "jeyk",
+    "levelID": 111766860,
     "length": 31,
     "version": 2.2,
     "date": "2024-11-03",
@@ -9928,6 +9990,21 @@
     "levelID": 75080274
   },
   {
+    "name": "fladge",
+    "id": "fladge",
+    "player": "CHOOONK",
+    "levelID": 126722733,
+    "date": "2025-10-05",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://www.youtube.com/watch?v=ghiJjEQB-mY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=ghiJjEQB-mY?t=115",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Buffbath",
     "id": "buffbath",
     "player": "AGSEcho",
@@ -10422,6 +10499,20 @@
     ]
   },
   {
+    "name": "khmeli suneli",
+    "id": "khmeli-suneli",
+    "player": "kwezy",
+    "date": "2025-10-01",
+	  "levelID": 126565319,
+    "version": 2.2,
+    "video": "https://youtu.be/hiAtw-soAmg",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Challenge",
+      "Verified"
+    ]
+  },
+  {
     "name": "VENUS",
     "id": "venus",
     "player": "SeazeIsCool",
@@ -10860,6 +10951,21 @@
     ]
   },
   {
+    "name": "Silent Silhouette",
+    "id": "silent-silhouette",
+    "player": "ROZE",
+    "levelID": 126822479,
+    "date": "2025-10-23",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/Lidju9Y3ZcE",
+    "showcaseVideo": "https://youtu.be/8T4HwJWkNcQ",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Blue Tartarus",
     "id": "blue-tartarus",
     "player": "breakcore11",
@@ -10893,6 +10999,7 @@
     ]
   }
 ]
+
 
 
 
