@@ -1119,6 +1119,23 @@
     ]
   },
   {
+    "name": "Vehemence 21-46%",
+    "id": "vehemence-21-46",
+    "player": "A6",
+    "length": 40,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/eUT71RqNVBA?t=7960",
+    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
+    "date": "2025-09-19",
+    "submitter": "kyle1saurus",
+    "levelID": null,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Blue Avernus",
     "id": "blue-avernus",
     "player": "KlimK",
@@ -7858,22 +7875,6 @@
     ]
   },
   {
-    "name": "Dredlethal VantamaxX",
-    "id": "dredlethal-vantamaxx",
-    "player": "KyuPlays",
-    "date": "2025-08-14",
-    "levelID": "108671100",
-    "length": "26",
-    "version": "2.2",
-    "video": "https://youtu.be/jAASLdLcdHA",
-    "showcaseVideo": "https://youtu.be/kWDtcMvXRyw",
-    "submitter": "goofygdplayer",
-    "tags": [
-      "Challenge",
-      "Verified"
-    ]
-  },
-  {
     "name": "Firework (Bradenbowl) 64%",
     "id": "firework-bradenbowl-64",
     "player": "Bradenbowl",
@@ -8177,6 +8178,22 @@
     "tags": [
       "Level",
       "Progress"
+    ]
+  },
+  {
+    "name": "Dredlethal VantamaxX",
+    "id": "dredlethal-vantamaxx",
+    "player": "KyuPlays",
+    "date": "2025-08-14",
+    "levelID": "108671100",
+    "length": "26",
+    "version": "2.2",
+    "video": "https://youtu.be/jAASLdLcdHA",
+    "showcaseVideo": "https://youtu.be/kWDtcMvXRyw",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Challenge",
+      "Verified"
     ]
   },
   {
@@ -8893,6 +8910,24 @@
       "Mobile",
       "Progress",
       "Rated"
+    ]
+  },
+  {
+    "name": "Solar Flare 480hz Mobile 34-100%",
+    "id": "solar-flare-480hz-mobile-34-100",
+    "player": "YgoLb1",
+    "levelID": 90390075,
+    "date": "2023-04-29",
+    "length": 40,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/i1S20yt8cIw",
+    "showcaseVideo": "https://youtu.be/V2UFysszlyI",
+    "tags": [
+      "Level",
+      "CBF",
+      "Mobile",
+      "Progress"
     ]
   },
   {
@@ -10748,4 +10783,5 @@
     ]
   }
 ]
+
 
