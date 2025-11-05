@@ -918,6 +918,21 @@
     "submitter": "kyle1saurus"
   },
   {
+	"name": "WRISTS UNTIED",
+    "id": "wrists-untied",
+    "player": "ungafo",
+    "levelID": 127488759,
+    "date": "2025-10-27",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/lu5Zme0klGw",
+    "showcaseVideo": "https://youtu.be/O8z3cuRdk-c",
+    "tags": [
+      "Platformer",
+      "Verified"
+    ]
+  },
+  {
     "name": "Trouncy Ball",
     "id": "trouncy-ball",
     "player": "spycold",
@@ -1071,6 +1086,22 @@
   ]
   },
   {
+	"name": "HALL OF THE HOOKKING",
+    "id": "hall-of-the-hookking",
+    "player": "Noobie",
+    "levelID": 126964597,
+    "date": "2025-10-12",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/8f9eXu1mYN4",
+    "showcaseVideo": "https://youtu.be/xGcZNyUhhVs",
+    "tags": [
+      "Platformer",
+      "Verified",
+	  "Rated"
+    ]
+  },
+{
     "name": "Project BUZZKILL 60hz Mobile",
     "id": "project-buzzkill-60hz-mobile",
     "player": "willysilly",
