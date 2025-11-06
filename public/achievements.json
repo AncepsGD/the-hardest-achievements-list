@@ -8027,6 +8027,23 @@
     ]
   },
   {
+	"name": "Labyrinth 44-100%",
+    "id": "labyrinth-44-100",
+    "player": "GGonop",
+    "length": 40,
+    "version": 2.2,
+    "video": "https://youtu.be/hagtWNVNH8A?t=174",
+    "showcaseVideo": "https://youtu.be/skRj5RpaCVk",
+    "date": "2025-10-30",
+    "submitter": "TYATYAPKA",
+    "levelID": null,
+    "thumbnail": null,
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "walter white",
     "id": "walter-white",
     "player": "iliLaserili",
@@ -8418,6 +8435,22 @@
     ]
   },
   {
+	"name": "Ace 92%",
+    "id": "ace-82",
+    "player": "Aidsen",
+    "levelID": null,
+    "date": "2024-11-05",
+    "length": 63,
+    "version": 2.2,
+    "submitter": "Natalie :3",
+    "video": "https://youtu.be/k2-0_CCz7ik",
+    "showcaseVideo": "https://youtu.be/Y-amw14icK0",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "No Love",
     "id": "no-love",
     "player": "rinjello",
@@ -8432,6 +8465,23 @@
       "Level",
       "Verified",
       "Tentative"
+    ]
+  },
+  {
+	"name": "SARYYX NEVER CLEAR",
+    "id": "saryyx-never-clear",
+    "player": "skzyl",
+    "levelID": 95998005,
+    "date": "2023-10-29",
+    "length": 97,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/rRlyvmjcz_4",
+    "showcaseVideo": "https://youtu.be/99R4_EVBZl8",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ]
   },
   {
@@ -8593,23 +8643,6 @@
         ]
     },
     {
-    "name": "SARYYX NEVER CLEAR",
-    "id": "saryyx-never-clear",
-    "player": "skzyl",
-    "levelID": 95998005,
-    "date": "2023-10-29",
-    "length": 97,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/rRlyvmjcz_4",
-    "showcaseVideo": "https://youtu.be/99R4_EVBZl8",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
     "name": "Meltryllis Dance",
     "id": "meltryllis-dance",
     "player": "Hyperlith",
@@ -9580,6 +9613,22 @@
     ]
   },
   {
+	"name": "Ace 30-100%",
+    "id": "ace-30-100",
+    "player": "Aidsen",
+    "levelID": null,
+    "date": "2024-11-05",
+    "length": 55,
+    "version": 2.2,
+    "submitter": "Natalie :3",
+    "video": "https://youtu.be/k2-0_CCz7ik?t=72",
+    "showcaseVideo": "https://youtu.be/Y-amw14icK0",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Trueffet 144hz",
     "id": "trueffet-144hz",
     "player": "Razzley",
@@ -10320,6 +10369,7 @@
     "version": 2.2,
     "video": "https://youtu.be/WpBT2-mYXco",
     "showcaseVideo": "https://youtu.be/Afce2edO1SQ",
+	"submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Verified"
@@ -10333,6 +10383,7 @@
     "length": 80,
     "version": 2.2,
     "video": "https://youtu.be/EWClI25OwaE",
+	"showcaseVideo": "https://youtu.be/_dP3TZhrOZY",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -10491,6 +10542,7 @@
     "version": 2.1,
     "video": "https://youtu.be/vWsAAcPGy5s",
     "showcaseVideo": "https://youtu.be/0rvqYWQWswA",
+	"submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Low Hertz",
@@ -10503,7 +10555,7 @@
     "id": "khmeli-suneli",
     "player": "kwezy",
     "date": "2025-10-01",
-	  "levelID": 126565319,
+	"levelID": 126565319,
     "version": 2.2,
     "video": "https://youtu.be/hiAtw-soAmg",
     "submitter": "TYATYAPKA",
@@ -10999,6 +11051,7 @@
     ]
   }
 ]
+
 
 
 
