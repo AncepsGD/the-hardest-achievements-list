@@ -5062,6 +5062,23 @@
     ]
   },
   {
+	"name": "Unnerfed unknown 33-71%",
+    "id": "unnerfed-unknown-33-71",
+    "player": "Emp",
+    "levelID": 70003258,
+    "date": "2025-11-07",
+    "length": 14,
+    "version": 2.2,
+    "video": "https://youtu.be/T7yG6ns6fOw",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "Emp",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "The Lightning Rod",
     "id": "the-lightning-rod",
     "player": "lavatrex",
@@ -5419,23 +5436,6 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 21%, 30%",
-    "id": "unnerfed-unknown-21-30",
-    "player": "Emp",
-    "levelID": 70003258,
-    "date": "2025-11-04",
-    "length": 19,
-    "version": 2.2,
-    "video": "https://youtu.be/m-whLITT8cI",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
-    "submitter": "Emp",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
     "name": "Hard Machine 144hz Mobile",
     "id": "hard-machine-144hz-mobile",
     "player": "MAXDASH07",
@@ -5585,7 +5585,7 @@
     "id": "eclipse-kyy",
     "player": "kyy",
     "date": "2025-08-16",
-	  "levelID": 124722258,
+	"levelID": 124722258,
     "version": 2.2,
     "video": "https://youtu.be/xLm0ClnvCNE",
     "showcaseVideo": "https://youtu.be/jP_LDMw0xHk",
@@ -5648,13 +5648,13 @@
     "name": "The Golden 120hz",
     "id": "the-golden-120hz",
     "player": "Sid125",
-    "length": "76",
-    "version": "2.1",
+    "length": 76,
+    "version": 2.1,
     "video": "https://youtu.be/GEguIRtbjk8",
     "showcaseVideo": "https://youtu.be/lbrN3kasxR0",
     "date": "2021-05-26",
     "submitter": "jak",
-    "levelID": "60978746",
+    "levelID": 60978746,
     "tags": [
       "Level",
       "Low Hertz",
@@ -5721,6 +5721,7 @@
     "version": 2.1,
     "video": "https://youtu.be/oFy5cYANqQA",
     "showcaseVideo": "https://youtu.be/Go2xnL5uStI",
+	"submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Progress"
@@ -5827,6 +5828,7 @@
     "version": 2.1,
     "video": "https://youtu.be/1gDrHIaCr_A",
     "showcaseVideo": "https://youtu.be/Go2xnL5uStI",
+	"submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Progress"
@@ -5954,13 +5956,13 @@
     "name": "Tunnel of Despair 144hz Mobile 46-100%",
     "id": "tunnel-of-despair-144hz-mobile-46-100",
     "player": "VERTOP",
-    "length": "38",
-    "version": "2.2",
+    "length": 38,
+    "version": 2.2,
     "video": "https://youtu.be/41fGLBze4cY",
     "showcaseVideo": "https://youtu.be/SgWZkTPHNaM&t=113",
     "date": "2025-05-22",
     "submitter": "finn",
-    "levelID": "91351939",
+    "levelID": 91351939,
     "tags": [
       "Level",
       "Low Hertz",
@@ -6181,9 +6183,9 @@
     "id": "waterfall-120hz-mobile",
     "player": "BBGameGuru",
     "date": "2025-05-31",
-    "length": "97",
-    "version": "2.2",
-    "levelID": "110991117",
+    "length": 97,
+    "version": 2.2,
+    "levelID": 110991117,
     "video": "https://youtu.be/Z08iJYxCn00",
     "showcaseVideo": "https://youtu.be/vXg5nJqRizI",
     "submitter": "kyle1saurus",
@@ -6370,8 +6372,8 @@
     "name": "CSE 63%",
     "id": "cse-63",
     "player": "seels",
-    "length": "7",
-    "version": "2.2",
+    "length": 7,
+    "version": 2.2,
     "video": "https://youtu.be/DK2ri1eDnjg",
     "showcaseVideo": "https://youtu.be/0TJb-GHC15M",
     "date": "2025-05-05",
@@ -6387,9 +6389,9 @@
     "id": "sakpen-circles-cursed-44-70",
     "player": "Emp",
     "date": "2025-07-24",
-    "length": "9",
-    "version": "2.2",
-    "levelID": "123070864",
+    "length": 9,
+    "version": 2.2,
+    "levelID": 123070864,
     "video": "https://youtu.be/VZ3HpUBSz2k",
     "showcaseVideo": "https://youtu.be/KDxOtDFwajE",
     "submitter": "Emp",
@@ -6469,8 +6471,8 @@
     "name": "CSE 40-100%",
     "id": "cse-40-100",
     "player": "seels",
-    "length": "7",
-    "version": "2.2",
+    "length": 7,
+    "version": 2.2,
     "video": "https://youtu.be/0TJb-GHC15M",
     "showcaseVideo": "https://youtu.be/0TJb-GHC15M",
     "date": "2025-05-05",
@@ -11051,6 +11053,7 @@
     ]
   }
 ]
+
 
 
 
