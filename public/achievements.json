@@ -5615,6 +5615,22 @@
     ]
   },
   {
+	"name": "Aeternus 77-100%",
+    "id": "aeternus-77-100",
+    "player": "Chill Guy",
+    "date": "2025-11-08",
+    "length": 15,
+    "version": 2.2,
+    "levelID": 102647436,
+    "video": "https://youtu.be/EydH2IUy61o",
+    "showcaseVideo": "https://youtu.be/p4QgFtKL5kE",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "aztec rave monkey",
     "id": "aztec-rave-monkey",
     "player": "Revenant",
@@ -6649,22 +6665,6 @@
     "tags": [
       "Challenge",
       "Verified"
-    ]
-  },
-  {
-    "name": "Aeternus 79-100%",
-    "id": "aeternus-79-100",
-    "player": "Trick",
-    "date": "2025-06-19",
-    "length": "15",
-    "version": "2.2",
-    "levelID": "102647436",
-    "video": "https://youtu.be/L4a6UY8KSXQ",
-    "showcaseVideo": "https://youtu.be/p4QgFtKL5kE",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -11056,6 +11056,7 @@
     ]
   }
 ]
+
 
 
 
