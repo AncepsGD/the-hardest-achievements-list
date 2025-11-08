@@ -1455,6 +1455,23 @@
     ]
   },
   {
+	"name": "Old Orochi 81%",
+    "id": "old-orochi-81",
+    "player": "SeptaGon7",
+	"levelID": null,
+    "date": "2025-11-08",
+    "length": 78,
+    "version": 2.2,
+    "video": "https://youtu.be/JSdttMSGUSw",
+    "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "Acheron",
     "id": "acheron",
     "player": "microforest",
@@ -2394,6 +2411,22 @@
       "Progress",
       "Rated",
       "Tentative"
+    ]
+  },
+  {
+	"name": "Old Orochi 14-100%",
+    "id": "old-orochi-14-100",
+    "player": "SeptaGon7",
+    "date": "2025-11-08",
+    "length": 86,
+    "version": 2.2,
+    "video": "https://youtu.be/JSdttMSGUSw?t=110",
+    "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
     ]
   },
   {
@@ -3374,22 +3407,6 @@
     ]
   },
   {
-    "name": "Old Orochi 10-80%",
-    "id": "old-orochi-10-80",
-    "player": "SeptaGon7",
-    "date": "2025-10-25",
-    "length": 67,
-    "version": 2.2,
-    "video": "https://youtu.be/DJ8abAPFvz8",
-    "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
     "name": "Demotivation Dance",
     "id": "demotivation-dance",
     "player": "Cursed",
@@ -3637,22 +3654,6 @@
       "Level",
       "Speedhack",
       "Progress"
-    ]
-  },
-  {
-    "name": "Old Orochi 67%",
-    "id": "old-orochi-67",
-    "player": "SeptaGon7",
-    "date": "2025-11-03",
-    "length": 57,
-    "version": 2.2,
-    "video": "https://youtu.be/9Q5E-lz_elo",
-    "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
     ]
   },
   {
@@ -4174,22 +4175,6 @@
     "tags": [
       "Level",
       "Verified"
-    ]
-  },
-  {
-    "name": "Old Orochi 19-100%",
-    "id": "old-orochi-19-100",
-    "player": "SeptaGon7",
-    "date": "2025-09-27",
-    "length": 79,
-    "version": 2.2,
-    "video": "https://youtu.be/XedLqg5H8Ow",
-    "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
-    "submitter": "SeptaGon7",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
     ]
   },
   {
@@ -11053,6 +11038,7 @@
     ]
   }
 ]
+
 
 
 
