@@ -3756,6 +3756,23 @@
     ]
   },
   {
+	"name": "Paraballa 60hz Mobile",
+    "id": "paraballa-60hz-mobile",
+    "player": "cring",
+    "levelID": 68963370,
+    "date": "2022-12-27",
+    "length": 14,
+    "version": 2.1,
+    "video": "https://youtu.be/AEEzvOBwPyw",
+    "showcaseVideo": "https://youtu.be/sWdgDpblGBU",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+  {
     "name": "wocky circles",
     "id": "wocky-circles",
     "player": "ROZE GD",
@@ -6131,6 +6148,23 @@
     ]
   },
   {
+	"name": "Hell Ball Finale 60hz Mobile",
+        "id": "hell-ball-finale-60hz-mobile",
+        "player": "cring",
+        "levelID": 86047466,
+        "date": "2022-11-24",
+        "length": 24,
+        "version": 2.1,
+        "submitter": "Arcadie",
+        "video": "https://youtu.be/sj3BGHe5qTc",
+        "showcaseVideo": "https://youtu.be/cYe-BUOqixc",
+        "tags": [
+            "Challenge",
+            "Low Hertz",
+            "Mobile"
+        ]
+    },
+    {
     "name": "Oblivion 144hz Mobile",
     "id": "oblivion-144hz-mobile",
     "player": "bemj80",
@@ -6566,6 +6600,23 @@
       "Level",
       "Consistency",
       "Rated"
+    ]
+  },
+  {
+	"name": "3SH in Hell 60hz Mobile",
+    "id": "3sh-in-hell-60hz-mobile",
+    "player": "cring",
+    "levelID": 61614466,
+    "date": "2022-08-19",
+    "length": 12,
+    "version": 2.1,
+    "video": "https://youtu.be/rPKC65m9bDE",
+    "showcaseVideo": "https://youtu.be/QuRsfqweNTk",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
     ]
   },
   {
@@ -7095,23 +7146,6 @@
     "tags": [
       "Level",
       "Verified"
-    ]
-  },
-  {
-    "name": "Paraballa 60hz Mobile",
-    "id": "paraballa-60hz-mobile",
-    "player": "cring",
-    "levelID": 68963370,
-    "date": "2022-12-27",
-    "length": 14,
-    "version": 2.1,
-    "video": "https://youtu.be/AEEzvOBwPyw",
-    "showcaseVideo": "https://youtu.be/sWdgDpblGBU",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Challenge",
-      "Low Hertz",
-      "Mobile"
     ]
   },
   {
@@ -8578,23 +8612,6 @@
     "tags": [
       "Level",
       "Verified"
-    ]
-  },
-  {
-    "name": "3SH in Hell 60hz Mobile",
-    "id": "3sh-in-hell-60hz-mobile",
-    "player": "cring",
-    "levelID": 61614466,
-    "date": "2022-08-19",
-    "length": 12,
-    "version": 2.1,
-    "video": "https://youtu.be/rPKC65m9bDE",
-    "showcaseVideo": "https://youtu.be/QuRsfqweNTk",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Challenge",
-      "Low Hertz",
-      "Mobile"
     ]
   },
   {
@@ -11038,6 +11055,7 @@
     ]
   }
 ]
+
 
 
 
