@@ -9586,6 +9586,25 @@
     ]
   },
   {
+	"name": "LIMBO 240hz Mobile 63%",
+    "id": "limbo-240hz-mobile-63",
+    "player": "GYTO",
+    "levelID": 86084399,
+    "date": "2025-10-23",
+    "length": 100,
+    "version": 2.2,
+    "submitter": "GYTO",
+    "video": "https://youtu.be/lsVuSooorSo",
+    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
+    "tags": [
+      "Level",
+      "Mobile",
+	  "Progress",
+	  "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "Checked Steam (1st Coin)",
     "id": "checked-steam-1st-coin",
     "player": "Whizkid05",
@@ -10381,6 +10400,25 @@
     ]
   },
   {
+	"name": "LIMBO 240hz Mobile 27-80%",
+    "id": "limbo-240hz-mobile-27-80",
+    "player": "GYTO",
+    "levelID": 86084399,
+    "date": "2025-10-22",
+    "length": 102,
+    "version": 2.2,
+    "submitter": "GYTO",
+    "video": "https://youtu.be/7FVvCU7TQ2g",
+    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
+    "tags": [
+      "Level",
+      "Mobile",
+	  "Progress",
+	  "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "Eternal Flame",
     "id": "eternal-flame",
     "player": "veshel",
@@ -10958,6 +10996,25 @@
     ]
   },
   {
+	"name": "LIMBO 240hz Mobile 34-100%",
+    "id": "limbo-240hz-mobile-34-100",
+    "player": "GYTO",
+    "levelID": 86084399,
+    "date": "2025-09-08",
+    "length": 120,
+    "version": 2.2,
+    "submitter": "GYTO",
+    "video": "https://youtu.be/tQpcIhdu-Ug",
+    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
+    "tags": [
+      "Level",
+      "Mobile",
+	  "Progress",
+	  "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "Gumi 86%",
     "id": "gumi-86",
     "player": "Thnnder",
@@ -11073,6 +11130,7 @@
     ]
   }
 ]
+
 
 
 
