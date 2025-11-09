@@ -2447,6 +2447,23 @@
     ]
   },
   {
+	"name": "Vehemence 69-100%",
+    "id": "vehemence-69-100",
+    "player": "A6",
+    "length": 39,
+    "version": 2.2,
+    "video": "https://youtu.be/nf9THSQ7PIE",
+    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
+    "date": "2025-11-09",
+    "submitter": "kyle1saurus",
+    "levelID": null,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Kyouki",
     "id": "kyouki",
     "player": "{出見塩}Demishio",
@@ -4887,6 +4904,21 @@
     ]
   },
   {
+	"name": "Azure Flare (polar) 46-78%",
+    "id": "azure-flare-polar-46-78",
+    "player": "polar",
+    "date": "2025-11-08",
+    "length": 18,
+    "version": 2.2,
+    "video": "https://youtu.be/N7TZc-NBmlo?t=30",
+    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
+    "submitter": "tmtsps12",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Sakupen",
     "id": "sakupen",
     "player": "Cursed",
@@ -7044,21 +7076,6 @@
     "video": "https://youtu.be/OukvALqTyxE",
     "showcaseVideo": "https://youtu.be/Q-IT8xuqU9Q",
     "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Azure Flare (polar) 25-47%",
-    "id": "azure-flare-polar-25-47",
-    "player": "polar",
-    "date": "2025-07-26",
-    "length": 14,
-    "version": 2.2,
-    "video": "https://youtu.be/9MZpfYfOfss",
-    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
-    "submitter": "polar",
     "tags": [
       "Level",
       "Progress"
@@ -9756,19 +9773,19 @@
     ]
   },
   {
-    "name": "Silent Circles (Starchman) 62-88%, 62-97%",
-    "id": "silent-circles-starchman-62-88-62-97",
+    "name": "Silent Circles (Starchman) 62-100%",
+    "id": "silent-circles-starchman-62-100",
     "player": "Juls",
     "levelID": null,
-    "date": "2025-10-31",
-    "length": 59,
+    "date": "2025-11-09",
+    "length": 30,
     "version": 2.2,
-    "video": "https://youtube.com/clip/UgkxzHE66ZUdNxwXBislDRFT_fL7dW18Ee9W",
+    "video": "https://youtu.be/JMPTi_Utnao",
     "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "submitter": "BlooCubed",
+    "submitter": "kyle1saurus",
     "tags": [
       "Level",
-      "Consistency",
+      "Progress",
       "CBF"
     ]
   },
@@ -10816,7 +10833,7 @@
     "id": "cosmic-cyclone-meatius-10-deaths-99-94-accuracy",
     "player": "Meatius",
     "date": "2025-08-22",
-    "levelID": "108671100",
+    "levelID": 108671100,
     "length": 70,
     "version": 2.2,
     "video": "https://youtu.be/YX-KCPYYVI8&t=152",
@@ -10833,7 +10850,7 @@
     "id": "cosmic-cyclone-meatius-52",
     "player": "Meatius",
     "date": "2025-08-22",
-    "levelID": "108671100",
+    "levelID": 108671100,
     "length": 70,
     "version": 2.2,
     "video": "https://youtu.be/YX-KCPYYVI8&t=623",
@@ -11056,6 +11073,7 @@
     ]
   }
 ]
+
 
 
 
