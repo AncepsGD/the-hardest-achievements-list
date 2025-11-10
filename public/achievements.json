@@ -1472,6 +1472,22 @@
     ]
   },
   {
+	"name": "Angelicide Kaza 68-100%",
+    "id": "angelicide-kaza-68-100",
+    "player": "Kaza",
+	"levelID": 114002031,
+    "length": 22,
+    "version": 2.2,
+    "video": "https://youtu.be/b2HX1VdeDxY",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-11-10",
+    "submitter": "SirDoodle2920",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Acheron",
     "id": "acheron",
     "player": "microforest",
@@ -1873,21 +1889,6 @@
       "Level",
       "Verified",
       "Rated"
-    ]
-  },
-  {
-    "name": "Angelicide (Kaza) 68-94%",
-    "id": "angelicide-kaza-68-94",
-    "player": "Kaza",
-    "length": 22,
-    "version": 2.2,
-    "video": "https://youtu.be/xX5oNO-A_yc",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-09-12",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -4530,9 +4531,10 @@
     ]
   },
   {
-    "name": "Angelicide (Kaza) 37-65%",
+    "name": "Angelicide Kaza 37-65%",
     "id": "angelicide-kaza-37-65",
     "player": "Kaza",
+	"levelID": 114002031,
     "date": "2025-09-15",
     "length": 26,
     "version": 2.2,
@@ -4541,7 +4543,8 @@
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
-      "Progress"
+      "Progress",
+	  "CBF"
     ]
   },
   {
@@ -5820,21 +5823,6 @@
     "showcaseVideo": "https://www.youtube.com/live/7sXz0-XR3zY?t=8086",
     "video": "https://youtu.be/BRliFwd5jKs",
     "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Angelicide (Kaza) 76-100%",
-    "id": "angelicide-kaza-76-100",
-    "player": "Kaza",
-    "date": "2025-10-14",
-    "length": 19,
-    "version": 2.2,
-    "showcaseVideo": "https://youtu.be/J3zsCA6a-TQ",
-    "video": "https://youtu.be/BRliFwd5jKs",
-    "submitter": "tmtsps12",
     "tags": [
       "Level",
       "Progress"
@@ -7431,6 +7419,23 @@
     ]
   },
   {
+	"name": "Vehemence 53-74%",
+    "id": "vehemence-53-74",
+    "player": "A6",
+    "length": 22,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/MMz_PwsLk3U?t=2760",
+    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
+    "date": "2025-11-09",
+    "submitter": "Excryst",
+    "levelID": null,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Itsumade",
     "id": "itsumade",
     "player": "CaveMelv",
@@ -8678,6 +8683,22 @@
       "Verified"
     ],
     "showcaseVideo": "https://youtu.be/K5MFdFgfdto"
+  },
+  {
+	"name": "ULTRA PARACOSM 79%",
+    "id": "ultra-paracosm-79",
+    "player": "Wity",
+    "levelID": null,
+    "date": "2025-11-10",
+    "length": 57,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/RNUFc2F4N6g",
+    "showcaseVideo": "https://youtu.be/E0sQ4n9gCfc",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
   },
   {
     "name": "Fertane Never Clear",
@@ -10251,6 +10272,25 @@
     ]
   },
   {
+	"name": "LIMBO 240hz Mobile 29-90%",
+    "id": "limbo-240hz-mobile-29-90",
+    "player": "GYTO",
+    "levelID": 86084399,
+    "date": "2025-11-09",
+    "length": 109,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/t-733_MLO24",
+    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
+    "tags": [
+      "Level",
+      "Mobile",
+	  "Progress",
+	  "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "The Wonder of You",
     "id": "the-wonder-of-you",
     "player": "Helix",
@@ -10400,25 +10440,6 @@
     ]
   },
   {
-	"name": "LIMBO 240hz Mobile 27-80%",
-    "id": "limbo-240hz-mobile-27-80",
-    "player": "GYTO",
-    "levelID": 86084399,
-    "date": "2025-10-22",
-    "length": 102,
-    "version": 2.2,
-    "submitter": "GYTO",
-    "video": "https://youtu.be/7FVvCU7TQ2g",
-    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
-    "tags": [
-      "Level",
-      "Mobile",
-	  "Progress",
-	  "CBF",
-      "Rated"
-    ]
-  },
-  {
     "name": "Eternal Flame",
     "id": "eternal-flame",
     "player": "veshel",
@@ -10486,9 +10507,9 @@
     "id": "widestep-60hz-68",
     "player": "Th3on3C",
     "date": "2025-03-31",
-    "length": "52",
-    "version": "2.2",
-    "levelID": "69289606",
+    "length": 52,
+    "version": 2.2,
+    "levelID": 69289606,
     "video": "https://youtu.be/RQvHmSkyznw",
     "showcaseVideo": "https://youtu.be/uAwHbCTkmzc",
     "submitter": "kyle1saurus",
@@ -10829,7 +10850,8 @@
       "Level",
       "Verified",
       "2P",
-      "Rated"
+      "Rated",
+	  "CBF"
     ]
   },
   {
@@ -10913,22 +10935,6 @@
     "tags": [
       "Level",
       "Verified"
-    ]
-  },
-  {
-    "name": "ULTRA PARACOSM 62%",
-    "id": "ultra-paracosm-62",
-    "player": "Wity",
-    "levelID": null,
-    "date": "2025-10-12",
-    "length": 40,
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/LpwrrIUizCA",
-    "showcaseVideo": "https://youtu.be/E0sQ4n9gCfc",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -11130,6 +11136,7 @@
     ]
   }
 ]
+
 
 
 
