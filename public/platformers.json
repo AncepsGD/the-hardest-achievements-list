@@ -60,10 +60,11 @@
     "submitter": "kyle1saurus"
   },
   {
-    "name": "Terminal Heaven (Speedrun)",
-    "id": "terminal-heaven-speedrun",
+    "name": "Terminal Heaven (World Record)",
+    "id": "terminal-heaven-world-record",
     "player": "Cucu",
     "version": 2.2,
+	"length": 65,
     "video": "https://youtu.be/8jnLnq377Bk",
     "showcaseVideo": "https://youtu.be/e3GHd6jx1es",
     "date": "2025-03-01",
@@ -121,6 +122,23 @@
     "date": "2025-05-27",
     "video": "https://www.youtube.com/watch?v=2HRu26YzDUo",
     "showcaseVideo": "https://youtu.be/_-ACXbZmdlE",
+    "submitter": "kyle1saurus"
+  },
+  {
+	"name": "glungus 60hz Mobile",
+    "id": "glungus-60hz-mobile",
+    "player": "Ray131",
+    "levelID": 112482571,
+    "tags": [
+      "Platformer",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "version": 2.2,
+    "date": "2025-08-15",
+    "video": "https://www.youtube.com/watch?v=a9099BQ1Suk",
+    "showcaseVideo": "https://youtu.be/muYSrubZ1kk",
     "submitter": "kyle1saurus"
   },
   {
@@ -305,20 +323,18 @@
     "submitter": "kyle1saurus"
   },
   {
-    "name": "glungus 60hz Mobile",
-    "id": "glungus-60hz-mobile",
-    "player": "Ray131",
-    "levelID": 112482571,
+	"name": "The Elephants Foot (Unnerfed) 120hz Mobile",
+    "id": "the-elephants-foot-unnerfed-120hz-mobile",
+    "player": "CuriousTheFurious",
+    "levelID": 109553133,
     "tags": [
-      "Platformer",
       "Low Hertz",
       "Mobile",
-      "Rated"
+      "Platformer"
     ],
     "version": 2.2,
     "date": "2025-08-15",
-    "video": "https://www.youtube.com/watch?v=a9099BQ1Suk",
-    "showcaseVideo": "https://youtu.be/muYSrubZ1kk",
+    "video": "https://youtu.be/KaHvcARUVC0",
     "submitter": "kyle1saurus"
   },
   {
@@ -401,6 +417,23 @@
   ]
   },
   {
+    "name": "im happy 4 you 120hz Mobile",
+    "id": "im-happy-4-you-120hz-mobile",
+    "player": "Colouts",
+    "levelID": 99195742,
+    "tags": [
+      "Low Hertz",
+      "Mobile",
+      "Platformer",
+      "Rated"
+    ],
+    "version": 2.2,
+    "date": "2025-06-30",
+    "video": "https://youtu.be/dHT7RFtakUA",
+	"showcaseVideo": "https://youtu.be/OyoxEZ7BizE",
+    "submitter": "toolazytogetausername"
+  },
+  {
   "name": "Crime And Punishment",
   "id": "crime-and-punishment",
   "player": "itzCyberCube",
@@ -480,6 +513,22 @@
     "submitter": "toolazytogetausername"
   },
   {
+	"name": "The Elephants Foot 120hz Mobile",
+    "id": "the-elephants-foot-120hz-mobile",
+    "player": "CuriousTheFurious",
+    "levelID": 104896656,
+    "tags": [
+      "Low Hertz",
+      "Mobile",
+      "Platformer"
+    ],
+    "version": 2.2,
+    "date": "2025-07-01",
+    "video": "https://youtu.be/c8vfGS2HBKA",
+	"showcaseVideo": "https://youtu.be/iSxoIGgQGKs",
+    "submitter": "kyle1saurus"
+  },
+  {
     "name": "Cl5u37r0ph0b1a",
     "id": "cl5u37r0ph0b1a",
     "player": "Aibyou",
@@ -542,6 +591,23 @@
     "submitter": "kyle1saurus"
   },
   {
+	"name": "Project BUZZKILL 60hz Mobile",
+    "id": "project-buzzkill-60hz-mobile",
+    "player": "willysilly",
+    "levelID": 111113059,
+    "tags": [
+      "Low Hertz",
+      "Mobile",
+      "Platformer",
+      "Rated"
+    ],
+    "version": 2.2,
+    "date": "2024-11-19",
+    "video": "https://www.youtube.com/watch?v=JOQczmRTJbM",
+    "showcaseVideo": "https://youtu.be/awz0zAwxzCU",
+    "submitter": "toolazytogetausername"
+  },
+{
     "name": "r a g e",
     "id": "r-a-g-e",
     "player": "kgamesnyc",
@@ -618,21 +684,6 @@
     "Deathless",
     "Rated"
   ]
-  },
-  {
-    "name": "The Elephants Foot (Unnerfed) 120hz Mobile",
-    "id": "the-elephants-foot-unnerfed-120hz-mobile",
-    "player": "CuriousTheFurious",
-    "levelID": 109553133,
-    "tags": [
-      "Low Hertz",
-      "Mobile",
-      "Platformer"
-    ],
-    "version": 2.2,
-    "date": "2025-08-15",
-    "video": "https://youtu.be/KaHvcARUVC0",
-    "submitter": "kyle1saurus"
   },
   {
     "name": "The Elephants Foot (Unnerfed)",
@@ -728,7 +779,7 @@
     "submitter": "kyle1saurus"
   },
   {
-    "name": "Feverest Dream (3rd Coin)",
+  "name": "Feverest Dream (3rd Coin)",
   "id": "feverest-dream-3rd-coin",
   "player": "Cucu",
   "version": 2.2,
@@ -808,22 +859,6 @@
     "submitter": "toolazytogetausername"
   },
   {
-    "name": "The Elephants Foot 120hz Mobile",
-    "id": "the-elephants-foot-120hz-mobile",
-    "player": "CuriousTheFurious",
-    "levelID": 104896656,
-    "tags": [
-      "Low Hertz",
-      "Mobile",
-      "Platformer"
-    ],
-    "version": 2.2,
-    "date": "2025-07-01",
-    "video": "https://youtu.be/c8vfGS2HBKA",
-	"showcaseVideo": "https://youtu.be/iSxoIGgQGKs",
-    "submitter": "kyle1saurus"
-  },
-  {
     "name": "The Elephants Foot",
     "id": "the-elephants-foot",
     "player": "Superkobster",
@@ -868,23 +903,6 @@
     "video": "https://www.youtube.com/watch?v=TR25M9F3Q9Y",
 	"showcaseVideo": "https://youtu.be/IdXZRYNRQrc",
     "submitter": "kyle1saurus"
-  },
-  {
-    "name": "im happy 4 you 120hz Mobile",
-    "id": "im-happy-4-you-120hz-mobile",
-    "player": "Colouts",
-    "levelID": 99195742,
-    "tags": [
-      "Low Hertz",
-      "Mobile",
-      "Platformer",
-      "Rated"
-    ],
-    "version": 2.2,
-    "date": "2025-06-30",
-    "video": "https://youtu.be/dHT7RFtakUA",
-	"showcaseVideo": "https://youtu.be/OyoxEZ7BizE",
-    "submitter": "toolazytogetausername"
   },
   {
     "name": "im happy 4 you",
@@ -1100,23 +1118,6 @@
       "Verified",
 	  "Rated"
     ]
-  },
-{
-    "name": "Project BUZZKILL 60hz Mobile",
-    "id": "project-buzzkill-60hz-mobile",
-    "player": "willysilly",
-    "levelID": 111113059,
-    "tags": [
-      "Low Hertz",
-      "Mobile",
-      "Platformer",
-      "Rated"
-    ],
-    "version": 2.2,
-    "date": "2024-11-19",
-    "video": "https://www.youtube.com/watch?v=JOQczmRTJbM",
-    "showcaseVideo": "https://youtu.be/awz0zAwxzCU",
-    "submitter": "toolazytogetausername"
   },
 {
     "name": "Project BUZZKILL",
