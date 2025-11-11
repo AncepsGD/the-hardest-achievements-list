@@ -667,19 +667,19 @@
     ]
   },
   {
-    "name": "Subsuming Vortex (Renn241) 96%",
-    "id": "subsuming-vortex-renn241-96",
+    "name": "Subsuming Vortex (Renn241)",
+    "id": "subsuming-vortex-renn241",
     "player": "Cursed",
     "levelID": 66422816,
-    "date": "2025-07-13",
-    "length": "55",
+    "date": "2025-11-11",
+    "length": 60,
     "version": 2.2,
-    "video": "https://youtu.be/PvE_1H_ZNwU",
+    "video": "https://www.youtube.com/live/LFUg0KBstuk?t=7227",
     "showcaseVideo": "https://youtu.be/3dKj12cQSII",
-    "submitter": "SeptaGon7",
+    "submitter": "Exiled_Shade",
     "tags": [
       "Level",
-      "Progress"
+      "Verified"
     ]
   },
   {
@@ -1086,6 +1086,23 @@
     ]
   },
   {
+	"name": "Vehemence 24-54%",
+    "id": "vehemence-24-54",
+    "player": "A6",
+    "length": 43,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/xiFU4dvJ4_w?t=2595s",
+    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
+    "date": "2025-11-11",
+    "submitter": "TYATYAPKA",
+    "levelID": null,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Old Orochi 40%x2 in a row",
     "id": "old-orochi-40x2-in-a-row",
     "player": "SeptaGon7",
@@ -1128,23 +1145,6 @@
     "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
     "date": "2025-09-19",
     "submitter": "Exiled_Shade",
-    "levelID": null,
-    "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Vehemence 21-46%",
-    "id": "vehemence-21-46",
-    "player": "A6",
-    "length": 40,
-    "version": 2.2,
-    "video": "https://www.youtube.com/live/eUT71RqNVBA?t=7960",
-    "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
-    "date": "2025-09-19",
-    "submitter": "kyle1saurus",
     "levelID": null,
     "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
     "tags": [
@@ -1322,22 +1322,6 @@
       "Low Hertz",
       "Progress",
       "Rated"
-    ]
-  },
-  {
-    "name": "Subsuming Vortex (Renn241) 35-100%",
-    "id": "subsuming-vortex-renn241-35-100",
-    "player": "Cursed",
-    "length": 33,
-    "version": 2.2,
-    "video": "https://youtu.be/CmvC8zW9QOM&t=68",
-    "showcaseVideo": "https://youtu.be/jvAIOmx4zi8",
-    "date": "2025-07-05",
-    "submitter": "SeptaGon7",
-    "levelID": 66422816,
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -10954,6 +10938,21 @@
     ]
   },
   {
+	"name": "Wavterminal 94%",
+        "id": "wavterminal-94",
+        "player": "Frice",
+        "date": "2025-11-10",
+        "length": 97,
+        "version": 2.2,
+        "video": "https://youtu.be/ck6eFUXxJRI",
+        "showcaseVideo": "https://youtu.be/EfrKH-CuT50",
+        "submitter": "kyle1saurus",
+        "tags": [
+            "Level",
+            "Progress"
+        ]
+    },
+    {
     "name": "Blooming Blossoms 67%",
     "id": "blooming-blossoms-67",
     "player": "piesy",
@@ -11136,18 +11135,3 @@
     ]
   }
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
