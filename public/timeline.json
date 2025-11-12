@@ -814,6 +814,23 @@
     "showcaseVideo": "https://youtu.be/gRozCOZKL3I"
   },
   {
+    "id": "acropolis-65-100",
+    "name": "Acropolis 65%, 100%",
+    "player": "Zobros",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "length": 122,
+    "version": 1.9,
+    "date": "2015-05-13",
+    "submitter": "Arcadie",
+    "levelID": 5155022,
+    "video": "https://youtu.be/CxS2dY5JJ9A",
+    "showcaseVideo": "https://youtu.be/WOuerC9uuFY"
+  },
+  {
     "id": "cataclysm-old-71",
     "name": "Cataclysm (Old) 71%",
     "player": "Giron",
@@ -884,7 +901,7 @@
     "showcaseVideo": "https://youtu.be/j3SgupWqHJw"
   },
   {
-    "id": "acropolis",
+    "id": "acropolis-copy",
     "name": "Acropolis",
     "player": "Zobros",
     "tags": [
