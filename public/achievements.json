@@ -674,7 +674,7 @@
     "date": "2025-11-11",
     "length": 60,
     "version": 2.2,
-    "video": "https://www.youtube.com/live/LFUg0KBstuk?t=7227",
+    "video": "https://youtu.be/0eYG1ogJpIQ",
     "showcaseVideo": "https://youtu.be/3dKj12cQSII",
     "submitter": "Exiled_Shade",
     "tags": [
@@ -5150,6 +5150,23 @@
     ]
   },
   {
+	"name": "Unnerfed unknown 39%",
+    "id": "unnerfed-unknown-39",
+    "player": "Emp",
+    "levelID": 70003258,
+    "date": "2025-11-12",
+    "length": 16,
+    "version": 2.2,
+    "video": "https://youtu.be/o502wzvSzI4",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "axellssl",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "NOMAD",
     "id": "nomad",
     "player": "Laniakea",
@@ -5696,23 +5713,6 @@
       "Level",
       "Low Hertz",
       "Rated"
-    ]
-  },
-  {
-    "name": "Unnerfed unknown 38%",
-    "id": "unnerfed-unknown-38",
-    "player": "Emp",
-    "levelID": 70003258,
-    "date": "2024-12-08",
-    "length": 15,
-    "version": 2.2,
-    "video": "https://youtu.be/dWXvXgAOMVM",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
-    "submitter": "jak",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
     ]
   },
   {
@@ -6623,6 +6623,23 @@
     ]
   },
   {
+	"name": "Apocalyptic Trilogy",
+    "id": "apocalyptic-trilogy",
+    "player": "polterghast",
+    "levelID": 113443235,
+    "date": "2024-12-24",
+    "length": 275,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/RUBbpsTR5eU",
+    "showcaseVideo": "https://youtu.be/8HpDleYxDQA",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
 	"name": "3SH in Hell 60hz Mobile",
     "id": "3sh-in-hell-60hz-mobile",
     "player": "cring",
@@ -7102,23 +7119,6 @@
       "Level",
       "Speedhack",
       "Progress",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Apocalyptic Trilogy",
-    "id": "apocalyptic-trilogy",
-    "player": "polterghast",
-    "levelID": 113443235,
-    "date": "2024-12-24",
-    "length": 275,
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/RUBbpsTR5eU",
-    "showcaseVideo": "https://youtu.be/8HpDleYxDQA",
-    "tags": [
-      "Level",
-      "Verified",
       "Rated"
     ]
   },
@@ -11135,3 +11135,4 @@
     ]
   }
 ]
+
