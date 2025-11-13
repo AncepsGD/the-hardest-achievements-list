@@ -3,37 +3,37 @@
     "name": "GRIEF 83%",
     "id": "grief-83",
     "player": "Doggie",
-    "video": "https://youtu.be/mp8TSHLoW8Q",
+	"date": "2025-11-01",
+    "length": 136,
+    "version": 2.2,
+    "submitter": "kittycatiscute",
+	"video": "https://youtu.be/mp8TSHLoW8Q",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png",
     "tags": [
       "Level",
       "Progress",
       "2P",
       "CBF"
-    ],
-    "date": "2025-11-01",
-    "length": 136,
-    "version": 2.2,
-    "submitter": "kittycatiscute",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/102686349.png"
+    ]
   },
   {
     "name": "GRIEF (Unbuffed) 56-100%, 67% in a row",
     "id": "grief-unbuffed-56-100-67-in-a-row",
     "player": "Doggie",
+	"date": "2025-04-23",
+    "length": 200,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
     "video": "https://youtu.be/aqg-2kThaSc",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
+	"thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed1.avif",
     "tags": [
       "Level",
       "Consistency",
       "2P",
       "CBF"
-    ],
-    "date": "2025-04-23",
-    "length": 200,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed1.avif"
+    ]
   },
   {
     "name": "KOCMOC UNLEASHED 19-91%",
@@ -57,42 +57,43 @@
     "name": "Flamewall 73%, 100% in a row",
     "id": "flamewall-73-100-in-a-row",
     "player": "Cuatrocientos",
+	"date": "2025-09-21",
+    "length": 714,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
+    "levelID": 126242564,
     "video": "https://youtu.be/18ixmjwoG6Q",
     "showcaseVideo": "https://youtu.be/eeTlZnCGP_k",
     "tags": [
       "Level",
       "Consistency",
       "Rated"
-    ],
-    "date": "2025-09-21",
-    "length": 714,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
-    "levelID": 126242564
+    ]
   },
   {
     "name": "GRIEF 25-98%",
     "id": "grief-25-98",
     "player": "Doggie",
+	"date": "2025-10-29",
+    "length": 115,
+    "version": 2.2,
+    "submitter": "CoolSchnoodle",
     "video": "https://www.youtube.com/watch?v=RInlxRwyjI4&t=2152s",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
+	"thumbnail": "https://tjcsucht.net/levelthumbs/102303428.png",
     "tags": [
       "Level",
       "Progress",
       "2P",
       "CBF"
-    ],
-    "date": "2025-10-29",
-    "length": 115,
-    "version": 2.2,
-    "submitter": "CoolSchnoodle",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/102303428.png"
+    ]
   },
   {
     "name": "Thinking Space II",
     "id": "thinking-space-ii",
     "player": "Zoink",
+	"levelID": 119544028
     "length": 70,
     "version": 2.2,
     "video": "https://youtu.be/CELNmHwln_c",
@@ -104,49 +105,53 @@
       "Level",
       "Verified",
       "Rated"
-    ],
-    "levelID": 119544028
+    ]
   },
   {
     "name": "Amethyst",
     "id": "amethyst",
     "player": "wPopoff",
+	"date": "2025-05-25",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/amethyst-trick1.avif",
+    "length": 102,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "levelID": 119550490,
     "video": "https://youtu.be/4lfkzz1VCbA",
     "showcaseVideo": "https://youtu.be/2Z7NGo83ZnU",
     "tags": [
       "Level",
       "Verified",
       "Rated"
-    ],
-    "date": "2025-05-25",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/amethyst-trick1.avif",
-    "length": 102,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "levelID": 119550490
+    ]
   },
   {
     "name": "Flamewall",
     "id": "flamewall",
     "player": "Cuatrocientos",
+	"date": "2025-09-21",
+    "length": 407,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
+    "levelID": 126242564,
     "video": "https://youtu.be/x4Io4zkWVRw",
     "showcaseVideo": "https://youtu.be/eeTlZnCGP_k",
     "tags": [
       "Level",
       "Verified",
       "Rated"
-    ],
-    "date": "2025-09-21",
-    "length": 407,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
-    "levelID": 126242564
+    ]
   },
   {
     "name": "GRIEF (Unbuffed) 25-100%",
     "id": "grief-unbuffed-25-100",
     "player": "Doggie",
+	"date": "2025-02-26",
+    "length": 117,
+    "version": 2.2,
+    "submitter": "ScorchBTD",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/102303428.png",
     "video": "https://youtu.be/JZ6rLQoP7Y0",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
     "tags": [
@@ -154,17 +159,17 @@
       "Progress",
       "2P",
       "CBF"
-    ],
-    "date": "2025-02-26",
-    "length": 117,
-    "version": 2.2,
-    "submitter": "ScorchBTD",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/102303428.png"
+    ]
   },
   {
     "name": "GRIEF (Unbuffed) 17-92%",
     "id": "grief-unbuffed-17-92",
     "player": "Doggie",
+	"submitter": "Scarlett",
+    "date": "2025-01-19",
+    "length": 116,
+    "version": 2.2,
+    "thumbnail": "https://tjcsucht.net/levelthumbs/103524537.png",
     "video": "https://youtu.be/ssE2G3-y5dE",
     "showcaseVideo": "https://youtu.be/1GolW8jKK7k",
     "tags": [
@@ -172,29 +177,24 @@
       "Progress",
       "2P",
       "CBF"
-    ],
-    "submitter": "Scarlett",
-    "date": "2025-01-19",
-    "length": 116,
-    "version": 2.2,
-    "thumbnail": "https://tjcsucht.net/levelthumbs/103524537.png"
+    ]
   },
   {
     "name": "Tidal Wave 35%, 131%",
     "id": "tidal-wave-35-131",
     "player": "Netermind",
+	"submitter": "TYATYAPKA",
+    "levelID": 86407629,
+    "date": "2025-11-05",
+    "length": 181,
+    "version": 2.2,
     "video": "https://www.youtube.com/live/Zbp_m7rLJ1Q?t=6890s",
     "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
     "tags": [
       "Level",
       "Consistency",
       "Rated"
-    ],
-    "submitter": "TYATYAPKA",
-    "levelID": 86407629,
-    "date": "2025-11-05",
-    "length": 181,
-    "version": 2.2
+    ]
   },
   {
     "name": "KOCMOC UNLEASHED 14-78%",
@@ -1147,6 +1147,22 @@
     "submitter": "Exiled_Shade",
     "levelID": null,
     "thumbnail": "https://tjcsucht.net/levelthumbs/96572223.png",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
+	"name": "Heliopolis 38-92%",
+    "id": "heliopolis-38-92",
+    "player": "Abdieldevil",
+    "date": "2025-11-13",
+    "length": 80,
+    "version": 2.2,
+	"submitter": "axellssl",
+    "video": "https://youtu.be/g02b74BZzJY",
+	"showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
     "tags": [
       "Level",
       "Progress"
@@ -5619,21 +5635,6 @@
     ]
   },
   {
-    "name": "Eclipse (kyy)",
-    "id": "eclipse-kyy",
-    "player": "kyy",
-    "date": "2025-08-16",
-	"levelID": 124722258,
-    "version": 2.2,
-    "video": "https://youtu.be/xLm0ClnvCNE",
-    "showcaseVideo": "https://youtu.be/jP_LDMw0xHk",
-    "submitter": "goofygdplayer",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "CHIL",
     "id": "chil",
     "player": "Coco",
@@ -6908,22 +6909,6 @@
     ]
   },
   {
-    "name": "Heliopolis 38-78%",
-    "id": "heliopolis-38-78",
-    "player": "Abdieldevil",
-    "date": "2025-02-27",
-    "length": 55,
-    "version": 2.2,
-    "video": "https://youtu.be/cOvrkgWrGHU",
-    "submitter": "Exiled_Shade",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "showcaseVideo": "https://youtu.be/sNl2Vg5RXv4"
-  },
-  {
     "name": "COMBUSTION",
     "id": "combustion",
     "player": "Slithium",
@@ -7120,21 +7105,6 @@
       "Speedhack",
       "Progress",
       "Rated"
-    ]
-  },
-  {
-    "name": "Make Paul Dance",
-    "id": "make-paul-dance",
-    "player": "AiriCloud",
-    "levelID": 115860808,
-    "date": "2025-10-08",
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/XQoF35hNKpg",
-    "showcaseVideo": "https://youtu.be/yOqxB9aWhIE",
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -7471,9 +7441,9 @@
     "id": "unnerfed-cobwebs-85",
     "player": "Cursed",
     "date": "2022-07-24",
-    "length": "25",
-    "version": "2.1",
-    "levelID": "82173373",
+    "length": 25,
+    "version": 2.1,
+    "levelID": 82173373,
     "video": "https://youtu.be/KSm59ySAXs8",
     "showcaseVideo": "https://youtu.be/iTvXj34Gm8E",
     "submitter": "kyle1saurus",
@@ -7487,8 +7457,8 @@
     "id": "britney-no-sclears-Old-74",
     "player": "Scotchtape",
     "date": "2025-06-05",
-    "length": "58",
-    "version": "2.2",
+    "length": 58,
+    "version": 2.2,
     "video": "https://youtu.be/IQ_CqIwlqUM",
     "showcaseVideo": "https://youtu.be/UPZJHVYJyhw",
     "submitter": "Exiled_Shade",
@@ -7519,8 +7489,8 @@
     "id": "nightfall-74",
     "player": "nei",
     "date": "2025-07-01",
-    "length": "30",
-    "version": "2.2",
+    "length": 30,
+    "version": 2.2,
     "video": "https://youtu.be/DBMYoTPGVT8",
     "submitter": "kyle1saurus",
     "showcaseVideo": "https://youtu.be/ml4bpWYi-4Q",
@@ -7534,9 +7504,9 @@
     "id": "thinking-space-ii-144hz-mobile-79-98",
     "player": "VERTOP",
     "date": "2025-06-07",
-    "length": "10",
-    "version": "2.2",
-    "levelID": "119544028",
+    "length": 10,
+    "version": 2.2,
+    "levelID": 119544028,
     "video": "https://youtu.be/80Fip_0zcaU",
     "showcaseVideo": "https://youtu.be/7xZ-xgeDyuc",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
@@ -7552,13 +7522,13 @@
     "name": "Silent AcropoliX 51%",
     "id": "silent-acropolix-51",
     "player": "SeptaGon7",
-    "length": "38",
-    "version": "2.2",
+    "length": 38,
+    "version": 2.2,
     "video": "https://youtu.be/KCX1UHsCG-g",
     "showcaseVideo": "https://youtu.be/BrEuDSpVD_A",
     "date": "2025-05-15",
     "submitter": "SeptaGon7",
-    "levelID": "20846131",
+    "levelID": 20846131,
     "tags": [
       "Level",
       "Progress",
@@ -7570,9 +7540,9 @@
     "id": "bonus-level-41-100",
     "player": "nensa",
     "date": "2025-07-09",
-    "length": "31",
-    "version": "2.2",
-    "levelID": "81287932",
+    "length": 31,
+    "version": 2.2,
+    "levelID": 81287932,
     "showcaseVideo": "https://youtu.be/l_jMJSStQBk",
     "video": "https://youtu.be/sixgYizzJKE",
     "submitter": "nensa",
@@ -7659,13 +7629,28 @@
     ]
   },
   {
+	"name": "Make Paul Dance",
+    "id": "make-paul-dance",
+    "player": "AiriCloud",
+    "levelID": 115860808,
+    "date": "2025-10-08",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/XQoF35hNKpg",
+    "showcaseVideo": "https://youtu.be/yOqxB9aWhIE",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Bonus Level 67%",
     "id": "bonus-level-67",
     "player": "nensa",
     "date": "2025-07-12",
-    "length": "33",
-    "version": "2.2",
-    "levelID": "81287932",
+    "length": 33,
+    "version": 2.2,
+    "levelID": 81287932,
     "video": "https://youtu.be/2qMtu_-ueT4",
     "showcaseVideo": "https://youtu.be/l_jMJSStQBk",
     "submitter": "nensa",
@@ -8795,6 +8780,23 @@
     "tags": [
       "Challenge",
       "Verified"
+    ]
+  },
+  {
+	"name": "Loops Of Fury",
+    "id": "loops-of-fury",
+    "player": "xCork",
+    "levelID": 126571887,
+    "date": "2025-10-02",
+    "length": 133,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/9HBG3i5zbw8",
+    "showcaseVideo": "https://youtu.be/9HBG3i5zbw8?t=151",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ]
   },
   {
@@ -10084,21 +10086,6 @@
     "levelID": 75080274
   },
   {
-    "name": "fladge",
-    "id": "fladge",
-    "player": "CHOOONK",
-    "levelID": 126722733,
-    "date": "2025-10-05",
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://www.youtube.com/watch?v=ghiJjEQB-mY",
-    "showcaseVideo": "https://www.youtube.com/watch?v=ghiJjEQB-mY?t=115",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "Buffbath",
     "id": "buffbath",
     "player": "AGSEcho",
@@ -11087,21 +11074,6 @@
     ]
   },
   {
-    "name": "Silent Silhouette",
-    "id": "silent-silhouette",
-    "player": "ROZE",
-    "levelID": 126822479,
-    "date": "2025-10-23",
-    "version": 2.2,
-    "submitter": "Excryst",
-    "video": "https://youtu.be/Lidju9Y3ZcE",
-    "showcaseVideo": "https://youtu.be/8T4HwJWkNcQ",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "Blue Tartarus",
     "id": "blue-tartarus",
     "player": "breakcore11",
@@ -11135,4 +11107,5 @@
     ]
   }
 ]
+
 
