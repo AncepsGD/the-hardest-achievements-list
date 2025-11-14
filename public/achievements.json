@@ -217,35 +217,35 @@
     "name": "GRIEF madness 85%",
     "id": "grief-madness-85",
     "player": "Doggie",
+	"date": "2024-11-01",
+    "length": 138,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed2.avif",
     "video": "https://youtu.be/YHH5CFQidU4",
     "tags": [
       "Level",
       "Progress",
       "2P",
       "CBF"
-    ],
-    "date": "2024-11-01",
-    "length": 138,
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed2.avif"
+    ]
   },
   {
     "name": "Slaughterhouse 300%",
     "id": "slaughterhouse-300",
     "player": "wPopoff",
+	"submitter": "Anceps",
+    "levelID": 27690100,
+    "date": "2024-04-27",
+    "length": 210,
+    "version": 2.1,
     "video": "https://youtu.be/Yu_p9yrVL0w",
     "showcaseVideo": "https://youtu.be/ctmNCG3_1Gg",
     "tags": [
       "Level",
       "Consistency",
       "Rated"
-    ],
-    "submitter": "Anceps",
-    "levelID": 27690100,
-    "date": "2024-04-27",
-    "length": 210,
-    "version": 2.1
+    ]
   },
   {
     "name": "Acheron 60hz 17-67%",
@@ -269,34 +269,50 @@
     "name": "Tidal Wave buffed",
     "id": "tidal-wave-buffed",
     "player": "wPopoff",
+	"levelID": 116732736,
+    "date": "2025-04-01",
+    "length": 181,
+    "version": 2.2,
+    "submitter": "tmtsps12",
     "video": "https://youtu.be/1-ihSeRCpds",
     "showcaseVideo": "https://youtu.be/IObH78Nln2U",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "levelID": 116732736,
-    "date": "2025-04-01",
-    "length": 181,
-    "version": 2.2,
-    "submitter": "tmtsps12"
+    ]
   },
   {
     "name": "Tidal Wave",
     "id": "tidal-wave",
     "player": "Zoink",
+	"submitter": "Anceps",
+    "levelID": 86407629,
+    "date": "2023-09-10",
+    "length": 181,
+    "version": 2.1,
     "video": "https://youtu.be/9fsZ014qB3s",
     "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
     "tags": [
       "Level",
       "Verified",
       "Rated"
-    ],
-    "submitter": "Anceps",
-    "levelID": 86407629,
-    "date": "2023-09-10",
-    "length": 181,
-    "version": 2.1
+    ]
+  },
+  {
+	"name": "Heliopolis 38-92%",
+    "id": "heliopolis-38-92",
+    "player": "Abdieldevil",
+    "date": "2025-11-13",
+    "length": 80,
+    "version": 2.2,
+	"submitter": "axellssl",
+    "video": "https://youtu.be/iFKVLUSAQC8?t=89",
+	"showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
   },
   {
     "name": "Acheron 60hz 50%",
@@ -404,68 +420,68 @@
     "name": "Banshee 10-79%",
     "id": "banshee-10-79",
     "player": "spcreat",
-    "video": "https://www.youtube.com/live/dckUEM7QwRE?t=1592",
-    "tags": [
-      "Level",
-      "Progress",
-      "Tentative"
-    ],
-    "date": "2025-10-03",
+	"date": "2025-10-03",
     "submitter": "TYATYAPKA",
     "length": 68,
     "version": 2.2,
     "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
-    "showcaseVideo": "https://youtu.be/h14lmGH31_M"
+    "video": "https://www.youtube.com/live/dckUEM7QwRE?t=1592",
+	"showcaseVideo": "https://youtu.be/h14lmGH31_M",
+    "tags": [
+      "Level",
+      "Progress",
+      "Tentative"
+    ]
   },
   {
     "name": "Nullscapes",
     "id": "nullscapes",
     "player": "Zoink",
+	"levelID": 109780665,
+    "date": "2024-09-03",
+    "length": 86,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
     "video": "https://youtu.be/EztneTPp5CU",
     "showcaseVideo": "https://youtu.be/C-KDhWkXlvI",
     "tags": [
       "Level",
       "Verified",
       "Rated"
-    ],
-    "levelID": 109780665,
-    "date": "2024-09-03",
-    "length": 86,
-    "version": 2.2,
-    "submitter": "kyle1saurus"
+    ]
   },
   {
     "name": "Banshee 77%",
     "id": "banshee-77",
     "player": "spcreat",
-    "video": "https://youtu.be/i5Xd9I4Zx1w",
-    "tags": [
-      "Level",
-      "Progress",
-      "Tentative"
-    ],
-    "date": "2025-07-31",
+	"date": "2025-07-31",
     "submitter": "rook_saneless",
     "length": 70,
     "version": 2.2,
     "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
-    "showcaseVideo": "https://youtu.be/h14lmGH31_M"
+    "video": "https://youtu.be/i5Xd9I4Zx1w",
+	"showcaseVideo": "https://youtu.be/h14lmGH31_M",
+    "tags": [
+      "Level",
+      "Progress",
+      "Tentative"
+    ]
   },
   {
     "name": "Banshee (Old) 86%",
     "id": "banshee-old-86",
     "player": "spcreat",
+	"date": "2024-05-13",
+    "submitter": "Anceps",
+    "length": 78,
+    "version": 2.2,
+    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
     "video": "https://youtu.be/AkAcvx32BII",
     "tags": [
       "Level",
       "Progress",
       "Tentative"
-    ],
-    "date": "2024-05-13",
-    "submitter": "Anceps",
-    "length": 78,
-    "version": 2.2,
-    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg"
+    ]
   },
   {
     "name": "Anathema 156%",
@@ -819,18 +835,18 @@
     "name": "Silent clubstep 5-25%x2, 5-64%",
     "id": "silent-clubstep-5-25x2-5-64",
     "player": "Vision",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "length": 90,
+	"length": 90,
     "version": 2.1,
     "date": "2023-01-02",
     "levelID": 4125776,
     "submitter": "Juls",
     "video": "https://youtu.be/fKN9T_w5wnE",
-    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E"
+    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ]
   },
   {
     "name": "Renevant 60hz",
@@ -1153,22 +1169,6 @@
     ]
   },
   {
-	"name": "Heliopolis 38-92%",
-    "id": "heliopolis-38-92",
-    "player": "Abdieldevil",
-    "date": "2025-11-13",
-    "length": 80,
-    "version": 2.2,
-	"submitter": "axellssl",
-    "video": "https://youtu.be/g02b74BZzJY",
-	"showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "Blue Avernus",
     "id": "blue-avernus",
     "player": "KlimK",
@@ -1278,26 +1278,26 @@
     "version": 2.2,
     "video": "https://youtu.be/pwT2ukn3y6Y",
     "showcaseVideo": "https://youtu.be/ix6VZzXNHkI",
+	"thumbnail": "https://tjcsucht.net/levelthumbs/75206202.png",
     "submitter": "Arcadie",
     "tags": [
       "Level",
       "Low Hertz",
       "Mobile",
       "Rated"
-    ],
-    "thumbnail": "https://tjcsucht.net/levelthumbs/75206202.png"
+    ]
   },
   {
     "name": "Sinister Silence 75hz",
     "id": "sinister-silence-75hz",
     "player": "wwdonut",
-    "length": "525",
-    "version": "2.1",
+    "length": 525,
+    "version": 2.1,
     "video": "https://youtu.be/6N8u_byYoZo",
     "showcaseVideo": "https://youtu.be/0yfTwDma-j0",
     "date": "2023-08-03",
     "submitter": "Anceps",
-    "levelID": "82249742",
+    "levelID": 82249742,
     "tags": [
       "Level",
       "Low Hertz",
@@ -1358,8 +1358,8 @@
     ]
   },
   {
-    "name": "Angelicide (Xtra8nugz) 37-100% 8 deaths, 99.83 accuracy",
-    "id": "angelicide-xtra8nugz-37-100-8-deaths-99-83-accuracy",
+    "name": "Drukilicide 37-100% 8 deaths, 99.83 accuracy",
+    "id": "drukilicide-37-100-8-deaths-99-83-accuracy",
     "player": "Xtra8nugz",
     "length": 50,
     "version": 2.2,
@@ -1408,8 +1408,8 @@
     ]
   },
   {
-    "name": "Angelicide (Xtra8nugz) 68-98%",
-    "id": "angelicide-xtra8nugz-68-98",
+    "name": "Drukilicide 68-98%",
+    "id": "drukilicide-68-98",
     "player": "Xtra8nugz",
     "length": 24,
     "version": 2.2,
@@ -1752,14 +1752,14 @@
     "version": 2.2,
     "levelID": 78149361,
     "video": "https://youtu.be/WHOfO0OxbvM",
+    "showcaseVideo": "https://youtu.be/AgQeRMZw-t4",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Verified",
       "CBF",
       "Tentative"
-    ],
-    "showcaseVideo": "https://youtu.be/AgQeRMZw-t4"
+    ]
   },
   {
     "name": "Slaughterhouse 25-100%, GRIEF 65-100%",
@@ -1796,6 +1796,7 @@
     "id": "re",
     "player": "torn",
     "date": "2025-09-23",
+	"length": 14,
     "levelID": 126279500,
     "version": 2.2,
     "video": "https://youtu.be/Rz7Um6lxYYU",
@@ -1804,8 +1805,7 @@
     "tags": [
       "Challenge",
       "Verified"
-    ],
-    "length": 14
+    ]
   },
   {
     "name": "Bloodlust 72hz 95%",
@@ -4166,9 +4166,10 @@
     ]
   },
   {
-    "name": "Angelicide (Xtra8nugz) 36-67%",
-    "id": "angelicide-xtra8nugz-36-67",
+    "name": "Drukilicide 36-67%",
+    "id": "drukilicide-36-67",
     "player": "Xtra8nugz",
+	"levelID": 120478542,
     "date": "2025-09-14",
     "length": 23,
     "version": 2.2,
@@ -4237,12 +4238,12 @@
     "length": 14,
     "version": 2.2,
     "video": "https://youtu.be/pwMc6S7mUF8&t=12",
+	"showcaseVideo": "https://youtu.be/1f460nBGjvA",
     "submitter": "kyle1saurus",
     "tags": [
       "Challenge",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/1f460nBGjvA"
+    ]
   },
   {
     "name": "ConClusion 60hz Mobile 87%",
@@ -4360,11 +4361,11 @@
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/SVHsQz-bwqU",
+	"showcaseVideo": "https://youtu.be/FTJEXVRizyo",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/FTJEXVRizyo"
+    ]
   },
   {
     "name": "VSC Geist",
@@ -4375,12 +4376,12 @@
     "length": 108,
     "version": 2.2,
     "video": "https://youtu.be/FJnOov1Y7PE",
+	"showcaseVideo": "https://youtu.be/Vdk0TvRbTZs",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/Vdk0TvRbTZs"
+    ]
   },
   {
     "name": "VSC Lost Sense Deco",
@@ -4623,6 +4624,23 @@
     "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
     "video": "https://youtu.be/hC2Cy4-RlTg&t=5754",
     "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
+	"name": "Thinking Redux II 91%",
+    "id": "thinking-redux-ii-91",
+    "player": "Liamkn08",
+	"levelID": 126692371,
+    "length": 65,
+    "version": 2.2,
+    "video": "https://youtu.be/ACrEql3v8Fc",
+    "showcaseVideo": "https://youtu.be/BOg3lvu38N0",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
+    "date": "2025-11-13",
+    "submitter": "Excryst",
     "tags": [
       "Level",
       "Progress"
@@ -5799,8 +5817,8 @@
     ]
   },
   {
-    "name": "Angelicide (Xtra8nugz) 76-100%",
-    "id": "angelicide-xtra8nugz-76-100",
+    "name": "Drukilicide 76-100%",
+    "id": "Drukilicide-76-100",
     "player": "Xtra8nugz",
     "date": "2025-10-22",
     "length": 19,
@@ -6721,41 +6739,6 @@
     ]
   },
   {
-    "name": "Belladonna",
-    "id": "belladonna",
-    "player": "exsii",
-    "levelID": 94969889,
-    "date": "2023-09-26",
-    "length": 106,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/saHSgoU1JQQ",
-    "showcaseVideo": "https://youtu.be/WxpF_bZxvIQ",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Belladonna 144hz 76%",
-    "id": "belladonna-144hz-76",
-    "player": "Melted",
-    "levelID": 94969889,
-    "date": "2025-04-28",
-    "length": 82,
-    "version": 2.2,
-    "submitter": "jak",
-    "video": "https://youtu.be/Q2yWHdet-kY",
-    "showcaseVideo": "https://youtu.be/WxpF_bZxvIQ",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
     "name": "Old Blade of Justice 30-95%",
     "id": "old-blade-of-justice-30-95",
     "player": "AGSEcho",
@@ -7403,6 +7386,41 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+	"name": "Belladonna",
+    "id": "belladonna",
+    "player": "exsii",
+    "levelID": 94969889,
+    "date": "2023-09-26",
+    "length": 106,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/saHSgoU1JQQ",
+    "showcaseVideo": "https://youtu.be/WxpF_bZxvIQ",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Belladonna 144hz 76%",
+    "id": "belladonna-144hz-76",
+    "player": "Melted",
+    "levelID": 94969889,
+    "date": "2025-04-28",
+    "length": 82,
+    "version": 2.2,
+    "submitter": "jak",
+    "video": "https://youtu.be/Q2yWHdet-kY",
+    "showcaseVideo": "https://youtu.be/WxpF_bZxvIQ",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Progress",
+      "Rated"
     ]
   },
   {
@@ -8380,6 +8398,22 @@
     ]
   },
   {
+		"name": "Wavterminal",
+        "id": "wavterminal",
+        "player": "Frice",
+        "date": "2025-11-14",
+        "length": 100,
+        "version": 2.2,
+	    "levelID": 128093374,
+        "video": "https://www.youtube.com/watch?v=dlvsCE3xYkQ",
+        "showcaseVideo": "https://youtu.be/EfrKH-CuT50",
+        "submitter": "Natalie :3",
+        "tags": [
+            "Level",
+            "Verified"
+        ]
+    },
+    {
     "name": "PSYCHOPATH",
     "id": "psychopath",
     "player": "BONN",
@@ -8735,6 +8769,23 @@
     ]
   },
   {
+	"name": "Climax",
+    "id": "climax",
+    "player": "Wain",
+    "levelID": 95049815,
+    "date": "2023-10-02",
+    "length": 67,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/E4ppq2WeAAs",
+    "showcaseVideo": "https://youtu.be/SrwxNt0MLFQ",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
     "name": "ORDINARY",
     "id": "ordinary",
     "player": "wPopoff",
@@ -8798,23 +8849,6 @@
       "Verified",
       "Rated"
     ]
-  },
-  {
-    "name": "Thinking Redux II 72%",
-    "id": "thinking-redux-ii-72",
-    "player": "Liamkn08",
-    "length": 47,
-    "version": 2.2,
-    "video": "https://youtu.be/CTPIVDiM818",
-    "showcaseVideo": "https://www.youtube.com/watch?v=BOg3lvu38N0",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
-    "date": "2025-10-31",
-    "submitter": "tmtsps12",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "levelID": 126692371
   },
   {
     "name": "Midnight",
@@ -9438,23 +9472,6 @@
     "tags": [
       "Level",
       "Consistency",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Climax",
-    "id": "climax",
-    "player": "Wain",
-    "levelID": 95049815,
-    "date": "2023-10-02",
-    "length": 67,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/E4ppq2WeAAs",
-    "showcaseVideo": "https://youtu.be/SrwxNt0MLFQ",
-    "tags": [
-      "Level",
-      "Verified",
       "Rated"
     ]
   },
@@ -10925,21 +10942,6 @@
     ]
   },
   {
-	"name": "Wavterminal 94%",
-        "id": "wavterminal-94",
-        "player": "Frice",
-        "date": "2025-11-10",
-        "length": 97,
-        "version": 2.2,
-        "video": "https://youtu.be/ck6eFUXxJRI",
-        "showcaseVideo": "https://youtu.be/EfrKH-CuT50",
-        "submitter": "kyle1saurus",
-        "tags": [
-            "Level",
-            "Progress"
-        ]
-    },
-    {
     "name": "Blooming Blossoms 67%",
     "id": "blooming-blossoms-67",
     "player": "piesy",
@@ -11107,3 +11109,4 @@
     ]
   }
 ]
+
