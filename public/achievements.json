@@ -2703,6 +2703,21 @@
     ]
   },
   {
+    "name": "Silent Oppenheimer 55%",
+    "id": "silent-oppenheimer-55",
+    "player": "Dezstro",
+    "date": "2025-11-14",
+    "length": 56,
+    "version": 2.2,
+    "video": "https://youtu.be/A-QO1PICMlo",
+    "showcaseVideo": "https://youtu.be/Q-IT8xuqU9Q",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Like if you camt bea 92%",
     "id": "like-if-you-camt-bea-92",
     "player": "Llqne",
@@ -6807,21 +6822,6 @@
     ]
   },
   {
-    "name": "Silent Oppenheimer 32-54%",
-    "id": "silent-oppenheimer-32-54",
-    "player": "Dezstro",
-    "date": "2025-09-13",
-    "length": 29,
-    "version": 2.2,
-    "video": "https://youtu.be/IQBGUuERgF8",
-    "showcaseVideo": "https://youtu.be/Q-IT8xuqU9Q",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "The Hallucination",
     "id": "the-hallucination",
     "player": "VoTcHi",
@@ -7021,21 +7021,6 @@
       "Level",
       "Verified",
       "Tentative"
-    ]
-  },
-  {
-    "name": "Silent Oppenheimer 40%",
-    "id": "silent-oppenheimer-40",
-    "player": "Dezstro",
-    "date": "2025-09-24",
-    "length": 44,
-    "version": 2.2,
-    "video": "https://youtu.be/OukvALqTyxE",
-    "showcaseVideo": "https://youtu.be/Q-IT8xuqU9Q",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -10700,3 +10685,4 @@
     ]
   }
 ]
+
