@@ -113,7 +113,7 @@
     "id": "i-loved-you",
     "player": "nng12",
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=SLyCnzlygtc"
+    "video": "https://www.youtube.com/watch?v=SLyCnzlygtc",
     "showcaseVideo": "https://youtu.be/NYRNOlQReg8",
     "date": "2025-09-25",
     "submitter": "toolazytogetausername",
@@ -449,7 +449,7 @@
     "submitter": "kyle1saurus"
   },
   {
-  "name": "Null 120hz Mobile",
+    "name": "Null 120hz Mobile",
     "id": "null-120hz-mobile",
     "player": "CuriousTheFurious",
     "levelID": 104031134,
