@@ -126,24 +126,6 @@
     ]
   },
   {
-    "name": "Flamewall",
-    "id": "flamewall",
-    "player": "Cuatrocientos",
-    "date": "2025-09-21",
-    "length": 407,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
-    "levelID": 126242564,
-    "video": "https://youtu.be/x4Io4zkWVRw",
-    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
     "name": "GRIEF (Unbuffed) 25-100%",
     "id": "grief-unbuffed-25-100",
     "player": "Doggie",
@@ -228,6 +210,24 @@
       "Progress",
       "2P",
       "CBF"
+    ]
+  },
+  {
+    "name": "Flamewall",
+    "id": "flamewall",
+    "player": "Cuatrocientos",
+    "date": "2025-09-21",
+    "length": 407,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
+    "levelID": 126242564,
+    "video": "https://youtu.be/x4Io4zkWVRw",
+    "showcaseVideo": "https://youtu.be/eeTlZnCGP_k",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ]
   },
   {
@@ -401,8 +401,26 @@
     ]
   },
   {
-    "name": "SARY NEVER CLEAR (Old) 2.1",
-    "id": "sary-never-clear-old-2-1",
+    "name": "Subsuming Vortex (Renn241) 37-75%, 37-68% in a row",
+    "id": "subsuming-vortex-renn241-37-75-37-68-in-a-row",
+    "player": "Wity",
+    "date": "2025-08-03",
+    "length": 55,
+    "version": 2.2,
+    "video": "https://youtu.be/9V8mSuYmgOU",
+    "showcaseVideo": "https://youtu.be/3dKj12cQSII",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/subsuming-vortex-renn241-1.webp",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated",
+      "CBF"
+    ]
+  },
+  {
+    "name": "SARY NEVER CLEAR (Optic Sunflow) 2.1",
+    "id": "sary-never-clear-optic-sunflow-2-1",
     "player": "Glow",
     "length": 75,
     "version": 2.1,
@@ -444,6 +462,23 @@
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/EztneTPp5CU",
     "showcaseVideo": "https://youtu.be/C-KDhWkXlvI",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Subsuming Vortex (Renn241)",
+    "id": "subsuming-vortex-renn241",
+    "player": "Cursed",
+    "levelID": 66422816,
+    "date": "2025-11-11",
+    "length": 60,
+    "version": 2.2,
+    "video": "https://youtu.be/0eYG1ogJpIQ",
+    "showcaseVideo": "https://youtu.be/3dKj12cQSII",
+    "submitter": "Exiled_Shade",
     "tags": [
       "Level",
       "Verified",
@@ -600,23 +635,6 @@
     ]
   },
   {
-    "name": "Subsuming Vortex (Renn241) 37-75%, 37-68% in a row",
-    "id": "subsuming-vortex-renn241-37-75-37-68-in-a-row",
-    "player": "Wity",
-    "date": "2025-08-03",
-    "length": 55,
-    "version": 2.2,
-    "video": "https://youtu.be/9V8mSuYmgOU",
-    "showcaseVideo": "https://youtu.be/3dKj12cQSII",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/subsuming-vortex-renn241-1.webp",
-    "submitter": "goofygdplayer",
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ]
-  },
-  {
     "name": "Exasperation 67%",
     "id": "exasperation-67",
     "player": "Zoink",
@@ -680,22 +698,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "Subsuming Vortex (Renn241)",
-    "id": "subsuming-vortex-renn241",
-    "player": "Cursed",
-    "levelID": 66422816,
-    "date": "2025-11-11",
-    "length": 60,
-    "version": 2.2,
-    "video": "https://youtu.be/0eYG1ogJpIQ",
-    "showcaseVideo": "https://youtu.be/3dKj12cQSII",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -1252,6 +1254,22 @@
     ]
   },
   {
+    "name": "Angelicide Kaza 68-100%",
+    "id": "angelicide-kaza-68-100",
+    "player": "Kaza",
+    "levelID": 114002031,
+    "length": 22,
+    "version": 2.2,
+    "video": "https://youtu.be/b2HX1VdeDxY",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-11-10",
+    "submitter": "SirDoodle2920",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Aeternus 72-97%",
     "id": "aeternus-72-97",
     "player": "Trick",
@@ -1308,13 +1326,13 @@
     "name": "Crimson Planet 60hz Mobile",
     "id": "crimson-planet-60hz-mobile",
     "player": "SeaWolfMikes",
-    "length": "67",
-    "version": "2.1",
+    "length": 67,
+    "version": 2.1,
     "video": "https://youtu.be/vhIJfF2mFmg",
     "showcaseVideo": "https://youtu.be/4pUR3_AAK9g",
     "date": "2024-09-26",
     "submitter": "kyle1saurus",
-    "levelID": "45866767",
+    "levelID": 45866767,
     "tags": [
       "Level",
       "Low Hertz",
@@ -1363,6 +1381,7 @@
     "player": "Xtra8nugz",
     "length": 50,
     "version": 2.2,
+    "levelID": 120478542,
     "video": "https://www.youtube.com/watch?v=V6HcmQRFIYA",
     "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
     "date": "2025-10-18",
@@ -1411,6 +1430,7 @@
     "name": "Drukilicide 68-98%",
     "id": "drukilicide-68-98",
     "player": "Xtra8nugz",
+    "levelID": 120478542,
     "length": 24,
     "version": 2.2,
     "video": "https://youtu.be/Suh3Uyj6omM",
@@ -1469,22 +1489,6 @@
       "Level",
       "Progress",
       "CBF"
-    ]
-  },
-  {
-    "name": "Angelicide Kaza 68-100%",
-    "id": "angelicide-kaza-68-100",
-    "player": "Kaza",
-    "levelID": 114002031,
-    "length": 22,
-    "version": 2.2,
-    "video": "https://youtu.be/b2HX1VdeDxY",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-11-10",
-    "submitter": "SirDoodle2920",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -4265,9 +4269,9 @@
     "id": "conclusion-60hz-mobile-87",
     "player": "Dominionxx",
     "date": "2025-06-28",
-    "length": "67",
-    "version": "2.2",
-    "levelID": "96471171",
+    "length": 67,
+    "version": 2.2,
+    "levelID": 96471171,
     "video": "https://youtu.be/qc424awbRCE",
     "showcaseVideo": "https://youtu.be/6zHr7dmhUn0",
     "submitter": "TYATYAPKA",
@@ -4682,12 +4686,12 @@
     "name": "Leaves 33-91%",
     "id": "leaves-33-91",
     "player": "subabo",
-    "length": "41",
-    "version": "2.2",
+    "length": 41,
+    "version": 2.2,
     "video": "https://youtu.be/JpBB-FEWI2Q",
     "date": "2025-08-06",
     "showcaseVideo": "https://youtu.be/S0WKrJx7Bq0",
-    "levelID": "82602651",
+    "levelID": 82602651,
     "submitter": "subabo",
     "tags": [
       "Level",
@@ -4699,12 +4703,12 @@
     "name": "Leaves 25-82%",
     "id": "leaves-25-82",
     "player": "subabo",
-    "length": "40",
-    "version": "2.2",
+    "length": 40,
+    "version": 2.2,
     "video": "https://youtu.be/hPI_TTbaLBo",
     "date": "2025-07-22",
     "showcaseVideo": "https://youtu.be/S0WKrJx7Bq0",
-    "levelID": "82602651",
+    "levelID": 82602651,
     "submitter": "subabo",
     "tags": [
       "Level",
@@ -4771,11 +4775,11 @@
     "version": 2.2,
     "submitter": "TYATYAPKA",
     "video": "https://youtu.be/sHFY_vOMLCo",
+    "showcaseVideo": "https://youtu.be/RHmVk0pUIPI",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/RHmVk0pUIPI"
+    ]
   },
   {
     "name": "SADOMASOCHISM 60%, 85% in a row",
@@ -4798,8 +4802,8 @@
     "id": "flashbang-46",
     "player": "Noctal",
     "date": "2025-07-25",
-    "length": "72",
-    "version": "2.2",
+    "length": 72,
+    "version": 2.2,
     "video": "https://youtu.be/4tyRrH6jb00",
     "showcaseVideo": "https://youtu.be/2j9nLPyE2Tw",
     "submitter": "TYATYAPKA",
@@ -4813,9 +4817,9 @@
     "id": "limbo-144hz",
     "player": "Leslie",
     "date": "2023-04-05",
-    "length": "207",
-    "version": "2.1",
-    "levelID": "86084399",
+    "length": 207,
+    "version": 2.1,
+    "levelID": 86084399,
     "video": "https://youtu.be/3HKqUUySSrc",
     "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
     "submitter": "Arcadie",
@@ -5023,6 +5027,7 @@
     "player": "nensa",
     "length": 50,
     "version": 2.2,
+    "levelID": 118680356,
     "video": "https://youtu.be/w_SfQ5RJTj4",
     "showcaseVideo": "https://youtu.be/TYlMnbQdKWw",
     "date": "2025-05-10",
@@ -5031,8 +5036,23 @@
       "Level",
       "Verified",
       "CBF"
-    ],
-    "levelID": 118680356
+    ]
+  },
+  {
+    "name": "Drukilicide 48-72%",
+    "id": "drukilicide-48-72",
+    "player": "Xtra8nugz",
+    "levelID": 120478542,
+    "length": 19,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/Qpv3K3g6P_g?t=4770s",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-11-15",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
   },
   {
     "name": "Determination Dance",
@@ -5838,8 +5858,9 @@
     "date": "2025-10-22",
     "length": 19,
     "version": 2.2,
-    "showcaseVideo": "https://www.youtube.com/live/7sXz0-XR3zY?t=8086",
-    "video": "https://youtu.be/BRliFwd5jKs",
+    "levelID": 120478542,
+    "video": "https://www.youtube.com/live/7sXz0-XR3zY?t=8086",
+    "showcaseVideo": "https://youtu.be/on1SmypYPJY",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -10685,4 +10706,5 @@
     ]
   }
 ]
+
 
