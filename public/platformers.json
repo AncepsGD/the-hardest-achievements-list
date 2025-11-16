@@ -77,14 +77,14 @@
     ]
   },
   {
-	"name": "CONVOLUTION 90%, 40%, 100%",
-    "id": "convolution-90-40-100",
+	"name": "CONVOLUTION 90%, 48%, 100%",
+    "id": "convolution-90-48-100",
     "player": "Lolez",
     "levelID": 105724358,
 	"version": 2.2,
     "date": "2024-09-10",
-    "showcaseVideo": "https://youtu.be/LtfUOxGOR6Y?t=246",
-    "video": "https://www.youtube.com/watch?v=bfASf1-aK2M",
+	"video": "https://youtu.be/LtfUOxGOR6Y?t=246",
+    "showcaseVideo": "https://youtu.be/rcSQvDWvswI",
     "submitter": "Lolez",
     "tags": [
       "Platformer",
@@ -1134,22 +1134,6 @@
   ]
   },
   {
-	"name": "HALL OF THE HOOKKING",
-    "id": "hall-of-the-hookking",
-    "player": "Noobie",
-    "levelID": 126964597,
-    "date": "2025-10-12",
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/8f9eXu1mYN4",
-    "showcaseVideo": "https://youtu.be/xGcZNyUhhVs",
-    "tags": [
-      "Platformer",
-      "Verified",
-	  "Rated"
-    ]
-  },
-{
     "name": "Project BUZZKILL",
     "id": "project-buzzkill",
     "player": "Superkobster",
