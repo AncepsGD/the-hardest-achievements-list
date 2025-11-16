@@ -403,6 +403,7 @@
   {
     "name": "Subsuming Vortex (Renn241) 37-75%, 37-68% in a row",
     "id": "subsuming-vortex-renn241-37-75-37-68-in-a-row",
+    "levelID": 127997391,
     "player": "Wity",
     "date": "2025-08-03",
     "length": 55,
@@ -472,7 +473,7 @@
     "name": "Subsuming Vortex (Renn241)",
     "id": "subsuming-vortex-renn241",
     "player": "Cursed",
-    "levelID": 66422816,
+    "levelID": 127997391,
     "date": "2025-11-11",
     "length": 60,
     "version": 2.2,
