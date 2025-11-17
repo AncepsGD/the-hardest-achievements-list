@@ -342,6 +342,7 @@
     "levelID": 126120466,
     "video": "https://youtu.be/WBBPfgnuGaw",
     "showcaseVideo": "https://youtu.be/TPnljyNS7Dg",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/91159750.png",
     "submitter": "nensa",
     "tags": [
       "Level",
@@ -667,6 +668,23 @@
       "Level",
       "Verified",
       "Tentative"
+    ]
+  },
+  {
+    "name": "Azure Flare (VERTOP) 36-91%",
+    "id": "azure-flare-vertop-36-91",
+    "player": "VERTOP",
+    "date": "2025-11-16",
+    "length": 36,
+    "version": 2.2,
+    "video": "https://youtu.be/WXVpk5vs4s8",
+    "levelID": 97429207,
+    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
     ]
   },
   {
@@ -2364,22 +2382,6 @@
       "Challenge",
       "Progress",
       "CBF"
-    ]
-  },
-  {
-    "name": "Azure Flare (VERTOP) 36-76%",
-    "id": "azure-flare-vertop-36-76",
-    "player": "VERTOP",
-    "date": "2023-11-22",
-    "length": 21,
-    "version": 2.1,
-    "video": "https://youtu.be/4Z66tui2l-Y",
-    "levelID": 97429207,
-    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -5078,14 +5080,14 @@
     "date": "2024-03-19",
     "length": 97,
     "version": 2.2,
+    "levelID": 106084668,
     "video": "https://youtu.be/mXoaMklDNmg",
     "showcaseVideo": "https://youtu.be/ENc_q7C7W04",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "levelID": 106084668
+    ]
   },
   {
     "name": "MUD 63%",
@@ -5116,7 +5118,7 @@
     "tags": [
       "Level",
       "Verified",
-      "Tentative"
+      "Rated"
     ]
   },
   {
@@ -5327,9 +5329,9 @@
     "id": "cognition-60hz-mobile-8-79",
     "player": "Siaxid",
     "date": "2025-07-18",
-    "length": "43",
-    "version": "2.2",
-    "levelID": "57600307",
+    "length": 43,
+    "version": 2.2,
+    "levelID": 57600307,
     "video": "https://youtu.be/yPi-3Rss3hg",
     "showcaseVideo": "https://youtu.be/_fY_jzKmBuU",
     "submitter": "TYATYAPKA",
@@ -5368,7 +5370,7 @@
     "showcaseVideo": "https://youtu.be/lbrN3kasxR0",
     "date": "2021-08-07",
     "submitter": "Radiator",
-    "levelID": "60978746",
+    "levelID": 60978746,
     "tags": [
       "Level",
       "Low Hertz",
@@ -5382,9 +5384,9 @@
     "id": "acheron-my-79",
     "player": "OneAlphaHelix",
     "date": "2022-08-18",
-    "length": "54",
-    "version": "2.1",
-    "levelID": "82709695",
+    "length": 54,
+    "version": 2.1,
+    "levelID": 82709695,
     "video": "https://youtu.be/DfXZ_al6yGg",
     "showcaseVideo": "https://youtu.be/YOPnKJgsKck",
     "submitter": "kyle1saurus",
@@ -5448,9 +5450,9 @@
     "id": "tunnel-of-despair-144hz-mobile-18-84",
     "player": "VERTOP",
     "date": "2025-05-15",
-    "length": "50",
-    "version": "2.2",
-    "levelID": "91351939",
+    "length": 50,
+    "version": 2.2,
+    "levelID": 91351939,
     "video": "https://youtu.be/aeezvldppr4",
     "showcaseVideo": "https://youtu.be/SgWZkTPHNaM&t=113",
     "submitter": "kittycatiscute",
@@ -5587,12 +5589,12 @@
     "length": 14,
     "version": 2.2,
     "video": "https://youtu.be/IsRUxBcso2g",
+    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Progress"
-    ],
-    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E"
+    ]
   },
   {
     "name": "Natural Disaster (GammaReXx)",
@@ -5638,11 +5640,11 @@
     "length": 24,
     "version": 2.2,
     "video": "https://youtu.be/htGElQ0RWeA",
+    "showcaseVideo": "https://youtu.be/as-foZIIKDE",
     "tags": [
       "Challenge",
       "Consistency"
-    ],
-    "showcaseVideo": "https://youtu.be/as-foZIIKDE"
+    ]
   },
   {
     "name": "Bloodlust, Spectrum Cyclone, Wasureta, Sonic Wave",
@@ -5651,12 +5653,12 @@
     "length": 471,
     "version": 2.2,
     "video": "https://youtu.be/_eWcDxL6ZuY&t=332",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/bl-sc-wasu-sw.avif",
     "date": "2024-09-22",
     "submitter": "jak",
     "tags": [
       "Miscellaneous"
-    ],
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/bl-sc-wasu-sw.avif"
+    ]
   },
   {
     "name": "surface (Old) 17-78%",
@@ -5873,8 +5875,8 @@
     "id": "gay-acheron-17-100",
     "player": "turtl",
     "date": "2025-05-30",
-    "length": "55",
-    "version": "2.2",
+    "length": 55,
+    "version": 2.2,
     "video": "https://youtu.be/C0ttHXp4dtM",
     "submitter": "kyle1saurus",
     "tags": [
@@ -6262,8 +6264,8 @@
     "name": "TEETH FORTRESS II 58-100%",
     "id": "teeth-fortress-ii-58-100",
     "player": "JohnLikesDiamond",
-    "length": "65",
-    "version": "2.2",
+    "length": 65,
+    "version": 2.2,
     "video": "https://youtu.be/YOHOnOGwsoM",
     "showcaseVideo": "https://youtu.be/QbrkUUSW_H0",
     "date": "2025-05-03",
@@ -8332,13 +8334,13 @@
     "submitter": "tricklength",
     "video": "https://youtu.be/9KjxX-YkOS0",
     "showcaseVideo": "https://youtu.be/7fS-J7FqITU",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/91159750.png",
     "tags": [
       "Challenge",
       "Progress",
       "CBF",
       "Tentative"
-    ],
-    "thumbnail": "https://tjcsucht.net/levelthumbs/91159750.png"
+    ]
   },
   {
     "name": "MIGRAINE 48-100%",
@@ -8418,23 +8420,6 @@
     "tags": [
       "Level",
       "Verified"
-    ]
-  },
-  {
-    "name": "PSYCHOPATH",
-    "id": "psychopath",
-    "player": "BONN",
-    "levelID": 103925676,
-    "date": "2024-05-16",
-    "length": 126,
-    "version": 2.2,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/1luL7tTE8p8",
-    "showcaseVideo": "https://youtu.be/TzvckUZSoaM",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
     ]
   },
   {
@@ -8606,12 +8591,12 @@
     "length": 26,
     "version": 2.2,
     "video": "https://youtu.be/AqcPnSpbxzQ",
+    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
     "submitter": "polar",
     "tags": [
       "Level",
       "Progress"
-    ],
-    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E"
+    ]
   },
   {
     "name": "Decks Dark",
@@ -8670,12 +8655,12 @@
     "length": 28,
     "version": 2.1,
     "video": "https://youtu.be/jb-Tmnb8zT8",
+    "showcaseVideo": "https://youtu.be/K5MFdFgfdto",
     "submitter": "jak",
     "tags": [
       "Challenge",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/K5MFdFgfdto"
+    ]
   },
   {
     "name": "ULTRA PARACOSM 79%",
@@ -8702,12 +8687,12 @@
     "version": 2.2,
     "date": "2024-11-03",
     "video": "https://youtu.be/8JOq9d61C-k",
+    "showcaseVideo": "https://youtu.be/AauwACwyVBo",
     "submitter": "vaughn",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/AauwACwyVBo"
+    ]
   },
   {
     "name": "Firework (Pre-Balance) 54%",
@@ -8717,13 +8702,13 @@
     "length": 68,
     "version": 2.1,
     "video": "https://youtu.be/xMnqDKDL9Fk",
+    "showcaseVideo": "https://youtu.be/_Fgb3DCCkxA"
     "submitter": "kyle1saurus",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/firework1.webp",
     "tags": [
       "Level",
       "Progress"
-    ],
-    "showcaseVideo": "https://youtu.be/_Fgb3DCCkxA"
+    ]
   },
   {
     "name": "Chromium",
@@ -8911,8 +8896,8 @@
     "id": "buffed-misanthrope-12-52",
     "player": "BigMacGD",
     "date": "2025-06-13",
-    "length": "109",
-    "version": "2.2",
+    "length": 109,
+    "version": 2.2,
     "video": "https://youtu.be/Lh0OZfdDry0",
     "showcaseVideo": "https://youtu.be/qp-gY1MrS3A",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/misanthrope.webp",
@@ -8986,6 +8971,23 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "PSYCHOPATH",
+    "id": "psychopath",
+    "player": "BONN",
+    "levelID": 103925676,
+    "date": "2024-05-16",
+    "length": 126,
+    "version": 2.2,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/1luL7tTE8p8",
+    "showcaseVideo": "https://youtu.be/TzvckUZSoaM",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ]
   },
   {
@@ -10707,5 +10709,6 @@
     ]
   }
 ]
+
 
 
