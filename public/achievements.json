@@ -1073,6 +1073,23 @@
     ]
   },
   {
+    "name": "Drukilicide 37-100% 8 deaths, 99.83 accuracy",
+    "id": "drukilicide-37-100-8-deaths-99-83-accuracy",
+    "player": "Xtra8nugz",
+    "length": 50,
+    "version": 2.2,
+    "levelID": 120478542,
+    "video": "https://www.youtube.com/watch?v=V6HcmQRFIYA",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-10-18",
+    "submitter": "Kuri",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress"
+    ]
+  },
+  {
     "name": "Acheron 97 challenge 2.1",
     "id": "acheron-97-challenge-2-1",
     "player": "wPopoff",
@@ -1289,6 +1306,22 @@
     ]
   },
   {
+    "name": "Drukilicide 68-98%",
+    "id": "drukilicide-68-98",
+    "player": "Xtra8nugz",
+    "levelID": 120478542,
+    "length": 24,
+    "version": 2.2,
+    "video": "https://youtu.be/Suh3Uyj6omM",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-10-20",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Aeternus 72-97%",
     "id": "aeternus-72-97",
     "player": "Trick",
@@ -1395,23 +1428,6 @@
     ]
   },
   {
-    "name": "Drukilicide 37-100% 8 deaths, 99.83 accuracy",
-    "id": "drukilicide-37-100-8-deaths-99-83-accuracy",
-    "player": "Xtra8nugz",
-    "length": 50,
-    "version": 2.2,
-    "levelID": 120478542,
-    "video": "https://www.youtube.com/watch?v=V6HcmQRFIYA",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-10-18",
-    "submitter": "Kuri",
-    "tags": [
-      "Level",
-      "Noclip",
-      "Progress"
-    ]
-  },
-  {
     "name": "Silent clubstep 2.1",
     "id": "silent-clubstep-2-1",
     "player": "paqoe",
@@ -1443,22 +1459,6 @@
       "Challenge",
       "Low Hertz",
       "Mobile"
-    ]
-  },
-  {
-    "name": "Drukilicide 68-98%",
-    "id": "drukilicide-68-98",
-    "player": "Xtra8nugz",
-    "levelID": 120478542,
-    "length": 24,
-    "version": 2.2,
-    "video": "https://youtu.be/Suh3Uyj6omM",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-10-20",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -5152,6 +5152,23 @@
     "tags": [
       "Challenge",
       "Progress"
+    ]
+  },
+  {
+    "name": "Unnerfed unknown 11-47%",
+    "id": "unnerfed-unknown-11-47",
+    "player": "Emp",
+    "levelID": 70003258,
+    "date": "2025-11-18",
+    "length": 13,
+    "version": 2.2,
+    "video": "https://youtu.be/mar_iC4fUso",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "Emp",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
     ]
   },
   {
@@ -10709,6 +10726,7 @@
     ]
   }
 ]
+
 
 
 
