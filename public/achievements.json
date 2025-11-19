@@ -4785,6 +4785,22 @@
     ]
   },
   {
+    "name": "Unnerfed unknown 43%",
+    "id": "unnerfed-unknown-43",
+    "player": "ffzer",
+    "levelID": 70003258,
+    "date": "2025-11-19",
+    "length": 18,
+    "version": 2.2,
+    "video": "https://youtu.be/iaxzmWgbqjM",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "SADOMASOCHISM 60%, 85% in a row",
     "id": "sadomasochism-60-85-in-a-row",
     "player": "NucGDStuff",
@@ -5172,20 +5188,19 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 33-71%",
-    "id": "unnerfed-unknown-33-71",
-    "player": "Emp",
+    "name": "Unnerfed unknown 47-93%",
+    "id": "unnerfed-unknown-47-93",
+    "player": "ffzer",
     "levelID": 70003258,
-    "date": "2025-11-07",
-    "length": 14,
+    "date": "2025-11-19",
+    "length": 19,
     "version": 2.2,
-    "video": "https://youtu.be/T7yG6ns6fOw",
+    "video": "https://youtu.be/iaxzmWgbqjM?t=30",
     "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
-    "submitter": "Emp",
+    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
-      "Progress",
-      "CBF"
+      "Progress"
     ]
   },
   {
@@ -5236,23 +5251,6 @@
       "Low Hertz",
       "Rated",
       "Tentative"
-    ]
-  },
-  {
-    "name": "Unnerfed unknown 39%",
-    "id": "unnerfed-unknown-39",
-    "player": "Emp",
-    "levelID": 70003258,
-    "date": "2025-11-12",
-    "length": 16,
-    "version": 2.2,
-    "video": "https://youtu.be/o502wzvSzI4",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
-    "submitter": "axellssl",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
     ]
   },
   {
@@ -5984,23 +5982,6 @@
     ]
   },
   {
-    "name": "poocubed",
-    "id": "poocubed",
-    "player": "Kyasshukodo",
-    "levelID": 85133223,
-    "date": "2022-11-01",
-    "length": 82,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/fzL31vai1ms",
-    "showcaseVideo": "https://youtu.be/WM1KcNGkP08",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
     "name": "Eyes in the Water",
     "id": "eyes-in-the-water",
     "player": "LordVadercraft",
@@ -6043,6 +6024,23 @@
     "video": "https://youtu.be/hZ8vFX8z_BU",
     "showcaseVideo": "https://youtu.be/Sw7Aucy0Tjg",
     "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "poocubed",
+    "id": "poocubed",
+    "player": "Kyasshukodo",
+    "levelID": 85133223,
+    "date": "2022-11-01",
+    "length": 82,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/fzL31vai1ms",
+    "showcaseVideo": "https://youtu.be/WM1KcNGkP08",
     "tags": [
       "Level",
       "Verified",
@@ -10726,6 +10724,7 @@
     ]
   }
 ]
+
 
 
 
