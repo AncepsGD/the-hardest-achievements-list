@@ -713,6 +713,7 @@
     "version": 2.2,
     "video": "https://youtu.be/0tFBzVMAORQ",
     "showcaseVideo": "https://youtu.be/J73lxPI-9dI",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81842690",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -762,6 +763,7 @@
     "version": 2.2,
     "video": "https://youtu.be/ic_9fFREAWo",
     "showcaseVideo": "https://youtu.be/J73lxPI-9dI",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81842690",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -777,6 +779,7 @@
     "version": "2.2",
     "video": "https://youtu.be/0w7mj16QAGg",
     "showcaseVideo": "https://youtu.be/J73lxPI-9dI",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81842690",
     "submitter": "Exiled_Shade",
     "tags": [
       "Level",
@@ -3615,6 +3618,23 @@
     ]
   },
   {
+    "name": "Saul Goodman 25-100%, 100% in a row",
+    "id": "saul-goodman-25-100-100-in-a-row",
+    "player": "Hazel",
+    "date": "2025-11-19",
+    "length": 100,
+    "version": 2.2,
+    "levelID": 90477539,
+    "video": "https://www.youtube.com/watch?v=oc4ukX3-q6I",
+    "showcaseVideo": "https://youtu.be/ktVdIYE9P-I",
+    "submitter": "jak",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ]
+  },
+  {
     "name": "GREEN BULLET 57%",
     "id": "green-bullet-57",
     "player": "nickname",
@@ -4533,24 +4553,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "Saul Goodman 41-100%, 100% in a row",
-    "id": "saul-goodman-41-100-100-in-a-row",
-    "player": "Slithium",
-    "date": "2024-07-17",
-    "length": 86,
-    "version": 2.2,
-    "levelID": 90477539,
-    "showcaseVideo": "https://youtu.be/ktVdIYE9P-I",
-    "video": "https://youtu.be/1qUQccpP9mA",
-    "submitter": "53ek",
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF",
-      "Rated"
     ]
   },
   {
@@ -10724,6 +10726,7 @@
     ]
   }
 ]
+
 
 
 
