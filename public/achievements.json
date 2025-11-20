@@ -5190,22 +5190,6 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 47-93%",
-    "id": "unnerfed-unknown-47-93",
-    "player": "ffzer",
-    "levelID": 70003258,
-    "date": "2025-11-19",
-    "length": 19,
-    "version": 2.2,
-    "video": "https://youtu.be/iaxzmWgbqjM?t=30",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "The Lightning Rod",
     "id": "the-lightning-rod",
     "player": "lavatrex",
@@ -7412,6 +7396,22 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "Unnerfed unknown 47-93%",
+    "id": "unnerfed-unknown-47-93",
+    "player": "ffzer",
+    "levelID": 70003258,
+    "date": "2025-11-19",
+    "length": 19,
+    "version": 2.2,
+    "video": "https://youtu.be/iaxzmWgbqjM?t=30",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -10726,6 +10726,7 @@
     ]
   }
 ]
+
 
 
 
