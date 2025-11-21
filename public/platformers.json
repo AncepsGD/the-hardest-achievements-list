@@ -118,6 +118,7 @@
     "date": "2025-09-25",
     "submitter": "toolazytogetausername",
     "levelID": 126360881,
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/126360881",
     "tags": [
       "Verified",
       "Platformer",
@@ -137,7 +138,8 @@
     "date": "2025-05-27",
     "video": "https://www.youtube.com/watch?v=2HRu26YzDUo",
     "showcaseVideo": "https://youtu.be/_-ACXbZmdlE",
-    "submitter": "kyle1saurus"
+    "submitter": "kyle1saurus",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/119709734"
   },
   {
 	"name": "glungus 60hz Mobile",
@@ -350,7 +352,8 @@
     "version": 2.2,
     "date": "2025-08-15",
     "video": "https://youtu.be/KaHvcARUVC0",
-    "submitter": "kyle1saurus"
+    "submitter": "kyle1saurus",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/109553133"
   },
   {
     "name": "glungus",
@@ -382,6 +385,7 @@
     "date": "2025-07-06",
     "video": "https://www.youtube.com/watch?v=Ie8P8yCBUAc",
     "showcaseVideo": "https://youtu.be/MezgqDHtbos",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/122391065",
     "submitter": "kyle1saurus"
   },
   {
@@ -494,6 +498,7 @@
     "date": "2025-02-25",
     "video": "https://www.youtube.com/watch?v=bsXmrACozOw",
     "showcaseVideo": "https://youtu.be/6XORDGEYXuw",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/111338608",
     "submitter": "toolazytogetausername"
   },
   {
@@ -553,6 +558,7 @@
   "date": "2025-08-03",
   "submitter": "toolazytogetausername",
   "levelID": 99536415,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/99536415",
   "tags": [
     "Platformer",
     "Verified"
@@ -575,7 +581,7 @@
     "submitter": "kyle1saurus"
   },
   {
-	"name": "Crime And Punishment",
+  "name": "Crime And Punishment",
   "id": "crime-and-punishment",
   "player": "itzCyberCube",
   "version": 2.2,
@@ -584,6 +590,7 @@
   "date": "2025-08-31",
   "submitter": "toolazytogetausername",
   "levelID": 125430986,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/125430986",
   "tags": [
     "Platformer",
     "Verified",
@@ -620,6 +627,7 @@
     "date": "2025-08-07",
     "video": "https://www.youtube.com/watch?v=p20TT1qkPg0",
 	"showcaseVideo": "https://youtu.be/BbMwRW53K7c",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/124275094",
     "submitter": "kyle1saurus"
   },
   {
@@ -683,6 +691,7 @@
     "date": "2025-07-20",
     "video": "https://www.youtube.com/watch?v=6QO0NCGfyh8",
     "showcaseVideo": "https://youtu.be/nCtxpKHBlqM",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/123260275",
     "submitter": "kyle1saurus"
   },
   {
@@ -698,6 +707,7 @@
     "date": "2025-03-11",
     "showcaseVideo": "https://youtu.be/Eqecbbeg6-Y",
     "video": "https://www.youtube.com/watch?v=FtLZsx5TAFk",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/115979065",
     "submitter": "kyle1saurus"
   },
   {
@@ -730,6 +740,7 @@
     "date": "2024-08-09",
     "video": "https://www.youtube.com/watch?v=Gf_NgxUkQ0s",
 	"showcaseVideo": null,
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/109553133",
     "submitter": "kyle1saurus"
   },
   {
@@ -823,6 +834,7 @@
     "date": "2024-10-08",
     "video": "https://www.youtube.com/watch?v=7xT5KBtHJVw",
 	"showcaseVideo": "https://youtu.be/Rkm8AyDtnno",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/124303654",
     "submitter": "kyle1saurus"
   },
   {
@@ -917,6 +929,7 @@
     "date": "2025-06-25",
     "video": "https://www.youtube.com/watch?v=TR25M9F3Q9Y",
 	"showcaseVideo": "https://youtu.be/IdXZRYNRQrc",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/121386057",
     "submitter": "kyle1saurus"
   },
   {
@@ -1063,10 +1076,11 @@
   "player": "Artemka_Klutoy",
   "version": 2.2,
   "video": "https://www.youtube.com/watch?v=ZwJVWrT7Pvs",
-  "showcaseVideo": null,
+  "showcaseVideo": "https://youtu.be/TKwCZXZe0nQ",
   "date": "2025-09-18",
   "submitter": "kyle1saurus",
   "levelID": 125767600,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/125767600",
   "tags": [
     "Platformer",
     "Verified"
@@ -1082,6 +1096,7 @@
   "date": "2025-10-05",
   "submitter": "toolazytogetausername",
   "levelID": 120722125,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120722125",
   "tags": [
     "Platformer",
     "Verified",
@@ -1110,10 +1125,11 @@
   "player": "IvanCrafter026",
   "version": 2.2,
   "video": "https://www.youtube.com/watch?v=0vy2H2kieBg",
-  "showcaseVideo": null,
+  "showcaseVideo": "https://youtu.be/TftMRSlckr8",
   "date": "2025-09-28",
   "submitter": "kyle1saurus",
   "levelID": 126491208,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/126491208",
   "tags": [
     "Platformer",
     "Verified"
@@ -1128,6 +1144,7 @@
   "date": "2025-10-11",
   "submitter": "kyle1saurus",
   "levelID": 124547902,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/124547902",
   "tags": [
     "Platformer",
     "Verified"
