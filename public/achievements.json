@@ -2851,6 +2851,7 @@
     "version": 2.2,
     "video": "https://youtu.be/QFGAZJ5IFS4",
     "showcaseVideo": "https://youtu.be/vAcru8i0A0M",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/88104589",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -2868,6 +2869,7 @@
     "version": 2.2,
     "video": "https://youtu.be/BXHCVB2ZRIw",
     "showcaseVideo": "https://youtu.be/R5GoIVEqmo8",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/91131797",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -2884,6 +2886,7 @@
     "version": 2.2,
     "video": "https://youtu.be/Ond52P3gE9I",
     "showcaseVideo": "https://youtu.be/F4TUsKuXWg4",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/92905701",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -2900,6 +2903,7 @@
     "version": 2.2,
     "video": "https://youtu.be/k0h3tliGlEI",
     "showcaseVideo": "https://youtu.be/oNY9im0870I",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/84550931",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -2916,6 +2920,7 @@
     "version": 2.2,
     "video": "https://youtu.be/FN_6rxa8oyg",
     "showcaseVideo": "https://youtu.be/J--tYr5HbQ0",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81376890",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -2926,17 +2931,18 @@
     "name": "Invisible Slaughterhouse 49-91%",
     "id": "invisible-slaughterhouse-49-91",
     "player": "enfix",
+    "levelID": 89216381,
     "date": "2023-03-17",
     "length": 29,
     "version": 2.1,
     "video": "https://youtu.be/yIeX5TA4yvs&t=19",
+    "showcaseVideo": "https://youtu.be/l6poOVWISJA",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/89216381",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Progress"
-    ],
-    "levelID": 89216381,
-    "showcaseVideo": "https://youtu.be/l6poOVWISJA"
+    ]
   },
   {
     "name": "Acheron 60hz 69-100%",
@@ -2977,18 +2983,18 @@
     "name": "Silent Acropolis (Fixed) 31-100%",
     "id": "silent-acropolis-fixed-31-100",
     "player": "bop",
+    "levelID": 13918016,
     "date": "2024-10-25",
     "length": 49,
     "version": 2.2,
     "video": "https://youtu.be/c2pc6LSqBl8",
+    "showcaseVideo": "https://youtu.be/lR70uK1NuKU",
     "submitter": "gdspeedcuber",
     "tags": [
       "Level",
       "Progress",
       "CBF"
-    ],
-    "levelID": 13918016,
-    "showcaseVideo": "https://youtu.be/lR70uK1NuKU"
+    ]
   },
   {
     "name": "Acheron (serpentical)",
@@ -2999,13 +3005,13 @@
     "version": 2.2,
     "levelID": 122490465,
     "video": "https://youtu.be/APtUnzAP9bM",
+    "showcaseVideo": "https://youtu.be/CxdvSP7nLvI",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Verified",
       "CBF"
-    ],
-    "showcaseVideo": "https://youtu.be/CxdvSP7nLvI"
+    ]
   },
   {
     "name": "last stop 31%, 15%, 25%, 31%, 15%, 25% in a row",
@@ -3067,12 +3073,12 @@
     "version": 2.1,
     "submitter": "Anceps",
     "video": "https://youtu.be/m83lkg9wdSs",
+    "showcaseVideo": "https://youtu.be/28q8-ccS83I",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/92429015.png",
     "tags": [
       "Challenge",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/28q8-ccS83I",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/92429015.png"
+    ]
   },
   {
     "name": "j0nahh challenge",
@@ -3084,12 +3090,12 @@
     "version": 2.1,
     "submitter": "Anceps",
     "video": "https://youtu.be/YqTZmivTFus",
+    "showcaseVideo": "https://youtu.be/w2dejE2NZYE",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/93072937.png",
     "tags": [
       "Challenge",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/w2dejE2NZYE",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/93072937.png"
+    ]
   },
   {
     "name": "VSC 20p is dead",
@@ -3101,12 +3107,12 @@
     "version": 2.1,
     "submitter": "Anceps",
     "video": "https://youtu.be/cmfVQxG02_c",
+    "showcaseVideo": "https://youtu.be/J4aWEJUS_2E",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/83526910.png",
     "tags": [
       "Challenge",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/J4aWEJUS_2E",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/83526910.png"
+    ]
   },
   {
     "name": "VSC Nev Finale 25-68%",
@@ -3118,12 +3124,12 @@
     "version": 2.1,
     "submitter": "Excryst",
     "video": "https://youtu.be/N_z_dkKevQ4",
+    "showcaseVideo": "https://youtu.be/MuFaJ57ItPU",
+    "thumbnail": "https://tjcsucht.net/levelthumbs/85140035.png",
     "tags": [
       "Challenge",
       "Progress"
-    ],
-    "showcaseVideo": "https://youtu.be/MuFaJ57ItPU",
-    "thumbnail": "https://tjcsucht.net/levelthumbs/85140035.png"
+    ]
   },
   {
     "name": "3sh on Pointercrate",
@@ -10733,6 +10739,7 @@
     ]
   }
 ]
+
 
 
 
