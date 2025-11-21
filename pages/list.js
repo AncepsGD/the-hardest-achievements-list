@@ -92,7 +92,23 @@ function normalizeYoutubeUrl(input) {
     return parsed.href;
   }
 
-  return input;
+  return null;
+}
+
+function sanitizeImageUrl(input) {
+  if (!input || typeof input !== 'string') return null;
+  const s = input.trim();
+  if (s.startsWith('data:')) {
+    if (/^data:image\/(png|jpeg|jpg|gif|webp);base64,/i.test(s)) return s;
+    return null;
+  }
+  try {
+    const u = new URL(s.startsWith('http') ? s : `https://${s}`);
+    if (u.protocol !== 'https:') return null;
+    return u.href;
+  } catch (e) {
+    return null;
+  }
 }
 
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
@@ -167,7 +183,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode }) 
     }
   };
   return (
-    <Link href={`/achievement/${achievement.id}`} passHref legacyBehavior>
+    <Link href={`/achievement/${encodeURIComponent(achievement.id)}`} passHref legacyBehavior>
       <a
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
         onClick={handleClick}
@@ -200,7 +216,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode }) 
               <p>{achievement.player}</p>
             </div>
             <div className="thumbnail-container">
-              <img src={achievement.thumbnail || (achievement.levelID ? `https://tjcsucht.net/levelthumbs/${achievement.levelID}.png` : '/assets/default-thumbnail.png')} alt={achievement.name} loading="lazy" />
+              <img src={sanitizeImageUrl(achievement.thumbnail) || (achievement.levelID ? `https://levelthumbs.prevter.me/thumbnail/${achievement.levelID}` : '/assets/default-thumbnail.png')} alt={achievement.name} loading="lazy" />
             </div>
           </div>
         </div>
@@ -411,7 +427,7 @@ export default function List() {
     const items = devMode && reordered ? reordered : achievements;
     const map = new Map();
     items.forEach((a, i) => {
-      const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://tjcsucht.net/levelthumbs/${a.levelID}.png` : '';
+      const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
       const key = String(thumb || '').trim();
       if (!key) return;
       map.set(key, (map.get(key) || 0) + 1);
@@ -542,7 +558,7 @@ export default function List() {
         setBgImage(null);
         return;
       }
-      const thumb = (top.thumbnail && String(top.thumbnail).trim()) ? top.thumbnail : (top.levelID ? `https://tjcsucht.net/levelthumbs/${top.levelID}.png` : null);
+      const thumb = (top.thumbnail && String(top.thumbnail).trim()) ? top.thumbnail : (top.levelID ? `https://levelthumbs.prevter.me/thumbnail/${top.levelID}` : null);
       setBgImage(thumb || null);
     } catch (e) {
       setBgImage(null);
@@ -1075,12 +1091,15 @@ export default function List() {
                   aria-label={showMobileFilters ? 'Hide Filters' : 'Show Filters'}
                   onClick={handleMobileToggle}
                   className="mobile-filter-toggle"
-                  dangerouslySetInnerHTML={{
-                    __html: showMobileFilters
-                      ? '<span class="arrow-img-wrapper"><img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-up.svg" alt="Hide Filters" class="arrow-img" /></span>'
-                      : '<span class="arrow-img-wrapper"><img src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-down.svg" alt="Show Filters" class="arrow-img" /></span>'
-                  }}
-                />
+                >
+                  <span className="arrow-img-wrapper">
+                    <img
+                      src={showMobileFilters ? "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-up.svg" : "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-down.svg"}
+                      alt={showMobileFilters ? "Hide Filters" : "Show Filters"}
+                      className="arrow-img"
+                    />
+                  </span>
+                </button>
               </div>
             </div>
           )}
@@ -1262,7 +1281,7 @@ export default function List() {
                   achievementRefs.current[i] = el;
                 }}
                 className={(() => {
-                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://tjcsucht.net/levelthumbs/${a.levelID}.png` : '';
+                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
                   return duplicateThumbKeys.has((thumb || '').trim()) ? 'duplicate-thumb-item' : '';
                 })()}
                 style={{
@@ -1451,7 +1470,7 @@ export default function List() {
                 {({ index, style }) => {
                   const a = filtered[index];
                   const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
-                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://tjcsucht.net/levelthumbs/${a.levelID}.png` : '';
+                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
                   const isDup = duplicateThumbKeys.has((thumb || '').trim());
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
