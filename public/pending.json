@@ -31,6 +31,22 @@
     ]
   },
   {
+    "name": "Mastery Of The Slope (Deathless)",
+    "id": "mastery-of-the-slope-deathless",
+    "player": "Cucu",
+    "levelID": 105166503,
+    "date": "2025-01-09",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/v0DI0lRZWZI",
+    "showcaseVideo": null,
+    "tags": [
+      "Platformer",
+      "Deathless",
+      "Rated"
+    ]
+  },
+  {
     "name": "Lexapro 45%",
     "id": "lexapro-45",
     "player": "panap",
