@@ -681,6 +681,7 @@
     "video": "https://youtu.be/WXVpk5vs4s8",
     "levelID": 97429207,
     "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/97429207",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -1085,6 +1086,7 @@
     "levelID": 120478542,
     "video": "https://www.youtube.com/watch?v=V6HcmQRFIYA",
     "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
     "date": "2025-10-18",
     "submitter": "Kuri",
     "tags": [
@@ -1303,6 +1305,7 @@
     "version": 2.2,
     "video": "https://youtu.be/b2HX1VdeDxY",
     "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/114002031",
     "date": "2025-11-10",
     "submitter": "SirDoodle2920",
     "tags": [
@@ -1319,6 +1322,7 @@
     "version": 2.2,
     "video": "https://youtu.be/Suh3Uyj6omM",
     "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
     "date": "2025-10-20",
     "submitter": "TYATYAPKA",
     "tags": [
@@ -1571,17 +1575,17 @@
     "id": "banshee-21-100",
     "player": "spcreat",
     "video": "https://youtu.be/hGRJKeBB14k&t=1149",
-    "tags": [
-      "Level",
-      "Progress",
-      "Tentative"
-    ],
     "date": "2025-08-01",
     "submitter": "jak",
     "length": 80,
     "version": 2.2,
     "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
-    "showcaseVideo": "https://youtu.be/h14lmGH31_M"
+    "showcaseVideo": "https://youtu.be/h14lmGH31_M",
+    "tags": [
+      "Level",
+      "Progress",
+      "Tentative"
+    ]
   },
   {
     "name": "Heliopolis (Thnnder) 48-87%",
@@ -1641,6 +1645,7 @@
     "video": "https://youtu.be/5C4xbt-yIeQ",
     "levelID": 97429207,
     "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/97429207",
     "submitter": "axellssl",
     "tags": [
       "Level",
@@ -1657,7 +1662,7 @@
     "length": 65,
     "version": 2.1,
     "video": "https://youtu.be/TRRKIrgCcfA",
-    "showcaseVideo": "https://youtu.be/jlAYQoYtvq8",
+    "showcaseVideo": "https://youtu.be/RDDVs0LJQQg",
     "submitter": "Isabella",
     "tags": [
       "Level",
@@ -1781,6 +1786,7 @@
     "levelID": 78149361,
     "video": "https://youtu.be/WHOfO0OxbvM",
     "showcaseVideo": "https://youtu.be/AgQeRMZw-t4",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/78149361",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -1829,6 +1835,7 @@
     "version": 2.2,
     "video": "https://youtu.be/Rz7Um6lxYYU",
     "showcaseVideo": "https://youtu.be/RX9mJmScTd8",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/126279500",
     "submitter": "nensa",
     "tags": [
       "Challenge",
@@ -2023,6 +2030,7 @@
     "version": 2.2,
     "video": "https://youtu.be/aTxt76U3e2Q",
     "showcaseVideo": "https://youtu.be/1H0UpLzDEQw",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/123119196",
     "submitter": "shortweekly",
     "tags": [
       "Level",
@@ -2175,6 +2183,7 @@
     "video": "https://youtu.be/F9P_T1c2bAQ",
     "showcaseVideo": "https://youtu.be/KFRRiYLid7M",
     "submitter": "kyle1saurus",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/124702724",
     "tags": [
       "Level",
       "Progress"
@@ -2188,6 +2197,7 @@
     "length": 74,
     "version": 2.2,
     "video": "https://youtu.be/OqodbR8-Tmc",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/100152198",
     "submitter": "tmtsps12",
     "tags": [
       "Level",
@@ -2202,6 +2212,7 @@
     "length": 74,
     "version": 2.2,
     "video": "https://youtu.be/wgNI_7Bh4wc",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/100152198",
     "submitter": "tmtsps12",
     "tags": [
       "Level",
@@ -2277,13 +2288,13 @@
     "name": "The Golden 80hz 94%",
     "id": "the-golden-80hz-94",
     "player": "Sid125",
-    "length": "70",
-    "version": "2.1",
+    "length": 70,
+    "version": 2.1,
     "video": "https://youtu.be/b6dUBlA38_4&t=98",
     "showcaseVideo": "https://youtu.be/lbrN3kasxR0",
     "date": "2021-08-05",
     "submitter": "Radiator",
-    "levelID": "60978746",
+    "levelID": 60978746,
     "tags": [
       "Level",
       "Low Hertz",
@@ -2329,13 +2340,13 @@
     "name": "Trueffet 1.3x",
     "id": "trueffet-13x",
     "player": "Arshadow",
-    "length": "61",
-    "version": "2.2",
+    "length": 61,
+    "version": 2.2,
     "video": "https://youtu.be/khoORHh2M68",
     "showcaseVideo": "https://youtu.be/qkQidB9aPLA",
     "date": "2025-08-18",
     "submitter": "ad3usgmd",
-    "levelID": "71434979",
+    "levelID": 71434979,
     "tags": [
       "Level",
       "Speedhack",
@@ -2347,12 +2358,14 @@
     "name": "3sh on Pointercrate 76%, 69%",
     "id": "3sh-on-pointercrate-76-69",
     "player": "TahaBht_",
+    "levelID": 127534241,
     "date": "2025-10-23",
     "length": 45,
     "version": 2.2,
     "submitter": "nensa",
     "video": "https://youtu.be/CweiVNgo9IY",
     "showcaseVideo": "https://youtu.be/r0UUlgjrF2w",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/127534241",
     "tags": [
       "Challenge",
       "Consistency"
@@ -2367,6 +2380,7 @@
     "version": 2.2,
     "video": "https://youtu.be/tjvmCvpUbRQ",
     "showcaseVideo": "https://youtu.be/VrDdQrTBEJY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81683082",
     "submitter": "Alistef",
     "tags": [
       "Challenge",
@@ -2378,10 +2392,11 @@
     "id": "surface-17-86",
     "player": "zXdasfsa",
     "date": "2025-06-06",
-    "length": "20",
-    "version": "2.2",
+    "length": 20,
+    "version": 2.2,
     "video": "https://youtu.be/VrSCfOEHnN4",
     "showcaseVideo": "https://youtu.be/VrDdQrTBEJY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81683082",
     "submitter": "tmtsps12",
     "tags": [
       "Challenge",
@@ -3337,6 +3352,7 @@
     "video": "https://youtu.be/OiK2Tny1c0U",
     "levelID": 97429207,
     "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/97429207",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -4225,6 +4241,7 @@
     "version": 2.2,
     "video": "https://youtu.be/OVuh8hDHNvQ",
     "showcaseVideo": null,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
     "submitter": "JustAComfyCookie",
     "tags": [
       "Level",
@@ -4573,6 +4590,7 @@
     "version": 2.2,
     "showcaseVideo": "https://youtu.be/kJIHZ73fI_Y",
     "video": "https://youtu.be/D7zVa1N6I9k",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/114002031",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -5874,6 +5892,7 @@
     "levelID": 120478542,
     "video": "https://www.youtube.com/live/7sXz0-XR3zY?t=8086",
     "showcaseVideo": "https://youtu.be/on1SmypYPJY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -9293,6 +9312,7 @@
     "length": 65,
     "version": 2.1,
     "video": "https://youtu.be/jlAYQoYtvq8",
+    "showcaseVideo": "https://youtu.be/RDDVs0LJQQg",
     "submitter": "Arcadie",
     "tags": [
       "Level",
@@ -10739,6 +10759,7 @@
     ]
   }
 ]
+
 
 
 
