@@ -4008,13 +4008,13 @@
     "name": "RANDOM WAVE 516%",
     "id": "random-wave-516",
     "player": "Zoink",
-    "length": "110",
-    "version": "2.2",
+    "length": 110,
+    "version": 2.2,
     "video": "https://youtu.be/FGmF79H58XU",
     "showcaseVideo": "https://youtu.be/smYGrFTatb8",
     "date": "2025-05-16",
     "submitter": "jak",
-    "levelID": "116760828",
+    "levelID": 116760828,
     "tags": [
       "Challenge",
       "Consistency",
@@ -4363,6 +4363,22 @@
       "Level",
       "Low Hertz",
       "Rated"
+    ]
+  },
+  {
+    "name": "Drukilicide 42-70%",
+    "id": "drukilicide-42-70",
+    "player": "Xtra8nugz",
+    "levelID": 120478542,
+    "length": 22,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/N_PfHP2xnyc?t=8589s",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-11-22",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -5110,22 +5126,6 @@
       "Level",
       "Verified",
       "CBF"
-    ]
-  },
-  {
-    "name": "Drukilicide 48-72%",
-    "id": "drukilicide-48-72",
-    "player": "Xtra8nugz",
-    "levelID": 120478542,
-    "length": 19,
-    "version": 2.2,
-    "video": "https://www.youtube.com/live/Qpv3K3g6P_g?t=4770s",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-11-15",
-    "submitter": "Excryst",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -10786,6 +10786,7 @@
     ]
   }
 ]
+
 
 
 
