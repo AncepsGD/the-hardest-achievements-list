@@ -9146,6 +9146,23 @@
     ]
   },
   {
+    "name": "Silent Clubstep II 31%",
+    "id": "silent-clubstep-ii-31",
+    "player": "SkittleCatastrophe",
+    "date": "2025-11-22",
+    "length": 31,
+    "version": 2.2,
+    "levelID": 78614226,
+    "video": "https://youtu.be/Q9StAIoMkhU",
+    "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "arcturus",
     "id": "arcturus",
     "player": "ultrakawaHD",
@@ -10206,16 +10223,16 @@
     ]
   },
   {
-    "name": "Silent Clubstep II 18-39%",
-    "id": "silent-clubstep-ii-18-39",
+    "name": "Silent Clubstep II 27-43%",
+    "id": "silent-clubstep-ii-27-43",
     "player": "SkittleCatastrophe",
-    "date": "2025-10-04",
+    "date": "2025-11-22",
     "length": 18,
     "version": 2.2,
     "levelID": 78614226,
-    "video": "https://youtu.be/wdvIUop96iA",
+    "video": "https://youtu.be/RMEhwJGnjok",
     "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
-    "submitter": "Excryst",
+    "submitter": "aytch0008",
     "tags": [
       "Level",
       "Progress"
@@ -10226,9 +10243,9 @@
     "id": "silent-clubstep-ii-37-54",
     "player": "SkittleCatastrophe",
     "date": "2025-08-25",
-    "length": "18",
-    "version": "2.2",
-    "levelID": "78614226",
+    "length": 18,
+    "version": 2.2,
+    "levelID": 78614226,
     "video": "https://youtu.be/suXpr39rcDU&t=75",
     "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
     "submitter": "kyle1saurus",
@@ -10399,8 +10416,8 @@
     "name": "Eternal Night 31%",
     "id": "eternal-night-31",
     "player": "Trolley1",
-    "length": "30",
-    "version": "2.2",
+    "length": 30,
+    "version": 2.2,
     "video": "https://youtu.be/f9ewrnsAAvs",
     "date": "2025-08-10",
     "showcaseVideo": "https://youtu.be/njGusIAPm9w",
@@ -10670,23 +10687,23 @@
     ]
   },
   {
-    "name": "Silent Clubstep II 26%",
-    "id": "silent-clubstep-ii-26",
-    "player": "SkittleCatastrophe",
-    "date": "2025-08-25",
-    "length": "26",
-    "version": "2.2",
-    "levelID": "78614226",
-    "video": "https://youtu.be/OeuT_ZZ60Ug",
-    "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
+    "name": "Theory Of Darkness (Old)",
+        "id": "theory-of-darkness-old",
+        "player": "Glow",
+        "levelID": 68243886,
+        "date": "2025-11-23",
+        "length": 84,
+        "version": 2.2,
+        "submitter": "Exiled_Shade",
+        "video": "https://youtu.be/4BkLgPp7ZWU",
+        "showcaseVideo": "https://youtu.be/io11u-GLJkM",
+        "tags": [
+            "Level",
+            "Verified",
+            "Formerly Rated"
+        ]
+    },
+    {
     "name": "xo 60hz Mobile",
     "id": "xo-60hz-mobile",
     "player": "pigchefer",
@@ -10761,12 +10778,12 @@
     "length": 87,
     "version": 2.2,
     "video": "https://youtu.be/kW8gK7uCgcY",
+    "showcaseVideo": "https://youtu.be/l2zswV7eQZU",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Verified"
-    ],
-    "showcaseVideo": "https://youtu.be/l2zswV7eQZU"
+    ]
   },
   {
     "name": "Tartarus",
@@ -10786,16 +10803,3 @@
     ]
   }
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
