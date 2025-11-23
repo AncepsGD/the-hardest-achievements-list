@@ -416,8 +416,8 @@
     "tags": [
       "Level",
       "Consistency",
-      "Rated",
-      "CBF"
+      "CBF",
+      "Rated"
     ]
   },
   {
@@ -4821,41 +4821,6 @@
     ]
   },
   {
-    "name": "Firework",
-    "id": "firework",
-    "player": "Hyperlith",
-    "levelID": 105547415,
-    "date": "2024-05-23",
-    "length": 127,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/Kbb3eXeMHQo",
-    "showcaseVideo": "https://youtu.be/DU6mRmGHy74",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/firework1.webp",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Redwork",
-    "id": "redwork",
-    "player": "Abstract",
-    "levelID": 113640015,
-    "date": "2024-12-30",
-    "length": 127,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/sHFY_vOMLCo",
-    "showcaseVideo": "https://youtu.be/RHmVk0pUIPI",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/113640015",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "Unnerfed unknown 43%",
     "id": "unnerfed-unknown-43",
     "player": "ffzer",
@@ -5310,19 +5275,68 @@
     ]
   },
   {
-    "name": "Vehemence (Wpopoff old) 24-55%",
+    "name": "Eyes in the Water",
+    "id": "eyes-in-the-water",
+    "player": "LordVadercraft",
+    "levelID": 95851008,
+    "date": "2023-10-29",
+    "length": 92,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/yvLwiOy3KEA",
+    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Eyes in the Water (Netermind)",
+    "id": "eyes-in-the-water-netermind",
+    "player": "Netermind",
+    "date": "2023-10-18",
+    "length": 92,
+    "version": 2.1,
+    "video": "https://youtu.be/UMOqidVTMmk",
+    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
+    "submitter": "Tr1bto",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
+    "name": "Vehemence (wPopoff old) 24-55%",
     "id": "vehemence-wpopoff-old-24-55",
     "player": "wPopoff",
     "date": "2025-07-21",
     "length": 32,
     "version": 2.2,
     "levelID": 96572223,
-    "video": "https://youtu.be/0A9WtwjR-X0&t=2639",
+    "video": "https://youtu.be/0A9WtwjR-X0",
     "showcaseVideo": "https://youtu.be/FwxtJQQocKA",
     "submitter": "tmtsps12",
     "tags": [
       "Level",
       "Progress"
+    ]
+  },
+  {
+    "name": "KOSETSU",
+    "id": "kosetsu",
+    "player": "Taiago",
+    "levelID": 109439644,
+    "date": "2024-08-24",
+    "length": 72,
+    "version": 2.2,
+    "video": "https://youtu.be/hZ8vFX8z_BU",
+    "showcaseVideo": "https://youtu.be/Sw7Aucy0Tjg",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ]
   },
   {
@@ -5415,12 +5429,12 @@
     ]
   },
   {
-    "name": "The Golden 75hz-54%",
+    "name": "The Golden 75hz 54%",
     "id": "the-golden-75hz-54",
     "player": "Sid125",
-    "length": "50",
-    "version": "2.1",
-    "video": "https://youtu.be/b6dUBlA38_4&t=87",
+    "length": 50,
+    "version": 2.1,
+    "video": "https://youtu.be/b6dUBlA38_4",
     "showcaseVideo": "https://youtu.be/lbrN3kasxR0",
     "date": "2021-08-07",
     "submitter": "Radiator",
@@ -5447,6 +5461,41 @@
     "tags": [
       "Level",
       "Progress"
+    ]
+  },
+  {
+    "name": "Firework",
+    "id": "firework",
+    "player": "Hyperlith",
+    "levelID": 105547415,
+    "date": "2024-05-23",
+    "length": 127,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/Kbb3eXeMHQo",
+    "showcaseVideo": "https://youtu.be/DU6mRmGHy74",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/firework1.webp",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Redwork",
+    "id": "redwork",
+    "player": "Abstract",
+    "levelID": 113640015,
+    "date": "2024-12-30",
+    "length": 127,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/sHFY_vOMLCo",
+    "showcaseVideo": "https://youtu.be/RHmVk0pUIPI",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/113640015",
+    "tags": [
+      "Level",
+      "Verified"
     ]
   },
   {
@@ -5497,6 +5546,23 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "poocubed",
+    "id": "poocubed",
+    "player": "Kyasshukodo",
+    "levelID": 85133223,
+    "date": "2022-11-01",
+    "length": 82,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/fzL31vai1ms",
+    "showcaseVideo": "https://youtu.be/WM1KcNGkP08",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ]
   },
   {
@@ -6020,72 +6086,6 @@
     "tags": [
       "Challenge",
       "Progress"
-    ]
-  },
-  {
-    "name": "Eyes in the Water",
-    "id": "eyes-in-the-water",
-    "player": "LordVadercraft",
-    "levelID": 95851008,
-    "date": "2023-10-29",
-    "length": 92,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/yvLwiOy3KEA",
-    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Eyes in the Water (Netermind)",
-    "id": "eyes-in-the-water-netermind",
-    "player": "Netermind",
-    "date": "2023-10-18",
-    "length": 92,
-    "version": 2.1,
-    "video": "https://youtu.be/UMOqidVTMmk",
-    "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
-    "submitter": "Tr1bto",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
-    "name": "KOSETSU",
-    "id": "kosetsu",
-    "player": "Taiago",
-    "levelID": 109439644,
-    "date": "2024-08-24",
-    "length": 72,
-    "version": 2.2,
-    "video": "https://youtu.be/hZ8vFX8z_BU",
-    "showcaseVideo": "https://youtu.be/Sw7Aucy0Tjg",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "poocubed",
-    "id": "poocubed",
-    "player": "Kyasshukodo",
-    "levelID": 85133223,
-    "date": "2022-11-01",
-    "length": 82,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/fzL31vai1ms",
-    "showcaseVideo": "https://youtu.be/WM1KcNGkP08",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
     ]
   },
   {
@@ -10688,22 +10688,22 @@
   },
   {
     "name": "Theory Of Darkness (Old)",
-        "id": "theory-of-darkness-old",
-        "player": "Glow",
-        "levelID": 68243886,
-        "date": "2025-11-23",
-        "length": 84,
-        "version": 2.2,
-        "submitter": "Exiled_Shade",
-        "video": "https://youtu.be/4BkLgPp7ZWU",
-        "showcaseVideo": "https://youtu.be/io11u-GLJkM",
-        "tags": [
-            "Level",
-            "Verified",
-            "Formerly Rated"
-        ]
-    },
-    {
+    "id": "theory-of-darkness-old",
+    "player": "Glow",
+    "levelID": 68243886,
+    "date": "2025-11-23",
+    "length": 84,
+    "version": 2.2,
+    "submitter": "Exiled_Shade",
+    "video": "https://youtu.be/4BkLgPp7ZWU",
+    "showcaseVideo": "https://youtu.be/io11u-GLJkM",
+    "tags": [
+      "Level",
+      "Verified",
+      "Formerly Rated"
+    ]
+  },
+  {
     "name": "xo 60hz Mobile",
     "id": "xo-60hz-mobile",
     "player": "pigchefer",
