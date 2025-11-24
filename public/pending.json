@@ -17,7 +17,41 @@
   ]
 },
 {
-  "name": "Trials Of Infinity",
+  "name": "Blade Of Justice 612%",
+  "id": "blade-of-justice-612",
+  "player": "mosk1712",
+  "date": "2025-11-23",
+  "levelID": 35448603,
+  "length": 120,
+  "version": 2.2,
+  "submitter": "axellssl",
+  "video": "https://youtu.be/j0xUmqbkxg4",
+  "showcaseVideo": "https://youtu.be/vHij4M3TBfY",
+  "tags": [
+    "Level",
+    "Consistency",
+    "Rated"
+  ]
+},
+{
+  "name": "Slaughterhouse (Chopblox) 48-100%",
+  "id": "slaughterhouse-chopblox-48-100",
+  "player": "Chopblox",
+  "date": "2025-11-23",
+  "levelID": null,
+  "length": 30,
+  "version": 2.2,
+  "submitter": "kittycatiscute",
+  "video": "https://www.youtube.com/watch?v=bSn2eUORkSU",
+  "showcaseVideo": null,
+  "tags": [
+    "Level",
+    "Progress",
+    "CBF"
+  ]
+},
+{
+    "name": "Trials Of Infinity",
     "id": "trials-of-infinity",
     "player": "VoPlat",
     "levelID": 109520668,
@@ -25,6 +59,36 @@
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/X288_MLVKV8",
+    "showcaseVideo": null,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ]
+  },
+  {
+    "name": "Boring Uber",
+    "id": "boring-uber",
+    "player": "VoPlat",
+    "levelID": 128477071,
+    "date": "2025-11-23",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/NHTeNICMq5k",
+    "showcaseVideo": null,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ]
+  },
+  {
+    "name": "Pozor Morozova Final",
+    "id": "pozor-morozova-final",
+    "player": "VoPlat",
+    "levelID": 127562552,
+    "date": "2025-10-30",
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://www.youtube.com/live/bHXqfp3YrNU?t=1h17m57s",
     "showcaseVideo": null,
     "tags": [
       "Platformer",
