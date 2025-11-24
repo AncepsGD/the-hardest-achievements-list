@@ -1828,23 +1828,6 @@
     ]
   },
   {
-    "name": "Re",
-    "id": "re",
-    "player": "torn",
-    "date": "2025-09-23",
-    "length": 14,
-    "levelID": 126279500,
-    "version": 2.2,
-    "video": "https://youtu.be/Rz7Um6lxYYU",
-    "showcaseVideo": "https://youtu.be/RX9mJmScTd8",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/126279500",
-    "submitter": "nensa",
-    "tags": [
-      "Challenge",
-      "Verified"
-    ]
-  },
-  {
     "name": "Bloodlust 72hz 95%",
     "id": "bloodlust-72hz-95",
     "player": "AGSEcho",
@@ -2234,6 +2217,23 @@
     "showcaseVideo": "https://youtu.be/i1PU3YoEOXc&t=9",
     "tags": [
       "Level",
+      "Verified"
+    ]
+  },
+  {
+    "name": "Re",
+    "id": "re",
+    "player": "torn",
+    "date": "2025-09-23",
+    "length": 14,
+    "levelID": 126279500,
+    "version": 2.2,
+    "video": "https://youtu.be/Rz7Um6lxYYU",
+    "showcaseVideo": "https://youtu.be/RX9mJmScTd8",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/126279500",
+    "submitter": "nensa",
+    "tags": [
+      "Challenge",
       "Verified"
     ]
   },
@@ -4366,16 +4366,16 @@
     ]
   },
   {
-    "name": "Drukilicide 42-70%",
-    "id": "drukilicide-42-70",
+    "name": "Drukilicide 56-83%",
+    "id": "drukilicide-56-83",
     "player": "Xtra8nugz",
     "levelID": 120478542,
     "length": 22,
     "version": 2.2,
-    "video": "https://www.youtube.com/live/N_PfHP2xnyc?t=8589s",
+    "video": "https://www.youtube.com/watch?v=o_uV34gFfYg&t=7374s",
     "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-11-22",
-    "submitter": "Excryst",
+    "date": "2025-11-23",
+    "submitter": "kittycatiscute",
     "tags": [
       "Level",
       "Progress"
@@ -9579,8 +9579,8 @@
     ]
   },
   {
-    "name": "Silent Clubstep II 42-100%",
-    "id": "silent-clubstep-ii-42-100",
+    "name": "Silent Clubstep II 43-100%",
+    "id": "silent-clubstep-ii-43-100",
     "player": "SkittleCatastrophe",
     "date": "2025-08-25",
     "length": 45,
@@ -9710,6 +9710,23 @@
       "Level",
       "Verified",
       "Rated"
+    ]
+  },
+  {
+    "name": "Silent Clubstep II 38-60%",
+    "id": "silent-clubstep-ii-38-60",
+    "player": "SkittleCatastrophe",
+    "date": "2025-11-23",
+    "length": 22,
+    "version": 2.2,
+    "levelID": 78614226,
+    "video": "https://youtube.com/shorts/3qyRPqaEWU0",
+    "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
     ]
   },
   {
@@ -10044,9 +10061,9 @@
     "id": "sakupen-silhouette-37-100-2-deaths-99-88-accuracy",
     "player": "sobot",
     "date": "2024-10-29",
-    "length": "28",
-    "version": "2.2",
-    "levelID": "92199224",
+    "length": 28,
+    "version": 2.2,
+    "levelID": 92199224,
     "video": "https://youtu.be/vv0Zx8LqqWw",
     "showcaseVideo": "https://youtu.be/LptlyojZcNw",
     "submitter": "kyle1saurus",
@@ -10233,22 +10250,6 @@
     "video": "https://youtu.be/RMEhwJGnjok",
     "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
     "submitter": "aytch0008",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Silent Clubstep II 37-54%",
-    "id": "silent-clubstep-ii-37-54",
-    "player": "SkittleCatastrophe",
-    "date": "2025-08-25",
-    "length": 18,
-    "version": 2.2,
-    "levelID": 78614226,
-    "video": "https://youtu.be/suXpr39rcDU&t=75",
-    "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
-    "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Progress",
@@ -10801,4 +10802,5 @@
       "Rated"
     ]
   }
+
 ]
