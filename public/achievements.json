@@ -1828,6 +1828,23 @@
     ]
   },
   {
+    "name": "Re",
+    "id": "re",
+    "player": "torn",
+    "date": "2025-09-23",
+    "length": 14,
+    "levelID": 126279500,
+    "version": 2.2,
+    "video": "https://youtu.be/Rz7Um6lxYYU",
+    "showcaseVideo": "https://youtu.be/RX9mJmScTd8",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/126279500",
+    "submitter": "nensa",
+    "tags": [
+      "Challenge",
+      "Verified"
+    ]
+  },
+  {
     "name": "Bloodlust 72hz 95%",
     "id": "bloodlust-72hz-95",
     "player": "AGSEcho",
@@ -2217,23 +2234,6 @@
     "showcaseVideo": "https://youtu.be/i1PU3YoEOXc&t=9",
     "tags": [
       "Level",
-      "Verified"
-    ]
-  },
-  {
-    "name": "Re",
-    "id": "re",
-    "player": "torn",
-    "date": "2025-09-23",
-    "length": 14,
-    "levelID": 126279500,
-    "version": 2.2,
-    "video": "https://youtu.be/Rz7Um6lxYYU",
-    "showcaseVideo": "https://youtu.be/RX9mJmScTd8",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/126279500",
-    "submitter": "nensa",
-    "tags": [
-      "Challenge",
       "Verified"
     ]
   },
@@ -10803,6 +10803,4 @@
       "Rated"
     ]
   }
-
 ]
-
