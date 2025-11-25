@@ -4075,9 +4075,9 @@
     "id": "sakupen-circles-wave-54",
     "player": "ad3usgmd",
     "date": "2025-06-02",
-    "length": "16",
-    "version": "2.2",
-    "levelID": "10887708",
+    "length": 16,
+    "version": 2.2,
+    "levelID": null,
     "video": "https://youtu.be/9EyMComWMOc",
     "submitter": "TYATYAPKA",
     "tags": [
@@ -5642,6 +5642,7 @@
     "levelID": null,
     "video": "https://youtu.be/UpBmMZbEzRY",
     "showcaseVideo": null,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/64175406",
     "submitter": "aytch0008",
     "tags": [
       "Challenge",
@@ -6811,7 +6812,7 @@
     "length": 36,
     "version": 2.2,
     "video": "https://youtu.be/WfnaiwqDHaE&t=9200",
-    "showcaseVideo": "https://youtu.be/8lNHaYbvQE0",
+    "showcaseVideo": null,
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -7048,7 +7049,7 @@
     "length": 32,
     "version": 2.2,
     "video": "https://youtu.be/WfnaiwqDHaE&t=5135",
-    "showcaseVideo": "https://youtu.be/8lNHaYbvQE0",
+    "showcaseVideo": null,
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -7966,6 +7967,7 @@
     "id": "invisible-wasureta-17-100",
     "player": "fanatic72",
     "date": "2025-07-12",
+    "levelID": 76401173,
     "length": 47,
     "version": 2.2,
     "video": "https://youtu.be/iq8292y4Ljo",
@@ -7974,14 +7976,14 @@
     "tags": [
       "Level",
       "Progress"
-    ],
-    "levelID": 76401173
+    ]
   },
   {
     "name": "Invisible Wasureta 63%",
     "id": "invisible-wasureta-63",
     "player": "Aqua",
     "date": "2024-08-22",
+    "levelID": 76401173,
     "length": 35,
     "version": 2.2,
     "video": "https://youtu.be/s9VbUQ_lPqs",
@@ -7990,8 +7992,7 @@
     "tags": [
       "Level",
       "Progress"
-    ],
-    "levelID": 76401173
+    ]
   },
   {
     "name": "Heavenly Sakupen",
@@ -8030,6 +8031,7 @@
     "id": "lunatic-eyes",
     "player": "DNM121",
     "date": "2025-07-23",
+    "levelID": 123417713,
     "length": 86,
     "version": 2.2,
     "video": "https://youtu.be/0M1sMbchs68",
@@ -8038,8 +8040,7 @@
     "tags": [
       "Level",
       "Verified"
-    ],
-    "levelID": 123417713
+    ]
   },
   {
     "name": "riverlasting",
@@ -8129,8 +8130,8 @@
     "id": "migraine-50",
     "player": "Hover",
     "date": "2025-07-07",
-    "length": "42",
-    "version": "2.2",
+    "length": 42,
+    "version": 2.2,
     "video": "https://youtu.be/rAxT71yjkcU",
     "showcaseVideo": "https://youtu.be/yM3p_sJRv3I",
     "submitter": "TYATYAPKA",
@@ -10805,4 +10806,5 @@
   }
 
 ]
+
 
