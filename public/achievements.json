@@ -4836,15 +4836,15 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 43%",
-    "id": "unnerfed-unknown-43",
+    "name": "Buffed unknown 43%",
+    "id": "Buffed-unknown-43",
     "player": "ffzer",
     "levelID": 70003258,
     "date": "2025-11-19",
     "length": 18,
     "version": 2.2,
     "video": "https://youtu.be/iaxzmWgbqjM",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "showcaseVideo": "https://youtu.be/KqGCwPgrIsk",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -5207,15 +5207,15 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 11-47%",
-    "id": "unnerfed-unknown-11-47",
+    "name": "Buffed unknown 11-47%",
+    "id": "buffed-unknown-11-47",
     "player": "Emp",
     "levelID": 70003258,
     "date": "2025-11-18",
     "length": 13,
     "version": 2.2,
     "video": "https://youtu.be/mar_iC4fUso",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "showcaseVideo": "https://youtu.be/KqGCwPgrIsk",
     "submitter": "Emp",
     "tags": [
       "Level",
@@ -7456,15 +7456,15 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 47-93%",
-    "id": "unnerfed-unknown-47-93",
+    "name": "Buffed unknown 47-93%",
+    "id": "Buffed-unknown-47-93",
     "player": "ffzer",
     "levelID": 70003258,
     "date": "2025-11-19",
     "length": 19,
     "version": 2.2,
     "video": "https://youtu.be/iaxzmWgbqjM?t=30",
-    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "showcaseVideo": "https://youtu.be/KqGCwPgrIsk",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -10805,3 +10805,4 @@
   }
 
 ]
+
