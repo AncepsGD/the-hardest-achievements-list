@@ -51,6 +51,38 @@
   ]
 },
 {
+    "name": "Unnerfed unknown 58%",
+    "id": "unnerfed-unknown-58",
+    "player": "Emp",
+    "levelID": null,
+    "date": "2025-11-24",
+    "length": 24,
+    "version": 2.2,
+    "video": "https://youtu.be/G5LSciK5_VM",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
+    "name": "Unnerfed unknown 11-80%",
+    "id": "unnerfed-unknown-11-80",
+    "player": "Emp",
+    "levelID": null,
+    "date": "2025-11-24",
+    "length": 24,
+    "version": 2.2,
+    "video": "https://youtu.be/AbSl56ehQYE",
+    "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Trials Of Infinity",
     "id": "trials-of-infinity",
     "player": "VoPlat",
