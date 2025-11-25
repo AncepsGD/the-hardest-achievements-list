@@ -723,6 +723,23 @@
     ]
   },
   {
+    "name": "Azure Flare (VERTOP) 49%",
+    "id": "azure-flare-vertop-49",
+    "player": "VERTOP",
+    "date": "2025-11-24",
+    "length": 29,
+    "version": 2.2,
+    "video": "https://youtu.be/PeT5GAsu-rM",
+    "levelID": 97429207,
+    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/97429207",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "andromeda",
     "id": "andromeda",
     "player": "Taiago",
@@ -2242,9 +2259,9 @@
     "id": "acheron-riot-47-100",
     "player": "xalval",
     "date": "2025-06-28",
-    "length": "30",
-    "version": "2.2",
-    "levelID": "82758705",
+    "length": 30,
+    "version": 2.2,
+    "levelID": 82758705,
     "video": "https://youtu.be/Y3IBLK3t40U&t=50",
     "showcaseVideo": "https://youtu.be/Pui-sfRR_kQ",
     "submitter": "TYATYAPKA",
@@ -2717,6 +2734,21 @@
     ]
   },
   {
+    "name": "ANTARCTIC LIGHTS 70%",
+    "id": "antarctic-lights-70",
+    "player": "Axinity",
+    "length": 55,
+    "version": 2.2,
+    "video": "https://www.twitch.tv/axinitygd/clip/HeadstrongSuperDiscDogFace-5qDlKDI-W6BkpI1f",
+    "date": "2025-11-24",
+    "showcaseVideo": "https://youtu.be/oZfKkZ36L9Q",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Subterminal Point",
     "id": "subterminal-point",
     "player": "PoCle",
@@ -2767,9 +2799,9 @@
     "id": "acheron-wolvez-96",
     "player": "Wolvez",
     "date": "2022-04-09",
-    "length": "67",
-    "version": "2.1",
-    "levelID": "79312442",
+    "length": 67,
+    "version": 2.1,
+    "levelID": 79312442,
     "showcaseVideo": "https://youtu.be/EuZY748OnYU",
     "video": "https://youtu.be/Hjmtt7q5boA",
     "submitter": "kyle1saurus",
@@ -3347,23 +3379,6 @@
     "submitter": "Anceps",
     "video": "https://youtu.be/VHgRQfFy9xc",
     "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Azure Flare (VERTOP) 45%",
-    "id": "azure-flare-vertop-45",
-    "player": "VERTOP",
-    "date": "2023-11-17",
-    "length": 26,
-    "version": 2.1,
-    "video": "https://youtu.be/OiK2Tny1c0U",
-    "levelID": 97429207,
-    "showcaseVideo": "https://youtu.be/sJkeRnrAqWQ",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/97429207",
-    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Progress"
@@ -6205,21 +6220,6 @@
     ]
   },
   {
-    "name": "ANTARCTIC LIGHTS 63%",
-    "id": "antarctic-lights-63",
-    "player": "Axinity",
-    "length": 50,
-    "version": 2.2,
-    "video": "https://t.co/OjeXFZefJU",
-    "date": "2025-10-28",
-    "showcaseVideo": "https://youtu.be/oZfKkZ36L9Q",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "i propose 57%",
     "id": "i-propose-57",
     "player": "zXdasfsa",
@@ -6253,8 +6253,8 @@
     "name": "Ex Vacuo 53-100%",
     "id": "ex-vacuo-53-100",
     "player": "Laniakea",
-    "length": "66",
-    "version": "2.2",
+    "length": 66,
+    "version": 2.2,
     "video": "https://youtu.be/kP4p23TmZsA&t=73",
     "showcaseVideo": "https://youtu.be/CVXC2_bveBQ",
     "date": "2025-08-19",
@@ -10803,4 +10803,5 @@
       "Rated"
     ]
   }
+
 ]
