@@ -83,6 +83,57 @@
     ]
   },
   {
+        "name": "Glaz Diavola 60hz Mobile",
+        "id": "glaz-diavola-60hz-mobile",
+        "player": "cring",
+        "length": 9,
+        "version": 2.1,
+        "video": "https://youtu.be/jOZRbHU5ldA",
+        "date": "2023-10-16",
+        "showcaseVideo": "https://youtu.be/5UtPYnXjy_Q",
+        "submitter": "th3name",
+        "levelID": 77593145,
+        "tags": [
+            "Challenge",
+            "Low Hertz",
+            "Mobile"
+        ]
+    },
+    {
+        "name": "60hz Mobile",
+        "id": "60hz-mobile",
+        "player": "ScorchBTD",
+        "levelID": 86592424,
+        "date": "2023-06-11",
+        "length": 16,
+        "version": 2.1,
+        "video": "https://youtu.be/rz43b5hZ4nw",
+        "showcaseVideo": "https://youtu.be/e1eiAvcQT_M",
+        "submitter": "ScorchBTD",
+        "tags": [
+            "Challenge",
+            "Low Hertz",
+            "Mobile"
+        ]
+    },
+    {
+        "name": "Superr Challenge 60hz Mobile",
+        "id": "superr-challenge-60hz-mobile",
+        "player": "Peng Peng Hong",
+        "levelID": 47354575,
+        "date": "2025-07-06",
+        "length": 17,
+        "version": 2.2,
+        "video": "https://youtu.be/njjww03BuOE",
+        "showcaseVideo": null,
+        "submitter": "th3name",
+        "tags": [
+            "Challenge",
+            "Low Hertz",
+            "Mobile"
+        ]
+    },
+    {
     "name": "Trials Of Infinity",
     "id": "trials-of-infinity",
     "player": "VoPlat",
@@ -91,7 +142,7 @@
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/X288_MLVKV8",
-    "showcaseVideo": null,
+    "showcaseVideo": "https://youtu.be/gUDcf4pe-mc",
     "tags": [
       "Platformer",
       "Verified"
@@ -106,7 +157,7 @@
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/NHTeNICMq5k",
-    "showcaseVideo": null,
+    "showcaseVideo": "https://youtu.be/CFy3E9wWk2k",
     "tags": [
       "Platformer",
       "Verified"
@@ -136,7 +187,7 @@
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/v0DI0lRZWZI",
-    "showcaseVideo": null,
+    "showcaseVideo": "https://youtu.be/IFfaTTRssTQ",
     "tags": [
       "Platformer",
       "Deathless",
@@ -152,7 +203,7 @@
     "version": 2.2,
     "submitter": "SirDoodle2920",
     "video": "https://youtu.be/9NTFHFI73So",
-    "showcaseVideo": null,
+    "showcaseVideo": "https://youtu.be/DNszb2CkTak",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/110096141",
     "tags": [
       "Platformer",
