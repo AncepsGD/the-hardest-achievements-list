@@ -9609,6 +9609,40 @@
     ]
   },
   {
+        "name": "Sonic Wave 449%",
+        "id": "sonic-wave-449",
+        "player": "Trick",
+        "levelID": 26681070,
+        "date": "2024-09-21",
+        "length": 544,
+        "version": 2.2,
+        "video": "https://youtu.be/Ny_3b2mlkZM&t=1203",
+        "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
+        "submitter": "vaughn",
+        "tags": [
+            "Level",
+            "Consistency",
+            "Rated"
+        ]
+    },
+    {
+        "name": "Sonic Wave Rebirth 429%",
+        "id": "sonic-wave-rebirth-429",
+        "player": "PoCle",
+        "levelID": 68688849,
+        "date": "2024-09-07",
+        "length": 541,
+        "version": 2.2,
+        "video": "https://youtu.be/XD0UqeRaYCE&t=3183",
+        "showcaseVideo": "https://youtu.be/5VWq3JL3DnA",
+        "submitter": "kyle1saurus",
+        "tags": [
+            "Level",
+            "Consistency",
+            "Rated"
+        ]
+    },
+    {
     "name": "BEELINE 144hz",
     "id": "beeline-144hz",
     "player": "Nsaynchkn",
@@ -10953,5 +10987,6 @@
     ]
   }
 ]
+
 
 
