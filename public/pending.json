@@ -51,14 +51,14 @@
   ]
 },
 {
-    "name": "Unnerfed unknown 58%",
-    "id": "unnerfed-unknown-58",
-    "player": "Emp",
-    "levelID": null,
-    "date": "2025-11-24",
-    "length": 24,
+    "name": "Unnerfed unknown 80%",
+    "id": "unnerfed-unknown-80",
+    "player": "ffzer",
+    "levelID": 70003258,
+    "date": "2025-11-25",
+    "length": 32,
     "version": 2.2,
-    "video": "https://youtu.be/G5LSciK5_VM",
+    "video": "https://youtu.be/cIevykznhZQ",
     "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
     "submitter": "kyle1saurus",
     "tags": [
@@ -67,16 +67,16 @@
     ]
   },
   {
-    "name": "Unnerfed unknown 11-80%",
-    "id": "unnerfed-unknown-11-80",
-    "player": "Emp",
-    "levelID": null,
-    "date": "2025-11-24",
-    "length": 24,
+    "name": "Unnerfed unknown 33-100%",
+    "id": "unnerfed-unknown-33-100",
+    "player": "ffzer",
+    "levelID": 70003258,
+    "date": "2025-11-25",
+    "length": 30,
     "version": 2.2,
-    "video": "https://youtu.be/AbSl56ehQYE",
+    "video": "https://youtu.be/cIevykznhZQ?t=45",
     "showcaseVideo": "https://youtu.be/GBhwmQfdCmQ",
-    "submitter": "TYATYAPKA",
+    "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Progress"
