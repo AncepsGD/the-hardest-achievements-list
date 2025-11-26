@@ -1,20 +1,37 @@
 [
   {
-    "name": "Society 62-100%",
-    "id": "silent-circles-starchman-62-100",
-    "player": "Juls",
-    "levelID": null,
+    "name": "Society 25-33%",
+    "id": "society-25-33",
+    "player": "Nickname",
+    "levelID": 127323087,
     "date": "2025-11-25",
-    "length": 30,
+    "length": 8,
     "version": 2.2,
-    "video": "https://youtu.be/AFj_sU1zljQ",
-    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "submitter": "Juls",
+    "video": "https://youtu.be/AFj_sU1zljQ?t=2m45s",
+    "showcaseVideo": "https://www.youtube.com/watch?v=6s-NBTRzspE",
+    "submitter": "Exiled_Shade",
     "tags": [
       "Level",
       "Progress"
     ]
   },
+  {
+  "name": "Society 33-50%",
+    "id": "society-25-33",
+    "player": "galagzee",
+    "levelID": 127323087,
+    "date": "2025-11-25",
+    "length": 16,
+    "version": 2.2,
+    "video": "https://youtu.be/AFj_sU1zljQ?t=2m53s",
+    "showcaseVideo": "https://www.youtube.com/watch?v=6s-NBTRzspE",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
   "name": "Silent Circles (Starchman) 62-100%",
     "id": "silent-circles-starchman-62-100",
     "player": "Juls",
