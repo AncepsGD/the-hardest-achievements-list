@@ -2288,6 +2288,21 @@
     ]
   },
   {
+    "name": "ANTARCTIC LIGHTS 25-89%",
+    "id": "antarctic-lights-25-89",
+    "player": "Axinity",
+    "length": 35,
+    "version": 2.2,
+    "video": "https://youtu.be/vh8RS2HPGnI",
+    "date": "2025-11-25",
+    "showcaseVideo": "https://youtu.be/oZfKkZ36L9Q",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Illusion of Hell",
     "id": "illusion-of-hell",
     "player": "Diamond",
@@ -4094,21 +4109,6 @@
     "length": 40,
     "version": 2.2,
     "video": "https://youtu.be/DoCLqk1Q2Ac",
-    "showcaseVideo": "https://youtu.be/oZfKkZ36L9Q",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "ANTARCTIC LIGHTS 25-85%",
-    "id": "antarctic-lights-25-85",
-    "player": "Axinity",
-    "length": 33,
-    "version": 2.2,
-    "video": "https://youtu.be/olGmPqgSQ0o",
-    "date": "2025-10-16",
     "showcaseVideo": "https://youtu.be/oZfKkZ36L9Q",
     "submitter": "Exiled_Shade",
     "tags": [
@@ -8126,6 +8126,7 @@
     "version": 2.1,
     "video": "https://youtu.be/qj6jdlSg5no",
     "submitter": "kyle1saurus",
+    "showcaseVideo": "https://youtu.be/LYOt7Frj5Ck",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/firework1.webp",
     "tags": [
       "Level",
@@ -10814,3 +10815,4 @@
     ]
   }
 ]
+
