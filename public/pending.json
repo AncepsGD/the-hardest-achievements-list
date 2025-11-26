@@ -16,6 +16,40 @@
     ]
   },
   {
+  "name": "Agile 60hz Mobile",
+    "id": "agile-60hz-mobile",
+    "player": "Peng Peng Hong",
+    "levelID": 64697883,
+    "date": "2025-07-06",
+    "length": 15,
+    "version": 2.2,
+    "video": "https://youtu.be/zRXAHOSs1y4",
+    "showcaseVideo": "https://youtu.be/sQJc10JwpLM",
+    "submitter": "Peng Peng Hong",
+    "tags": [
+      "Challenge",
+      "Mobile",
+      "Low Hertz"
+    ]
+  },
+  {
+  "name": "I see 60hz Mobile",
+    "id": "i-see-60hz-mobile",
+    "player": "cringmobilplayer",
+    "levelID": 64697883,
+    "date": "2023-05-15",
+    "length": 13,
+    "version": 2.1,
+    "video": "https://youtu.be/c_DcZdwZJDk",
+    "showcaseVideo": "https://youtu.be/sQJc10JwpLM",
+    "submitter": "Peng Peng Hong",
+    "tags": [
+      "Challenge",
+      "Mobile",
+      "Low Hertz"
+    ]
+  },
+  {
   "name": "Society 33-50%",
     "id": "society-25-33",
     "player": "galagzee",
