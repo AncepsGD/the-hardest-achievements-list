@@ -7167,6 +7167,22 @@
     ]
   },
   {
+    "name": "Silent Circles (Starchman) 62-100%, 62-83%, 62-97%",
+    "id": "silent-circles-starchman-62-100-62-83-62-97",
+    "player": "Juls",
+    "levelID": null,
+    "date": "2025-11-25",
+    "length": 30,
+    "version": 2.2,
+    "video": "https://youtu.be/buGlnp62eLg",
+    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
+    "submitter": "Juls",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Solar Flare",
     "id": "solar-flare",
     "player": "swiborg",
@@ -9528,6 +9544,22 @@
     ]
   },
   {
+    "name": "Society 25-33%",
+    "id": "society-25-33",
+    "player": "Nickname",
+    "levelID": 127323087,
+    "date": "2025-11-25",
+    "length": 8,
+    "version": 2.2,
+    "video": "https://youtu.be/AFj_sU1zljQ?t=2m45s",
+    "showcaseVideo": "https://www.youtube.com/watch?v=6s-NBTRzspE",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Spectrolux",
     "id": "spectrolux",
     "player": "fusion425",
@@ -9662,6 +9694,22 @@
     ]
   },
   {
+    "name": "Silent Circles (Starchman) 62-100%",
+    "id": "silent-circles-starchman-62-100",
+    "player": "Juls",
+    "levelID": null,
+    "date": "2025-11-25",
+    "length": 30,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/Y3YThm5gBcQ?t=38m23s",
+    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
+    "submitter": "Juls",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Ragnarok 75hz",
     "id": "ragnarok-75hz",
     "player": "wwdonut",
@@ -9763,6 +9811,22 @@
     ]
   },
   {
+    "name": "Silent Circles (Starchman) 53-91%",
+    "id": "silent-circles-starchman-53-91",
+    "player": "Juls",
+    "levelID": null,
+    "date": "2025-11-25",
+    "length": 30,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/Y3YThm5gBcQ?t=1h17m19s",
+    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
+    "submitter": "Juls",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Sonic Wave Infinity 480hz Mobile",
     "id": "sonic-wave-infinity-480hz-mobile",
     "player": "Rotys",
@@ -9789,6 +9853,7 @@
     "version": 2.1,
     "video": "https://youtu.be/opmsfLvtQoU",
     "showcaseVideo": "https://youtu.be/QYd2YdKtj8Y",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/69685815",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -9892,6 +9957,7 @@
     "version": 2.2,
     "video": "https://youtu.be/jWUkVGeXiXM",
     "showcaseVideo": "https://youtu.be/q3M4_gezvLc",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/123417713",
     "tags": [
       "Level",
       "Progress"
@@ -9911,6 +9977,22 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "Society 33-50%",
+    "id": "society-25-33",
+    "player": "galagzee",
+    "levelID": 127323087,
+    "date": "2025-11-25",
+    "length": 16,
+    "version": 2.2,
+    "video": "https://youtu.be/AFj_sU1zljQ?t=2m53s",
+    "showcaseVideo": "https://www.youtube.com/watch?v=6s-NBTRzspE",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -9964,6 +10046,23 @@
       "Mobile",
       "Progress",
       "Rated"
+    ]
+  },
+  {
+    "name": "Agile 60hz Mobile",
+    "id": "agile-60hz-mobile",
+    "player": "Peng Peng Hong",
+    "levelID": 64697883,
+    "date": "2025-07-06",
+    "length": 15,
+    "version": 2.2,
+    "video": "https://youtu.be/zRXAHOSs1y4",
+    "showcaseVideo": "https://youtu.be/sQJc10JwpLM",
+    "submitter": "Peng Peng Hong",
+    "tags": [
+      "Challenge",
+      "Mobile",
+      "Low Hertz"
     ]
   },
   {
@@ -10023,9 +10122,9 @@
     "id": "exens-limit-12x-58-100",
     "player": "Skylar",
     "date": "2025-05-13",
-    "length": "15",
-    "version": "2.2",
-    "levelID": "97338077",
+    "length": 15,
+    "version": 2.2,
+    "levelID": 97338077,
     "video": "https://youtu.be/3XHN2gkHzNk",
     "showcaseVideo": "https://youtu.be/ZpeknSJF-2U",
     "submitter": "kittycatiscute",
@@ -10053,23 +10152,6 @@
     ]
   },
   {
-    "name": "Silent Circles (Starchman) 62-100%",
-    "id": "silent-circles-starchman-62-100",
-    "player": "Juls",
-    "levelID": null,
-    "date": "2025-11-09",
-    "length": 30,
-    "version": 2.2,
-    "video": "https://youtu.be/JMPTi_Utnao",
-    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
     "name": "Axinie 144hz Mobile 83%",
     "id": "axinie-144hz-mobile-83",
     "player": "Mateex",
@@ -10093,9 +10175,9 @@
     "id": "kyouki-11x-30-78",
     "player": "goldix",
     "date": "2024-08-13",
-    "length": "37",
-    "version": "2.1",
-    "levelID": "86018142",
+    "length": 37,
+    "version": 2.1,
+    "levelID": 86018142,
     "video": "https://youtu.be/9MGw5yHS5uQ",
     "showcaseVideo": "https://youtu.be/RBeyMGug3J0",
     "submitter": "kyle1saurus",
@@ -10328,6 +10410,7 @@
     "id": "riots-demise-99",
     "player": "noname228gg",
     "date": "2024-12-02",
+    "levelID": 75080274,
     "length": 111,
     "version": 2.2,
     "video": "https://youtu.be/LDs-XQCVlW8",
@@ -10336,8 +10419,7 @@
     "tags": [
       "Level",
       "Progress"
-    ],
-    "levelID": 75080274
+    ]
   },
   {
     "name": "Buffbath",
@@ -10954,6 +11036,23 @@
     ]
   },
   {
+    "name": "I see 60hz Mobile",
+    "id": "i-see-60hz-mobile",
+    "player": "cringmobilplayer",
+    "levelID": 64697883,
+    "date": "2023-05-15",
+    "length": 13,
+    "version": 2.1,
+    "video": "https://youtu.be/c_DcZdwZJDk",
+    "showcaseVideo": "https://youtu.be/wwp08jk-T0c",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Challenge",
+      "Mobile",
+      "Low Hertz"
+    ]
+  },
+  {
     "name": "Blue Tartarus",
     "id": "blue-tartarus",
     "player": "breakcore11",
@@ -10987,7 +11086,3 @@
     ]
   }
 ]
-
-
-
-
