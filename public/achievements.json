@@ -6359,23 +6359,23 @@
     ]
   },
   {
-        "name": "60hz Mobile",
-        "id": "60hz-mobile",
-        "player": "ScorchBTD",
-        "levelID": 86592424,
-        "date": "2023-06-11",
-        "length": 16,
-        "version": 2.1,
-        "video": "https://youtu.be/rz43b5hZ4nw",
-        "showcaseVideo": "https://youtu.be/e1eiAvcQT_M",
-        "submitter": "ScorchBTD",
-        "tags": [
-            "Challenge",
-            "Low Hertz",
-            "Mobile"
-        ]
-    },
-    {
+    "name": "60hz Mobile",
+    "id": "60hz-mobile",
+    "player": "ScorchBTD",
+    "levelID": 86592424,
+    "date": "2023-06-11",
+    "length": 16,
+    "version": 2.1,
+    "video": "https://youtu.be/rz43b5hZ4nw",
+    "showcaseVideo": "https://youtu.be/e1eiAvcQT_M",
+    "submitter": "ScorchBTD",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+  {
     "name": "Trueffet 144hz Mobile 74%",
     "id": "trueffet-144hz-mobile-74",
     "player": "bemj80",
@@ -6566,22 +6566,22 @@
   },
   {
     "name": "Glaz Diavola 60hz Mobile",
-        "id": "glaz-diavola-60hz-mobile",
-        "player": "cring",
-        "length": 9,
-        "version": 2.1,
-        "video": "https://youtu.be/jOZRbHU5ldA",
-        "date": "2023-10-16",
-        "showcaseVideo": "https://youtu.be/5UtPYnXjy_Q",
-        "submitter": "th3name",
-        "levelID": 77593145,
-        "tags": [
-            "Challenge",
-            "Low Hertz",
-            "Mobile"
-        ]
-    },
-    {
+    "id": "glaz-diavola-60hz-mobile",
+    "player": "cring",
+    "length": 9,
+    "version": 2.1,
+    "video": "https://youtu.be/jOZRbHU5ldA",
+    "date": "2023-10-16",
+    "showcaseVideo": "https://youtu.be/5UtPYnXjy_Q",
+    "submitter": "th3name",
+    "levelID": 77593145,
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+  {
     "name": "Sakupen Circles (Cursed) 44-70%",
     "id": "sakpen-circles-cursed-44-70",
     "player": "Emp",
@@ -7367,22 +7367,6 @@
     ]
   },
   {
-    "name": "ETERNALtheory",
-    "id": "eternaltheory",
-    "player": "Hyperlith",
-    "levelID": 92196326,
-    "date": "2023-07-06",
-    "length": 89,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/3LfjQWk9Hyg",
-    "showcaseVideo": "https://youtu.be/a3xBOH7RsrU",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "Avernus 480hz Mobile 47-77%",
     "id": "avernus-480hz-mobile-47-77",
     "player": "Prmak",
@@ -7833,6 +7817,22 @@
     "submitter": "Anceps",
     "video": "https://youtu.be/4_C6BaxD1D4",
     "showcaseVideo": "https://youtu.be/UdBS9JYYlZ8",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
+    "name": "ETERNALtheory",
+    "id": "eternaltheory",
+    "player": "Hyperlith",
+    "levelID": 92196326,
+    "date": "2023-07-06",
+    "length": 89,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/3LfjQWk9Hyg",
+    "showcaseVideo": "https://youtu.be/a3xBOH7RsrU",
     "tags": [
       "Level",
       "Verified"
@@ -8531,23 +8531,23 @@
     ]
   },
   {
-        "name": "Superr Challenge 60hz Mobile",
-        "id": "superr-challenge-60hz-mobile",
-        "player": "Peng Peng Hong",
-        "levelID": 47354575,
-        "date": "2025-07-06",
-        "length": 17,
-        "version": 2.2,
-        "video": "https://youtu.be/njjww03BuOE",
-        "showcaseVideo": null,
-        "submitter": "th3name",
-        "tags": [
-            "Challenge",
-            "Low Hertz",
-            "Mobile"
-        ]
-    },
-    {
+    "name": "Superr Challenge 60hz Mobile",
+    "id": "superr-challenge-60hz-mobile",
+    "player": "Peng Peng Hong",
+    "levelID": 47354575,
+    "date": "2025-07-06",
+    "length": 17,
+    "version": 2.2,
+    "video": "https://youtu.be/njjww03BuOE",
+    "showcaseVideo": null,
+    "submitter": "th3name",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+  {
     "name": "Kyoto",
     "id": "kyoto",
     "player": "scorchtape",
@@ -9051,23 +9051,23 @@
     ]
   },
   {
-  "name": "garden",
-  "id": "garden",
-  "player": "lus",
-  "date": "2025-11-14",
-  "levelID": 128105257,
-  "length": 232,
-  "version": 2.2,
-  "submitter": "Natalie :3",
-  "video": "https://www.youtube.com/watch?v=2oRX3tq5Rds",
-  "showcaseVideo": "https://youtu.be/zhbEyNxWwNg",
-  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/128105257",
-  "tags": [
-    "Level",
-    "Verified"
-  ]
-},
-{
+    "name": "garden",
+    "id": "garden",
+    "player": "lus",
+    "date": "2025-11-14",
+    "levelID": 128105257,
+    "length": 232,
+    "version": 2.2,
+    "submitter": "Natalie :3",
+    "video": "https://www.youtube.com/watch?v=2oRX3tq5Rds",
+    "showcaseVideo": "https://youtu.be/zhbEyNxWwNg",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/128105257",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Buffed Misanthrope 12-52%",
     "id": "buffed-misanthrope-12-52",
     "player": "BigMacGD",
@@ -9641,23 +9641,23 @@
     ]
   },
   {
-        "name": "Sonic Wave 549%",
-        "id": "sonic-wave-549",
-        "player": "Trick",
-        "levelID": 26681070,
-        "date": "2024-09-21",
-        "length": 675,
-        "version": 2.1,
-        "video": "https://youtu.be/Ny_3b2mlkZM?t=1203",
-        "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
-        "submitter": "vaughn",
-        "tags": [
-            "Level",
-            "Consistency",
-            "Rated"
-        ]
-    },
-    {
+    "name": "Sonic Wave 549%",
+    "id": "sonic-wave-549",
+    "player": "Trick",
+    "levelID": 26681070,
+    "date": "2024-09-21",
+    "length": 675,
+    "version": 2.1,
+    "video": "https://youtu.be/Ny_3b2mlkZM?t=1203",
+    "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
+    "submitter": "vaughn",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ]
+  },
+  {
     "name": "BEELINE 144hz",
     "id": "beeline-144hz",
     "player": "Nsaynchkn",
@@ -10061,8 +10061,8 @@
     "submitter": "Peng Peng Hong",
     "tags": [
       "Challenge",
-      "Mobile",
-      "Low Hertz"
+      "Low Hertz",
+      "Mobile"
     ]
   },
   {
@@ -10613,23 +10613,23 @@
     ]
   },
   {
-        "name": "Sonic Wave Rebirth 429%",
-        "id": "sonic-wave-rebirth-429",
-        "player": "PoCle",
-        "levelID": 68688849,
-        "date": "2024-09-07",
-        "length": 541,
-        "version": 2.2,
-        "video": "https://youtu.be/XD0UqeRaYCE&t=53m03s",
-        "showcaseVideo": "https://youtu.be/5VWq3JL3DnA",
-        "submitter": "kyle1saurus",
-        "tags": [
-            "Level",
-            "Consistency",
-            "Rated"
-        ]
-    },
-    {
+    "name": "Sonic Wave Rebirth 429%",
+    "id": "sonic-wave-rebirth-429",
+    "player": "PoCle",
+    "levelID": 68688849,
+    "date": "2024-09-07",
+    "length": 541,
+    "version": 2.2,
+    "video": "https://youtu.be/XD0UqeRaYCE&t=53m03s",
+    "showcaseVideo": "https://youtu.be/5VWq3JL3DnA",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ]
+  },
+  {
     "name": "Eternal Night 31%",
     "id": "eternal-night-31",
     "player": "Trolley1",
@@ -10795,23 +10795,23 @@
     ]
   },
   {
-  "name": "Slaughterhouse (Chopblox) 48-100%",
-  "id": "slaughterhouse-chopblox-48-100",
-  "player": "Chopblox",
-  "date": "2025-11-23",
-  "levelID": null,
-  "length": 30,
-  "version": 2.2,
-  "submitter": "kittycatiscute",
-  "video": "https://www.youtube.com/watch?v=bSn2eUORkSU",
-  "showcaseVideo": null,
-  "tags": [
-    "Level",
-    "Progress",
-    "CBF"
-  ]
-},
-{
+    "name": "Slaughterhouse (Chopblox) 48-100%",
+    "id": "slaughterhouse-chopblox-48-100",
+    "player": "Chopblox",
+    "date": "2025-11-23",
+    "levelID": null,
+    "length": 30,
+    "version": 2.2,
+    "submitter": "kittycatiscute",
+    "video": "https://www.youtube.com/watch?v=bSn2eUORkSU",
+    "showcaseVideo": null,
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "E N D",
     "id": "e-n-d",
     "player": "KARMAKAZE",
@@ -10987,22 +10987,22 @@
   },
   {
     "name": "Blade Of Justice 612%",
-  "id": "blade-of-justice-612",
-  "player": "mosk1712",
-  "date": "2025-11-23",
-  "levelID": 35448603,
-  "length": 120,
-  "version": 2.2,
-  "submitter": "axellssl",
-  "video": "https://youtu.be/j0xUmqbkxg4",
-  "showcaseVideo": "https://youtu.be/vHij4M3TBfY",
-  "tags": [
-    "Level",
-    "Consistency",
-    "Rated"
-  ]
-},
-{
+    "id": "blade-of-justice-612",
+    "player": "mosk1712",
+    "date": "2025-11-23",
+    "levelID": 35448603,
+    "length": 120,
+    "version": 2.2,
+    "submitter": "axellssl",
+    "video": "https://youtu.be/j0xUmqbkxg4",
+    "showcaseVideo": "https://youtu.be/vHij4M3TBfY",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ]
+  },
+  {
     "name": "VENUS",
     "id": "venus",
     "player": "SeazeIsCool",
@@ -11048,8 +11048,8 @@
     "submitter": "TYATYAPKA",
     "tags": [
       "Challenge",
-      "Mobile",
-      "Low Hertz"
+      "Low Hertz",
+      "Mobile"
     ]
   },
   {
@@ -11086,5 +11086,3 @@
     ]
   }
 ]
-
-
