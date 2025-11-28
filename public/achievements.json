@@ -7150,6 +7150,22 @@
     ]
   },
   {
+    "name": "Silent Circles (Starchman) 53-91%",
+    "id": "silent-circles-starchman-53-91",
+    "player": "Juls",
+    "levelID": null,
+    "date": "2025-11-25",
+    "length": 30,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/Y3YThm5gBcQ?t=1h17m19s",
+    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
+    "submitter": "Juls",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Edge of Destiny",
     "id": "edge-of-destiny",
     "player": "polterghast",
@@ -7164,22 +7180,6 @@
       "Level",
       "Verified",
       "Rated"
-    ]
-  },
-  {
-    "name": "Silent Circles (Starchman) 62-100%, 62-83%, 62-97%",
-    "id": "silent-circles-starchman-62-100-62-83-62-97",
-    "player": "Juls",
-    "levelID": null,
-    "date": "2025-11-25",
-    "length": 30,
-    "version": 2.2,
-    "video": "https://youtu.be/buGlnp62eLg",
-    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "submitter": "Juls",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -7203,13 +7203,13 @@
     "name": "The Golden 1.25x 36-100%",
     "id": "the-golden-1-25x-36-100",
     "player": "goldix",
-    "length": "42",
-    "version": "2.1",
+    "length": 42,
+    "version": 2.1,
     "video": "https://youtu.be/fuW1FfGQ5co",
     "showcaseVideo": "https://youtu.be/lbrN3kasxR0",
     "date": "2025-08-23",
     "submitter": "jak",
-    "levelID": "60978746",
+    "levelID": 60978746,
     "tags": [
       "Level",
       "Speedhack",
@@ -7238,8 +7238,8 @@
     "id": "retray-wave-39-74",
     "player": "Caleger",
     "date": "2025-04-13",
-    "length": "7",
-    "version": "2.2",
+    "length": 7,
+    "version": 2.2,
     "video": "https://youtu.be/-yChFnq6N5w",
     "showcaseVideo": "https://youtu.be/c3F9s7jqIFk",
     "submitter": "kyle1saurus",
@@ -7608,6 +7608,7 @@
     "version": 2.2,
     "video": "https://youtu.be/IQ_CqIwlqUM",
     "showcaseVideo": "https://youtu.be/UPZJHVYJyhw",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/125317359",
     "submitter": "Exiled_Shade",
     "tags": [
       "Level",
@@ -8340,6 +8341,7 @@
     "length": 100,
     "version": 2.2,
     "video": "https://youtu.be/7NlSMZRKI2E",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/123042674",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -8352,9 +8354,9 @@
     "id": "silent-acropolis-38",
     "player": "SeptaGon7",
     "date": "2025-04-13",
-    "length": "34",
-    "version": "2.2",
-    "levelID": "111237270",
+    "length": 34,
+    "version": 2.2,
+    "levelID": 111237270,
     "video": "https://youtu.be/jv-FNzqDDZ0",
     "showcaseVideo": "https://youtu.be/E2guz5tw6c8",
     "submitter": "SeptaGon7",
@@ -8501,9 +8503,9 @@
     "id": "dredlethal-vantamaxx",
     "player": "KyuPlays",
     "date": "2025-08-14",
-    "levelID": "108671100",
-    "length": "26",
-    "version": "2.2",
+    "levelID": 108671100,
+    "length": 26,
+    "version": 2.2,
     "video": "https://youtu.be/jAASLdLcdHA",
     "showcaseVideo": "https://youtu.be/kWDtcMvXRyw",
     "submitter": "goofygdplayer",
@@ -9811,22 +9813,6 @@
     ]
   },
   {
-    "name": "Silent Circles (Starchman) 53-91%",
-    "id": "silent-circles-starchman-53-91",
-    "player": "Juls",
-    "levelID": null,
-    "date": "2025-11-25",
-    "length": 30,
-    "version": 2.2,
-    "video": "https://www.youtube.com/live/Y3YThm5gBcQ?t=1h17m19s",
-    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "submitter": "Juls",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "Sonic Wave Infinity 480hz Mobile",
     "id": "sonic-wave-infinity-480hz-mobile",
     "player": "Rotys",
@@ -10348,6 +10334,7 @@
     "version": 2.1,
     "video": "https://youtu.be/5X38QMirccg",
     "showcaseVideo": "https://youtu.be/xtS4ibDPGxE",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/94858072",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -10536,7 +10523,8 @@
     "length": 80,
     "version": 2.1,
     "video": "https://youtu.be/2kxxOEbS58o",
-    "showcaseVideo": "https://youtu.be/lMTOnatGZjg",
+    "showcaseVideo": "https://youtu.be/VRAaWL1j0YU",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/66641815",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -11085,4 +11073,5 @@
       "Rated"
     ]
   }
+
 ]
