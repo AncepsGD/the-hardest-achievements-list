@@ -4830,6 +4830,7 @@
     "version": 2.2,
     "video": "https://youtu.be/o3_GutIGLG0",
     "showcaseVideo": "https://youtu.be/xN7R-z4rMQA",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/95045558",
     "submitter": "goofygdplayer",
     "tags": [
       "Level",
@@ -5010,6 +5011,7 @@
     "version": 2.2,
     "video": "https://youtu.be/uKuc1lQBd5w",
     "showcaseVideo": "https://youtu.be/Qi6yu86LUZY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/95045558",
     "submitter": "Exiled_Shade",
     "tags": [
       "Level",
@@ -10641,6 +10643,7 @@
     "name": "Eternal Night 31%",
     "id": "eternal-night-31",
     "player": "Trolley1",
+    "levelID": 73011766,
     "length": 30,
     "version": 2.2,
     "video": "https://youtu.be/f9ewrnsAAvs",
@@ -11114,3 +11117,4 @@
   }
 
 ]
+
