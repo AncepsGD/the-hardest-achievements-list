@@ -2826,6 +2826,23 @@
     ]
   },
   {
+    "name": "Drukilicide 37-70%",
+    "id": "drukilicide-37-70",
+    "player": "Xtra8nugz",
+    "levelID": 120478542,
+    "date": "2025-11-29",
+    "length": 27,
+    "version": 2.2,
+    "video": "https://youtube.com/clip/UgkxNDn9oBH6OtTsjbeO1sKzuxwXdRRxVBPh",
+    "showcaseVideo": null,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
+    "submitter": "Kuri",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Flamewall (OneAlphaHelix) 60%",
     "id": "flamewall-onealphahelix-60",
     "player": "OneAlphaHelix",
@@ -4262,23 +4279,6 @@
     "submitter": "kyle1saurus",
     "tags": [
       "Challenge",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Drukilicide 36-67%",
-    "id": "drukilicide-36-67",
-    "player": "Xtra8nugz",
-    "levelID": 120478542,
-    "date": "2025-09-14",
-    "length": 23,
-    "version": 2.2,
-    "video": "https://youtu.be/OVuh8hDHNvQ",
-    "showcaseVideo": null,
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
-    "submitter": "JustAComfyCookie",
-    "tags": [
-      "Level",
       "Progress"
     ]
   },
@@ -9382,6 +9382,25 @@
     ]
   },
   {
+    "name": "Verdant Landscape 120hz Mobile 17-93%",
+        "id": "verdant-landscape-120hz-mobile-17-93",
+        "player": "Que2Yo",
+        "date": "2025-11-29",
+        "length": 60,
+        "version": 2.2,
+        "levelID": 76543324,
+        "video": "https://youtu.be/vhjCWVLrdlQ",
+        "showcaseVideo": "https://youtu.be/dSbox0NKuXs",
+        "submitter": "kyle1saurus",
+        "tags": [
+            "Level",
+            "Low Hertz",
+            "Mobile",
+            "Progress",
+            "Rated"
+        ]
+    },
+    {
     "name": "Solar Flare 480hz Mobile 34-100%",
     "id": "solar-flare-480hz-mobile-34-100",
     "player": "YgoLb1",
@@ -10635,6 +10654,25 @@
     ]
   },
   {
+    "name": "Fragile 180hz Mobile 93%",
+        "id": "fragile-180hz-mobile-93",
+        "player": "ZaX1",
+        "length": 98,
+        "version": 2.2,
+        "video": "https://youtu.be/v7ZdCL-2F_o",
+        "date": "2025-05-12",
+        "showcaseVideo": "https://youtu.be/mp55yC6oM1o",
+        "submitter": "Anceps",
+        "levelID": 65588448,
+        "tags": [
+            "Rated",
+            "Level",
+            "CBF",
+            "Mobile",
+            "Progress"
+        ]
+    },
+    {
     "name": "Kuzureta 60hz Mobile",
     "id": "kuzureta-60hz-mobile",
     "player": "Hydrus73",
@@ -11074,4 +11112,5 @@
       "Rated"
     ]
   }
+
 ]
