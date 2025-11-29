@@ -5354,6 +5354,7 @@
     "version": 2.1,
     "video": "https://youtu.be/UMOqidVTMmk",
     "showcaseVideo": "https://youtu.be/bqKgTzTZ7N4",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/95851008",
     "submitter": "Tr1bto",
     "tags": [
       "Level",
@@ -5942,7 +5943,7 @@
     "length": 73,
     "version": 2.1,
     "video": "https://youtu.be/oFy5cYANqQA",
-    "showcaseVideo": "https://youtu.be/Go2xnL5uStI",
+    "showcaseVideo": "https://youtu.be/Nd26PP51VIY",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -6036,7 +6037,7 @@
     "length": 65,
     "version": 2.1,
     "video": "https://youtu.be/1gDrHIaCr_A",
-    "showcaseVideo": "https://youtu.be/Go2xnL5uStI",
+    "showcaseVideo": "https://youtu.be/Nd26PP51VIY",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -8017,10 +8018,11 @@
     "id": "vehemence-buffed-62-100",
     "player": "Radium",
     "date": "2023-06-24",
+    "levelID": 126826718,
     "length": 89,
     "version": 2.1,
     "video": "https://youtu.be/4hti5_iSl9k",
-    "showcaseVideo": "https://youtu.be/Iljkwy_NFAo",
+    "showcaseVideo": "https://youtu.be/BSGqtb9YwrY",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -8851,6 +8853,7 @@
     "date": "2024-11-03",
     "video": "https://youtu.be/8JOq9d61C-k",
     "showcaseVideo": "https://youtu.be/AauwACwyVBo",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/86592424",
     "submitter": "vaughn",
     "tags": [
       "Level",
@@ -11115,6 +11118,4 @@
       "Rated"
     ]
   }
-
 ]
-
