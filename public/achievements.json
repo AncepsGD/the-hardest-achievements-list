@@ -2715,13 +2715,14 @@
     ]
   },
   {
-    "name": "Sakupen Circles (Skylar) 76%",
-    "id": "sakupen-circles-skylar-76",
+    "name": "Sakupen Circles Nerfdate 76%",
+    "id": "sakupen-circles-nerfdate-76",
     "player": "Skylar",
     "date": "2025-08-16",
     "length": 36,
     "version": 2.2,
     "video": "https://youtu.be/93Pv6ny4ECI",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/116790129",
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -4012,6 +4013,7 @@
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/653-Er6VWcw",
     "showcaseVideo": "https://youtu.be/OzCGe5a5DTY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/83966317",
     "tags": [
       "Level",
       "Progress"
@@ -5591,22 +5593,6 @@
     ]
   },
   {
-    "name": "HAZARD DUTY PAY",
-    "id": "hazard-duty-pay",
-    "player": "w3rty",
-    "levelID": 104359956,
-    "date": "2024-03-18",
-    "length": 78,
-    "version": 2.2,
-    "video": "https://youtu.be/kpbE1vJXUos",
-    "showcaseVideo": "https://youtu.be/RgGuvJbDJZ4",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "FF 14%, 17% in a row",
     "id": "ff-14-17-in-a-row",
     "player": "Caleger",
@@ -5944,6 +5930,7 @@
     "version": 2.1,
     "video": "https://youtu.be/oFy5cYANqQA",
     "showcaseVideo": "https://youtu.be/Nd26PP51VIY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/72826858",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -6038,6 +6025,7 @@
     "version": 2.1,
     "video": "https://youtu.be/1gDrHIaCr_A",
     "showcaseVideo": "https://youtu.be/Nd26PP51VIY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/72826858",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -7394,9 +7382,9 @@
     "id": "tartarus-144hz",
     "player": "5shine",
     "date": "2023-07-09",
-    "length": "87",
-    "version": "2.1",
-    "levelID": "59075347",
+    "length": 87,
+    "version": 2.1,
+    "levelID": 59075347,
     "video": "https://youtu.be/UcoLCDQsJpg",
     "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
     "submitter": "MaruiG",
@@ -7444,10 +7432,11 @@
     "id": "i-n-j-u-r-y-18-81",
     "player": "zXdasfsa",
     "date": "2025-06-16",
-    "length": "18",
-    "version": "2.2",
+    "length": 18,
+    "version": 2.2,
     "video": "https://youtu.be/tXzRtJGmP9M",
     "showcaseVideo": "https://youtu.be/OzCGe5a5DTY",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/83966317",
     "submitter": "zXdasfsa",
     "tags": [
       "Level",
@@ -7499,6 +7488,22 @@
     "video": "https://youtu.be/Oh8t09JF-EA",
     "showcaseVideo": "https://youtu.be/qS3mHt8CeFU",
     "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
+    "name": "HAZARD DUTY PAY",
+    "id": "hazard-duty-pay",
+    "player": "w3rty",
+    "levelID": 104359956,
+    "date": "2024-03-18",
+    "length": 78,
+    "version": 2.2,
+    "video": "https://youtu.be/kpbE1vJXUos",
+    "showcaseVideo": "https://youtu.be/RgGuvJbDJZ4",
+    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Verified"
@@ -8059,22 +8064,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "Heavenly Sakupen",
-    "id": "heavenly-sakupen",
-    "player": "fusion425",
-    "date": "2025-08-02",
-    "levelID": 123467310,
-    "length": 41,
-    "version": 2.2,
-    "video": "https://youtu.be/4uwSVZBrtfg",
-    "showcaseVideo": "https://youtu.be/3qKBJW6u6DQ",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Verified"
     ]
   },
   {
@@ -9634,6 +9623,22 @@
     ]
   },
   {
+    "name": "Heavenly Sakupen",
+    "id": "heavenly-sakupen",
+    "player": "fusion425",
+    "date": "2025-08-02",
+    "levelID": 123467310,
+    "length": 41,
+    "version": 2.2,
+    "video": "https://youtu.be/4uwSVZBrtfg",
+    "showcaseVideo": "https://youtu.be/3qKBJW6u6DQ",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Sonic Wave 60hz Mobile",
     "id": "sonic-wave-60hz-mobile",
     "player": "Biprex",
@@ -11119,3 +11124,4 @@
     ]
   }
 ]
+
