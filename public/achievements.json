@@ -5022,21 +5022,6 @@
     ]
   },
   {
-    "name": "Azure Flare (polar) 46-78%",
-    "id": "azure-flare-polar-46-78",
-    "player": "polar",
-    "date": "2025-11-08",
-    "length": 18,
-    "version": 2.2,
-    "video": "https://youtu.be/N7TZc-NBmlo?t=30",
-    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
-    "submitter": "tmtsps12",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "Sakupen",
     "id": "sakupen",
     "player": "Cursed",
@@ -5701,6 +5686,7 @@
     "id": "azure-flare-polar-36-62",
     "player": "polar",
     "date": "2025-05-01",
+    "levelID": 123782119,
     "length": 14,
     "version": 2.2,
     "video": "https://youtu.be/IsRUxBcso2g",
@@ -5820,6 +5806,22 @@
       "Level",
       "Verified",
       "Rated"
+    ]
+  },
+  {
+    "name": "Azure Flare (polar) 46-78%",
+    "id": "azure-flare-polar-46-78",
+    "player": "polar",
+    "date": "2025-11-08",
+    "levelID": 123782119,
+    "length": 18,
+    "version": 2.2,
+    "video": "https://youtu.be/N7TZc-NBmlo?t=30",
+    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
+    "submitter": "tmtsps12",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -6658,6 +6660,22 @@
     ]
   },
   {
+    "name": "Azure Flare (polar) 40%",
+    "id": "azure-flare-polar-40",
+    "player": "polar",
+    "date": "2025-08-08",
+    "levelID": 123782119,
+    "length": 26,
+    "version": 2.2,
+    "video": "https://youtu.be/AqcPnSpbxzQ",
+    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
+    "submitter": "polar",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "CSE 40-100%",
     "id": "cse-40-100",
     "player": "seels",
@@ -6739,21 +6757,6 @@
       "Level",
       "Verified",
       "Rated"
-    ]
-  },
-  {
-    "name": "Azure Flare (polar) 60-100%",
-    "id": "azure-flare-polar-60-100",
-    "player": "polar",
-    "date": "2025-05-01",
-    "length": 27,
-    "version": 2.2,
-    "video": "https://youtu.be/6WcK69Ft5f8",
-    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -7639,6 +7642,22 @@
       "Challenge",
       "Verified",
       "CBF"
+    ]
+  },
+  {
+    "name": "Azure Flare (polar) 60-100%",
+    "id": "azure-flare-polar-60-100",
+    "player": "polar",
+    "date": "2025-05-01",
+    "levelID": 123782119,
+    "length": 27,
+    "version": 2.2,
+    "video": "https://youtu.be/6WcK69Ft5f8",
+    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -8735,21 +8754,6 @@
     "tags": [
       "Challenge",
       "Verified"
-    ]
-  },
-  {
-    "name": "Azure Flare (polar) 40%",
-    "id": "azure-flare-polar-40",
-    "player": "polar",
-    "date": "2025-08-08",
-    "length": 26,
-    "version": 2.2,
-    "video": "https://youtu.be/AqcPnSpbxzQ",
-    "showcaseVideo": "https://youtu.be/sXEE5F9Zg9E",
-    "submitter": "polar",
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -11124,4 +11128,5 @@
     ]
   }
 ]
+
 
