@@ -3770,6 +3770,23 @@
     ]
   },
   {
+    "name": "The Lightning Rod",
+    "id": "the-lightning-rod",
+    "player": "lavatrex",
+    "levelID": 93917076,
+    "date": "2023-08-28",
+    "length": 97,
+    "version": 2.1,
+    "submitter": "Anceps",
+    "video": "https://youtu.be/nQDTi077O6M",
+    "showcaseVideo": "https://youtu.be/dzVCMlRFPlc",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ]
+  },
+  {
     "name": "Sakupen Circles (Diamond)",
     "id": "sakupen-circles-diamond",
     "player": "Skylar",
@@ -5214,23 +5231,6 @@
       "Level",
       "Progress",
       "CBF"
-    ]
-  },
-  {
-    "name": "The Lightning Rod",
-    "id": "the-lightning-rod",
-    "player": "lavatrex",
-    "levelID": 93917076,
-    "date": "2023-08-28",
-    "length": 97,
-    "version": 2.1,
-    "submitter": "Anceps",
-    "video": "https://youtu.be/nQDTi077O6M",
-    "showcaseVideo": "https://youtu.be/dzVCMlRFPlc",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated"
     ]
   },
   {
@@ -9381,24 +9381,24 @@
   },
   {
     "name": "Verdant Landscape 120hz Mobile 17-93%",
-        "id": "verdant-landscape-120hz-mobile-17-93",
-        "player": "Que2Yo",
-        "date": "2025-11-29",
-        "length": 60,
-        "version": 2.2,
-        "levelID": 76543324,
-        "video": "https://youtu.be/vhjCWVLrdlQ",
-        "showcaseVideo": "https://youtu.be/dSbox0NKuXs",
-        "submitter": "kyle1saurus",
-        "tags": [
-            "Level",
-            "Low Hertz",
-            "Mobile",
-            "Progress",
-            "Rated"
-        ]
-    },
-    {
+    "id": "verdant-landscape-120hz-mobile-17-93",
+    "player": "Que2Yo",
+    "date": "2025-11-29",
+    "length": 60,
+    "version": 2.2,
+    "levelID": 76543324,
+    "video": "https://youtu.be/vhjCWVLrdlQ",
+    "showcaseVideo": "https://youtu.be/dSbox0NKuXs",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Solar Flare 480hz Mobile 34-100%",
     "id": "solar-flare-480hz-mobile-34-100",
     "player": "YgoLb1",
@@ -10670,24 +10670,24 @@
   },
   {
     "name": "Fragile 180hz Mobile 93%",
-        "id": "fragile-180hz-mobile-93",
-        "player": "ZaX1",
-        "length": 98,
-        "version": 2.2,
-        "video": "https://youtu.be/v7ZdCL-2F_o",
-        "date": "2025-05-12",
-        "showcaseVideo": "https://youtu.be/mp55yC6oM1o",
-        "submitter": "Anceps",
-        "levelID": 65588448,
-        "tags": [
-            "Rated",
-            "Level",
-            "CBF",
-            "Mobile",
-            "Progress"
-        ]
-    },
-    {
+    "id": "fragile-180hz-mobile-93",
+    "player": "ZaX1",
+    "length": 98,
+    "version": 2.2,
+    "video": "https://youtu.be/v7ZdCL-2F_o",
+    "date": "2025-05-12",
+    "showcaseVideo": "https://youtu.be/mp55yC6oM1o",
+    "submitter": "Anceps",
+    "levelID": 65588448,
+    "tags": [
+      "Level",
+      "Mobile",
+      "Progress",
+      "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "Kuzureta 60hz Mobile",
     "id": "kuzureta-60hz-mobile",
     "player": "Hydrus73",
@@ -11128,5 +11128,3 @@
     ]
   }
 ]
-
-
