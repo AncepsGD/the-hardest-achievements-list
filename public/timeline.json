@@ -614,22 +614,6 @@
     "showcaseVideo": "https://youtu.be/pZlRHWuVDn4"
   },
   {
-    "name": "Black Blizzard (Near-Unnerfed) 60hz 45%",
-    "id": "black-blizzard-near-unnerfed-60hz-45",
-    "player": "KrmaL",
-    "length": 54,
-    "version": 2.1,
-    "video": "https://youtu.be/jJMyB3HA4AU",
-    "date": "2017-02-21",
-    "submitter": "Relayne",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Progress",
-      "Tentative"
-    ]
-  },
-  {
     "id": "sonic-wave-mefewe-98",
     "name": "Sonic Wave (Mefewe) 98%",
     "player": "Mefewe",
@@ -816,7 +800,7 @@
   {
     "id": "acropolis-65-100",
     "name": "Acropolis 65%, 100%",
-    "player": "Zobros",
+    "player": "Sungsu Kim",
     "tags": [
       "Level",
       "Consistency",
