@@ -3554,9 +3554,10 @@
     "id": "im-hard-92",
     "player": "totalgd",
     "date": "2025-05-27",
-    "length": "23",
-    "version": "2.2",
+    "length": 23,
+    "version": 2.2,
     "video": "https://youtube.com/clip/Ugkx2rM7MSPrJ7whHc7GYe_AWn2-KC9jvDPa",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/67051617",
     "submitter": "ggdotlol",
     "tags": [
       "Challenge",
@@ -4564,6 +4565,7 @@
     "length": 27,
     "version": 2.2,
     "video": "https://youtu.be/4XwmUXLjJWQ",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/eternal%20torment.png",
     "submitter": "kyle1saurus",
     "tags": [
       "Challenge",
@@ -5949,6 +5951,7 @@
     "version": 2.1,
     "video": "https://youtu.be/aRqjg9-67kI",
     "showcaseVideo": "https://youtu.be/Ag381Ey-pWs",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/72206188",
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -11127,4 +11130,5 @@
       "Rated"
     ]
   }
+
 ]
