@@ -438,22 +438,6 @@
     "submitter": "toolazytogetausername"
   },
   {
-    "name": "Void World (Deathless)",
-    "id": "void-world-deathless",
-    "player": "Peasant Banana",
-    "levelID": 107052022,
-    "tags": [
-      "Platformer",
-      "Deathless",
-      "Rated"
-    ],
-    "version": 2.2,
-    "date": "2025-07-01",
-    "video": "https://www.youtube.com/watch?v=pAUPgQ7Td2E",
-    "showcaseVideo": "https://youtu.be/D0K6eHjngVE",
-    "submitter": "kyle1saurus"
-  },
-  {
     "name": "Null 120hz Mobile",
     "id": "null-120hz-mobile",
     "player": "CuriousTheFurious",
