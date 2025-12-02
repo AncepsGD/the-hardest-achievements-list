@@ -1,5 +1,73 @@
 [
     {
+        "name": "Agile 60hz Mobile",
+    "id": "agile-60hz-mobile",
+    "player": "Peng Peng Hong",
+    "levelID": 64697883,
+    "date": "2025-07-06",
+    "length": 15,
+    "version": 2.2,
+    "video": "https://youtu.be/zRXAHOSs1y4",
+    "showcaseVideo": "https://youtu.be/sQJc10JwpLM",
+    "submitter": "Peng Peng Hong",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+   {
+       "name": "Kuzureta 60hz",
+    "id": "kuzureta-60hz",
+    "player": "Ikarya",
+    "levelID": 71216292,
+    "date": "2024-02-28",
+    "length": 69,
+    "version": 2.2,
+    "video": "https://youtu.be/dJER1D69IMs",
+    "showcaseVideo": "https://youtu.be/Q5LqZ9aKn78",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ]
+  },
+  {
+      "name": "Superr Challenge 60hz Mobile",
+    "id": "superr-challenge-60hz-mobile",
+    "player": "Peng Peng Hong",
+    "levelID": 47354575,
+    "date": "2025-07-06",
+    "length": 17,
+    "version": 2.2,
+    "video": "https://youtu.be/njjww03BuOE",
+    "showcaseVideo": null,
+    "submitter": "th3name",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+   {
+       "name": "I see 60hz Mobile",
+    "id": "i-see-60hz-mobile",
+    "player": "cringmobilplayer",
+    "levelID": 64697883,
+    "date": "2023-05-15",
+    "length": 13,
+    "version": 2.1,
+    "video": "https://youtu.be/c_DcZdwZJDk",
+    "showcaseVideo": "https://youtu.be/wwp08jk-T0c",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+   {
         "name": "Silent clubstep (Old) 14-73%",
         "id": "silent-clubstep-old-14-73",
         "player": "Vision",
@@ -59,22 +127,6 @@
         "submitter": null,
         "video": "https://youtu.be/g2DrT9bHjOI",
         "showcaseVideo": "https://youtu.be/hHRcf7qQQdI",
-        "tags": [
-            "Level",
-            "Verified"
-        ]
-    },
-    {
-        "name": "TrakineS",
-        "id": "trakines",
-        "player": "mariner",
-        "levelID": 125788781,
-        "date": "2025-09-09",
-        "length": 64,
-        "version": 2.2,
-        "submitter": null,
-        "video": "https://youtu.be/oKuoI-_JzKU",
-        "showcaseVideo": "https://youtu.be/0H-a8yQzi5A",
         "tags": [
             "Level",
             "Verified"
