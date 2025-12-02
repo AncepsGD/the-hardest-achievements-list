@@ -1,4 +1,51 @@
 [
-
-  
+  {
+    "name": "Dead Of Night (World Record)",
+    "id": "dead-of-night-world-record",
+    "player": "Freddy3",
+    "levelID": 117297448,
+    "length": 8714,
+    "version": 2.2,
+    "date": "2025-11-25",
+    "video": "https://youtu.be/UGF8aRjHbTg",
+    "showcaseVideo": "https://youtu.be/ew6RUiXebp4",
+    "submitter": "bugdaybey",
+    "tags": [
+      "Speedrun",
+      "Platformer",
+      "Rated"
+    ]
+  },
+  {
+    "name": "laith",
+    "id": "laith",
+    "player": "Pepesito",
+    "levelID": 128813553,
+    "length": null,
+    "version": 2.2,
+    "date": "2025-11-30",
+    "video": "https://youtu.be/3lXBC4ZYvZg",
+    "showcaseVideo": "https://youtu.be/mEB2kXR3hxg",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Verified",
+      "Platformer"
+    ]
+  },
+  {
+    "name": "cell tower (All Coins)",
+    "id": "cell-tower-all-coins",
+    "player": "p1nkempress",
+    "levelID": 111808927,
+    "version": 2.2,
+    "date": "2024-11-02",
+    "video": "https://youtu.be/cFTUGNtkAx8",
+	  "showcaseVideo": "https://youtu.be/dFbuMG9yMkA",
+    "submitter": "legoyoshi3",
+    "tags": [
+      "Verified",
+      "Platformer",
+      "Coin Route"
+    ]
+  }
 ]
