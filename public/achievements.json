@@ -672,23 +672,6 @@
     ]
   },
   {
-    "name": "Aeternus 60-91%",
-    "id": "aeternus-60-91",
-    "player": "Trick",
-    "levelID": 102647436,
-    "date": "2025-12-01",
-    "length": 24,
-    "version": 2.2,
-    "video": "https://youtu.be/kFfTZmC-qG4",
-    "showcaseVideo": "https://youtu.be/p4QgFtKL5kE",
-    "submitter": "TTB18",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
     "name": "Azure Flare (VERTOP) 36-91%",
     "id": "azure-flare-vertop-36-91",
     "player": "VERTOP",
@@ -5665,6 +5648,23 @@
     ]
   },
   {
+    "name": "Sonic Wave 60hz Mobile",
+    "id": "sonic-wave-60hz-mobile",
+    "player": "Biprex",
+    "levelID": 26681070,
+    "date": "2021-11-18",
+    "length": 121,
+    "version": 2.1,
+    "video": "https://youtu.be/4v-J6vj8iMQ",
+    "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
+    "submitter": "Arcadie",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ]
+  },
+  {
     "name": "Hard Machine 144hz Mobile",
     "id": "hard-machine-144hz-mobile",
     "player": "MAXDASH07",
@@ -6373,23 +6373,6 @@
     ]
   },
   {
-    "name": "60hz Mobile",
-    "id": "60hz-mobile",
-    "player": "ScorchBTD",
-    "levelID": 86592424,
-    "date": "2023-06-11",
-    "length": 16,
-    "version": 2.1,
-    "video": "https://youtu.be/rz43b5hZ4nw",
-    "showcaseVideo": "https://youtu.be/e1eiAvcQT_M",
-    "submitter": "ScorchBTD",
-    "tags": [
-      "Challenge",
-      "Low Hertz",
-      "Mobile"
-    ]
-  },
-  {
     "name": "Trueffet 144hz Mobile 74%",
     "id": "trueffet-144hz-mobile-74",
     "player": "bemj80",
@@ -6579,23 +6562,6 @@
     ]
   },
   {
-    "name": "Glaz Diavola 60hz Mobile",
-    "id": "glaz-diavola-60hz-mobile",
-    "player": "cring",
-    "length": 9,
-    "version": 2.1,
-    "video": "https://youtu.be/jOZRbHU5ldA",
-    "date": "2023-10-16",
-    "showcaseVideo": "https://youtu.be/5UtPYnXjy_Q",
-    "submitter": "th3name",
-    "levelID": 77593145,
-    "tags": [
-      "Challenge",
-      "Low Hertz",
-      "Mobile"
-    ]
-  },
-  {
     "name": "Sakupen Circles (Cursed) 44-70%",
     "id": "sakpen-circles-cursed-44-70",
     "player": "Emp",
@@ -6763,6 +6729,24 @@
     ]
   },
   {
+    "name": "Sigma 60hz Mobile",
+    "id": "sigma-60hz-mobile",
+    "player": "Biprex",
+    "levelID": 51657783,
+    "date": "2022-02-10",
+    "length": 155,
+    "version": 2.1,
+    "video": "https://youtu.be/k-WrHoaKkIo",
+    "showcaseVideo": "https://youtu.be/6Lv2Q_88nS4",
+    "submitter": "Arcadie",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ]
+  },
+  {
     "name": "MINUSdry",
     "id": "minusdry",
     "player": "Varium",
@@ -6814,20 +6798,21 @@
     ]
   },
   {
-    "name": "3SH in Hell 60hz Mobile",
-    "id": "3sh-in-hell-60hz-mobile",
-    "player": "cring",
-    "levelID": 61614466,
-    "date": "2022-08-19",
-    "length": 12,
+    "name": "Jesse Pinkman 60hz Mobile",
+    "id": "jesse-pinkman-60hz-mobile",
+    "player": "Biprex",
+    "levelID": 79918576,
+    "date": "2022-12-10",
+    "length": 72,
     "version": 2.1,
-    "video": "https://youtu.be/rPKC65m9bDE",
-    "showcaseVideo": "https://youtu.be/QuRsfqweNTk",
-    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/JSylL1BoxF0",
+    "showcaseVideo": "https://youtu.be/3YQtDDnUEm4",
+    "submitter": "kyle1saurus",
     "tags": [
-      "Challenge",
+      "Level",
       "Low Hertz",
-      "Mobile"
+      "Mobile",
+      "Rated"
     ]
   },
   {
@@ -6894,6 +6879,24 @@
     ]
   },
   {
+       "name": "RUST 60hz Mobile",
+        "id": "rust-60hz-mobile",
+        "player": "Biprex",
+        "levelID": 71912451,
+        "date": "2022-09-07",
+        "length": 84,
+        "version": 2.1,
+        "video": "https://youtu.be/p8f3g_oYtNQ",
+        "showcaseVideo": "https://youtu.be/U6-UrdnGLoY",
+        "submitter": "kyle1saurus",
+        "tags": [
+        "Level",
+        "Low Hertz",
+        "Mobile",
+        "Rated"
+        ]
+    },
+    {
     "name": "Old Blade of Justice 30-95%",
     "id": "old-blade-of-justice-30-95",
     "player": "AGSEcho",
@@ -6960,6 +6963,23 @@
       "Mobile",
       "Progress",
       "Rated"
+    ]
+  },
+  {
+    "name": "60hz Mobile",
+    "id": "60hz-mobile",
+    "player": "ScorchBTD",
+    "levelID": 86592424,
+    "date": "2023-06-11",
+    "length": 16,
+    "version": 2.1,
+    "video": "https://youtu.be/rz43b5hZ4nw",
+    "showcaseVideo": "https://youtu.be/e1eiAvcQT_M",
+    "submitter": "ScorchBTD",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
     ]
   },
   {
@@ -7128,6 +7148,24 @@
       "Level",
       "Progress",
       "CBF"
+    ]
+  },
+  {
+    "name": "xo 60hz Mobile",
+    "id": "xo-60hz-mobile",
+    "player": "pigchefer",
+    "levelID": 58825144,
+    "date": "2021-03-26",
+    "length": 157,
+    "version": 2.1,
+    "video": "https://youtu.be/vWsAAcPGy5s",
+    "showcaseVideo": "https://youtu.be/0rvqYWQWswA",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
     ]
   },
   {
@@ -7349,6 +7387,24 @@
     ]
   },
   {
+    "name": "Visible Ray 60hz Mobile",
+    "id": "visible-ray-60hz-mobile",
+    "player": "MAXed out",
+    "length": 156,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=jh-xpsHPuco",
+    "date": "2025-09-19",
+    "showcaseVideo": "https://youtu.be/4ngzCQDdMVA",
+    "levelID": 48267315,
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ]
+  },
+  {
     "name": "LIMBO",
     "id": "limbo",
     "player": "BGram",
@@ -7398,6 +7454,23 @@
       "Progress",
       "CBF",
       "Rated"
+    ]
+  },
+  {
+    "name": "Glaz Diavola 60hz Mobile",
+    "id": "glaz-diavola-60hz-mobile",
+    "player": "cring",
+    "length": 9,
+    "version": 2.1,
+    "video": "https://youtu.be/jOZRbHU5ldA",
+    "date": "2023-10-16",
+    "showcaseVideo": "https://youtu.be/5UtPYnXjy_Q",
+    "submitter": "th3name",
+    "levelID": 77593145,
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
     ]
   },
   {
@@ -8793,6 +8866,23 @@
     ]
   },
   {
+    "name": "3SH in Hell 60hz Mobile",
+    "id": "3sh-in-hell-60hz-mobile",
+    "player": "cring",
+    "levelID": 61614466,
+    "date": "2022-08-19",
+    "length": 12,
+    "version": 2.1,
+    "video": "https://youtu.be/rPKC65m9bDE",
+    "showcaseVideo": "https://youtu.be/QuRsfqweNTk",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Challenge",
+      "Low Hertz",
+      "Mobile"
+    ]
+  },
+  {
     "name": "3SH in Hell",
     "id": "3sh-in-hell",
     "player": "UFokinWotM8",
@@ -9663,23 +9753,6 @@
     ]
   },
   {
-    "name": "Sonic Wave 60hz Mobile",
-    "id": "sonic-wave-60hz-mobile",
-    "player": "Biprex",
-    "levelID": 26681070,
-    "date": "2021-11-18",
-    "length": 121,
-    "version": 2.1,
-    "video": "https://youtu.be/4v-J6vj8iMQ",
-    "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
-    "submitter": "Arcadie",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Rated"
-    ]
-  },
-  {
     "name": "Sonic Wave 60hz",
     "id": "sonic-wave-60hz",
     "player": "Galaxy",
@@ -10140,24 +10213,6 @@
     ]
   },
   {
-    "name": "Sigma 60hz Mobile",
-    "id": "sigma-60hz-mobile",
-    "player": "Biprex",
-    "levelID": 51657783,
-    "date": "2022-02-10",
-    "length": 155,
-    "version": 2.1,
-    "video": "https://youtu.be/k-WrHoaKkIo",
-    "showcaseVideo": "https://youtu.be/6Lv2Q_88nS4",
-    "submitter": "Arcadie",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
-    ]
-  },
-  {
     "name": "Exens limit 1.2x 58-100%",
     "id": "exens-limit-12x-58-100",
     "player": "Skylar",
@@ -10429,24 +10484,6 @@
     ]
   },
   {
-    "name": "Visible Ray 60hz Mobile",
-    "id": "visible-ray-60hz-mobile",
-    "player": "MAXed out",
-    "length": 156,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=jh-xpsHPuco",
-    "date": "2025-09-19",
-    "showcaseVideo": "https://youtu.be/4ngzCQDdMVA",
-    "levelID": 48267315,
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
-    ]
-  },
-  {
     "name": "Riots Demise 99%",
     "id": "riots-demise-99",
     "player": "noname228gg",
@@ -10494,24 +10531,6 @@
       "Level",
       "Progress",
       "CBF"
-    ]
-  },
-  {
-    "name": "Jesse Pinkman 60hz Mobile",
-    "id": "jesse-pinkman-60hz-mobile",
-    "player": "Biprex",
-    "levelID": 79918576,
-    "date": "2022-12-10",
-    "length": 72,
-    "version": 2.1,
-    "video": "https://youtu.be/JSylL1BoxF0",
-    "showcaseVideo": "https://youtu.be/3YQtDDnUEm4",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
     ]
   },
   {
@@ -11015,24 +11034,6 @@
     ]
   },
   {
-    "name": "xo 60hz Mobile",
-    "id": "xo-60hz-mobile",
-    "player": "pigchefer",
-    "levelID": 58825144,
-    "date": "2021-03-26",
-    "length": 157,
-    "version": 2.1,
-    "video": "https://youtu.be/vWsAAcPGy5s",
-    "showcaseVideo": "https://youtu.be/0rvqYWQWswA",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
-    ]
-  },
-  {
     "name": "khmeli suneli",
     "id": "khmeli-suneli",
     "player": "kwezy",
@@ -11147,6 +11148,4 @@
       "Rated"
     ]
   }
-
 ]
-
