@@ -2040,24 +2040,6 @@
     ]
   },
   {
-    "name": "Ashley Wave Trials",
-    "id": "ashley-wave-trials",
-    "player": "Zoink",
-    "levelID": 123119196,
-    "date": "2024-11-01",
-    "length": 126,
-    "version": 2.2,
-    "video": "https://youtu.be/aTxt76U3e2Q",
-    "showcaseVideo": "https://youtu.be/1H0UpLzDEQw",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/62912799",
-    "submitter": "shortweekly",
-    "tags": [
-      "Level",
-      "Verified",
-      "CBF"
-    ]
-  },
-  {
     "name": "Menace",
     "id": "menace",
     "player": "Whizkid05",
@@ -2141,6 +2123,24 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "Ashley Wave Trials",
+    "id": "ashley-wave-trials",
+    "player": "Zoink",
+    "levelID": 123119196,
+    "date": "2024-11-01",
+    "length": 126,
+    "version": 2.2,
+    "video": "https://youtu.be/aTxt76U3e2Q",
+    "showcaseVideo": "https://youtu.be/1H0UpLzDEQw",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/62912799",
+    "submitter": "shortweekly",
+    "tags": [
+      "Level",
+      "Verified",
+      "CBF"
     ]
   },
   {
@@ -9282,22 +9282,6 @@
     ]
   },
   {
-    "name": "Excelsus",
-    "id": "excelsus",
-    "player": "NucGDStuff",
-    "length": 67,
-    "version": 2.2,
-    "video": "https://youtu.be/CivKEuUzIiA",
-    "showcaseVideo": "https://youtu.be/TfIU5ziu0aI",
-    "date": "2025-10-30",
-    "submitter": "TYATYAPKA",
-    "levelID": 127574442,
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "PSYCHOPATH",
     "id": "psychopath",
     "player": "BONN",
@@ -10187,22 +10171,6 @@
     ]
   },
   {
-    "name": "iridescent",
-    "id": "iridescent",
-    "player": "serpentical",
-    "date": "2025-07-23",
-    "length": 59,
-    "version": 2.2,
-    "levelID": 123430601,
-    "video": "https://youtu.be/tf2md44JU2g",
-    "showcaseVideo": "https://youtu.be/9EgxpC9nEnU",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Verified"
-    ]
-  },
-  {
     "name": "Society 33-50%",
     "id": "society-33-50",
     "player": "galagzee",
@@ -10219,7 +10187,6 @@
     ]
   },
   {
-    
     "name": "Ace 30-100%",
     "id": "ace-30-100",
     "player": "Aidsen",
@@ -11227,4 +11194,3 @@
     ]
   }
 ]
-
