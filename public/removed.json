@@ -1,5 +1,37 @@
 [
     {
+        "name": "Excelsus",
+    "id": "excelsus",
+    "player": "NucGDStuff",
+    "length": 67,
+    "version": 2.2,
+    "video": "https://youtu.be/CivKEuUzIiA",
+    "showcaseVideo": "https://youtu.be/TfIU5ziu0aI",
+    "date": "2025-10-30",
+    "submitter": "TYATYAPKA",
+    "levelID": 127574442,
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
+      "name": "iridescent",
+    "id": "iridescent",
+    "player": "serpentical",
+    "date": "2025-07-23",
+    "length": 59,
+    "version": 2.2,
+    "levelID": 123430601,
+    "video": "https://youtu.be/tf2md44JU2g",
+    "showcaseVideo": "https://youtu.be/9EgxpC9nEnU",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
         "name": "Agile 60hz Mobile",
     "id": "agile-60hz-mobile",
     "player": "Peng Peng Hong",
