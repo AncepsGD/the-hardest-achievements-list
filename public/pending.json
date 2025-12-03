@@ -1,5 +1,22 @@
 [
   {
+    "name": "Chromacave 29-81%",
+    "id": "chromacave-29-81",
+    "player": "GeoDom85YT",
+    "levelID": null,
+    "date": "2025-12-01",
+    "length": 38,
+    "version": 2.2,
+    "video": "https://youtu.be/xrnqABCiSGQ",
+    "showcaseVideo": "https://youtu.be/XfJXTdXOqY0",
+    "submitter": "Exiled_Shade",
+    "thumbnail": null,
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Dead Of Night (World Record)",
     "id": "dead-of-night-world-record",
     "player": "Freddy3",
@@ -40,10 +57,9 @@
     "version": 2.2,
     "date": "2024-11-02",
     "video": "https://youtu.be/cFTUGNtkAx8",
-	  "showcaseVideo": "https://youtu.be/dFbuMG9yMkA",
+	"showcaseVideo": "https://youtu.be/dFbuMG9yMkA",
     "submitter": "legoyoshi3",
     "tags": [
-      "Verified",
       "Platformer",
       "Coin Route"
     ]
