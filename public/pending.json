@@ -62,7 +62,22 @@
     "video": "https://youtu.be/xrnqABCiSGQ",
     "showcaseVideo": "https://youtu.be/XfJXTdXOqY0",
     "submitter": "Exiled_Shade",
-    "thumbnail": null,
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
+	"name": "DreamStep 20-85%",
+    "id": "dreamstep-20-85",
+    "player": "youngs6",
+    "levelID": null,
+    "date": "2025-12-05",
+    "length": 45,
+    "version": 2.2,
+    "video": "https://youtu.be/942mh1DtB9E",
+    "showcaseVideo": "https://youtu.be/HbZ12yXZxn4",
+    "submitter": "Exiled_Shade",
     "tags": [
       "Level",
       "Progress"
