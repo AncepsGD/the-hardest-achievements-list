@@ -127,6 +127,21 @@
     ]
   },
   {
+  "name": "Sedulous",
+  "id": "sedulous",
+  "player": "mikoshii",
+  "version": 2.2,
+  "video": "https://youtu.be/VGX3PFO55ps",
+  "showcaseVideo": "https://youtu.be/T03qx2HDBe4",
+  "date": "2025-10-16",
+  "submitter": "kyle1saurus",
+  "levelID": 111126817,
+  "tags": [
+    "Platformer",
+    "Verified"
+  ]
+	},
+	{
     "name": "Meat Tower",
     "id": "meat-tower",
     "player": "Crerro",
@@ -175,21 +190,6 @@
     ]
   },
   {
-  "name": "Sedulous",
-  "id": "sedulous",
-  "player": "mikoshii",
-  "version": 2.2,
-  "video": "https://youtu.be/VGX3PFO55ps",
-  "showcaseVideo": "https://youtu.be/T03qx2HDBe4",
-  "date": "2025-10-16",
-  "submitter": "kyle1saurus",
-  "levelID": 111126817,
-  "tags": [
-    "Platformer",
-    "Verified"
-  ]
-	},
-	{
     "name": "ㅤRuined",
     "id": "ruined",
     "player": "GToast",
@@ -252,6 +252,22 @@
     "submitter": "kyle1saurus"
   },
   {
+	"name": "A Nameless Star 24%",
+    "id": "a-nameless-star-24",
+    "player": "Whizkid05",
+    "levelID": 123574741,
+    "length": null,
+    "version": 2.2,
+    "date": "2025-02-08",
+    "video": "https://youtu.be/V-Hok6eOCOw",
+    "showcaseVideo": "https://youtu.be/r7lJAxa3kQw",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Progress",
+      "Platformer"
+    ]
+  },
+  {
     "name": "Nullspace",
     "id": "nullspace",
     "player": "Tanuklen",
@@ -307,6 +323,7 @@
     "date": "2025-02-13",
     "video": "https://www.youtube.com/watch?v=a9099BQ1Suk",
     "showcaseVideo": "https://youtu.be/muYSrubZ1kk",
+	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/112482571",
     "submitter": "kyle1saurus"
   },
   {
@@ -355,6 +372,23 @@
     "video": "https://youtu.be/KaHvcARUVC0",
     "submitter": "kyle1saurus",
 	"thumbnail": "https://levelthumbs.prevter.me/thumbnail/109553133"
+  },
+  {
+	"name": "Dead Of Night (World Record)",
+    "id": "dead-of-night-world-record",
+    "player": "Freddy3",
+    "levelID": 117297448,
+    "length": 8714,
+    "version": 2.2,
+    "date": "2025-11-25",
+    "video": "https://youtu.be/UGF8aRjHbTg",
+    "showcaseVideo": "https://youtu.be/ew6RUiXebp4",
+    "submitter": "bugdaybey",
+    "tags": [
+      "Speedrun",
+      "Platformer",
+      "Rated"
+    ]
   },
   {
     "name": "glungus",
@@ -469,6 +503,23 @@
       "Platformer",
       "Rated"
     ]
+  },
+  {
+  "name": "Crime And Punishment (All Coins)",
+  "id": "crime-and-punishment-all-coins",
+  "player": "itzCyberCube",
+  "version": 2.2,
+  "video": "https://youtu.be/hy6bUSzVM_g",
+  "showcaseVideo": "https://youtu.be/DZZl3IftwQQ",
+  "date": "2025-08-31",
+  "submitter": "toolazytogetausername",
+  "levelID": 125430986,
+  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/125430986",
+  "tags": [
+    "Platformer",
+    "Coin Route",
+	"Rated"
+  ]
   },
   {
   "name": "Closed Square X",
@@ -798,6 +849,7 @@
     "date": "2024-05-03",
     "video": "https://youtu.be/t0ECeP2tMkQ",
     "showcaseVideo": "https://youtu.be/QNByVIH4OKE",
+	  "thumbnail": "https://levelthumbs.prevter.me/thumbnail/104031134",
     "submitter": "kyle1saurus",
     "tags": [
       "Verified",
@@ -1058,6 +1110,21 @@
     "submitter": "kyle1saurus"
   },
   {
+	"name": "cell tower (All Coins)",
+    "id": "cell-tower-all-coins",
+    "player": "p1nkempress",
+    "levelID": 111808927,
+    "version": 2.2,
+    "date": "2024-11-02",
+    "video": "https://youtu.be/cFTUGNtkAx8",
+	"showcaseVideo": "https://youtu.be/dFbuMG9yMkA",
+    "submitter": "legoyoshi3",
+    "tags": [
+      "Platformer",
+      "Coin Route"
+    ]
+  },
+{
     "name": "apricot tower",
     "id": "apricot-tower",
     "player": "whitepoop",
