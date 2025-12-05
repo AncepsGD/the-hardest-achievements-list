@@ -52,22 +52,6 @@
     ]
   },
   {
-    "name": "Chromacave 29-81%",
-    "id": "chromacave-29-81",
-    "player": "GeoDom85YT",
-    "levelID": null,
-    "date": "2025-12-01",
-    "length": 38,
-    "version": 2.2,
-    "video": "https://youtu.be/xrnqABCiSGQ",
-    "showcaseVideo": "https://youtu.be/XfJXTdXOqY0",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
 	"name": "DreamStep 20-85%",
     "id": "dreamstep-20-85",
     "player": "youngs6",
@@ -84,23 +68,6 @@
     ]
   },
   {
-    "name": "Dead Of Night (World Record)",
-    "id": "dead-of-night-world-record",
-    "player": "Freddy3",
-    "levelID": 117297448,
-    "length": 8714,
-    "version": 2.2,
-    "date": "2025-11-25",
-    "video": "https://youtu.be/UGF8aRjHbTg",
-    "showcaseVideo": "https://youtu.be/ew6RUiXebp4",
-    "submitter": "bugdaybey",
-    "tags": [
-      "Speedrun",
-      "Platformer",
-      "Rated"
-    ]
-  },
-  {
     "name": "laith",
     "id": "laith",
     "player": "Pepesito",
@@ -114,37 +81,6 @@
     "tags": [
       "Verified",
       "Platformer"
-    ]
-  },
-  {
-	"name": "A Nameless Star 24%",
-    "id": "a-nameless-star-24",
-    "player": "Whizkid05",
-    "levelID": 123574741,
-    "length": null,
-    "version": 2.2,
-    "date": "2025-02-08",
-    "video": "https://youtu.be/V-Hok6eOCOw",
-    "showcaseVideo": "https://youtu.be/r7lJAxa3kQw",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Progress",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "cell tower (All Coins)",
-    "id": "cell-tower-all-coins",
-    "player": "p1nkempress",
-    "levelID": 111808927,
-    "version": 2.2,
-    "date": "2024-11-02",
-    "video": "https://youtu.be/cFTUGNtkAx8",
-	"showcaseVideo": "https://youtu.be/dFbuMG9yMkA",
-    "submitter": "legoyoshi3",
-    "tags": [
-      "Platformer",
-      "Coin Route"
     ]
   }
 ]
