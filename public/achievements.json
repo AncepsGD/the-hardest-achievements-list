@@ -1929,6 +1929,23 @@
     ]
   },
   {
+    "name": "Drukilicide 37-73%",
+    "id": "drukilicide-37-73",
+    "player": "Xtra8nugz",
+    "levelID": 120478542,
+    "date": "2025-12-06",
+    "length": 29,
+    "version": 2.2,
+    "video": "https://www.youtube.com/live/Lt-0aDITRSY?t=7751s",
+    "showcaseVideo": null,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Spectre",
     "id": "spectre",
     "player": "PersonHuman42",
@@ -2821,23 +2838,6 @@
     "showcaseVideo": "https://youtu.be/EuZY748OnYU",
     "video": "https://youtu.be/Hjmtt7q5boA",
     "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
-    "name": "Drukilicide 37-70%",
-    "id": "drukilicide-37-70",
-    "player": "Xtra8nugz",
-    "levelID": 120478542,
-    "date": "2025-11-29",
-    "length": 27,
-    "version": 2.2,
-    "video": "https://youtube.com/clip/UgkxNDn9oBH6OtTsjbeO1sKzuxwXdRRxVBPh",
-    "showcaseVideo": null,
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
-    "submitter": "Kuri",
     "tags": [
       "Level",
       "Progress"
@@ -11212,5 +11212,6 @@
     ]
   }
 ]
+
 
 
