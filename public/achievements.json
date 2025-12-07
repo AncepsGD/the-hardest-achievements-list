@@ -471,6 +471,23 @@
     ]
   },
   {
+    "name": "obepdo3 UNLEASHED n2 91%",
+    "id": "obepdo3-unleashed-n2-91",
+    "player": "Arshadow",
+    "date": "2025-12-07",
+    "length": 77,
+    "version": 2.2,
+    "video": "https://youtu.be/P5GiZF74lqI",
+    "showcaseVideo": null,
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/kocmoc-unleashed1.webp",
+    "submitter": "Arcadie",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "Subsuming Vortex (Renn241)",
     "id": "subsuming-vortex-renn241",
     "player": "Cursed",
@@ -5580,6 +5597,22 @@
     ]
   },
   {
+    "name": "lightposts 70%, 72%, 34%, 60%, 58%x2",
+        "id": "lightposts-70-72-34-60-58x2",
+        "player": "Lele",
+        "levelID": 73199960,
+        "date": "2025-12-07",
+        "length": 30,
+        "version": 2.2,
+        "video": "https://youtu.be/w1eHVwY-x0c",
+        "showcaseVideo": "https://youtu.be/nIrv6in5fi8",
+    "submitter": "Lele",
+        "tags": [
+            "Challenge",
+            "Consistency"
+        ]
+    },
+    {
     "name": "FF 14%, 17% in a row",
     "id": "ff-14-17-in-a-row",
     "player": "Caleger",
@@ -10381,6 +10414,22 @@
     ]
   },
   {
+    "name": "DreamStep 20-85%",
+    "id": "dreamstep-20-85",
+    "player": "youngs6",
+    "levelID": null,
+    "date": "2025-12-05",
+    "length": 45,
+    "version": 2.2,
+    "video": "https://youtu.be/942mh1DtB9E",
+    "showcaseVideo": "https://youtu.be/HbZ12yXZxn4",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "Bloodlust 323%",
     "id": "bloodlust-323",
     "player": "JesseGaming GD",
@@ -11212,6 +11261,7 @@
     ]
   }
 ]
+
 
 
 
