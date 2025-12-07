@@ -52,37 +52,6 @@
     ]
   },
   {
-	"name": "lightposts 38%, 76%, 75%, 38%",
-        "id": "lightposts-38-76-75-38",
-        "player": "Lele",
-        "levelID": 73199960,
-        "date": "2025-12-06",
-        "length": 20,
-        "version": 2.2,
-        "video": "https://youtu.be/Q5ropB4G7ng",
-        "showcaseVideo": "https://youtu.be/nIrv6in5fi8",
-        "tags": [
-            "Challenge",
-            "Consistency"
-        ]
-    },
-    {
-	"name": "DreamStep 20-85%",
-    "id": "dreamstep-20-85",
-    "player": "youngs6",
-    "levelID": null,
-    "date": "2025-12-05",
-    "length": 45,
-    "version": 2.2,
-    "video": "https://youtu.be/942mh1DtB9E",
-    "showcaseVideo": "https://youtu.be/HbZ12yXZxn4",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Progress"
-    ]
-  },
-  {
     "name": "laith",
     "id": "laith",
     "player": "Pepesito",
