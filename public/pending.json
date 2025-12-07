@@ -52,6 +52,22 @@
     ]
   },
   {
+	"name": "Death Factory 97%",
+        "id": "death-factory-97",
+        "player": "dewbbs",
+        "levelID": 95424590,
+        "date": "2025-12-06",
+        "length": 305,
+        "version": 2.2,
+        "submitter": "Excryst",
+        "video": "https://youtu.be/hZP2QLlcM44",
+        "showcaseVideo": "https://youtu.be/qoPLznoNjQg",
+        "tags": [
+            "Level",
+            "Progress"
+        ]
+    },
+    {
     "name": "laith",
     "id": "laith",
     "player": "Pepesito",
