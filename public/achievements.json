@@ -231,6 +231,23 @@
     ]
   },
   {
+    "name": "obepdo3 UNLEASHED n2 91%",
+    "id": "obepdo3-unleashed-n2-91",
+    "player": "Arshadow",
+    "date": "2025-12-07",
+    "length": 77,
+    "version": 2.2,
+    "video": "https://youtu.be/P5GiZF74lqI",
+    "showcaseVideo": null,
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/kocmoc-unleashed1.webp",
+    "submitter": "Arcadie",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ]
+  },
+  {
     "name": "Slaughterhouse 300%",
     "id": "slaughterhouse-300",
     "player": "wPopoff",
@@ -468,23 +485,6 @@
       "Level",
       "Verified",
       "Rated"
-    ]
-  },
-  {
-    "name": "obepdo3 UNLEASHED n2 91%",
-    "id": "obepdo3-unleashed-n2-91",
-    "player": "Arshadow",
-    "date": "2025-12-07",
-    "length": 77,
-    "version": 2.2,
-    "video": "https://youtu.be/P5GiZF74lqI",
-    "showcaseVideo": null,
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/kocmoc-unleashed1.webp",
-    "submitter": "Arcadie",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
     ]
   },
   {
@@ -3023,6 +3023,22 @@
     "showcaseVideo": "https://youtu.be/J--tYr5HbQ0",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/81376890",
     "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
+    "name": "Goldenhouse",
+    "id": "goldenhouse",
+    "player": "WaterRising",
+    "levelID": null,
+    "date": "2025-12-07",
+    "length": 70,
+    "version": 2.2,
+    "video": "https://youtu.be/k0TciNmGJ_M",
+    "showcaseVideo": null,
+    "submitter": "rtwnr",
     "tags": [
       "Level",
       "Verified"
@@ -5597,22 +5613,6 @@
     ]
   },
   {
-    "name": "lightposts 70%, 72%, 34%, 60%, 58%x2",
-        "id": "lightposts-70-72-34-60-58x2",
-        "player": "Lele",
-        "levelID": 73199960,
-        "date": "2025-12-07",
-        "length": 30,
-        "version": 2.2,
-        "video": "https://youtu.be/w1eHVwY-x0c",
-        "showcaseVideo": "https://youtu.be/nIrv6in5fi8",
-    "submitter": "Lele",
-        "tags": [
-            "Challenge",
-            "Consistency"
-        ]
-    },
-    {
     "name": "FF 14%, 17% in a row",
     "id": "ff-14-17-in-a-row",
     "player": "Caleger",
@@ -5782,6 +5782,24 @@
       "Level",
       "Low Hertz",
       "Mobile",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Sonic Wave Infinity 480hz Mobile",
+    "id": "sonic-wave-infinity-480hz-mobile",
+    "player": "Rotys",
+    "levelID": 69685815,
+    "date": "2025-08-05",
+    "length": 148,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/PnwraVsq2nk",
+    "showcaseVideo": "https://youtu.be/QYd2YdKtj8Y",
+    "tags": [
+      "Level",
+      "Mobile",
+      "CBF",
       "Rated"
     ]
   },
@@ -7453,22 +7471,6 @@
       "Level",
       "Verified",
       "Rated"
-    ]
-  },
-  {
-    "name": "Purplehouse 25-95%",
-    "id": "purplehouse-25-95",
-    "player": "Xtra8nugs",
-    "levelID": null,
-    "date": "2025-09-09",
-    "length": 38,
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/f1WehtceFnk",
-    "showcaseVideo": null,
-    "tags": [
-      "Level",
-      "Progress"
     ]
   },
   {
@@ -10034,6 +10036,22 @@
     ]
   },
   {
+    "name": "Purplehouse 25-95%",
+    "id": "purplehouse-25-95",
+    "player": "Xtra8nugs",
+    "levelID": null,
+    "date": "2025-09-09",
+    "length": 38,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/f1WehtceFnk",
+    "showcaseVideo": null,
+    "tags": [
+      "Level",
+      "Progress"
+    ]
+  },
+  {
     "name": "RUTHLESS Unnerfed",
     "id": "ruthless-unnerfed",
     "player": "LordVadercraft",
@@ -10065,24 +10083,6 @@
       "Level",
       "Low Hertz",
       "Mobile",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Sonic Wave Infinity 480hz Mobile",
-    "id": "sonic-wave-infinity-480hz-mobile",
-    "player": "Rotys",
-    "levelID": 69685815,
-    "date": "2025-08-05",
-    "length": 148,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/PnwraVsq2nk",
-    "showcaseVideo": "https://youtu.be/QYd2YdKtj8Y",
-    "tags": [
-      "Level",
-      "Mobile",
-      "CBF",
       "Rated"
     ]
   },
@@ -10973,6 +10973,22 @@
     ]
   },
   {
+    "name": "Death Factory 97%",
+        "id": "death-factory-97",
+        "player": "dewbbs",
+        "levelID": 95424590,
+        "date": "2025-12-06",
+        "length": 305,
+        "version": 2.2,
+        "submitter": "Excryst",
+        "video": "https://youtu.be/hZP2QLlcM44",
+        "showcaseVideo": "https://youtu.be/qoPLznoNjQg",
+        "tags": [
+            "Level",
+            "Progress"
+        ]
+    },
+    {
     "name": "Plastic Death",
     "id": "plastic-death",
     "player": "zLevii",
@@ -11261,8 +11277,3 @@
     ]
   }
 ]
-
-
-
-
-
