@@ -1,5 +1,21 @@
 [
     {
+        "name": "lightposts 70%, 72%, 34%, 60%, 58%x2",
+        "id": "lightposts-70-72-34-60-58x2",
+        "player": "Lele",
+        "levelID": 73199960,
+        "date": "2025-12-07",
+        "length": 30,
+        "version": 2.2,
+        "video": "https://youtu.be/w1eHVwY-x0c",
+        "showcaseVideo": "https://youtu.be/nIrv6in5fi8",
+    "submitter": "Lele",
+        "tags": [
+            "Challenge",
+            "Consistency"
+        ]
+    },
+    {
         "name": "Excelsus",
     "id": "excelsus",
     "player": "NucGDStuff",
