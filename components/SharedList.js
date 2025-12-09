@@ -887,7 +887,7 @@ export default function SharedList({
   }
 
   const { getMostVisibleIdx } = useScrollPersistence({
-    storageKey: `thal_scroll_index_pending`,
+    storageKey: `thal_scroll_index_${storageKeySuffix}`,
     items: achievements,
     devMode,
     listRef,
@@ -973,11 +973,498 @@ export default function SharedList({
       <Head>
         <title>The Hardest Achievements List</title>
         <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="icon" type="image/png" href="/assets/favicon-96x96.png" sizes="96x96" />
+        <link rel="shortcut icon" href="/assets/favicon.ico" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+        <meta name="apple-mobile-web-app-title" content="THAL" />
+        <link rel="manifest" href="/assets/site.webmanifest" />
+        <meta
+          name="description"
+          content="This Geometry Dash list ranks rated, unrated, challenges, runs, speedhacked, low refresh rate, (and more) all under one list."
+        />
       </Head>
-      <Background bgImage={null} />
+      <Background bgImage={bgImage} />
+      <header className="main-header">
+        <div
+          className="header-bar"
+          style={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: isMobile ? 0 : 16,
+            width: '100%',
+            paddingBottom: isMobile ? 8 : 0
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: isMobile ? '100%' : 'auto' }}>
+            <button
+              id="mobile-hamburger-btn"
+              className="mobile-hamburger-btn"
+              type="button"
+              aria-label="Open sidebar"
+              title="Open sidebar menu"
+              onClick={() => isMobile && setShowSidebar(true)}
+              style={{ marginRight: 12 }}
+            >
+              <span className="bi bi-list hamburger-icon" aria-hidden="true"></span>
+            </button>
+            <div className="logo">
+              <img src="/assets/favicon-96x96.png" alt="The Hardest Achievements List Logo" title="The Hardest Achievements List Logo" className="logo-img" />
+            </div>
+            <h1 className="title main-title" style={{ marginLeft: 12, fontSize: isMobile ? 22 : undefined, lineHeight: 1.1 }}>
+              The Hardest Achievements List
+            </h1>
+          </div>
+          {isMobile && (
+            <div style={{ width: '100%', marginTop: 12 }}>
+              <div className="search-bar" style={{ width: '100%', maxWidth: 400, margin: '0 auto' }}>
+                <input
+                  type="text"
+                  placeholder="Search achievements..."
+                  value={search}
+                  onChange={e => { setManualSearch(''); setSearch(e.target.value); }}
+                  onKeyDown={handleSearchKeyDown}
+                  aria-label="Search achievements"
+                  className="search-input"
+                  style={{ width: '100%' }}
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
+                <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
+                  <input
+                    type="checkbox"
+                    checked={usePlatformers}
+                    onChange={e => {
+                      const next = !!e.target.checked;
+                      setUsePlatformers(next);
+                      try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
+                    }}
+                  />
+                  <span
+                    className="track"
+                    role="switch"
+                    aria-checked={usePlatformers}
+                    tabIndex={0}
+                  >
+                    <span className="inner-label label-left">Platformer</span>
+                    <span className="thumb" aria-hidden="true" />
+                    <span className="inner-label label-right">Classic</span>
+                  </span>
+                </label>
+              </div>
+              <div className="tag-filter-pills-container" style={{ width: '100%' }}>
+                <TagFilterPills
+                  allTags={allTags}
+                  filterTags={filterTags}
+                  setFilterTags={setFilterTags}
+                  isMobile={isMobile}
+                  show={showMobileFilters}
+                  setShow={setShowMobileFilters}
+                />
+              </div>
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: 8 }}>
+                <button
+                  ref={mobileBtnRef}
+                  id="mobile-filter-toggle-btn"
+                  aria-label={showMobileFilters ? 'Hide Filters' : 'Show Filters'}
+                  onClick={handleMobileToggle}
+                  className="mobile-filter-toggle"
+                >
+                  <span className="arrow-img-wrapper">
+                    <img
+                      src={showMobileFilters ? "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-up.svg" : "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/icons/chevron-down.svg"}
+                      alt={showMobileFilters ? "Hide Filters" : "Show Filters"}
+                      className="arrow-img"
+                    />
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
+          {!isMobile && (
+            <div className="search-bar" style={{ width: '100%', maxWidth: 400, marginLeft: 'auto' }}>
+              <input
+                type="text"
+                placeholder="Search achievements..."
+                value={search}
+                onChange={e => { setManualSearch(''); setSearch(e.target.value); }}
+                onKeyDown={handleSearchKeyDown}
+                aria-label="Search achievements"
+                className="search-input"
+                style={{ width: '100%' }}
+              />
+            </div>
+          )}
+          {!isMobile && (
+            <div style={{ display: 'flex', alignItems: 'center', marginLeft: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginRight: 12 }}>
+                <label style={{ color: 'var(--text-color)', fontSize: 13 }}>Sort:</label>
+                <select
+                  aria-label="Sort achievements"
+                  value={sortKey}
+                  onChange={e => {
+                    const v = e.target.value;
+                    setSortKey(v);
+                    try { localStorage.setItem('sortKey', v); } catch (err) {}
+                  }}
+                  style={{ padding: '6px 8px', borderRadius: 6, background: 'var(--primary-bg)', color: 'var(--text-color)', border: '1px solid var(--hover-bg)' }}
+                >
+                  <option value="rank">Rank (Default)</option>
+                  <option value="name">Name</option>
+                  <option value="length">Length</option>
+                  <option value="levelID">Level ID</option>
+                  <option value="random">Random</option>
+                  <option value="date">Date</option>
+                </select>
+                <button
+                  aria-label="Toggle sort direction"
+                  title={sortDir === 'asc' ? 'Ascending' : 'Descending'}
+                  onClick={() => {
+                    const next = sortDir === 'asc' ? 'desc' : 'asc';
+                    setSortDir(next);
+                    try { localStorage.setItem('sortDir', next); } catch (err) {}
+                  }}
+                  style={{ padding: '6px 10px', borderRadius: 6, background: 'var(--primary-accent)', color: '#fff', border: 'none', cursor: 'pointer' }}
+                >
+                  {sortDir === 'asc' ? '↑' : '↓'}
+                </button>
+              </div>
+              <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
+                <input
+                  type="checkbox"
+                  checked={usePlatformers}
+                  onChange={e => {
+                    const next = !!e.target.checked;
+                    setUsePlatformers(next);
+                    try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
+                  }}
+                />
+                <span
+                  className="track"
+                  role="switch"
+                  aria-checked={usePlatformers}
+                  tabIndex={0}
+                >
+                  <span className="inner-label label-left">Platformer</span>
+                  <span className="thumb" aria-hidden="true" />
+                  <span className="inner-label label-right">Classic</span>
+                </span>
+              </label>
+            </div>
+          )}
+        </div>
+        {!isMobile && (
+          <div className="tag-filter-pills-container">
+            <TagFilterPills
+              allTags={allTags}
+              filterTags={filterTags}
+              setFilterTags={setFilterTags}
+              isMobile={isMobile}
+              show={showMobileFilters}
+              setShow={setShowMobileFilters}
+            />
+          </div>
+        )}
+      </header>
+      <MobileSidebarOverlay 
+        isOpen={isMobile && showSidebar}
+        onClose={() => setShowSidebar(false)}
+      />
       <main className="main-content achievements-main">
-        <div className="no-achievements">SharedList loaded. Provide the rest of the original list.js JSX here.</div>
+        {!isMobile && <Sidebar />}
+        <div
+          id="achievements-search-index"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: -9999,
+            top: 'auto',
+            width: 1,
+            height: 1,
+            overflow: 'hidden',
+            whiteSpace: 'pre-wrap'
+          }}
+        >
+          {(devMode && reordered ? reordered : achievements).map((a, i) => {
+            const parts = [];
+            if (a && a.name) parts.push(a.name);
+            if (a && a.player) parts.push(a.player);
+            if (a && a.id) parts.push(String(a.id));
+            if (a && a.levelID) parts.push(String(a.levelID));
+            if (a && a.submitter) parts.push(a.submitter);
+            if (a && Array.isArray(a.tags) && a.tags.length) parts.push(a.tags.join(', '));
+            return (
+              <span key={a && a.id ? a.id : `s-${i}`}>
+                {parts.join(' \u2014 ')}
+              </span>
+            );
+          })}
+        </div>
+        <section className="achievements achievements-section">
+          <DevModePanel
+            devMode={devMode}
+            handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
+            editIdx={editIdx}
+            editForm={editForm}
+            editFormTags={editFormTags}
+            editFormCustomTags={editFormCustomTags}
+            AVAILABLE_TAGS={AVAILABLE_TAGS}
+            handleEditFormChange={handleEditFormChange}
+            handleEditFormTagClick={handleEditFormTagClick}
+            handleEditFormCustomTagsChange={handleEditFormCustomTagsChange}
+            handleEditFormSave={handleEditFormSave}
+            handleEditFormCancel={handleEditFormCancel}
+            showNewForm={showNewForm}
+            newForm={newForm}
+            newFormTags={newFormTags}
+            newFormCustomTags={newFormCustomTags}
+            handleNewFormChange={handleNewFormChange}
+            handleNewFormTagClick={handleNewFormTagClick}
+            handleNewFormCustomTagsChange={handleNewFormCustomTagsChange}
+            handleNewFormAdd={handleNewFormAdd}
+            handleNewFormCancel={handleNewFormCancel}
+            handleCopyJson={handleCopyJson}
+            handleShowNewForm={handleShowNewForm}
+            newFormPreview={newFormPreview}
+            onImportAchievementsJson={json => {
+              let imported = Array.isArray(json) ? json : (json.achievements || []);
+              if (!Array.isArray(imported)) {
+                alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
+                return;
+              }
+              imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
+              try {
+                const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
+                setReordered(imported);
+                setDevMode(true);
+                if (idx !== null && typeof setScrollToIdx === 'function') {
+                  requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
+                }
+              } catch (e) {
+                setReordered(imported);
+                setDevMode(true);
+              }
+              alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
+            }}
+            dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
+          />
+          {isPending ? (
+            <div className="no-achievements">Loading...</div>
+          ) : (devMode ? (
+            devAchievements.map((a, i) => (
+              <div
+                key={a.id || i}
+                data-index={i}
+                ref={el => {
+                  achievementRefs.current[i] = el;
+                }}
+                className={(() => {
+                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
+                  return duplicateThumbKeys.has((thumb || '').trim()) ? 'duplicate-thumb-item' : '';
+                })()}
+                style={{
+                  border: '1px solid #333',
+                  marginBottom: 8,
+                  background: '#181818',
+                  borderRadius: 8,
+                  position: 'relative'
+                }}
+                onClick={() => {
+                  if (showNewForm && scrollToIdx === i) setShowNewForm(false);
+                }}
+                onMouseEnter={() => setHoveredIdx(i)}
+                onMouseLeave={() => setHoveredIdx(v => v === i ? null : v)}
+              >
+                {(hoveredIdx === i) && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    display: 'flex',
+                    gap: 32,
+                    zIndex: 3,
+                    background: 'var(--secondary-bg, #232323)',
+                    borderRadius: '1.5rem',
+                    padding: '22px 40px',
+                    boxShadow: '0 4px 24px #000b',
+                    alignItems: 'center',
+                    border: '2px solid var(--primary-accent, #e67e22)',
+                    transition: 'background 0.2s, border 0.2s',
+                  }}>
+                    <button
+                      title="Move Up"
+                      style={{
+                        background: 'var(--primary-accent, #e67e22)',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: 36,
+                        cursor: 'pointer',
+                        opacity: 1,
+                        borderRadius: '50%',
+                        width: 48,
+                        height: 48,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px #0006',
+                        transition: 'background 0.15s, transform 0.1s',
+                        outline: 'none',
+                        marginRight: 8,
+                      }}
+                      disabled={i === 0}
+                      onClick={e => { e.stopPropagation(); handleMoveAchievementUp(i); }}
+                    >▲</button>
+                    <button
+                      title="Move Down"
+                      style={{
+                        background: 'var(--primary-accent, #e67e22)',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: 36,
+                        cursor: 'pointer',
+                        opacity: 1,
+                        borderRadius: '50%',
+                        width: 48,
+                        height: 48,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px #0006',
+                        transition: 'background 0.15s, transform 0.1s',
+                        outline: 'none',
+                        marginRight: 8,
+                      }}
+                      disabled={i === devAchievements.length - 1}
+                      onClick={e => { e.stopPropagation(); handleMoveAchievementDown(i); }}
+                    >▼</button>
+                    <button
+                      title="Edit"
+                      style={{
+                        background: 'var(--info, #2980b9)',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: 44,
+                        cursor: 'pointer',
+                        opacity: 1,
+                        borderRadius: '50%',
+                        width: 64,
+                        height: 64,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px #0006',
+                        transition: 'background 0.15s, transform 0.1s',
+                        outline: 'none',
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = 'var(--info-hover, #3498db)'}
+                      onMouseOut={e => e.currentTarget.style.background = 'var(--info, #2980b9)'}
+                      onClick={e => { e.stopPropagation(); handleEditAchievement(i); }}
+                    >✏️</button>
+                    <button
+                      title="Duplicate"
+                      style={{
+                        background: 'var(--primary-accent, #e67e22)',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: 44,
+                        cursor: 'pointer',
+                        opacity: 1,
+                        borderRadius: '50%',
+                        width: 64,
+                        height: 64,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px #0006',
+                        transition: 'background 0.15s, transform 0.1s',
+                        outline: 'none',
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = 'var(--primary-accent-hover, #ff9800)'}
+                      onMouseOut={e => e.currentTarget.style.background = 'var(--primary-accent, #e67e22)'}
+                      onClick={e => { e.stopPropagation(); handleDuplicateAchievement(i); }}
+                    >📄</button>
+                    <button
+                      title="Remove"
+                      style={{
+                        background: 'var(--danger, #c0392b)',
+                        border: 'none',
+                        color: '#fff',
+                        fontSize: 44,
+                        cursor: 'pointer',
+                        opacity: 1,
+                        borderRadius: '50%',
+                        width: 64,
+                        height: 64,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 2px 8px #0006',
+                        transition: 'background 0.15s, transform 0.1s',
+                        outline: 'none',
+                      }}
+                      onMouseOver={e => e.currentTarget.style.background = 'var(--danger-hover, #e74c3c)'}
+                      onMouseOut={e => e.currentTarget.style.background = 'var(--danger, #c0392b)'}
+                      onClick={e => { e.stopPropagation(); handleRemoveAchievement(i); }}
+                    >🗑️</button>
+                  </div>
+                )}
+                <div style={{
+                  opacity: hoveredIdx === i ? 0.3 : 1,
+                  transition: 'opacity 0.2s',
+                  position: 'relative',
+                  zIndex: 1
+                }} className={highlightedIdx === i ? 'search-highlight' : ''}>
+                  <AchievementCard achievement={a} devMode={devMode} />
+                </div>
+              </div>
+            ))
+          ) : (
+            filtered.length === 0 ? (
+              <div className="no-achievements">No achievements found.</div>
+            ) : (
+              <ListWindow
+                ref={listRef}
+                height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
+                itemCount={Math.min(visibleCount, filtered.length)}
+                itemSize={() => 150}
+                width={'100%'}
+                style={{ overflowX: 'hidden' }}
+                onItemsRendered={({ visibleStopIndex }) => {
+                  try {
+                    const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
+                    const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
+                    if (pageSize === 'all') return;
+                    if (visibleStopIndex >= Math.min(visibleCount, filtered.length) - 5 && visibleCount < filtered.length) {
+                      setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), filtered.length));
+                    }
+                  } catch (err) {
+                    if (visibleStopIndex >= Math.min(visibleCount, filtered.length) - 5 && visibleCount < filtered.length) {
+                      setVisibleCount(prev => Math.min(prev + 100, filtered.length));
+                    }
+                  }
+                }}
+              >
+                {({ index, style }) => {
+                  const a = filtered[index];
+                  const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
+                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
+                  const isDup = duplicateThumbKeys.has((thumb || '').trim());
+                  return (
+                    <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
+                      <AchievementCard achievement={a} devMode={devMode} />
+                    </div>
+                  );
+                }}
+              </ListWindow>
+            )
+          ))}
+        </section>
       </main>
+      <div aria-live="polite" aria-atomic="true" style={{position:'absolute', left:-9999, top:'auto', width:1, height:1, overflow:'hidden'}}>
+        {noMatchMessage}
+      </div>
     </>
   );
 }
