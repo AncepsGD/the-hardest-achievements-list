@@ -305,7 +305,7 @@ main {
   justify-content: center;
   align-items: flex-start;
   min-height: calc(100vh - 72px);
-  height: calc(100vh - 72px);
+  height: auto;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -367,7 +367,7 @@ main {
   gap: 1rem;
   padding: 2rem;
   min-height: 0;
-  height: calc(100vh - 72px - 4rem);
+  height: auto;
   max-height: calc(100vh - 72px - 4rem);
   overflow-y: auto;
   scrollbar-width: thin;
@@ -2478,17 +2478,207 @@ main,
 .sidebar,
 .leaderboard-container {
   scrollbar-width: thin;
-  scrollbar-color: var(--hover-bg) rgba(0,0,0,0.05);
+  scrollbar-color: var(--hover-bg) rgba(0, 0, 0, 0.05);
 }
 
 .achievements::-webkit-scrollbar-track,
 .sidebar::-webkit-scrollbar-track,
 .leaderboard-container::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.03);
+  background: rgba(0, 0, 0, 0.03);
   border-radius: 8px;
 }
 
 .sidebar-mobile-overlay.hidden,
 .sidebar-mobile-overlay.hidden * {
   pointer-events: none !important;
+}
+
+@media (min-width: 2560px) {
+  .text h2 {
+    font-size: 2rem;
+  }
+
+  .text p {
+    font-size: 1.3rem;
+  }
+
+  .achievement-item {
+    min-height: 180px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .main-title {
+    font-size: 2rem;
+  }
+
+  .sidebar {
+    width: 300px;
+  }
+
+  .achievements {
+    max-width: 1300px;
+    gap: 1.5rem;
+    padding: 2.5rem;
+  }
+
+  .achievement-card {
+    padding: 3rem;
+  }
+
+  .achievement-title {
+    font-size: 2.5rem;
+  }
+
+  .achievement-player {
+    font-size: 2rem;
+  }
+
+  .achievement-video,
+  .showcase-video .achievement-video {
+    min-height: 300px;
+    max-height: 400px;
+  }
+
+  .leaderboard-container {
+    padding: 3.5rem 3rem;
+    font-size: 1.5rem;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 1.5rem 1.5rem;
+    font-size: 1.4rem;
+  }
+
+  .tag {
+    font-size: 0.9rem;
+  }
+
+  .logo img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .copy-notification {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.5rem;
+  }
+
+  .search-bar button {
+    width: 50px;
+    height: 50px;
+  }
+
+  main {
+    gap: 3rem;
+    padding: 3rem;
+  }
+}
+
+@media (min-width: 3440px) {
+  .achievements {
+    max-width: 1600px;
+  }
+
+  .text h2 {
+    font-size: 2.2rem;
+  }
+
+  .text p {
+    font-size: 1.5rem;
+  }
+
+  .achievement-item {
+    min-height: 200px;
+  }
+
+  .title {
+    font-size: 2.3rem;
+  }
+
+  .sidebar {
+    width: 350px;
+  }
+
+  .achievement-card {
+    padding: 3.5rem;
+  }
+
+  .achievement-title {
+    font-size: 3rem;
+  }
+
+  .achievement-player {
+    font-size: 2.3rem;
+  }
+
+  .achievement-video,
+  .showcase-video .achievement-video {
+    min-height: 350px;
+    max-height: 450px;
+  }
+
+  main {
+    gap: 4rem;
+    padding: 4rem;
+  }
+}
+
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .text h2 {
+    font-size: 1.7rem;
+  }
+
+  .text p {
+    font-size: 1.15rem;
+  }
+
+  .achievement-item {
+    min-height: 150px;
+  }
+
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .sidebar {
+    width: 280px;
+  }
+
+  .achievements {
+    max-width: 1150px;
+    gap: 1.2rem;
+    padding: 2.2rem;
+  }
+
+  .achievement-card {
+    padding: 2.5rem;
+  }
+
+  .achievement-title {
+    font-size: 2.2rem;
+  }
+
+  .achievement-player {
+    font-size: 1.7rem;
+  }
+
+  .achievement-video,
+  .showcase-video .achievement-video {
+    min-height: 250px;
+    max-height: 350px;
+  }
+
+  .logo img {
+    width: 80px;
+    height: 80px;
+  }
+
+  main {
+    gap: 2.5rem;
+    padding: 2.5rem;
+  }
 }
