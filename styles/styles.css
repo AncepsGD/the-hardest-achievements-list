@@ -1964,7 +1964,7 @@ main,
 
 .achievement-item .tag-container {
   position: absolute;
-  bottom: 0.5rem;
+  top: 0.5rem;
   right: 0.5rem;
   display: flex;
   gap: 0.5rem;
@@ -1976,7 +1976,12 @@ main,
     position: relative;
     top: auto;
     right: auto;
-    margin-top: 0.5rem;
+    margin-top: auto;
+    order: 1;
+  }
+
+  .achievement-item .text {
+    order: 0;
   }
 
   .main-title {
