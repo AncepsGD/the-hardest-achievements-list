@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 
 export default function Background({ bgImage }) {
   useEffect(() => {
-    // Inject styles only once
     if (!document.getElementById('background-style')) {
       const style = document.createElement('style');
       style.id = 'background-style';
@@ -40,19 +39,17 @@ export default function Background({ bgImage }) {
       document.head.appendChild(style);
     }
 
-    // If bgImage is provided, set it directly
     if (bgImage) {
       const bgDiv = document.getElementById('dynamic-background');
       if (bgDiv) bgDiv.style.backgroundImage = `url('${bgImage}')`;
       return;
     }
 
-    // Fallback: Fetch achievements and set background
     function setBackgroundFromAchievements(achievements) {
       if (!achievements || !achievements.length) return;
       let topAchievement = achievements.find(a => a && (a.thumbnail || a.levelID));
       if (!topAchievement) return;
-      let bgUrl = topAchievement.thumbnail || (topAchievement.levelID ? `https://tjcsucht.net/levelthumbs/${topAchievement.levelID}.png` : null);
+      let bgUrl = topAchievement.thumbnail || (topAchievement.levelID ? `https://levelthumbs.prevter.me/thumbnail/${topAchievement.levelID}/small` : null);
       if (bgUrl) {
         const bgDiv = document.getElementById('dynamic-background');
         if (bgDiv) bgDiv.style.backgroundImage = `url('${bgUrl}')`;
