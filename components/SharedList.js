@@ -369,6 +369,16 @@ export default function SharedList({
     const query = rawQuery.toLowerCase();
     if (!query) return;
 
+    if (query === 'edit') {
+      setDevMode(true);
+      if (!reordered) setReordered(achievements.map(a => ({ ...a })));
+      setSearch('');
+      if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+      }
+      return;
+    }
+
     const matchesQuery = a => {
       if (!a) return false;
       const candidates = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean);
@@ -692,18 +702,6 @@ export default function SharedList({
   }, [achievements, usePlatformers]);
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (!router || !router.isReady) return;
-    try {
-      const hasDev = router.query && (router.query.dev === '1' || router.query.dev === 'true' || router.query.dev !== undefined);
-      if (hasDev && achievements && achievements.length && !devMode) {
-        setDevMode(true);
-        setReordered(achievements.map(a => ({ ...a })));
-      }
-    } catch (e) {
-    }
-  }, [router, router && router.isReady, router && router.query, achievements]);
 
   useEffect(() => {
     function handleKeyDown(e) {
