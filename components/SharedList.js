@@ -566,7 +566,7 @@ export default function SharedList({
     const items = devMode && reordered ? reordered : achievements;
     const map = new Map();
     items.forEach((a, i) => {
-      const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://tjcsucht.net/levelthumbs/${a.levelID}.png` : '';
+      const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
       const key = String(thumb || '').trim();
       if (!key) return;
       map.set(key, (map.get(key) || 0) + 1);
@@ -705,7 +705,7 @@ export default function SharedList({
         setBgImage(null);
         return;
       }
-      const thumb = (top.thumbnail && String(top.thumbnail).trim()) ? top.thumbnail : (top.levelID ? `https://tjcsucht.net/levelthumbs/${top.levelID}.png` : null);
+      const thumb = (top.thumbnail && String(top.thumbnail).trim()) ? top.thumbnail : (top.levelID ? `https://levelthumbs.prevter.me/thumbnail/${top.levelID}` : null);
       setBgImage(thumb || null);
     } catch (e) {
       setBgImage(null);
