@@ -4423,6 +4423,22 @@
     ]
   },
   {
+    "name": "Unnerfed Firework (Midgatal)",
+    "id": "unnerfed-firework-midgatal",
+    "player": "Midgatal",
+    "levelID": null,
+    "date": "2025-12-08",
+    "length": 127,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/He3iRW6Usv4",
+    "showcaseVideo": "https://youtu.be/i1PU3YoEOXc&t=9",
+    "tags": [
+      "Level",
+      "Verified"
+    ]
+  },
+  {
     "name": "Through the Gates",
     "id": "through-the-gates",
     "player": "Zoink",
@@ -7491,25 +7507,6 @@
     ]
   },
   {
-    "name": "Avernus 480hz Mobile 47-77%",
-    "id": "avernus-480hz-mobile-47-77",
-    "player": "Prmak",
-    "length": 34,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/qzN58Elwl-Y?t=67",
-    "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
-    "date": "2025-09-15",
-    "levelID": 89496627,
-    "tags": [
-      "Level",
-      "Mobile",
-      "Progress",
-      "CBF",
-      "Rated"
-    ]
-  },
-  {
     "name": "Glaz Diavola 60hz Mobile",
     "id": "glaz-diavola-60hz-mobile",
     "player": "cring",
@@ -10331,25 +10328,6 @@
     ]
   },
   {
-    "name": "Kyouki 120hz Mobile 11-45%",
-    "id": "kyouki-120hz-mobile-11-45",
-    "player": "flarinova",
-    "levelID": 86018142,
-    "date": "2025-10-14",
-    "length": 29,
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://youtu.be/lHwtZQtkwmM",
-    "showcaseVideo": "https://youtu.be/RBeyMGug3J0",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
     "name": "The Only Wish",
     "id": "the-only-wish",
     "player": "VxMasTeR",
@@ -10613,6 +10591,25 @@
     ]
   },
   {
+    "name": "Avernus 120hz Delay Mobile 47-77%",
+    "id": "avernus-120hz-delay-mobile-47-77",
+    "player": "Prmak",
+    "length": 34,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/qzN58Elwl-Y?t=67",
+    "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
+    "date": "2025-09-15",
+    "levelID": 89496627,
+    "tags": [
+      "Level",
+      "Mobile",
+      "Progress",
+      "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "Sakupen Silhouette 37-100% 2 deaths, 99.88 accuracy",
     "id": "sakupen-silhouette-37-100-2-deaths-99-88-accuracy",
     "player": "sobot",
@@ -10664,6 +10661,24 @@
     ]
   },
   {
+    "name": "Sky Shredder 144hz Delay Mobile",
+        "id": "sky-shredder-144hz-delay-mobile",
+        "player": "Mateex",
+        "date": "2023-01-27",
+        "length": 62,
+        "version": 2.1,
+        "levelID": 88136707,
+        "submitter": "QwidziT",
+        "video": "https://youtu.be/NDEeKaxcGuc",
+        "showcaseVideo": "https://www.youtube.com/watch?v=naTZfLqgq40",
+        "tags": [
+            "Rated",
+            "Mobile",
+            "CBF",
+            "Level"
+        ]
+    },
+    {
     "name": "Digital Descent 60hz Mobile",
     "id": "digital-descent-60hz-mobile",
     "player": "Biprex",
@@ -10695,6 +10710,25 @@
     "tags": [
       "Level",
       "Verified"
+    ]
+  },
+  {
+    "name": "Kyouki 120hz Mobile 11-45%",
+    "id": "kyouki-120hz-mobile-11-45",
+    "player": "flarinova",
+    "levelID": 86018142,
+    "date": "2025-10-14",
+    "length": 29,
+    "version": 2.2,
+    "submitter": "kyle1saurus",
+    "video": "https://youtu.be/lHwtZQtkwmM",
+    "showcaseVideo": "https://youtu.be/RBeyMGug3J0",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
     ]
   },
   {
@@ -10764,6 +10798,24 @@
     ]
   },
   {
+    "name": "Dry Out Copyable 2 120hz Mobile",
+        "id": "dry-out-copyable-2-120hz-mobile",
+        "player": "ang",
+        "date": "2025-12-07",
+        "length": 201,
+        "version": 2.2,
+        "levelID": 106522770,
+        "submitter": "QwidziT",
+        "video": "https://youtu.be/GH3Sv1keVjA",
+        "showcaseVideo": "https://youtu.be/8_xpUipiwqM",
+        "tags": [
+            "Rated",
+            "Mobile",
+            "Low Hertz",
+            "Level"
+        ]
+    },
+    {
     "name": "Riots Demise 99%",
     "id": "riots-demise-99",
     "player": "noname228gg",
@@ -11412,6 +11464,7 @@
     ]
   }
 ]
+
 
 
 
