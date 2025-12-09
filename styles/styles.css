@@ -1972,6 +1972,13 @@ main,
 }
 
 @media (max-width: 600px) {
+  .achievement-item .tag-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 0.5rem;
+  }
+
   .main-title {
     font-size: 1.1rem;
   }
