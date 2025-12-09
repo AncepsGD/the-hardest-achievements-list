@@ -4423,10 +4423,10 @@
     ]
   },
   {
-    "name": "Unnerfed Firework (Midgatal)",
-    "id": "unnerfed-firework-midgatal",
+    "name": "Firework Ice Nation",
+    "id": "firework-ice-nation",
     "player": "Midgatal",
-    "levelID": null,
+    "levelID": 75277673,
     "date": "2025-12-08",
     "length": 127,
     "version": 2.2,
@@ -7856,25 +7856,6 @@
     ]
   },
   {
-    "name": "Thinking Space II 144hz Mobile 79-98%",
-    "id": "thinking-space-ii-144hz-mobile-79-98",
-    "player": "VERTOP",
-    "date": "2025-06-07",
-    "length": 10,
-    "version": 2.2,
-    "levelID": 119544028,
-    "video": "https://youtu.be/80Fip_0zcaU",
-    "showcaseVideo": "https://youtu.be/7xZ-xgeDyuc",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress"
-    ]
-  },
-  {
     "name": "Silent AcropoliX 51%",
     "id": "silent-acropolix-51",
     "player": "SeptaGon7",
@@ -10991,6 +10972,25 @@
     ]
   },
   {
+    "name": "Thinking Space II 144hz Mobile 79-98%",
+    "id": "thinking-space-ii-144hz-mobile-79-98",
+    "player": "VERTOP",
+    "date": "2025-06-07",
+    "length": 10,
+    "version": 2.2,
+    "levelID": 119544028,
+    "video": "https://youtu.be/80Fip_0zcaU",
+    "showcaseVideo": "https://youtu.be/7xZ-xgeDyuc",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Fully Invisible Paraballa 24-74%",
     "id": "fully-invisible-paraballa-24-74",
     "player": "MoonFrost",
@@ -11077,6 +11077,22 @@
     ]
   },
   {
+    "name": "Time Lapse 144hz Delay Mobile",
+        "id": "time-lapse-144hz-delay-mobile",
+        "player": "Mateex",
+        "levelID": 97705490,
+        "date": "2025-10-14",
+        "length": 69,
+        "version": 2.2,
+        "video": "https://youtu.be/ns2RJoy4MpE",
+        "showcaseVideo": "https://www.youtube.com/watch?v=SGlmK7YVLGY",
+        "tags": [
+            "Level",
+            "Mobile",
+            "CBF"
+        ]
+    },
+    {
     "name": "The Golden 1.1x 97%",
     "id": "the-golden-1-1x-97",
     "player": "Sid125",
@@ -11319,6 +11335,24 @@
     ]
   },
   {
+    "name": "Renevant 120hz Mobile",
+        "id": "renevant-120hz-mobile",
+        "player": "SoulRise",
+        "date": "2025-05-16",
+        "length": 98,
+        "version": 2.2,
+        "levelID": 58161496,
+        "video": "https://youtu.be/uZZZqTbwCuY",
+        "showcaseVideo": "https://youtu.be/FgkACdloQug",
+        "submitter": "kyle1saurus",
+        "tags": [
+            "Level",
+            "Low Hertz",
+            "Mobile",
+            "Rated"
+        ]
+    },
+    {
     "name": "racketeering v3 44-100%",
     "id": "racketeering-v3-44-100",
     "player": "seels",
@@ -11464,6 +11498,7 @@
     ]
   }
 ]
+
 
 
 
