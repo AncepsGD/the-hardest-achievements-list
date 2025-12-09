@@ -108,6 +108,17 @@ function sanitizeImageUrl(input) {
   }
 }
 
+function getThumbnailUrl(achievement, isMobile) {
+  if (achievement && achievement.thumbnail) {
+    return achievement.thumbnail;
+  }
+  if (achievement && achievement.levelID) {
+    const baseUrl = `https://levelthumbs.prevter.me/thumbnail/${achievement.levelID}`;
+    return isMobile ? `${baseUrl}/small` : baseUrl;
+  }
+  return '/assets/default-thumbnail.png';
+}
+
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
   const tagStates = {};
   allTags.forEach(tag => {
@@ -258,7 +269,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               <p>{achievement.player}</p>
             </div>
             <div className="thumbnail-container">
-              <img src={sanitizeImageUrl(achievement.thumbnail) || (achievement.levelID ? `https://tjcsucht.net/levelthumbs/${achievement.levelID}.png` : '/assets/default-thumbnail.png')} alt={achievement.name} loading="lazy" />
+              <img src={sanitizeImageUrl(achievement.thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
             </div>
           </div>
           {/* Developer mode hover menu */}
@@ -320,7 +331,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode }) 
               <p>{achievement.player}</p>
             </div>
             <div className="thumbnail-container">
-              <img src={sanitizeImageUrl(achievement.thumbnail) || (achievement.levelID ? `https://levelthumbs.prevter.me/thumbnail/${achievement.levelID}` : '/assets/default-thumbnail.png')} alt={achievement.name} loading="lazy" />
+              <img src={sanitizeImageUrl(achievement.thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
             </div>
           </div>
         </div>
@@ -1292,7 +1303,7 @@ export default function SharedList({
         </div>
         <section className="achievements achievements-section">
           <div style={{ width: '100%'}}>
-            <div className="search-bar" style={{ width: '100%', maxWidth: 'min(95vw, 925px)', margin: '0 auto' }}>
+            <div className="search-bar" style={{ width: '100%', maxWidth: 'min(95vw, 902px)', margin: '0 auto' }}>
               <input
                 type="text"
                 placeholder="Search achievements..."
@@ -1363,7 +1374,7 @@ export default function SharedList({
                   achievementRefs.current[i] = el;
                 }}
                 className={(() => {
-                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
+                  const thumb = getThumbnailUrl(a, isMobile);
                   return duplicateThumbKeys.has((thumb || '').trim()) ? 'duplicate-thumb-item' : '';
                 })()}
                 style={{
@@ -1556,7 +1567,7 @@ export default function SharedList({
                 {({ index, style }) => {
                   const a = filtered[index];
                   const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
-                  const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
+                  const thumb = getThumbnailUrl(a, isMobile);
                   const isDup = duplicateThumbKeys.has((thumb || '').trim());
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
