@@ -2437,3 +2437,58 @@ main,
     transform: none;
   }
 }
+
+.achievements,
+.sidebar,
+.leaderboard-container,
+.achievement-item .tag-container,
+.tag-filter-pills {
+  scrollbar-gutter: stable both-edges;
+}
+
+.achievements::-webkit-scrollbar,
+.sidebar::-webkit-scrollbar,
+.leaderboard-container::-webkit-scrollbar,
+.achievement-item .tag-container::-webkit-scrollbar,
+.tag-filter-pills::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+.achievements::-webkit-scrollbar-thumb,
+.sidebar::-webkit-scrollbar-thumb,
+.leaderboard-container::-webkit-scrollbar-thumb,
+.achievement-item .tag-container::-webkit-scrollbar-thumb,
+.tag-filter-pills::-webkit-scrollbar-thumb {
+  background-color: var(--hover-bg);
+  border-radius: 8px;
+  min-height: 36px;
+  border: 4px solid transparent;
+  background-clip: padding-box;
+  cursor: grab;
+}
+
+.achievements::-webkit-scrollbar-thumb:active,
+.sidebar::-webkit-scrollbar-thumb:active,
+.leaderboard-container::-webkit-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.achievements,
+.sidebar,
+.leaderboard-container {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hover-bg) rgba(0,0,0,0.05);
+}
+
+.achievements::-webkit-scrollbar-track,
+.sidebar::-webkit-scrollbar-track,
+.leaderboard-container::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.03);
+  border-radius: 8px;
+}
+
+.sidebar-mobile-overlay.hidden,
+.sidebar-mobile-overlay.hidden * {
+  pointer-events: none !important;
+}
