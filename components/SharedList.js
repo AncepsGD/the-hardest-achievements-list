@@ -1133,18 +1133,6 @@ export default function SharedList({
           </div>
           {isMobile && (
             <div style={{ width: '100%', marginTop: 12 }}>
-              <div className="search-bar" style={{ width: '100%', maxWidth: 400, margin: '0 auto' }}>
-                <input
-                  type="text"
-                  placeholder="Search achievements..."
-                  value={search}
-                  onChange={e => { setManualSearch(''); setSearch(e.target.value); }}
-                  onKeyDown={handleSearchKeyDown}
-                  aria-label="Search achievements"
-                  className="search-input"
-                  style={{ width: '100%' }}
-                />
-              </div>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
                 <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
                   <input
@@ -1195,20 +1183,6 @@ export default function SharedList({
                   </span>
                 </button>
               </div>
-            </div>
-          )}
-          {!isMobile && (
-            <div className="search-bar" style={{ width: '100%', maxWidth: 400, marginLeft: 'auto' }}>
-              <input
-                type="text"
-                placeholder="Search achievements..."
-                value={search}
-                onChange={e => { setManualSearch(''); setSearch(e.target.value); }}
-                onKeyDown={handleSearchKeyDown}
-                aria-label="Search achievements"
-                className="search-input"
-                style={{ width: '100%' }}
-              />
             </div>
           )}
           {!isMobile && (
@@ -1317,6 +1291,20 @@ export default function SharedList({
           })}
         </div>
         <section className="achievements achievements-section">
+          <div style={{ width: '100%', padding: isMobile ? '12px 8px' : '16px', marginBottom: 16 }}>
+            <div className="search-bar" style={{ width: '100%', maxWidth: 600, margin: '0 auto' }}>
+              <input
+                type="text"
+                placeholder="Search achievements..."
+                value={search}
+                onChange={e => { setManualSearch(''); setSearch(e.target.value); }}
+                onKeyDown={handleSearchKeyDown}
+                aria-label="Search achievements"
+                className="search-input"
+                style={{ width: '100%' }}
+              />
+            </div>
+          </div>
           <DevModePanel
             devMode={devMode}
             handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
