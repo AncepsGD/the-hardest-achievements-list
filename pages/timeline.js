@@ -9,6 +9,7 @@ export default function TimelinePage() {
       dataUrl="/timeline.json"
       dataFileName="timeline.json"
       storageKeySuffix="timeline"
+      mode="timeline"
     />
   );
 }
