@@ -19,7 +19,8 @@ export default function MobileSidebarOverlay({ isOpen, onClose }) {
         touchAction: 'manipulation',
         display: "flex",
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        WebkitOverflowScrolling: "touch"
       }}
       onClick={onClose}
       role="dialog"
@@ -40,7 +41,9 @@ export default function MobileSidebarOverlay({ isOpen, onClose }) {
           background: "var(--secondary-bg)",
           borderRadius: "1.2rem",
           overflowY: "auto",
-          margin: 'auto'
+          WebkitOverflowScrolling: "touch",
+          margin: 'auto',
+          animation: 'slideUp 0.3s ease-out'
         }}
         onClick={e => e.stopPropagation()}
       >
@@ -56,7 +59,13 @@ export default function MobileSidebarOverlay({ isOpen, onClose }) {
             color: "#DFE3F5",
             fontSize: 28,
             cursor: "pointer",
-            zIndex: 1003
+            zIndex: 1003,
+            width: "44px",
+            height: "44px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "0"
           }}
           onClick={onClose}
         >
@@ -64,6 +73,18 @@ export default function MobileSidebarOverlay({ isOpen, onClose }) {
         </button>
   <Sidebar onClose={onClose} />
       </div>
+      <style>{`
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
