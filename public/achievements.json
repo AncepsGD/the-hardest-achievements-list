@@ -6443,6 +6443,25 @@
     ]
   },
   {
+    "name": "BOOBAWAMBA 144hz Mobile 49-87%",
+    "id": "boobawamba-144hz-mobile-49-87%",
+    "player": "VERTOP",
+    "date": "2024-10-05",
+    "levelID": 110816181,
+    "length": 53,
+    "version": 2.2,
+    "video": "https://youtu.be/bkDagaEkkaQ",
+    "showcaseVideo": "https://youtu.be/qaz4M52CxWU",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Waterfall 120hz Mobile",
     "id": "waterfall-120hz-mobile",
     "player": "BBGameGuru",
@@ -6457,25 +6476,6 @@
       "Level",
       "Low Hertz",
       "Mobile",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Trueffet 144hz Mobile 74%",
-    "id": "trueffet-144hz-mobile-74",
-    "player": "bemj80",
-    "levelID": 71434979,
-    "date": "2024-11-09",
-    "length": 53,
-    "version": 2.2,
-    "video": "https://youtu.be/6cRn5Uk9gI0",
-    "showcaseVideo": "https://youtu.be/6OEWoZZam-Y",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
       "Rated"
     ]
   },
@@ -6542,25 +6542,6 @@
     "tags": [
       "Level",
       "Verified",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Silent clubstep 120hz Mobile 24-100%",
-    "id": "silent-clubstep-120hz-mobile-24-100",
-    "player": "Demonbeater17",
-    "levelID": 4125776,
-    "date": "2023-11-01",
-    "length": 65,
-    "version": 2.1,
-    "video": "https://youtu.be/52HKhnnLtGE",
-    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
       "Rated"
     ]
   },
@@ -6782,6 +6763,25 @@
     ]
   },
   {
+    "name": "Solar Flare 144hz Delay Mobile 34-100%",
+    "id": "solar-flare-144hz-delay-mobile-34-100",
+    "player": "YgoLb1",
+    "levelID": 90390075,
+    "date": "2025-08-29",
+    "length": 40,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/i1S20yt8cIw",
+    "showcaseVideo": "https://youtu.be/V2UFysszlyI",
+    "tags": [
+      "Level",
+      "Mobile",
+      "Progress",
+      "CBF",
+      "Rated"
+    ]
+  },
+  {
     "name": "Cosmic Cyclone (Meatius) 37-90%",
     "id": "cosmic-cyclone-meatius-37-90",
     "player": "Meatius",
@@ -6917,6 +6917,25 @@
     ]
   },
   {
+    "name": "Silent clubstep 120hz Mobile 24-100%",
+    "id": "silent-clubstep-120hz-mobile-24-100",
+    "player": "Demonbeater17",
+    "levelID": 4125776,
+    "date": "2023-11-01",
+    "length": 65,
+    "version": 2.1,
+    "video": "https://youtu.be/52HKhnnLtGE",
+    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Avernus white 48%",
     "id": "avernus-white-48",
     "player": "SerVax",
@@ -7016,25 +7035,6 @@
     ]
   },
   {
-    "name": "SUPERHATEMEWORLD 144hz Mobile 94%",
-    "id": "superhatemeworld-144hz-mobile-94",
-    "player": "Zafsa",
-    "date": "2025-07-20",
-    "length": 72,
-    "version": 2.2,
-    "levelID": 57571983,
-    "video": "https://youtu.be/VPKDPKD2P-8",
-    "showcaseVideo": "https://youtu.be/2EYDg9cnt5E",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
     "name": "60hz Mobile",
     "id": "60hz-mobile",
     "player": "ScorchBTD",
@@ -7069,13 +7069,13 @@
     ]
   },
   {
-    "name": "Avernus 480hz Mobile 33%",
-    "id": "avernus-480hz-mobile-33",
+    "name": "Avernus 120hz Delay Mobile 33%",
+    "id": "avernus-120hz-delay-mobile-33",
     "player": "Prmak",
     "length": 40,
     "version": 2.2,
     "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/16Zh8jssanc",
+    "video": "https://youtu.be/X34KMK-KVl0",
     "showcaseVideo": "https://youtu.be/JL30R7f-iBE",
     "date": "2025-09-15",
     "levelID": 89496627,
@@ -7743,6 +7743,25 @@
       "Level",
       "Verified",
       "Tentative"
+    ]
+  },
+  {
+    "name": "Trueffet 144hz Mobile 74%",
+    "id": "trueffet-144hz-mobile-74",
+    "player": "bemj80",
+    "levelID": 71434979,
+    "date": "2024-11-09",
+    "length": 53,
+    "version": 2.2,
+    "video": "https://youtu.be/6cRn5Uk9gI0",
+    "showcaseVideo": "https://youtu.be/6OEWoZZam-Y",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
     ]
   },
   {
@@ -8941,6 +8960,25 @@
     ]
   },
   {
+    "name": "SUPERHATEMEWORLD 144hz Mobile 94%",
+    "id": "superhatemeworld-144hz-mobile-94",
+    "player": "Zafsa",
+    "date": "2025-07-20",
+    "length": 72,
+    "version": 2.2,
+    "levelID": 57571983,
+    "video": "https://youtu.be/VPKDPKD2P-8",
+    "showcaseVideo": "https://youtu.be/2EYDg9cnt5E",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Decks Dark",
     "id": "decks-dark",
     "player": "Whizkid05",
@@ -9602,24 +9640,6 @@
     ]
   },
   {
-    "name": "Solar Flare 480hz Mobile 34-100%",
-    "id": "solar-flare-480hz-mobile-34-100",
-    "player": "YgoLb1",
-    "levelID": 90390075,
-    "date": "2023-04-29",
-    "length": 40,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "video": "https://youtu.be/i1S20yt8cIw",
-    "showcaseVideo": "https://youtu.be/V2UFysszlyI",
-    "tags": [
-      "Level",
-      "Mobile",
-      "Progress",
-      "CBF"
-    ]
-  },
-  {
     "name": "Aerial Gleam 69%, 100% in a row",
     "id": "aerial-gleam-69-100-in-a-row",
     "player": "Cuatrocientos",
@@ -10171,25 +10191,6 @@
     ]
   },
   {
-    "name": "LIMBO 240hz Mobile 63%",
-    "id": "limbo-240hz-mobile-63",
-    "player": "GYTO",
-    "levelID": 86084399,
-    "date": "2025-10-23",
-    "length": 100,
-    "version": 2.2,
-    "submitter": "GYTO",
-    "video": "https://youtu.be/lsVuSooorSo",
-    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
-    "tags": [
-      "Level",
-      "Mobile",
-      "Progress",
-      "CBF",
-      "Rated"
-    ]
-  },
-  {
     "name": "Checked Steam (1st Coin)",
     "id": "checked-steam-1st-coin",
     "player": "Whizkid05",
@@ -10208,6 +10209,25 @@
     ]
   },
   {
+    "name": "Judgement Knights 120hz Delay Mobile 72%",
+        "id": "judgement-knights-120hz-delay-mobile-72",
+        "player": "Rotys",
+        "levelID": 110913375,
+        "date": "2025-01-16",
+        "length": 55,
+        "version": 2.2,
+        "video": "https://youtu.be/QLkTIyH7ElA",
+        "showcaseVideo": "https://youtu.be/HZR72ujXJA4",
+        "submitter": "QwidziT",
+        "tags": [
+            "Level",
+            "Progress",
+            "Mobile",
+            "CBF",
+            "Rated"
+        ]
+    },
+    {
     "name": "Lunatic Eyes (Old) 71%",
     "id": "lunatic-eyes-old-71",
     "player": "DNM121",
@@ -10220,6 +10240,25 @@
     "tags": [
       "Level",
       "Progress"
+    ]
+  },
+  {
+    "name": "Solar Flare 144hz Delay Mobile 46%",
+    "id": "solar-flare-144hz-delay-mobile-46",
+    "player": "YgoLb1",
+    "levelID": 90390075,
+    "date": "2025-10-19",
+    "length": 40,
+    "version": 2.2,
+    "submitter": "QwidziT",
+    "video": "https://youtu.be/URtNxE9XBXg",
+    "showcaseVideo": "https://youtu.be/V2UFysszlyI",
+    "tags": [
+      "Level",
+      "Mobile",
+      "Progress",
+      "CBF",
+      "Rated"
     ]
   },
   {
@@ -10252,6 +10291,25 @@
     "tags": [
       "Level",
       "Progress"
+    ]
+  },
+  {
+    "name": "LIMBO 120hz Delay Mobile 63%",
+    "id": "limbo-120hz-Delay-mobile-63",
+    "player": "GYTO",
+    "levelID": 86084399,
+    "date": "2025-10-23",
+    "length": 100,
+    "version": 2.2,
+    "submitter": "GYTO",
+    "video": "https://youtu.be/lsVuSooorSo",
+    "showcaseVideo": "https://youtu.be/gGz9rPR4pbw",
+    "tags": [
+      "Level",
+      "Mobile",
+      "Progress",
+      "CBF",
+      "Rated"
     ]
   },
   {
@@ -11279,3 +11337,4 @@
     ]
   }
 ]
+
