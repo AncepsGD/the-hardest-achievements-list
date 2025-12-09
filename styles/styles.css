@@ -1740,6 +1740,18 @@ main, .main-content {
   background-color: var(--hover-bg);
 }
 
+@media (min-width: 901px) {
+  .hamburger-icon {
+    display: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hamburger-icon {
+    display: flex !important;
+  }
+}
+
 .achievements-main {
   display: flex;
   gap: 2rem;
