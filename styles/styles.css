@@ -1964,7 +1964,7 @@ main,
 
 .achievement-item .tag-container {
   position: absolute;
-  top: 0.5rem;
+  bottom: 0.5rem;
   right: 0.5rem;
   display: flex;
   gap: 0.5rem;
