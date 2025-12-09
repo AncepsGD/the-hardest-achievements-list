@@ -1724,13 +1724,13 @@ main, .main-content {
 }
 
 .hamburger-icon {
+  display: none;
   font-size: 2rem;
   color: var(--text-color);
   padding: 0.5rem;
   cursor: pointer;
   border-radius: var(--border-radius);
   transition: background-color 0.2s ease;
-  display: flex;
   align-items: center;
   justify-content: center;
   background-color: transparent;
@@ -1738,12 +1738,6 @@ main, .main-content {
 
 .hamburger-icon:hover {
   background-color: var(--hover-bg);
-}
-
-@media (min-width: 901px) {
-  .hamburger-icon {
-    display: none !important;
-  }
 }
 
 @media (max-width: 900px) {
