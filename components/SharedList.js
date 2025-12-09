@@ -1292,7 +1292,7 @@ export default function SharedList({
         </div>
         <section className="achievements achievements-section">
           <div style={{ width: '100%'}}>
-            <div className="search-bar" style={{ width: '100%', margin: '0 auto' }}>
+            <div className="search-bar" style={{ width: '100%', maxWidth: 1000, margin: '0 auto' }}>
               <input
                 type="text"
                 placeholder="Search achievements..."
