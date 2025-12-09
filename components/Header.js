@@ -2,13 +2,11 @@ import { useState, useEffect } from "react";
 import MobileSidebarOverlay from "./MobileSidebarOverlay";
 
 export default function Header({ children }) {
-  // Splash text state
   const [splashText, setSplashText] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Fetch splash texts from public folder
     fetch("/splash-text.json")
       .then(res => res.json())
       .then(data => {
@@ -39,16 +37,24 @@ export default function Header({ children }) {
           aria-label="Open sidebar"
           title="Open sidebar menu"
           onClick={() => isMobile && setShowSidebar(true)}
+          style={{
+            padding: "0.5rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            minWidth: "44px",
+            minHeight: "44px"
+          }}
         >
           <span className="bi bi-list hamburger-icon" aria-hidden="true"></span>
         </button>
-        <div className="logo">
+        <div className="logo" style={{ flexShrink: 0 }}>
           <img src="/assets/favicon-96x96.png" alt="The Hardest Achievements List Logo" title="The Hardest Achievements List Logo" className="logo-img" />
         </div>
-        <h1 className="title main-title">The Hardest Achievements List</h1>
-        {children && <div className="header-children">{children}</div>}
+        <h1 className="title main-title" style={{ flex: 1, minWidth: 0 }}>The Hardest Achievements List</h1>
+        {children && <div className="header-children" style={{ marginLeft: "auto", flexShrink: 0 }}>{children}</div>}
       </div>
-      <div style={{ display: "flex", alignItems: "center", marginLeft: "auto" }}>
+      <div style={{ display: "flex", alignItems: "center", marginLeft: "auto", paddingRight: "1rem" }}>
         {!isMobile && <div className="splash-text">{splashText}</div>}
       </div>
             {/* Mobile Sidebar Overlay */}
