@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback, memo } from 'react';
 import { VariableSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -362,97 +362,6 @@ export default function SharedList({
   const [noMatchMessage, setNoMatchMessage] = useState('');
   const debouncedSearch = useDebouncedValue(search, 200);
 
-  function handleSearchKeyDown(e) {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-    const rawQuery = (search || '').trim();
-    const query = rawQuery.toLowerCase();
-    if (!query) return;
-
-    const matchesQuery = a => {
-      if (!a) return false;
-      const candidates = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean);
-      return candidates.some(c => String(c).toLowerCase().includes(query));
-    };
-
-    const respectsTagFilters = a => {
-      const tags = (a.tags || []).map(t => t.toUpperCase());
-      if (filterTags.include.length && !filterTags.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-      if (filterTags.exclude.length && filterTags.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-      return true;
-    };
-
-    const baseList = devMode && reordered ? reordered : achievements;
-
-    const preFiltered = baseList.filter(a => respectsTagFilters(a));
-
-    const matchingItems = preFiltered.filter(a => matchesQuery(a));
-    if (!matchingItems || matchingItems.length === 0) return;
-
-    const firstMatch = matchingItems[0];
-
-    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
-
-  setManualSearch(rawQuery);
-    setSearchJumpPending(true);
-    setVisibleCount(0);
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const countToShow = Math.max(20, matchingItems.length);
-      setVisibleCount(prev => Math.max(prev, countToShow));
-
-      if (devMode) {
-        setScrollToIdx(targetIdxInPreFiltered);
-        setHighlightedIdx(targetIdxInPreFiltered);
-      } else {
-
-        const visibleFiltered = achievements.filter(a => {
-          if (manualSearch || debouncedSearch) {
-            const s = manualSearch ? manualSearch : debouncedSearch;
-            const sLower = (s || '').trim().toLowerCase();
-            if (sLower) {
-              if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
-            }
-          }
-          const tags = (a.tags || []).map(t => t.toUpperCase());
-          if (filterTags.include.length && !filterTags.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-          if (filterTags.exclude.length && filterTags.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-          return true;
-        });
-
-        const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
-        const idxToUse = finalIdx === -1 ? 0 : finalIdx;
-        setScrollToIdx(idxToUse);
-        if (finalIdx === -1) {
-          setNoMatchMessage('No matching achievement is currently visible with the active filters.');
-          window.setTimeout(() => setNoMatchMessage(''), 3000);
-        } else {
-          setHighlightedIdx(idxToUse);
-        }
-      }
-    }));
-
-    if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
-      document.activeElement.blur();
-    }
-  }
-  const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
-  const [allTags, setAllTags] = useState([]);
-  const [isMobile, setIsMobile] = useState(false);
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const mobileBtnRef = useRef();
-  const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
-  const { dateFormat, setDateFormat } = useDateFormat();
-  const [showSettings, setShowSettings] = useState(false);
-  const [devMode, setDevMode] = useState(false);
-  const [sortKey, setSortKey] = useState(() => {
-    try { return typeof window !== 'undefined' ? (localStorage.getItem('sortKey') || 'rank') : 'rank'; } catch (e) { return 'rank'; }
-  });
-  const [sortDir, setSortDir] = useState(() => {
-    try { return typeof window !== 'undefined' ? localStorage.getItem('sortDir') || 'asc' : 'asc'; } catch (e) { return 'asc'; }
-  });
-
   const compareByKey = useCallback((a, b, key) => {
     if (!a && !b) return 0;
     if (!a) return -1;
@@ -784,6 +693,11 @@ export default function SharedList({
     return (s || '').trim().toLowerCase();
   }, [manualSearch, debouncedSearch]);
 
+  const filterTagsUppercase = useMemo(() => ({
+    include: filterTags.include.map(t => t.toUpperCase()),
+    exclude: filterTags.exclude.map(t => t.toUpperCase())
+  }), [filterTags]);
+
   const filterFn = useCallback(
     a => {
       if (searchLower) {
@@ -791,11 +705,11 @@ export default function SharedList({
         if (!a.name.toLowerCase().includes(searchLower)) return false;
       }
       const tags = (a.tags || []).map(t => t.toUpperCase());
-      if (filterTags.include.length && !filterTags.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-      if (filterTags.exclude.length && filterTags.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+      if (filterTagsUppercase.include.length && !filterTagsUppercase.include.every(tag => tags.includes(tag))) return false;
+      if (filterTagsUppercase.exclude.length && filterTagsUppercase.exclude.some(tag => tags.includes(tag))) return false;
       return true;
     },
-    [searchLower, filterTags]
+    [searchLower, filterTagsUppercase]
   );
 
   const filtered = useMemo(() => {
@@ -823,62 +737,129 @@ export default function SharedList({
     return copy;
   }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomOrderMap]);
 
-  useEffect(() => {
-    let pref = 100;
-    if (searchJumpPending) return;
-    try {
-      if (typeof window !== 'undefined') {
-        const v = localStorage.getItem('itemsPerPage');
-        pref = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
-      }
-    } catch (e) { pref = 100; }
-
-    if (pref === 'all') setVisibleCount(filtered.length);
-    else setVisibleCount(Math.min(pref, filtered.length));
-  }, [filtered]);
-
   const baseDev = devMode && reordered ? reordered : achievements;
 
   const devAchievements = useMemo(() => {
     if (!baseDev) return baseDev;
     if (!sortKey) return baseDev;
-    if (sortKey === 'levelID') {
-      const onlyWithLevel = baseDev.filter(a => {
-        const num = Number(a && a.levelID);
-        return !isNaN(num) && num > 0;
-      });
-      const copy = [...onlyWithLevel];
-      copy.sort((x, y) => compareByKey(x, y, 'levelID'));
+    
+    const performSort = (items) => {
+      if (sortKey === 'levelID') {
+        const filtered = items.filter(a => {
+          const num = Number(a && a.levelID);
+          return !isNaN(num) && num > 0;
+        });
+        const copy = [...filtered];
+        copy.sort((x, y) => compareByKey(x, y, 'levelID'));
+        if (sortDir === 'desc') copy.reverse();
+        return copy;
+      }
+      if (sortKey === 'random') {
+        const copy = [...items];
+        const getKey = item => (item && item.id) ? String(item.id) : `__idx_${items.indexOf(item)}`;
+        copy.sort((x, y) => ( (randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0) ));
+        if (sortDir === 'desc') copy.reverse();
+        return copy;
+      }
+      const copy = [...items];
+      copy.sort((x, y) => compareByKey(x, y, sortKey));
       if (sortDir === 'desc') copy.reverse();
       return copy;
-    }
-    if (sortKey === 'random') {
-      const copy = [...baseDev];
-      const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
-      copy.sort((x, y) => ( (randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0) ));
-      if (sortDir === 'desc') copy.reverse();
-      return copy;
-    }
-    const copy = [...baseDev];
-    copy.sort((x, y) => compareByKey(x, y, sortKey));
-    if (sortDir === 'desc') copy.reverse();
-    return copy;
+    };
+    
+    return performSort(baseDev);
   }, [baseDev, sortKey, sortDir, compareByKey, randomOrderMap]);
 
-  useEffect(() => {
-    const items = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : achievements;
-    const keys = (items || []).map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+  function handleSearchKeyDown(e) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    const rawQuery = (search || '').trim();
+    const query = rawQuery.toLowerCase();
+    if (!query) return;
 
-    for (let i = keys.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const t = keys[i];
-      keys[i] = keys[j];
-      keys[j] = t;
+    const matchesQuery = a => {
+      if (!a) return false;
+      const candidates = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean);
+      return candidates.some(c => String(c).toLowerCase().includes(query));
+    };
+
+    const respectsTagFilters = a => {
+      const tags = (a.tags || []).map(t => t.toUpperCase());
+      if (filterTagsUppercase.include.length && !filterTagsUppercase.include.every(tag => tags.includes(tag))) return false;
+      if (filterTagsUppercase.exclude.length && filterTagsUppercase.exclude.some(tag => tags.includes(tag))) return false;
+      return true;
+    };
+
+    const baseList = devMode && reordered ? reordered : achievements;
+
+    const preFiltered = baseList.filter(a => respectsTagFilters(a));
+
+    const matchingItems = preFiltered.filter(a => matchesQuery(a));
+    if (!matchingItems || matchingItems.length === 0) return;
+
+    const firstMatch = matchingItems[0];
+
+    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
+
+    setManualSearch(rawQuery);
+    setSearchJumpPending(true);
+    setVisibleCount(0);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const countToShow = Math.max(20, matchingItems.length);
+      setVisibleCount(prev => Math.max(prev, countToShow));
+
+      if (devMode) {
+        setScrollToIdx(targetIdxInPreFiltered);
+        setHighlightedIdx(targetIdxInPreFiltered);
+      } else {
+
+        const visibleFiltered = achievements.filter(a => {
+          if (manualSearch || debouncedSearch) {
+            const s = manualSearch ? manualSearch : debouncedSearch;
+            const sLower = (s || '').trim().toLowerCase();
+            if (sLower) {
+              if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
+            }
+          }
+          const tags = (a.tags || []).map(t => t.toUpperCase());
+          if (filterTagsUppercase.include.length && !filterTagsUppercase.include.every(tag => tags.includes(tag))) return false;
+          if (filterTagsUppercase.exclude.length && filterTagsUppercase.exclude.some(tag => tags.includes(tag))) return false;
+          return true;
+        });
+
+        const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
+        const idxToUse = finalIdx === -1 ? 0 : finalIdx;
+        setScrollToIdx(idxToUse);
+        if (finalIdx === -1) {
+          setNoMatchMessage('No matching achievement is currently visible with the active filters.');
+          window.setTimeout(() => setNoMatchMessage(''), 3000);
+        } else {
+          setHighlightedIdx(idxToUse);
+        }
+      }
+    }));
+
+    if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
     }
-    const map = {};
-    keys.forEach((k, i) => { map[k] = i; });
-    setRandomOrderMap(map);
-  }, [achievements, reordered]);
+  }
+  const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
+  const [allTags, setAllTags] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
+  const mobileBtnRef = useRef();
+  const isPending = false;
+  const { dateFormat, setDateFormat } = useDateFormat();
+  const [showSettings, setShowSettings] = useState(false);
+  const [devMode, setDevMode] = useState(false);
+  const [sortKey, setSortKey] = useState(() => {
+    try { return typeof window !== 'undefined' ? (localStorage.getItem('sortKey') || 'rank') : 'rank'; } catch (e) { return 'rank'; }
+  });
+  const [sortDir, setSortDir] = useState(() => {
+    try { return typeof window !== 'undefined' ? localStorage.getItem('sortDir') || 'asc' : 'asc'; } catch (e) { return 'asc'; }
+  });
 
   function handleMobileToggle() {
     setShowMobileFilters(v => !v);
