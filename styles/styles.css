@@ -1726,6 +1726,17 @@ main, .main-content {
 .hamburger-icon {
   font-size: 2rem;
   color: var(--text-color);
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburger-icon:hover {
+  background-color: var(--hover-bg);
 }
 
 .achievements-main {
@@ -1756,6 +1767,17 @@ main, .main-content {
   width: 20px;
   height: 20px;
   filter: invert(92%) sepia(7%) saturate(104%) hue-rotate(200deg) brightness(97%) contrast(92%);
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arrow-img:hover {
+  background-color: var(--hover-bg);
 }
 
 .copy-btn {
