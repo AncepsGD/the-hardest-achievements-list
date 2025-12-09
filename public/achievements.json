@@ -1556,6 +1556,44 @@
     ]
   },
   {
+    "name": "Sakupen Circles 144hz Mobile 37-100%",
+    "id": "sakupen-circles-144hz-mobile-37-100",
+    "player": "sydno",
+    "levelID": 76962930,
+    "date": "2025-10-20",
+    "length": 28,
+    "version": 2.2,
+    "video": "https://youtu.be/Nj5q3q29ni0",
+    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
+    "name": "Sakupen Circles 144hz Mobile 70%",
+    "id": "sakupen-circles-144hz-mobile-70",
+    "player": "sydno",
+    "levelID": 76962930,
+    "date": "2025-10-22",
+    "length": 36,
+    "version": 2.2,
+    "video": "https://youtu.be/lmgDE10_ZyY",
+    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ]
+  },
+  {
     "name": "Acheron",
     "id": "acheron",
     "player": "microforest",
@@ -1724,44 +1762,6 @@
       "Low Hertz",
       "Mobile",
       "Outdated Version"
-    ]
-  },
-  {
-    "name": "Sakupen Circles 144hz Mobile 37-100%",
-    "id": "sakupen-circles-144hz-mobile-37-100",
-    "player": "sydno",
-    "levelID": 76962930,
-    "date": "2025-10-20",
-    "length": 28,
-    "version": 2.2,
-    "video": "https://youtu.be/Nj5q3q29ni0",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
-    ]
-  },
-  {
-    "name": "Sakupen Circles 144hz Mobile 70%",
-    "id": "sakupen-circles-144hz-mobile-70",
-    "player": "sydno",
-    "levelID": 76962930,
-    "date": "2025-10-22",
-    "length": 36,
-    "version": 2.2,
-    "video": "https://youtu.be/lmgDE10_ZyY",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
     ]
   },
   {
@@ -5838,8 +5838,8 @@
     ]
   },
   {
-    "name": "Sonic Wave Infinity 480hz Mobile",
-    "id": "sonic-wave-infinity-480hz-mobile",
+    "name": "Sonic Wave Infinity 120hz Delay Mobile",
+    "id": "sonic-wave-infinity-120hz-delay-mobile",
     "player": "Rotys",
     "levelID": 69685815,
     "date": "2025-08-05",
@@ -10937,8 +10937,8 @@
     ]
   },
   {
-    "name": "LIMBO 240hz Mobile 29-90%",
-    "id": "limbo-240hz-mobile-29-90",
+    "name": "LIMBO 120hz Delay Mobile 29-90%",
+    "id": "limbo-120hz-delay-mobile-29-90",
     "player": "GYTO",
     "levelID": 86084399,
     "date": "2025-11-09",
@@ -11040,16 +11040,16 @@
     ]
   },
   {
-    "name": "Fragile 180hz Mobile 93%",
-    "id": "fragile-180hz-mobile-93",
+    "name": "Fragile 60hz Delay Mobile 93%",
+    "id": "fragile-60hz-delay-mobile-93",
     "player": "ZaX1",
+    "date": "2025-05-12",
+    "levelID": 65588448,
     "length": 98,
     "version": 2.2,
     "video": "https://youtu.be/v7ZdCL-2F_o",
-    "date": "2025-05-12",
     "showcaseVideo": "https://youtu.be/mp55yC6oM1o",
     "submitter": "Anceps",
-    "levelID": 65588448,
     "tags": [
       "Level",
       "Mobile",
@@ -11498,6 +11498,7 @@
     ]
   }
 ]
+
 
 
 
