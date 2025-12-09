@@ -645,13 +645,17 @@ export default function SharedList({
   }
 
   useEffect(() => {
-    const file = dataUrl;
+    let file = dataUrl;
+    if (usePlatformers) {
+      if (dataFileName === 'achievements.json' || dataUrl.endsWith('/achievements.json')) file = '/platformers.json';
+      else if (dataFileName === 'timeline.json' || dataUrl.endsWith('/timeline.json')) file = '/platformertimeline.json';
+      else if (dataFileName === 'pending.json' || dataUrl.endsWith('/pending.json')) file = '/platformers.json';
+    }
     fetch(file)
       .then(res => res.json())
       .then(data => {
         const list = Array.isArray(data) ? data : (data.achievements || []);
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
-        // Do not inject rank for pending.json (preserve original)
         if (dataFileName === 'pending.json') {
           setAchievements(valid);
         } else {
@@ -659,13 +663,13 @@ export default function SharedList({
           setAchievements(withRank);
         }
         const tags = new Set();
-        (dataFileName === 'pending.json' ? valid : (dataFileName ? (dataFileName && valid) : valid)).forEach(a => (a.tags || []).forEach(t => tags.add(t)));
+        valid.forEach(a => (a.tags || []).forEach(t => tags.add(t)));
         setAllTags(Array.from(tags));
       }).catch(e => {
         setAchievements([]);
         setAllTags([]);
       });
-  }, [dataUrl, dataFileName]);
+  }, [dataUrl, dataFileName, usePlatformers]);
 
   useEffect(() => {
     try {
@@ -982,7 +986,9 @@ export default function SharedList({
   function handleCopyJson() {
     if (!reordered) return;
     const json = JSON.stringify(reordered.map(r => ({ ...r })), null, 2);
-    const filename = usePlatformers && dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName;
+    const filename = usePlatformers
+      ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
+      : dataFileName;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(json);
       alert(`Copied new ${filename} to clipboard!`);
