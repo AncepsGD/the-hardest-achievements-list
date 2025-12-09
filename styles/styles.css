@@ -1998,6 +1998,29 @@ main,
   }
 }
 
+@media (min-width: 601px) and (max-width: 1024px) {
+  .achievement-item .tag-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 0.5rem;
+    order: 1;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.35rem;
+  }
+
+  .achievement-item .tag-container .tag {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .achievement-item .text {
+    order: 0;
+  }
+}
+
 @media (max-width: 400px) {
   .main-title {
     font-size: 0.9rem;
