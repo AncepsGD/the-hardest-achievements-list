@@ -170,6 +170,113 @@ function formatDate(date, dateFormat) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+// Add timeline-specific helpers
+function parseAsLocal(d) {
+  if (!d) return null;
+  const s = String(d).trim();
+  // treat unknown parts as invalid for calculations
+  if (s.includes('?')) return null;
+  try {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      // Use local parsing for YYYY-MM-DD
+      return new Date(s.replace(/-/g, '/'));
+    }
+    return new Date(s);
+  } catch (e) {
+    return null;
+  }
+}
+
+function calculateDaysLasted(currentDate, previousDate) {
+  if (!currentDate || !previousDate) return 'N/A';
+  const current = parseAsLocal(currentDate);
+  const previous = parseAsLocal(previousDate);
+  if (!current || !previous || isNaN(current) || isNaN(previous)) return 'N/A';
+  const diffTime = Math.abs(current - previous);
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+// Timeline card (shows length, lasted # days, date)
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode }) {
+  const { dateFormat } = useDateFormat();
+  const handleClick = e => {
+    if (devMode) {
+      if (e.ctrlKey || e.button === 1) return;
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  let lastedLabel;
+  if (previousAchievement && previousAchievement.date && achievement && achievement.date) {
+    const days = calculateDaysLasted(achievement.date, previousAchievement.date);
+    lastedLabel = typeof days === 'number' ? `Lasted ${days} days` : 'Lasted N/A days';
+  } else {
+    // top item or missing previous -> days since achievement to today
+    const today = new Date();
+    const achievementDate = parseAsLocal(achievement && achievement.date);
+    if (!achievement || !achievement.date || !achievementDate || isNaN(achievementDate)) {
+      lastedLabel = 'Lasting N/A days';
+    } else {
+      const diffTime = Math.abs(today - achievementDate);
+      const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      lastedLabel = `Lasting ${days} days`;
+    }
+  }
+
+  return (
+    <Link href={`/achievement/${achievement.id}`} passHref legacyBehavior>
+      <a
+        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+        onClick={handleClick}
+        onMouseDown={handleClick}
+        tabIndex={devMode ? -1 : 0}
+        aria-disabled={devMode ? 'true' : undefined}
+      >
+        <div
+          className={`achievement-item ${isHovered ? 'hovered' : ''}`}
+          tabIndex={0}
+          style={{ cursor: 'pointer' }}
+          onMouseEnter={onHoverEnter}
+          onMouseLeave={onHoverLeave}
+        >
+          <div className="rank-date-container">
+            <div className="achievement-length">
+              {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
+            </div>
+            <div className="lasted-days">{lastedLabel}</div>
+            <div className="achievement-date"><strong>{achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}</strong></div>
+          </div>
+          <div className="tag-container">
+            {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
+              <Tag tag={tag} key={tag} />
+            ))}
+          </div>
+          <div className="achievement-details">
+            <div className="text">
+              <h2>{achievement.name}</h2>
+              <p>{achievement.player}</p>
+            </div>
+            <div className="thumbnail-container">
+              <img src={sanitizeImageUrl(achievement.thumbnail) || (achievement.levelID ? `https://tjcsucht.net/levelthumbs/${achievement.levelID}.png` : '/assets/default-thumbnail.png')} alt={achievement.name} loading="lazy" />
+            </div>
+          </div>
+          {/* Developer mode hover menu */}
+          {onEdit && (
+            <div className="hover-menu" style={{ display: isHovered ? 'flex' : 'none' }}>
+              <button className="hover-menu-btn" onClick={onEdit} title="Edit achievement">
+                <span className="bi bi-pencil" aria-hidden="true"></span>
+              </button>
+            </div>
+          )}
+        </div>
+      </a>
+    </Link>
+  );
+}
+
+const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode);
+
 const AchievementCard = memo(function AchievementCard({ achievement, devMode }) {
   const { dateFormat } = useDateFormat();
   const handleClick = e => {
@@ -234,7 +341,8 @@ function useDebouncedValue(value, delay) {
 export default function SharedList({
   dataUrl = '/achievements.json',
   dataFileName = 'achievements.json',
-  storageKeySuffix = 'achievements'
+  storageKeySuffix = 'achievements',
+  mode = ''
 }) {
   const [achievements, setAchievements] = useState([]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
@@ -546,16 +654,21 @@ export default function SharedList({
       .then(data => {
         const list = Array.isArray(data) ? data : (data.achievements || []);
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
-        const withRank = valid.map((a, i) => ({ ...a, rank: i + 1 }));
-        setAchievements(withRank);
+        // Do not inject rank for pending.json (preserve original)
+        if (dataFileName === 'pending.json') {
+          setAchievements(valid);
+        } else {
+          const withRank = valid.map((a, i) => ({ ...a, rank: i + 1 }));
+          setAchievements(withRank);
+        }
         const tags = new Set();
-        withRank.forEach(a => (a.tags || []).forEach(t => tags.add(t)));
+        (dataFileName === 'pending.json' ? valid : (dataFileName ? (dataFileName && valid) : valid)).forEach(a => (a.tags || []).forEach(t => tags.add(t)));
         setAllTags(Array.from(tags));
       }).catch(e => {
-
         setAchievements([]);
+        setAllTags([]);
       });
-  }, [dataUrl]);
+  }, [dataUrl, dataFileName]);
 
   useEffect(() => {
     try {
@@ -871,10 +984,11 @@ export default function SharedList({
 
   function handleCopyJson() {
     if (!reordered) return;
-  const json = JSON.stringify(reordered.map(r => ({ ...r })), null, 2);
+    const json = JSON.stringify(reordered.map(r => ({ ...r })), null, 2);
+    const filename = usePlatformers && dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName;
     if (navigator.clipboard) {
       navigator.clipboard.writeText(json);
-      alert(`Copied new ${usePlatformers ? 'platformers.json' : 'pending.json'} to clipboard!`);
+      alert(`Copied new ${filename} to clipboard!`);
     } else {
       const textarea = document.createElement('textarea');
       textarea.value = json;
@@ -882,7 +996,7 @@ export default function SharedList({
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
-      alert(`Copied new ${usePlatformers ? 'platformers.json' : 'pending.json'} to clipboard!`);
+      alert(`Copied new ${filename} to clipboard!`);
     }
   }
 
@@ -1416,7 +1530,11 @@ export default function SharedList({
                   position: 'relative',
                   zIndex: 1
                 }} className={highlightedIdx === i ? 'search-highlight' : ''}>
-                  <AchievementCard achievement={a} devMode={devMode} />
+                  { mode === 'timeline' ?
+                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} />
+                    :
+                    <AchievementCard achievement={a} devMode={devMode} />
+                  }
                 </div>
               </div>
             ))
@@ -1453,7 +1571,11 @@ export default function SharedList({
                   const isDup = duplicateThumbKeys.has((thumb || '').trim());
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
-                      <AchievementCard achievement={a} devMode={devMode} />
+                      { mode === 'timeline' ?
+                          <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} />
+                        :
+                          <AchievementCard achievement={a} devMode={devMode} />
+                      }
                     </div>
                   );
                 }}
