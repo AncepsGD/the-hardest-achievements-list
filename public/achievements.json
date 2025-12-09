@@ -6525,7 +6525,7 @@
     "tags": [
       "Level",
       "Verified",
-      "CBF"
+      "Rated"
     ]
   },
   {
@@ -10366,6 +10366,25 @@
     ]
   },
   {
+    "name": "Starlight Summit 120hz Mobile 78%",
+        "id": "starlight-summit-120hz-mobile-78",
+        "player": "Riveriya",
+        "levelID": 114530859,
+        "date": "2025-12-04",
+        "length": 41,
+        "version": 2.2,
+        "video": "https://youtu.be/NbXfAblQgGM",
+        "showcaseVideo": "https://youtu.be/BbNMhp09VKc",
+        "submitter": "QwidziT",
+        "tags": [
+            "Level",
+            "Low Hertz",
+            "Mobile",
+            "Progress",
+            "Rated"
+        ]
+    },
+    {
     "name": "Tidal Wave 1.2x 77-95%",
     "id": "tidal-wave-1-2x-77-95",
     "player": "Zoink",
@@ -10401,6 +10420,24 @@
     ]
   },
   {
+    "name": "Lotus Flower 120hz Mobile",
+        "id": "lotus-flower-120hz-mobile",
+        "player": "Paladin46",
+        "levelID": 75813671,
+        "date": "2025-09-13",
+        "length": 93,
+        "version": 2.2,
+        "video": "https://youtu.be/HhWj_szLMYA",
+        "showcaseVideo": "https://youtu.be/yu_p61ch144",
+        "submitter": "QwidziT",
+        "tags": [
+            "Level",
+            "Low Hertz",
+            "Mobile",
+            "Rated"
+        ]
+    },
+    {
     "name": "Hard Machine 2.1",
     "id": "hard-machine-2-1",
     "player": "Varium",
@@ -10473,6 +10510,25 @@
     ]
   },
   {
+    "name": "Zodiac 144hz Mobile 77%",
+        "id": "zodiac-144hz-mobile-77",
+        "player": "Noxop",
+        "levelID": 52374843,
+        "date": "2023-05-07",
+        "length": 158,
+        "version": 2.1,
+        "video": "https://youtu.be/WkIyNkVwkjE",
+        "showcaseVideo": "https://youtu.be/9ZX_EHHpf04",
+        "submitter": "kyle1saurus",
+        "tags": [
+            "Level",
+            "Low Hertz",
+            "Mobile",
+            "Progress",
+            "Rated"
+        ]
+    },
+    {
     "name": "lobotomy 37%",
     "id": "lobotomy-37",
     "player": "SeptaGon7",
@@ -10505,6 +10561,25 @@
     ]
   },
   {
+    "name": "Promethean 100hz Delay Mobile 70%",
+        "id": "promethean-100hz-delay-mobile-70",
+        "player": "wntry",
+        "date": "2025-11-13",
+        "levelID": 69333212,
+        "length": 38,
+        "version": 2.2,
+        "submitter": "QwidziT",
+        "video": "https://youtu.be/2VcdmT15AK0",
+        "showcaseVideo": "https://www.youtube.com/watch?v=LqutgDTHg44",
+        "tags": [
+            "Rated",
+            "Progress",
+            "Mobile",
+            "CBF",
+            "Level"
+        ]
+    },
+    {
     "name": "Bloodlust 323%",
     "id": "bloodlust-323",
     "player": "JesseGaming GD",
@@ -11337,5 +11412,6 @@
     ]
   }
 ]
+
 
 
