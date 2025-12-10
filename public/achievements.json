@@ -238,7 +238,6 @@
     "length": 77,
     "version": 2.2,
     "video": "https://youtu.be/P5GiZF74lqI",
-    "showcaseVideo": null,
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/kocmoc-unleashed1.webp",
     "submitter": "Arcadie",
     "tags": [
@@ -1121,7 +1120,6 @@
     "showcaseVideo": "https://youtu.be/5dH4Vvp-GTc",
     "date": "2025-09-19",
     "submitter": "Exiled_Shade",
-    "levelID": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
     "tags": [
       "Level",
@@ -1206,7 +1204,6 @@
     "showcaseVideo": "https://youtu.be/5dH4Vvp-GTc",
     "date": "2025-11-11",
     "submitter": "TYATYAPKA",
-    "levelID": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
     "tags": [
       "Level",
@@ -1240,7 +1237,6 @@
     "showcaseVideo": "https://youtu.be/5dH4Vvp-GTc",
     "date": "2025-09-19",
     "submitter": "Exiled_Shade",
-    "levelID": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
     "tags": [
       "Level",
@@ -1541,7 +1537,6 @@
     "name": "Old Orochi 81%",
     "id": "old-orochi-81",
     "player": "SeptaGon7",
-    "levelID": null,
     "date": "2025-11-08",
     "length": 78,
     "version": 2.2,
@@ -1973,7 +1968,6 @@
     "length": 29,
     "version": 2.2,
     "video": "https://www.youtube.com/live/Lt-0aDITRSY?t=7751s",
-    "showcaseVideo": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
     "submitter": "TYATYAPKA",
     "tags": [
@@ -2591,7 +2585,6 @@
     "showcaseVideo": "https://youtu.be/5dH4Vvp-GTc",
     "date": "2025-11-09",
     "submitter": "kyle1saurus",
-    "levelID": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
     "tags": [
       "Level",
@@ -2940,7 +2933,6 @@
     "showcaseVideo": "https://youtu.be/5dH4Vvp-GTc",
     "date": "2025-11-01",
     "submitter": "Excryst",
-    "levelID": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
     "tags": [
       "Level",
@@ -3002,13 +2994,10 @@
     "name": "White Slaughterhouse",
     "id": "white-slaughterhouse",
     "player": "Viwi",
-    "levelID": null,
     "date": "2025-12-08",
     "length": 70,
     "version": 2.2,
     "video": "https://youtu.be/YpIxYngsUJs",
-    "showcaseVideo": null,
-    "thumbnail": null,
     "submitter": "TYATYAPKA",
     "tags": [
       "Level",
@@ -3092,7 +3081,6 @@
     "length": 70,
     "version": 2.2,
     "video": "https://youtu.be/k0TciNmGJ_M",
-    "showcaseVideo": null,
     "submitter": "rtwnr",
     "tags": [
       "Level",
@@ -4203,7 +4191,7 @@
     "showcaseVideo": "https://youtu.be/QyDnUJqBd60",
     "video": "https://youtu.be/Zx2tCV0YFTk",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/64815983",
-    "submitter": "kyle1saurus",
+    "submitter": "aytch0008",
     "tags": [
       "Challenge",
       "Progress",
@@ -4217,7 +4205,6 @@
     "date": "2025-06-02",
     "length": 16,
     "version": 2.2,
-    "levelID": null,
     "video": "https://youtu.be/9EyMComWMOc",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/10887708",
     "submitter": "TYATYAPKA",
@@ -5705,9 +5692,7 @@
     "date": "2025-10-27",
     "length": 20,
     "version": 2.1,
-    "levelID": null,
     "video": "https://youtu.be/UpBmMZbEzRY",
-    "showcaseVideo": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/64175406",
     "submitter": "aytch0008",
     "tags": [
@@ -6959,7 +6944,6 @@
     "length": 36,
     "version": 2.2,
     "video": "https://youtu.be/WfnaiwqDHaE&t=9200",
-    "showcaseVideo": null,
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -7228,7 +7212,6 @@
     "length": 32,
     "version": 2.2,
     "video": "https://youtu.be/WfnaiwqDHaE&t=5135",
-    "showcaseVideo": null,
     "submitter": "kyle1saurus",
     "tags": [
       "Level",
@@ -7307,7 +7290,6 @@
     "name": "Silent Circles (Starchman) 53-91%",
     "id": "silent-circles-starchman-53-91",
     "player": "Juls",
-    "levelID": null,
     "date": "2025-11-25",
     "length": 30,
     "version": 2.2,
@@ -7632,7 +7614,6 @@
     "showcaseVideo": "https://youtu.be/5dH4Vvp-GTc",
     "date": "2025-11-09",
     "submitter": "Excryst",
-    "levelID": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
     "tags": [
       "Level",
@@ -8473,8 +8454,6 @@
     "showcaseVideo": "https://youtu.be/hcZWawS26hU",
     "date": "2025-10-30",
     "submitter": "TYATYAPKA",
-    "levelID": null,
-    "thumbnail": null,
     "tags": [
       "Level",
       "Progress"
@@ -8833,10 +8812,8 @@
     "length": 16,
     "version": 2.2,
     "video": "https://youtu.be/wbkOlEWWM-k",
-    "showcaseVideo": null,
     "date": "2025-10-02",
     "submitter": "Emp",
-    "levelID": null,
     "tags": [
       "Level",
       "Progress",
@@ -8864,7 +8841,6 @@
     "name": "Ace 92%",
     "id": "ace-82",
     "player": "Aidsen",
-    "levelID": null,
     "date": "2024-11-05",
     "length": 63,
     "version": 2.2,
@@ -9075,7 +9051,6 @@
     "name": "ULTRA PARACOSM 79%",
     "id": "ultra-paracosm-79",
     "player": "Wity",
-    "levelID": null,
     "date": "2025-11-10",
     "length": 57,
     "version": 2.2,
@@ -9988,7 +9963,6 @@
     "name": "Silent Circles (Starchman) 62-100%",
     "id": "silent-circles-starchman-62-100",
     "player": "Juls",
-    "levelID": null,
     "date": "2025-11-25",
     "length": 30,
     "version": 2.2,
@@ -10088,13 +10062,11 @@
     "name": "Purplehouse 25-95%",
     "id": "purplehouse-25-95",
     "player": "Xtra8nugs",
-    "levelID": null,
     "date": "2025-09-09",
     "length": 38,
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/f1WehtceFnk",
-    "showcaseVideo": null,
     "tags": [
       "Level",
       "Progress"
@@ -10293,7 +10265,6 @@
     "name": "Ace 30-100%",
     "id": "ace-30-100",
     "player": "Aidsen",
-    "levelID": null,
     "date": "2024-11-05",
     "length": 55,
     "version": 2.2,
@@ -10857,7 +10828,7 @@
     "levelID": 78614226,
     "video": "https://youtu.be/RMEhwJGnjok",
     "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
-    "submitter": "aytch0008",
+    "submitter": "kittycatiscute",
     "tags": [
       "Level",
       "Progress",
@@ -11245,12 +11216,10 @@
     "id": "slaughterhouse-chopblox-48-100",
     "player": "Chopblox",
     "date": "2025-11-23",
-    "levelID": null,
     "length": 30,
     "version": 2.2,
     "submitter": "kittycatiscute",
     "video": "https://www.youtube.com/watch?v=bSn2eUORkSU",
-    "showcaseVideo": null,
     "tags": [
       "Level",
       "Progress",
@@ -11402,7 +11371,6 @@
     "name": "Chromacave 29-81%",
     "id": "chromacave-29-81",
     "player": "GeoDom85YT",
-    "levelID": null,
     "date": "2025-12-01",
     "length": 38,
     "version": 2.2,
@@ -11498,5 +11466,6 @@
     ]
   }
 ]
+
 
 
