@@ -1,4 +1,40 @@
 [
+      {
+    "name": "VSC Nev Finale X 22%",
+    "id": "vsc-nev-finale-x-22",
+    "player": "tricklength",
+    "levelID": 126120509,
+    "date": "2025-02-13",
+    "length": 3,
+    "version": 2.2,
+    "submitter": "tricklength",
+    "video": "https://youtu.be/9KjxX-YkOS0",
+    "showcaseVideo": "https://youtu.be/7fS-J7FqITU",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/91159750",
+    "tags": [
+      "Challenge",
+      "Progress",
+      "CBF",
+      "Tentative"
+    ]
+  },
+  {
+    "name": "Silent Circles (Anceps) 27-52%",
+    "id": "silent-circles-anceps-27-52",
+    "player": "tricklength",
+    "date": "2025-04-28",
+    "length": 13,
+    "version": 2.2,
+    "video": "https://youtu.be/QFASgWByRgs",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/assets/thumbnails/silent-circles-anceps1.png",
+    "submitter": "tricklength",
+    "tags": [
+      "Level",
+      "Progress",
+      "2P",
+      "CBF"
+    ]
+  },
     {
         "name": "khmeli suneli",
     "id": "khmeli-suneli",
