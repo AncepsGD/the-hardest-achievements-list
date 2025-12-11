@@ -135,6 +135,12 @@ export default function AchievementPage({ achievement, placement }) {
     }
     return null;
   }
+  function isImageUrl(url) {
+    if (!url) return false;
+    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.ico'];
+    const lowercaseUrl = url.toLowerCase();
+    return imageExtensions.some(ext => lowercaseUrl.includes(ext));
+  }
   if (!achievement) {
     return (
       <div>
@@ -189,6 +195,12 @@ export default function AchievementPage({ achievement, placement }) {
                   style={{ width: '100%', aspectRatio: '16/9', borderRadius: 8, marginBottom: 16, border: 0 }}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                />
+              ) : isImageUrl(achievement.video) ? (
+                <img
+                  src={achievement.video}
+                  alt="Achievement Video"
+                  style={{ width: '100%', maxHeight: '600px', borderRadius: 8, marginBottom: 16, objectFit: 'cover' }}
                 />
               ) : achievement.video ? (
                 <a href={achievement.video} target="_blank" rel="noopener" style={{ color: '#7ecfff', textDecoration: 'underline', marginBottom: 16, display: 'block' }}>Watch Video</a>
@@ -269,6 +281,12 @@ export default function AchievementPage({ achievement, placement }) {
                       style={{ width: '100%', aspectRatio: '16/9', borderRadius: 8, border: 0 }}
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
+                    />
+                  ) : isImageUrl(achievement.showcaseVideo) ? (
+                    <img
+                      src={achievement.showcaseVideo}
+                      alt="Showcase Image"
+                      style={{ width: '100%', maxHeight: '600px', borderRadius: 8, objectFit: 'cover' }}
                     />
                   ) : (
                     <a href={achievement.showcaseVideo} target="_blank" rel="noopener" style={{ color: '#7ecfff', textDecoration: 'underline' }}>Watch Showcase</a>
