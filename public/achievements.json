@@ -7404,23 +7404,6 @@
     ]
   },
   {
-    "name": "Silent Circles (Anceps) 27-52%",
-    "id": "silent-circles-anceps-27-52",
-    "player": "tricklength",
-    "date": "2025-04-28",
-    "length": 13,
-    "version": 2.2,
-    "video": "https://youtu.be/QFASgWByRgs",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/assets/thumbnails/silent-circles-anceps1.png",
-    "submitter": "tricklength",
-    "tags": [
-      "Level",
-      "Progress",
-      "2P",
-      "CBF"
-    ]
-  },
-  {
     "name": "SC2751p",
     "id": "sc2751p",
     "player": "UFokinWotM8",
@@ -7548,7 +7531,7 @@
     "levelID": "123070864",
     "video": "https://youtu.be/cDn4l4VYZW0",
     "showcaseVideo": "https://youtu.be/KDxOtDFwajE",
-    "submitter": "tricklength",
+    "submitter": "Emp",
     "tags": [
       "Level",
       "Progress",
@@ -8701,25 +8684,6 @@
     "tags": [
       "Level",
       "Progress"
-    ]
-  },
-  {
-    "name": "VSC Nev Finale X 22%",
-    "id": "vsc-nev-finale-x-22",
-    "player": "tricklength",
-    "levelID": 126120509,
-    "date": "2025-02-13",
-    "length": 3,
-    "version": 2.2,
-    "submitter": "tricklength",
-    "video": "https://youtu.be/9KjxX-YkOS0",
-    "showcaseVideo": "https://youtu.be/7fS-J7FqITU",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/91159750",
-    "tags": [
-      "Challenge",
-      "Progress",
-      "CBF",
-      "Tentative"
     ]
   },
   {
@@ -11466,6 +11430,7 @@
     ]
   }
 ]
+
 
 
 
