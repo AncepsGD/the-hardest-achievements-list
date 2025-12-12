@@ -1,5 +1,5 @@
 [
-	  {
+  {
     "name": "Thinking Space II 85%, (5), (3), 86% in a row",
     "id": "thinking-space-ii-85-5-3-86-in-a-row",
     "player": "wPopoff",
@@ -15,6 +15,22 @@
       "Level",
       "Progress",
       "Rated"
+    ]
+  },
+  {
+    "name": "Hell Affinity 53%",
+    "id": "hell-affinity-53",
+    "player": "NordstromUSA",
+    "length": 33,
+    "version": 2.2,
+    "video": "https://youtu.be/uUxjGNMZuU8",
+    "showcaseVideo": "https://youtu.be/5Jgwp0XuxS8",
+    "date": "2023-12-12",
+    "submitter": "sayoriiCLUB",
+    "thumbnail": "https://github.com/AncepsGD/the-hardest-achievements-list/blob/main/thumbnails/image_2025-12-12_07-18-55.png?raw=true",
+    "tags": [
+      "Level",
+      "Progress"
     ]
   },
   {
@@ -63,8 +79,8 @@
     "showcaseVideo": "https://youtu.be/mEB2kXR3hxg",
     "submitter": "kyle1saurus",
     "tags": [
-      "Verified",
-      "Platformer"
+      "Platformer",
+      "Verified"
     ]
   }
 ]
