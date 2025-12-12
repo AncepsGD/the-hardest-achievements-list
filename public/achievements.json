@@ -7852,13 +7852,12 @@
     {
     "name": "Silent Circles (Anceps) 27-52%",
     "id": "silent-circles-anceps-27-52",
-    "player": "tricklength",
+    "player": "-",
     "date": "2025-04-28",
     "length": 13,
     "version": 2.2,
     "video": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/public/assets/silent-circles-anceps-27-52.png",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/assets/thumbnails/silent-circles-anceps1.png",
-    "submitter": "tricklength",
     "tags": [
       "Level",
       "Progress",
@@ -9231,12 +9230,11 @@
     {
     "name": "VSC Nev Finale X 22%",
     "id": "vsc-nev-finale-x-22",
-    "player": "tricklength",
+    "player": "-",
     "levelID": 126120509,
     "date": "2025-02-13",
     "length": 3,
     "version": 2.2,
-    "submitter": "tricklength",
     "video": "https://youtu.be/N1YlkghSIKc",
     "showcaseVideo": "https://youtu.be/7fS-J7FqITU",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/91159750",
@@ -12164,4 +12162,5 @@
     "rank": 683
   }
 ]
+
 
