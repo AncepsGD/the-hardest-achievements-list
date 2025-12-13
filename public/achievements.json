@@ -2249,25 +2249,6 @@
     "rank": 125
   },
   {
-    "name": "Widestep 60hz 91%",
-    "id": "widestep-60hz-91",
-    "player": "Th3on3C",
-    "date": "2025-12-13",
-    "length": 69,
-    "version": 2.2,
-    "levelID": 69289606,
-    "video": "https://youtu.be/vNu78Yj2nA0",
-    "showcaseVideo": "https://youtu.be/uAwHbCTkmzc",
-    "submitter": "Excryst",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Progress",
-      "Rated"
-    ],
-    "rank": 126
-  },
-  {
     "name": "Exens limit 165%",
     "id": "exens-limit-165",
     "player": "Skylar",
@@ -8460,6 +8441,25 @@
     "rank": 474
   },
   {
+    "name": "Widestep 60hz 73%",
+    "id": "widestep-60hz-73",
+    "player": "Th3on3C",
+    "date": "2025-12-08",
+    "length": 57,
+    "version": 2.2,
+    "levelID": 69289606,
+    "video": "https://youtu.be/gO4jnOyAujg",
+    "showcaseVideo": "https://youtu.be/uAwHbCTkmzc",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Progress",
+      "Rated"
+    ],
+    "rank": 475
+  },
+  {
     "name": "Spectrum Cyclone 60hz Mobile",
     "id": "spectrum-cyclone-60hz-mobile",
     "player": "Cedric22",
@@ -12162,6 +12162,7 @@
     "rank": 683
   }
 ]
+
 
 
 
