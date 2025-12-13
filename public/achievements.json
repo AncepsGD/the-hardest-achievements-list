@@ -4686,7 +4686,7 @@
       "Level",
       "Verified"
     ],
-    "rank": "136"
+    "rank": 263
   },
   {
     "name": "Through the Gates",
@@ -11867,13 +11867,14 @@
     "length": 312,
     "version": 2.2,
     "submitter": "BlueGamer",
-    "video": "https://youtu.be/aH4VVYn2Tds?si=d3dcm6tGfA8OWYch",
+    "video": "https://youtu.be/aH4VVYn2Tds",
     "showcaseVideo": "https://youtu.be/qoPLznoNjQg",
     "tags": [
       "Level",
       "Verified"
     ],
-    "rank": 668
+    "rank": 668,
+    "thumbnail": "https://github.com/AncepsGD/the-hardest-achievements-list/blob/main/thumbnails/%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5_2025-12-13_105625896.png?raw=true"
   },
   {
     "name": "Plastic Death",
@@ -12163,5 +12164,3 @@
     "rank": 685
   }
 ]
-
-
