@@ -4682,12 +4682,12 @@
     "version": 2.2,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/He3iRW6Usv4",
-    "showcaseVideo": "https://youtu.be/i1PU3YoEOXc&t=9",
+    "showcaseVideo": "https://youtu.be/i1PU3YoEOXc",
     "tags": [
       "Level",
       "Verified"
     ],
-    "rank": 263
+    "rank": "136"
   },
   {
     "name": "Through the Gates",
@@ -8442,23 +8442,23 @@
     "rank": 475
   },
   {
-    "name": "Widestep 60hz 91%",
-    "id": "widestep-60hz-91",
+    "name": "Widestep 60hz 73%",
+    "id": "widestep-60hz-73",
     "player": "Th3on3C",
-    "date": "2025-12-13",
-    "length": 69,
+    "date": "2025-12-08",
+    "length": 57,
     "version": 2.2,
     "levelID": 69289606,
-    "video": "https://youtu.be/vNu78Yj2nA0",
+    "video": "https://youtu.be/gO4jnOyAujg",
     "showcaseVideo": "https://youtu.be/uAwHbCTkmzc",
-    "submitter": "Excryst",
+    "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Low Hertz",
       "Progress",
       "Rated"
     ],
-    "rank": "125"
+    "rank": 476
   },
   {
     "name": "Spectrum Cyclone 60hz Mobile",
@@ -11860,19 +11860,19 @@
     "rank": 667
   },
   {
-    "name": "Death Factory",
-    "id": "death-factory",
+    "name": "Death Factory 97%",
+    "id": "death-factory-97",
     "player": "dewbbs",
     "levelID": 95424590,
-    "date": "2025-12-13",
-    "length": 312,
+    "date": "2025-12-06",
+    "length": 305,
     "version": 2.2,
-    "submitter": "BlueGamer",
-    "video": "https://youtu.be/aH4VVYn2Tds",
+    "submitter": "Excryst",
+    "video": "https://youtu.be/hZP2QLlcM44",
     "showcaseVideo": "https://youtu.be/qoPLznoNjQg",
     "tags": [
       "Level",
-      "Verified"
+      "Progress"
     ],
     "rank": 668
   },
