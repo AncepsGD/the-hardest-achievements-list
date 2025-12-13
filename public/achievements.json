@@ -369,58 +369,40 @@
     "rank": 20
   },
   {
-    "name": "Sakupen circles (Old) 37-66%, 37-69%, 70% in a row",
-    "id": "sakupen-circles-old-37-66-37-69-70-in-a-row",
-    "player": "ad3usgmd",
-    "length": 91,
-    "version": 2.2,
-    "video": "https://youtu.be/QYs7UyGMrqw",
-    "showcaseVideo": "https://youtu.be/WX5RCDxobSA",
-    "date": "2025-06-27",
+    "name": "Banshee (Aug. 2025) 10-79%",
+    "id": "banshee-10-79",
+    "player": "spcreat",
+    "date": "2025-10-03",
     "submitter": "TYATYAPKA",
-    "levelID": 10887708,
+    "length": 68,
+    "version": 2.2,
+    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
+    "video": "https://www.youtube.com/watch?v=dckUEM7QwRE&t=1592",
+    "showcaseVideo": "https://youtu.be/h14lmGH31_M",
     "tags": [
       "Level",
-      "Consistency",
-      "CBF"
+      "Progress",
+      "Tentative"
     ],
     "rank": 21
   },
   {
-    "name": "Sakupen Circles 69%, 67%, 69%, 80% in a row",
-    "id": "sakupen-circles-69-67-69-80-in-a-row",
-    "player": "ad3usgmd",
-    "length": 151,
+    "name": "Banshee (Jul. 2025) 77%",
+    "id": "banshee-77",
+    "player": "spcreat",
+    "date": "2025-07-31",
+    "submitter": "rook_saneless",
+    "length": 70,
     "version": 2.2,
-    "video": "https://youtu.be/WwHQ2jiRSeo",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "date": "2025-06-19",
-    "submitter": "ad3usgmd",
-    "levelID": 76962930,
+    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
+    "video": "https://youtu.be/i5Xd9I4Zx1w",
+    "showcaseVideo": "https://youtu.be/h14lmGH31_M",
     "tags": [
       "Level",
-      "Consistency",
-      "Rated"
+      "Progress",
+      "Tentative"
     ],
     "rank": 22
-  },
-  {
-    "name": "KOCMOC 224%",
-    "id": "kocmoc-224",
-    "player": "Netermind",
-    "levelID": 87665224,
-    "date": "2024-12-09",
-    "length": 194,
-    "version": 2.2,
-    "video": "https://youtu.be/DYI1IPtInws&t=5649",
-    "showcaseVideo": "https://youtu.be/ulaXL0SdzZk",
-    "submitter": "Swift",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "rank": 23
   },
   {
     "name": "Subsuming Vortex (Renn241) 37-75%, 37-68% in a row",
@@ -440,7 +422,61 @@
       "CBF",
       "Rated"
     ],
+    "rank": 23
+  },
+  {
+    "name": "Sakupen circles (Old) 37-66%, 37-69%, 70% in a row",
+    "id": "sakupen-circles-old-37-66-37-69-70-in-a-row",
+    "player": "ad3usgmd",
+    "length": 91,
+    "version": 2.2,
+    "video": "https://youtu.be/QYs7UyGMrqw",
+    "showcaseVideo": "https://youtu.be/WX5RCDxobSA",
+    "date": "2025-06-27",
+    "submitter": "TYATYAPKA",
+    "levelID": 10887708,
+    "tags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
     "rank": 24
+  },
+  {
+    "name": "Sakupen Circles 69%, 67%, 69%, 80% in a row",
+    "id": "sakupen-circles-69-67-69-80-in-a-row",
+    "player": "ad3usgmd",
+    "length": 151,
+    "version": 2.2,
+    "video": "https://youtu.be/WwHQ2jiRSeo",
+    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
+    "date": "2025-06-19",
+    "submitter": "ad3usgmd",
+    "levelID": 76962930,
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "rank": 25
+  },
+  {
+    "name": "KOCMOC 224%",
+    "id": "kocmoc-224",
+    "player": "Netermind",
+    "levelID": 87665224,
+    "date": "2024-12-09",
+    "length": 194,
+    "version": 2.2,
+    "video": "https://youtu.be/DYI1IPtInws&t=5649",
+    "showcaseVideo": "https://youtu.be/ulaXL0SdzZk",
+    "submitter": "Swift",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "rank": 26
   },
   {
     "name": "SARY NEVER CLEAR (Optic Sunflow) 2.1",
@@ -457,7 +493,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 25
+    "rank": 27
   },
   {
     "name": "Nullscapes",
@@ -475,7 +511,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 26
+    "rank": 28
   },
   {
     "name": "Subsuming Vortex (Renn241)",
@@ -493,42 +529,6 @@
       "Level",
       "Verified",
       "Rated"
-    ],
-    "rank": 27
-  },
-  {
-    "name": "Banshee 10-79%",
-    "id": "banshee-10-79",
-    "player": "spcreat",
-    "date": "2025-10-03",
-    "submitter": "TYATYAPKA",
-    "length": 68,
-    "version": 2.2,
-    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
-    "video": "https://www.youtube.com/live/dckUEM7QwRE?t=1592",
-    "showcaseVideo": "https://youtu.be/h14lmGH31_M",
-    "tags": [
-      "Level",
-      "Progress",
-      "Tentative"
-    ],
-    "rank": 28
-  },
-  {
-    "name": "Banshee 77%",
-    "id": "banshee-77",
-    "player": "spcreat",
-    "date": "2025-07-31",
-    "submitter": "rook_saneless",
-    "length": 70,
-    "version": 2.2,
-    "thumbnail": "https://i.ytimg.com/vi/i8TGgQNAzDg/maxresdefault.jpg",
-    "video": "https://youtu.be/i5Xd9I4Zx1w",
-    "showcaseVideo": "https://youtu.be/h14lmGH31_M",
-    "tags": [
-      "Level",
-      "Progress",
-      "Tentative"
     ],
     "rank": 29
   },
