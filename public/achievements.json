@@ -11860,19 +11860,19 @@
     "rank": 667
   },
   {
-    "name": "Death Factory 97%",
-    "id": "death-factory-97",
+    "name": "Death Factory",
+    "id": "death-factory",
     "player": "dewbbs",
     "levelID": 95424590,
-    "date": "2025-12-06",
-    "length": 305,
+    "date": "2025-12-13",
+    "length": 312,
     "version": 2.2,
-    "submitter": "Excryst",
-    "video": "https://youtu.be/hZP2QLlcM44",
+    "submitter": "BlueGamer",
+    "video": "https://youtu.be/aH4VVYn2Tds?si=d3dcm6tGfA8OWYch",
     "showcaseVideo": "https://youtu.be/qoPLznoNjQg",
     "tags": [
       "Level",
-      "Progress"
+      "Verified"
     ],
     "rank": 668
   },
@@ -12164,3 +12164,4 @@
     "rank": 685
   }
 ]
+
