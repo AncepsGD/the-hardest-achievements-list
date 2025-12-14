@@ -1086,6 +1086,23 @@
     "rank": 60
   },
   {
+    "name": "Exasperation 65-100%",
+    "id": "exasperation-65-100",
+    "player": "Zoink",
+    "levelID": 31325851,
+    "date": "2025-08-08",
+    "length": 80,
+    "version": 2.2,
+    "video": "https://youtu.be/OCyCMPj_RIQ",
+    "showcaseVideo": "https://youtu.be/DDaO-V12JGY",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 61
+  },
+  {
     "name": "Silent Acropolis unn 31%, 54% in a row",
     "id": "silent-acropolis-unn-31-54-in-a-row",
     "player": "SeptaGon7",
@@ -1100,23 +1117,6 @@
       "Level",
       "Consistency",
       "CBF"
-    ],
-    "rank": 61
-  },
-  {
-    "name": "Exasperation 65-100%",
-    "id": "exasperation-65-100",
-    "player": "Zoink",
-    "levelID": 31325851,
-    "date": "2025-08-08",
-    "length": 80,
-    "version": 2.2,
-    "video": "https://youtu.be/OCyCMPj_RIQ",
-    "showcaseVideo": "https://youtu.be/DDaO-V12JGY",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
     ],
     "rank": 62
   },
@@ -1387,26 +1387,26 @@
     "rank": 77
   },
   {
-    "name": "Angelicide Kaza 68-100%",
-    "id": "angelicide-kaza-68-100",
-    "player": "Kaza",
-    "levelID": 114002031,
-    "length": 22,
+    "name": "Aeternus 72-97%",
+    "id": "aeternus-72-97",
+    "player": "Trick",
+    "levelID": 102647436,
+    "date": "2025-06-20",
+    "length": 16,
     "version": 2.2,
-    "video": "https://youtu.be/b2HX1VdeDxY",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/114002031",
-    "date": "2025-11-10",
-    "submitter": "SirDoodle2920",
+    "video": "https://youtu.be/eAZXXIFUWmg&t=3985s",
+    "showcaseVideo": "https://youtu.be/p4QgFtKL5kE",
+    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
-      "Progress"
+      "Progress",
+      "CBF"
     ],
     "rank": 78
   },
   {
-    "name": "Drukilicide 68-98%",
-    "id": "drukilicide-68-98",
+    "name": "Angelicide (Xtra8nugz) 68-98%",
+    "id": "angelicide-(xtra8nugz)-68-98",
     "player": "Xtra8nugz",
     "levelID": 120478542,
     "length": 24,
@@ -1423,20 +1423,38 @@
     "rank": 79
   },
   {
-    "name": "Aeternus 72-97%",
-    "id": "aeternus-72-97",
-    "player": "Trick",
-    "levelID": 102647436,
-    "date": "2025-06-20",
-    "length": 16,
+    "name": "Angelicide (Xtra8nugz) 71-100%",
+    "id": "angelicide-xtra8nugz-71-100",
+    "player": "Xtra8nugz",
+    "levelID": 120478542,
+    "length": 20,
     "version": 2.2,
-    "video": "https://youtu.be/eAZXXIFUWmg&t=3985s",
-    "showcaseVideo": "https://youtu.be/p4QgFtKL5kE",
-    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/6FTu8GcpDt4",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/114002031",
+    "date": "2025-12-11",
+    "submitter": "kittycatiscute",
     "tags": [
       "Level",
-      "Progress",
-      "CBF"
+      "Progress"
+    ],
+    "rank": 80
+  },
+  {
+    "name": "Angelicide (Kaza) 68-100%",
+    "id": "angelicide-kaza-68-100-copy",
+    "player": "Kaza",
+    "levelID": 114002031,
+    "length": 22,
+    "version": 2.2,
+    "video": "https://youtu.be/b2HX1VdeDxY",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/114002031",
+    "date": "2025-11-10",
+    "submitter": "SirDoodle2920",
+    "tags": [
+      "Level",
+      "Progress"
     ],
     "rank": 80
   },
@@ -6444,24 +6462,6 @@
       "Verified"
     ],
     "rank": 362
-  },
-  {
-    "name": "Drukilicide 76-100%",
-    "id": "Drukilicide-76-100",
-    "player": "Xtra8nugz",
-    "date": "2025-10-22",
-    "length": 19,
-    "version": 2.2,
-    "levelID": 120478542,
-    "video": "https://www.youtube.com/live/7sXz0-XR3zY?t=8086",
-    "showcaseVideo": "https://youtu.be/on1SmypYPJY",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/120478542",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 363
   },
   {
     "name": "Gay Acheron 17-100%",
