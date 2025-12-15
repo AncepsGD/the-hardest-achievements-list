@@ -8937,8 +8937,24 @@
     "rank": 503
   },
   {
+    "name": "Labyrinth 46",
+    "id": "labyrinth-46",
+    "player": "GGonop",
+    "length": 39,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=VHJ5PPCi8hY&t=168s",
+    "showcaseVideo": "https://youtu.be/hcZWawS26hU",
+    "date": "2025-11-27",
+    "submitter": "Natalie :3",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 504
+  },
+  {
     "name": "Labyrinth 44-100%",
-    "id": "labyrinth-44-100",
+    "id": "labyrinth-44-100-copy",
     "player": "GGonop",
     "length": 40,
     "version": 2.2,
@@ -12148,4 +12164,3 @@
     "rank": 684
   }
 ]
-
