@@ -6100,8 +6100,26 @@
     "rank": 342
   },
   {
+    "name": "Sonic Wave 60hz",
+    "id": "sonic-wave-60hz",
+    "player": "Galaxy",
+    "levelID": 26681070,
+    "date": "2021-07-14",
+    "length": 121,
+    "version": 2.1,
+    "video": "https://youtu.be/2mMTcqsCc4c",
+    "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
+    "rank": 343
+  },
+  {
     "name": "Hard Machine 144hz Mobile",
-    "id": "hard-machine-144hz-mobile",
+    "id": "hard-machine-144hz-mobile-copy",
     "player": "MAXDASH07",
     "levelID": 72744364,
     "date": "2025-01-21",
@@ -10576,24 +10594,6 @@
       "Verified"
     ],
     "rank": 597
-  },
-  {
-    "name": "Sonic Wave 60hz",
-    "id": "sonic-wave-60hz",
-    "player": "Galaxy",
-    "levelID": 26681070,
-    "date": "2021-07-14",
-    "length": 121,
-    "version": 2.1,
-    "video": "https://youtu.be/2mMTcqsCc4c",
-    "showcaseVideo": "https://youtu.be/6v_pWirR72Q",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Rated"
-    ],
-    "rank": 598
   },
   {
     "name": "Sonic Wave 549%",
