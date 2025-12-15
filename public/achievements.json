@@ -224,16 +224,16 @@
     "rank": 12
   },
   {
-    "name": "Slaughterhouse 300%",
-    "id": "slaughterhouse-300",
-    "player": "wPopoff",
-    "submitter": "Anceps",
-    "levelID": 27690100,
-    "date": "2024-04-27",
-    "length": 210,
-    "version": 2.1,
-    "video": "https://youtu.be/Yu_p9yrVL0w",
-    "showcaseVideo": "https://youtu.be/3zTp7cmsDXo",
+    "name": "Sakupen Circles 69%, 67%, 69%, 80%, (52), 81%, 69% in a row",
+    "id": "sakupen-circles-69-67-69-80-52-81-69-in-a-row",
+    "player": "ad3usgmd",
+    "length": 260,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=WwHQ2jiRSeo&t=4609",
+    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
+    "date": "2025-06-19",
+    "submitter": "ad3usgmd",
+    "levelID": 76962930,
     "tags": [
       "Level",
       "Consistency",
@@ -260,6 +260,24 @@
     "rank": 14
   },
   {
+    "name": "Slaughterhouse 300%",
+    "id": "slaughterhouse-300",
+    "player": "wPopoff",
+    "submitter": "Anceps",
+    "levelID": 27690100,
+    "date": "2024-04-27",
+    "length": 210,
+    "version": 2.1,
+    "video": "https://youtu.be/Yu_p9yrVL0w",
+    "showcaseVideo": "https://youtu.be/3zTp7cmsDXo",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "rank": 15
+  },
+  {
     "name": "Acheron 60hz 17-67%",
     "id": "acheron-60hz-17-67",
     "player": "Llqne",
@@ -276,7 +294,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 15
+    "rank": 16
   },
   {
     "name": "Tidal Wave buffed",
@@ -293,7 +311,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 16
+    "rank": 17
   },
   {
     "name": "Tidal Wave",
@@ -311,7 +329,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 17
+    "rank": 18
   },
   {
     "name": "Heliopolis 38-92%",
@@ -328,7 +346,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 18
+    "rank": 19
   },
   {
     "name": "Acheron 60hz 50%",
@@ -347,7 +365,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 19
+    "rank": 20
   },
   {
     "name": "VSC x2",
@@ -366,7 +384,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 20
+    "rank": 21
   },
   {
     "name": "Banshee (Aug. 2025) 10-79%",
@@ -384,7 +402,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 21
+    "rank": 22
   },
   {
     "name": "Banshee (Jul. 2025) 77%",
@@ -402,25 +420,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 22
-  },
-  {
-    "name": "Sakupen Circles 69%, 67%, 69%, 80%, (52), 81%, 69% in a row",
-    "id": "sakupen-circles-69-67-69-80-52-81-69-in-a-row",
-    "player": "ad3usgmd",
-    "length": 260,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=WwHQ2jiRSeo&t=4609",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "date": "2025-06-19",
-    "submitter": "ad3usgmd",
-    "levelID": 76962930,
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "rank": "13"
+    "rank": 23
   },
   {
     "name": "Sakupen circles (Old) 37-66%, 37-69%, 70% in a row",
