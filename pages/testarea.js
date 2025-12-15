@@ -48,13 +48,68 @@ export default function TestingPage({ data }) {
       idx += 1
     }
 
+    function hasRatedAndVerified(item) {
+      if (!item || typeof item !== 'object') return false
+      if ((item.rated === true || item.rated === 'rated' || item.rated) && (item.verified === true || item.verified === 'verified' || item.verified)) {
+        if (item.rated === true && item.verified === true) return true
+      }
+
+      const collect = (val) => {
+        if (!val) return []
+        if (Array.isArray(val)) return val.map(String)
+        return [String(val)]
+      }
+
+      const tags = []
+      tags.push(...collect(item.tags))
+      tags.push(...collect(item.tag))
+      tags.push(...collect(item.labels))
+      tags.push(...collect(item.label))
+      if (item.achievement && typeof item.achievement === 'object') {
+        tags.push(...collect(item.achievement.tags))
+        tags.push(...collect(item.achievement.label))
+      }
+
+      const lower = tags.map(t => String(t).toLowerCase())
+      return lower.includes('rated') && lower.includes('verified')
+    }
+
     for (let i = 0; i < TIERS.length; i++) {
       const tier = TIERS[i]
       const size = sizes[i]
-      const slice = items.slice(start, start + size)
+      if (size <= 0) {
+        groups.push({ ...tier, items: [] })
+        continue
+      }
+
+      const targetLastIndex = Math.min(total - 1, start + size - 1)
+
+      let foundIndex = -1
+      const maxOffset = Math.max(targetLastIndex - start, total - 1 - targetLastIndex)
+      for (let offset = 0; offset <= maxOffset; offset++) {
+        const forward = targetLastIndex + offset
+        if (forward < total && forward >= start && hasRatedAndVerified(items[forward])) {
+          foundIndex = forward
+          break
+        }
+        const backward = targetLastIndex - offset
+        if (backward >= start && backward < total && hasRatedAndVerified(items[backward])) {
+          foundIndex = backward
+          break
+        }
+      }
+
+      let sliceEndExclusive
+      if (foundIndex >= start) {
+        sliceEndExclusive = foundIndex + 1
+      } else {
+        sliceEndExclusive = Math.min(total, start + size)
+      }
+
+      const slice = items.slice(start, sliceEndExclusive)
       groups.push({ ...tier, items: slice })
-      start += size
-  }
+      start = sliceEndExclusive
+    }
 
     const remainder = items.slice(start)
 
