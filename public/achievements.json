@@ -11421,7 +11421,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 644
+    "rank": 643
   },
   {
     "name": "Kyouki 120hz Mobile 11-45%",
@@ -11441,7 +11441,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 645
+    "rank": 644
   },
   {
     "name": "The Wonder of You (Unnerfed) 79%",
@@ -11458,7 +11458,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 646
+    "rank": 645
   },
   {
     "name": "Congregation 75hz",
@@ -11476,7 +11476,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 647
+    "rank": 646
   },
   {
     "name": "i n j u r y (Layout) 1.25x 26-70%",
@@ -11493,7 +11493,7 @@
       "Speedhack",
       "Progress"
     ],
-    "rank": 648
+    "rank": 647
   },
   {
     "name": "Dry Out Copyable 2 120hz Mobile",
@@ -11512,7 +11512,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 649
+    "rank": 648
   },
   {
     "name": "Riots Demise 99%",
@@ -11529,7 +11529,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 650
+    "rank": 649
   },
   {
     "name": "Buffbath",
@@ -11547,7 +11547,7 @@
       "Verified",
       "CBF"
     ],
-    "rank": 651
+    "rank": 650
   },
   {
     "name": "Silent Clubstep II 27-43%",
@@ -11565,7 +11565,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 652
+    "rank": 651
   },
   {
     "name": "Hard Machine 75hz 48-100%",
@@ -11584,7 +11584,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 653
+    "rank": 652
   },
   {
     "name": "Hard Machine 75hz 54%",
@@ -11603,7 +11603,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 654
+    "rank": 653
   },
   {
     "name": "Kenos 120hz Mobile 27-100%",
@@ -11623,7 +11623,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 655
+    "rank": 654
   },
   {
     "name": "Silent Circles 70% (Zynvire Unnerfed)",
@@ -11640,7 +11640,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 656
+    "rank": 655
   },
   {
     "name": "Kenos 120hz Mobile 20-92%",
@@ -11660,7 +11660,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 657
+    "rank": 656
   },
   {
     "name": "LIMBO 120hz Delay Mobile 29-90%",
@@ -11681,7 +11681,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 658
+    "rank": 657
   },
   {
     "name": "The Wonder of You",
@@ -11698,7 +11698,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 659
+    "rank": 658
   },
   {
     "name": "Thinking Space II 144hz Mobile 79-98%",
@@ -11718,7 +11718,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 660
+    "rank": 659
   },
   {
     "name": "Fully Invisible Paraballa 24-74%",
@@ -11734,7 +11734,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 661
+    "rank": 660
   },
   {
     "name": "Sonic Wave Rebirth 429%",
@@ -11752,7 +11752,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 662
+    "rank": 661
   },
   {
     "name": "Eternal Night 31%",
@@ -11770,7 +11770,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 663
+    "rank": 662
   },
   {
     "name": "Fragile 60hz Delay Mobile 93%",
@@ -11791,11 +11791,29 @@
       "CBF",
       "Rated"
     ],
-    "rank": 664
+    "rank": 663
+  },
+  {
+    "name": "Omega 60hz",
+    "id": "omega-60hz",
+    "player": "JudeRB",
+    "levelID": 59706883,
+    "date": "2024-06-26",
+    "length": 158,
+    "version": 2.2,
+    "video": "https://youtu.be/vu99yigOo7g",
+    "showcaseVideo": "https://youtu.be/BGRtyJA_iT4",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
+    "rank": 664,
+    "submitter": "TYATYAPKA"
   },
   {
     "name": "Time Lapse 144hz Delay Mobile",
-    "id": "time-lapse-144hz-delay-mobile",
+    "id": "time-lapse-144hz-delay-mobile-copy",
     "player": "Mateex",
     "levelID": 97705490,
     "date": "2025-10-14",
@@ -11809,7 +11827,7 @@
       "Mobile",
       "CBF"
     ],
-    "rank": 666
+    "rank": 664
   },
   {
     "name": "The Golden 1.1x 97%",
@@ -11828,7 +11846,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 667
+    "rank": 665
   },
   {
     "name": "SADOMASOCHISM 1.1x 50%",
@@ -11846,7 +11864,7 @@
       "Speedhack",
       "Progress"
     ],
-    "rank": 668
+    "rank": 666
   },
   {
     "name": "Skystrike",
@@ -11863,7 +11881,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 669
+    "rank": 667
   },
   {
     "name": "Eternal Night 63-100%",
@@ -11880,7 +11898,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 670
+    "rank": 668
   },
   {
     "name": "Eternal Flame",
@@ -11897,7 +11915,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 671
+    "rank": 669
   },
   {
     "name": "Forsaken Frost 88%",
@@ -11913,7 +11931,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 672
+    "rank": 670
   },
   {
     "name": "Death Factory",
@@ -11930,7 +11948,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 673,
+    "rank": 671,
     "thumbnail": "https://github.com/AncepsGD/the-hardest-achievements-list/blob/main/thumbnails/%D0%B8%D0%B7%D0%BE%D0%B1%D1%80%D0%B0%D0%B6%D0%B5%D0%BD%D0%B8%D0%B5_2025-12-13_105625896.png?raw=true"
   },
   {
@@ -11948,7 +11966,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 674
+    "rank": 672
   },
   {
     "name": "Slaughterhouse (Chopblox) 48-100%",
@@ -11964,7 +11982,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 675
+    "rank": 673
   },
   {
     "name": "E N D",
@@ -11981,7 +11999,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 676
+    "rank": 674
   },
   {
     "name": "Silent Club Plus 58%",
@@ -11997,7 +12015,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 677
+    "rank": 675
   },
   {
     "name": "Dreamopolis",
@@ -12014,7 +12032,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 678
+    "rank": 676
   },
   {
     "name": "Kingdom of Miracalis (Layout) 58-100%",
@@ -12029,7 +12047,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 679
+    "rank": 677
   },
   {
     "name": "abicto",
@@ -12046,7 +12064,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 680
+    "rank": 678
   },
   {
     "name": "Renevant 120hz Mobile",
@@ -12065,7 +12083,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 681
+    "rank": 679
   },
   {
     "name": "racketeering v3 44-100%",
@@ -12080,7 +12098,7 @@
       "Challenge",
       "Progress"
     ],
-    "rank": 682
+    "rank": 680
   },
   {
     "name": "Theory Of Darkness (Old)",
@@ -12097,7 +12115,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 683
+    "rank": 681
   },
   {
     "name": "Unnerfed unknown 33-100%",
@@ -12114,7 +12132,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 684
+    "rank": 682
   },
   {
     "name": "Chromacave 29-81%",
@@ -12130,7 +12148,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 685
+    "rank": 683
   },
   {
     "name": "Blade Of Justice 612%",
@@ -12148,7 +12166,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 686
+    "rank": 684
   },
   {
     "name": "VENUS",
@@ -12165,7 +12183,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 687
+    "rank": 685
   },
   {
     "name": "Firework (Kurumi) 68%",
@@ -12183,7 +12201,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 688
+    "rank": 686
   },
   {
     "name": "Blue Tartarus",
@@ -12200,7 +12218,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 689
+    "rank": 687
   },
   {
     "name": "Tartarus",
@@ -12218,6 +12236,6 @@
       "Verified",
       "Rated"
     ],
-    "rank": 690
+    "rank": 688
   }
 ]
