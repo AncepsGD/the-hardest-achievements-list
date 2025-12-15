@@ -260,27 +260,6 @@
     "rank": 14
   },
   {
-    "name": "Subsuming Vortex 80%, 71% in a row",
-    "id": "subsuming-vortex-80-71-in-a-row",
-    "player": "Zoink",
-    "length": 97,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=ZyDiNv3sALI&t=5730",
-    "showcaseVideo": "https://youtu.be/rh15xLXAKpU",
-    "date": "2025-12-14",
-    "submitter": "Anceps",
-    "levelID": 127997391,
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/127997391",
-    "tags": [
-      "Level",
-      "Verified",
-      "Consistency",
-      "CBF",
-      "Rated"
-    ],
-    "rank": 15
-  },
-  {
     "name": "Acheron 60hz 17-67%",
     "id": "acheron-60hz-17-67",
     "player": "Llqne",
@@ -297,7 +276,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 16
+    "rank": 15
   },
   {
     "name": "Tidal Wave buffed",
@@ -314,7 +293,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 17
+    "rank": 16
   },
   {
     "name": "Tidal Wave",
@@ -332,7 +311,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 18
+    "rank": 17
   },
   {
     "name": "Heliopolis 38-92%",
@@ -349,7 +328,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 19
+    "rank": 18
   },
   {
     "name": "Acheron 60hz 50%",
@@ -368,7 +347,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 20
+    "rank": 19
   },
   {
     "name": "VSC x2",
@@ -387,7 +366,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 21
+    "rank": 20
   },
   {
     "name": "Banshee (Aug. 2025) 10-79%",
@@ -405,7 +384,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 22
+    "rank": 21
   },
   {
     "name": "Banshee (Jul. 2025) 77%",
@@ -423,7 +402,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 23
+    "rank": 22
   },
   {
     "name": "Sakupen circles (Old) 37-66%, 37-69%, 70% in a row",
@@ -441,7 +420,7 @@
       "Consistency",
       "CBF"
     ],
-    "rank": 24
+    "rank": 23
   },
   {
     "name": "Sakupen Circles 69%, 67%, 69%, 80% in a row",
@@ -457,6 +436,27 @@
     "tags": [
       "Level",
       "Consistency",
+      "Rated"
+    ],
+    "rank": 24
+  },
+  {
+    "name": "Subsuming Vortex 80%, 71% in a row",
+    "id": "subsuming-vortex-80-71-in-a-row",
+    "player": "Zoink",
+    "length": 97,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=ZyDiNv3sALI&t=5730",
+    "showcaseVideo": "https://youtu.be/rh15xLXAKpU",
+    "date": "2025-12-14",
+    "submitter": "Anceps",
+    "levelID": 127997391,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/127997391",
+    "tags": [
+      "Level",
+      "Verified",
+      "Consistency",
+      "CBF",
       "Rated"
     ],
     "rank": 25
