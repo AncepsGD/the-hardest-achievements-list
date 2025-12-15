@@ -25,8 +25,7 @@ function DevModePanelInner({
   handleShowNewForm,
   newFormPreview,
   handleCheckDuplicateThumbnails,
-  onImportAchievementsJson,
-  dataFileName = 'achievements.json'
+  onImportAchievementsJson
 }) {
   return (
     <>
@@ -35,10 +34,10 @@ function DevModePanelInner({
         <div className="devmode-floating-panel">
           <span className="devmode-title">Developer Mode Enabled (SHIFT+M)</span>
           <div className="devmode-btn-row" style={{gap: 8}}>
-            <button className="devmode-btn" onClick={handleCopyJson}>Copy {dataFileName}</button>
+            <button className="devmode-btn" onClick={handleCopyJson}>Copy achievements.json</button>
             <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails}>Check duplicate thumbnails</button>
             <label className="devmode-btn" style={{display:'inline-block',cursor:'pointer',margin:0}}>
-              Import {dataFileName}
+              Import achievements.json
               <input
                 type="file"
                 accept="application/json,.json"
@@ -54,7 +53,7 @@ function DevModePanelInner({
                         onImportAchievementsJson(json);
                       }
                     } catch (err) {
-                      alert(`Invalid ${dataFileName} file.`);
+                      alert('Invalid achievements.json file.');
                     }
                   };
                   reader.readAsText(file);
@@ -142,6 +141,7 @@ function DevModePanelInner({
               </div>
             </label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Length<input type="text" name="length" value={newForm.length} onChange={handleNewFormChange} placeholder="69" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
+            <label style={{display:'block',fontSize:13,marginTop:6}}>Rank<input type="number" name="rank" value={newForm.rank || ''} onChange={handleNewFormChange} min={1} placeholder="1" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Version<input type="text" name="version" value={newForm.version} onChange={handleNewFormChange} placeholder="2.2" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Video URL<input type="text" name="video" value={newForm.video} onChange={handleNewFormChange} placeholder="https://youtu.be/..." style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Showcase Video<input type="text" name="showcaseVideo" value={newForm.showcaseVideo} onChange={handleNewFormChange} placeholder="https://youtu.be/..." style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
@@ -177,8 +177,7 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.handleCopyJson === next.handleCopyJson
     && prev.handleShowNewForm === next.handleShowNewForm
   && prev.handleCheckDuplicateThumbnails === next.handleCheckDuplicateThumbnails
-    && prev.onImportAchievementsJson === next.onImportAchievementsJson
-    && prev.dataFileName === next.dataFileName;
+    && prev.onImportAchievementsJson === next.onImportAchievementsJson;
 });
 
 export default DevModePanel;
