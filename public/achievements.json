@@ -8651,6 +8651,7 @@
     "levelID": 115860808,
     "date": "2025-10-08",
     "version": 2.2,
+    "length:" 60,
     "submitter": "kyle1saurus",
     "video": "https://youtu.be/XQoF35hNKpg",
     "showcaseVideo": "https://youtu.be/yOqxB9aWhIE",
@@ -8666,6 +8667,7 @@
     "player": "scorchtape",
     "levelID": 127734228,
     "date": "2025-11-04",
+    "length": 106,
     "version": 2.2,
     "submitter": "Exiled_shade",
     "video": "https://youtu.be/uLyBjVP5AKM",
@@ -9521,7 +9523,7 @@
     "name": "Ace 92%",
     "id": "ace-82",
     "player": "Aidsen",
-    "date": "2024-11-05",
+    "date": "2025-11-05",
     "length": 63,
     "version": 2.2,
     "submitter": "Natalie :3",
@@ -12276,3 +12278,4 @@
     "rank": 691
   }
 ]
+
