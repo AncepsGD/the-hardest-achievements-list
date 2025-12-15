@@ -36,22 +36,37 @@ export default function TestingPage({ data }) {
 
   const groups = []
   let start = 0
-  for (const tier of TIERS) {
-    const slice = items.slice(start, start + tier.count)
-    groups.push({ ...tier, items: slice })
-    start += tier.count
+    const total = items.length
+
+    const sizes = TIERS.map(t => Math.floor(total * (t.percent / 100)))
+    let allocated = sizes.reduce((a, b) => a + b, 0)
+    let remainingToAllocate = total - allocated
+    let idx = 0
+    while (remainingToAllocate > 0 && TIERS.length > 0) {
+      sizes[idx % sizes.length] += 1
+      remainingToAllocate -= 1
+      idx += 1
+    }
+
+    for (let i = 0; i < TIERS.length; i++) {
+      const tier = TIERS[i]
+      const size = sizes[i]
+      const slice = items.slice(start, start + size)
+      groups.push({ ...tier, items: slice })
+      start += size
   }
 
-  const remainder = items.slice(start)
+    const remainder = items.slice(start)
 
   return (
     <div style={{ padding: 20, fontFamily: 'system-ui, Arial, sans-serif' }}>
       <h1>Achievements — Testing Page</h1>
       <p>Source: <strong>/public/achievements.json</strong> — split sequentially by tier counts.</p>
+        <p>Source: <strong>/public/achievements.json</strong> — split sequentially by tier percentages.</p>
 
       {groups.map((g, i) => (
         <section key={i} style={{ marginBottom: 24 }}>
-          <h2>{g.name} — {g.items.length} items</h2>
+          <h2>{g.name} — {g.percent}% — {g.items.length} items</h2>
           <ul style={{ background: '#f7f7f7', padding: 12, overflowX: 'auto', listStyle: 'none', margin: 0 }}>
             {g.items.map((it, idx) => (
               <li key={idx} style={{ padding: '4px 0' }}>{getAchievementName(it)}</li>
