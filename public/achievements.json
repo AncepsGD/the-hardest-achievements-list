@@ -3944,7 +3944,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 222
+    "rank": 221
   },
   {
     "name": "Ouroboros 60hz Mobile 10-100%",
@@ -5403,7 +5403,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 304
+    "rank": 303
   },
   {
     "name": "Unnerfed Natural Disaster 54-100%",
@@ -7285,8 +7285,26 @@
     "rank": 409
   },
   {
+    "name": "Gamma 60hz",
+    "id": "gamma-60hz",
+    "player": "Samamba",
+    "levelID": 39832454,
+    "date": "2023-10-10",
+    "length": 103,
+    "version": 2.1,
+    "video": "https://youtu.be/xdZ7DhMu5jw",
+    "showcaseVideo": "https://youtu.be/lE2jUb9qNNg",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
+    "rank": 410
+  },
+  {
     "name": "Jesse Pinkman 60hz Mobile",
-    "id": "jesse-pinkman-60hz-mobile",
+    "id": "jesse-pinkman-60hz-mobile-copy",
     "player": "Biprex",
     "levelID": 79918576,
     "date": "2022-12-10",
@@ -11350,24 +11368,6 @@
       "Rated"
     ],
     "rank": 639
-  },
-  {
-    "name": "Gamma 60hz",
-    "id": "gamma-60hz",
-    "player": "Samamba",
-    "levelID": 39832454,
-    "date": "2023-10-10",
-    "length": 103,
-    "version": 2.1,
-    "video": "https://youtu.be/xdZ7DhMu5jw",
-    "showcaseVideo": "https://youtu.be/lE2jUb9qNNg",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Rated"
-    ],
-    "rank": 640
   },
   {
     "name": "The Wonder of You (Unnerfed) 79%",
