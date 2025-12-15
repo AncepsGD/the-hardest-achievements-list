@@ -3036,7 +3036,6 @@
     "name": "Labyrinth 46%",
     "id": "labyrinth-46-copy",
     "player": "GGonop",
-    "levelID": 113599729,
     "date": "2025-11-27",
     "length": 39,
     "version": 2.2,
@@ -3053,7 +3052,6 @@
     "name": "Labyrinth 29-73%",
     "id": "labyrinth-29-73",
     "player": "GGonop",
-    "levelID": 113599729,
     "date": "2025-11-24",
     "length": 29,
     "version": 2.2,
@@ -3070,7 +3068,6 @@
     "name": "Labyrinth 44-100%",
     "id": "labyrinth-44-100-copy",
     "player": "GGonop",
-    "levelID": 113599729,
     "date": "2025-10-30",
     "length": 40,
     "version": 2.2,
@@ -12258,3 +12255,4 @@
     "rank": 690
   }
 ]
+
