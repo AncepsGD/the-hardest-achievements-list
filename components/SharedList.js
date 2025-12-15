@@ -353,7 +353,8 @@ export default function SharedList({
   dataUrl = '/achievements.json',
   dataFileName = 'achievements.json',
   storageKeySuffix = 'achievements',
-  mode = ''
+  mode = '',
+  showPlatformToggle = true
 }) {
   const [achievements, setAchievements] = useState([]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
@@ -1145,27 +1146,29 @@ export default function SharedList({
           {isMobile && (
             <div style={{ width: '100%', marginTop: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'center', marginTop: 8 }}>
-                <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
-                  <input
-                    type="checkbox"
-                    checked={usePlatformers}
-                    onChange={e => {
-                      const next = !!e.target.checked;
-                      setUsePlatformers(next);
-                      try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
-                    }}
-                  />
-                  <span
-                    className="track"
-                    role="switch"
-                    aria-checked={usePlatformers}
-                    tabIndex={0}
-                  >
-                    <span className="inner-label label-left">Platformer</span>
-                    <span className="thumb" aria-hidden="true" />
-                    <span className="inner-label label-right">Classic</span>
-                  </span>
-                </label>
+                {showPlatformToggle && (
+                  <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
+                    <input
+                      type="checkbox"
+                      checked={usePlatformers}
+                      onChange={e => {
+                        const next = !!e.target.checked;
+                        setUsePlatformers(next);
+                        try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
+                      }}
+                    />
+                    <span
+                      className="track"
+                      role="switch"
+                      aria-checked={usePlatformers}
+                      tabIndex={0}
+                    >
+                      <span className="inner-label label-left">Platformer</span>
+                      <span className="thumb" aria-hidden="true" />
+                      <span className="inner-label label-right">Classic</span>
+                    </span>
+                  </label>
+                )}
               </div>
               <div className="tag-filter-pills-container" style={{ width: '100%' }}>
                 <TagFilterPills
@@ -1230,27 +1233,29 @@ export default function SharedList({
                   {sortDir === 'asc' ? '↑' : '↓'}
                 </button>
               </div>
-              <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
-                <input
-                  type="checkbox"
-                  checked={usePlatformers}
-                  onChange={e => {
-                    const next = !!e.target.checked;
-                    setUsePlatformers(next);
-                    try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
-                  }}
-                />
-                <span
-                  className="track"
-                  role="switch"
-                  aria-checked={usePlatformers}
-                  tabIndex={0}
-                >
-                  <span className="inner-label label-left">Platformer</span>
-                  <span className="thumb" aria-hidden="true" />
-                  <span className="inner-label label-right">Classic</span>
-                </span>
-              </label>
+              {showPlatformToggle && (
+                <label className="pill-toggle" data-variant="platformer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--muted, #DFE3F5)', fontSize: 14 }}>
+                  <input
+                    type="checkbox"
+                    checked={usePlatformers}
+                    onChange={e => {
+                      const next = !!e.target.checked;
+                      setUsePlatformers(next);
+                      try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
+                    }}
+                  />
+                  <span
+                    className="track"
+                    role="switch"
+                    aria-checked={usePlatformers}
+                    tabIndex={0}
+                  >
+                    <span className="inner-label label-left">Platformer</span>
+                    <span className="thumb" aria-hidden="true" />
+                    <span className="inner-label label-right">Classic</span>
+                  </span>
+                </label>
+              )}
             </div>
           )}
         </div>
