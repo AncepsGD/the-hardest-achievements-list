@@ -1,41 +1,5 @@
 [
   {
-    "name": "Sakupen Circles 69%, 67%, 69%, 80%, (52), 81%, 69% in a row",
-    "id": "sakupen-circles-69-67-69-80-52-81-69-in-a-row",
-    "player": "ad3usgmd",
-    "length": 260,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=WwHQ2jiRSeo&t=4609",
-    "showcaseVideo": "https://youtu.be/b66_Oe4Xo1w",
-    "date": "2025-06-19",
-    "submitter": "ad3usgmd",
-    "levelID": 76962930,
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "rank": 1
-  },
-  {
-    "name": "Orochi 40%, (4), 40%, 43% in a row",
-    "id": "orochi-40-4-40-43-in-a-row",
-    "player": "SeptaGon7",
-    "date": "2025-11-30",
-    "length": 124,
-    "version": 2.2,
-    "video": "https://youtu.be/u4v-fjW8NLA",
-    "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/36712371",
-    "submitter": "stax",
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ],
-    "rank": 2
-  },
-  {
     "name": "Hell Affinity 53%",
     "id": "hell-affinity-53",
     "player": "NordstromUSA",
@@ -50,7 +14,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 4
+    "rank": 1
   },
   {
     "name": "Zodiac 120hz Mobile 63%",
@@ -70,7 +34,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 5
+    "rank": 2
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -90,7 +54,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 6
+    "rank": 3
   },
   {
     "name": "Thinking Space II 85%, (5), (3), 86% in a row",
@@ -109,7 +73,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 7
+    "rank": 4
   },
   {
     "name": "r a g e 120hz Mobile",
@@ -129,7 +93,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 8
+    "rank": 5
   },
   {
     "name": "vortex",
@@ -147,7 +111,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 9,
+    "rank": 6,
     "showcaseVideo": "https://youtu.be/BbMwRW53K7c"
   },
   {
@@ -165,6 +129,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 10
+    "rank": 7
   }
 ]
