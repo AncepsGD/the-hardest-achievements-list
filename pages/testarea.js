@@ -20,13 +20,13 @@ export async function getStaticProps() {
 }
 
 const TIERS = [
-  { name: 'Tier I (Endgame)', count: 4 },
-  { name: 'Tier II (Master)', count: 8 },
-  { name: 'Tier III (Expert)', count: 16 },
-  { name: 'Tier IV (Advanced)', count: 32 },
-  { name: 'Tier V (Intermediate)', count: 63 },
-  { name: 'Tier VI (Developing)', count: 126 },
-  { name: 'Tier VII (Entry)', count: 252 },
+  { name: 'Tier I (Endgame)', count: 20 },
+  { name: 'Tier II (Master)', count: 30 },
+  { name: 'Tier III (Expert)', count: 40 },
+  { name: 'Tier IV (Advanced)', count: 60 },
+  { name: 'Tier V (Intermediate)', count: 80 },
+  { name: 'Tier VI (Developing)', count: 120 },
+  { name: 'Tier VII (Entry)', count: 150 },
 ]
 
 export default function TestingPage({ data }) {
@@ -52,20 +52,35 @@ export default function TestingPage({ data }) {
       {groups.map((g, i) => (
         <section key={i} style={{ marginBottom: 24 }}>
           <h2>{g.name} — {g.items.length} items</h2>
-          <pre style={{ background: '#f7f7f7', padding: 12, overflowX: 'auto' }}>
-{JSON.stringify(g.items, null, 2)}
-          </pre>
+          <ul style={{ background: '#f7f7f7', padding: 12, overflowX: 'auto', listStyle: 'none', margin: 0 }}>
+            {g.items.map((it, idx) => (
+              <li key={idx} style={{ padding: '4px 0' }}>{getAchievementName(it)}</li>
+            ))}
+          </ul>
         </section>
       ))}
 
       {remainder.length > 0 && (
         <section>
           <h2>Remaining — {remainder.length} items</h2>
-          <pre style={{ background: '#f7f7f7', padding: 12, overflowX: 'auto' }}>
-{JSON.stringify(remainder, null, 2)}
-          </pre>
+          <ul style={{ background: '#f7f7f7', padding: 12, overflowX: 'auto', listStyle: 'none', margin: 0 }}>
+            {remainder.map((it, idx) => (
+              <li key={idx} style={{ padding: '4px 0' }}>{getAchievementName(it)}</li>
+            ))}
+          </ul>
         </section>
       )}
     </div>
   )
+}
+
+function getAchievementName(item) {
+  if (typeof item === 'string') return item
+  if (!item || typeof item !== 'object') return String(item)
+  if (item.name) return item.name
+  if (item.title) return item.title
+  if (item.label) return item.label
+  if (item.text) return item.text
+  if (item.achievement && (item.achievement.name || item.achievement.title)) return item.achievement.name || item.achievement.title
+  return JSON.stringify(item)
 }
