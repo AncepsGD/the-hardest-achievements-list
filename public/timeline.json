@@ -15,13 +15,14 @@
     "date": "2025-11-01",
     "video": "https://www.youtube.com/watch?v=mp8TSHLoW8Q",
     "showcaseVideo": "https://youtu.be/bQXnREyaO34",
-    "submitter": "kittycatiscute"
+    "submitter": "kittycatiscute",
+    "rank": 1
   },
   {
-    "id": "grief-unbuffed-56-100-67-in-a-row",
-    "name": "GRIEF (Unbuffed) 56-100%, 67% in a row",
+    "id": "grief-apr-2025-56-100-67-in-a-row",
+    "name": "GRIEF (Apr. 2025) 56-100%, 67% in a row",
     "player": "Doggie",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/103524537",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/grief-unbuffed1.avif",
     "tags": [
       "Level",
       "Consistency",
@@ -32,7 +33,9 @@
     "version": 2.2,
     "date": "2025-04-23",
     "video": "https://youtu.be/aqg-2kThaSc",
-    "showcaseVideo": "https://youtu.be/bQXnREyaO34"
+    "showcaseVideo": "https://youtu.be/bQXnREyaO34",
+    "rank": 2,
+    "submitter": "TYATYAPKA"
   },
   {
     "name": "Thinking Space II (Unbuffed) 79%",
@@ -47,7 +50,8 @@
       "Level",
       "Progress"
     ],
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii1.webp"
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii1.webp",
+    "rank": 3
   },
   {
     "id": "thinking-space-ii-unbuffed-77",
@@ -62,13 +66,14 @@
     "date": "2025-02-13",
     "video": "https://www.youtube.com/watch?v=_hsc3cvQIn4&t=3546",
     "showcaseVideo": "https://youtu.be/F05aMR0F6YM",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii1.webp"
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii1.webp",
+    "rank": 4
   },
   {
-    "id": "grief-unbuffed-80-copy",
-    "name": "GRIEF (Unbuffed) 80%",
+    "id": "grief-nov-2024-80",
+    "name": "GRIEF (Nov. 2024) 80%",
     "player": "Doggie",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/102686349",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/88952972",
     "tags": [
       "Level",
       "Progress",
@@ -79,7 +84,9 @@
     "version": 2.2,
     "date": "2024-11-24",
     "video": "https://youtu.be/5gx07ZNiuJY",
-    "showcaseVideo": "https://youtu.be/bQXnREyaO34"
+    "showcaseVideo": "https://youtu.be/bQXnREyaO34",
+    "rank": 5,
+    "submitter": "Swift"
   },
   {
     "id": "grief-madness-85",
@@ -95,7 +102,8 @@
     "length": 138,
     "version": 2.2,
     "date": "2024-11-01",
-    "video": "https://youtu.be/YHH5CFQidU4"
+    "video": "https://youtu.be/YHH5CFQidU4",
+    "rank": 6
   },
   {
     "name": "Slaughterhouse 300%",
@@ -112,7 +120,8 @@
       "Level",
       "Consistency",
       "Rated"
-    ]
+    ],
+    "rank": 7
   },
   {
     "id": "tidal-wave",
@@ -128,7 +137,8 @@
     "date": "2023-09-10",
     "levelID": 86407629,
     "video": "https://youtu.be/9fsZ014qB3s",
-    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM"
+    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
+    "rank": 8
   },
   {
     "id": "tidal-wave-95",
@@ -145,7 +155,8 @@
     "date": "2023-08-13",
     "levelID": "86407629",
     "video": "https://youtu.be/I176TU8NhNU",
-    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM"
+    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
+    "rank": 9
   },
   {
     "id": "tidal-wave-90",
@@ -162,7 +173,8 @@
     "date": "2023-08-11",
     "levelID": "86407629",
     "video": "https://youtu.be/n8xZnkFcBUc",
-    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM"
+    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
+    "rank": 10
   },
   {
     "id": "tidal-wave-74",
@@ -179,7 +191,8 @@
     "date": "2023-08-04",
     "levelID": "86407629",
     "video": "https://youtu.be/8kGaulReN2Q",
-    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM"
+    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
+    "rank": 11
   },
   {
     "id": "tidal-wave-67",
@@ -196,7 +209,8 @@
     "date": "2023-07-29",
     "levelID": "86407629",
     "video": "https://youtu.be/R-PZvpEsEqw",
-    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM"
+    "showcaseVideo": "https://youtu.be/PFHlkdz9UqM",
+    "rank": 12
   },
   {
     "name": "Silent clubstep 5-25%x2, 5-64%",
@@ -212,7 +226,8 @@
     "date": "2023-01-02",
     "levelID": "4125776",
     "video": "https://x.com/Vision31128666/status/1609653176189259778",
-    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E"
+    "showcaseVideo": "https://youtu.be/Oos0Ptzqq-E",
+    "rank": 13
   },
   {
     "id": "acheron-2-1",
@@ -229,7 +244,8 @@
     "date": "2022-08-22",
     "levelID": "73667628",
     "video": "https://youtu.be/sBKR6aUorzA",
-    "showcaseVideo": "https://youtu.be/YQElFvT5ynk"
+    "showcaseVideo": "https://youtu.be/YQElFvT5ynk",
+    "rank": 14
   },
   {
     "id": "acheron-2-1-97",
@@ -246,7 +262,8 @@
     "date": "2022-08-18",
     "levelID": "73667628",
     "video": "https://youtu.be/jSPADYiEJk8?si=4SqmuoOqbqsKlGDN&t=615",
-    "showcaseVideo": "https://youtu.be/YQElFvT5ynk"
+    "showcaseVideo": "https://youtu.be/YQElFvT5ynk",
+    "rank": 15
   },
   {
     "id": "acheron-2-1-96",
@@ -263,7 +280,8 @@
     "date": "2022-06-10",
     "levelID": "73667628",
     "video": "https://youtu.be/JCbPZHF1usI",
-    "showcaseVideo": "https://youtu.be/YQElFvT5ynk"
+    "showcaseVideo": "https://youtu.be/YQElFvT5ynk",
+    "rank": 16
   },
   {
     "id": "acheron-2-1-91",
@@ -280,7 +298,8 @@
     "date": "2022-06-03",
     "levelID": "73667628",
     "video": "https://youtu.be/fb9bEICGbfA",
-    "showcaseVideo": "https://youtu.be/YQElFvT5ynk"
+    "showcaseVideo": "https://youtu.be/YQElFvT5ynk",
+    "rank": 17
   },
   {
     "name": "Firework 82%, 100% in a row",
@@ -297,7 +316,8 @@
       "Level",
       "Consistency",
       "Outdated Version"
-    ]
+    ],
+    "rank": 18
   },
   {
     "id": "old-aod-98",
@@ -312,7 +332,8 @@
     "date": "2021-07-21",
     "levelID": "76680844",
     "video": "https://youtu.be/CNv735bQfkU",
-    "showcaseVideo": "https://youtu.be/9xnaAgxqqJs"
+    "showcaseVideo": "https://youtu.be/9xnaAgxqqJs",
+    "rank": 19
   },
   {
     "id": "old-aod-95",
@@ -328,7 +349,8 @@
     "date": "2021-03-19",
     "levelID": "76680844",
     "video": "https://youtu.be/ui6UCk8Sc-Y",
-    "showcaseVideo": "https://youtu.be/9xnaAgxqqJs"
+    "showcaseVideo": "https://youtu.be/9xnaAgxqqJs",
+    "rank": 20
   },
   {
     "id": "old-aod-76",
@@ -344,7 +366,8 @@
     "date": "2021-01-31",
     "levelID": "76680844",
     "video": "https://youtu.be/JsOjKOLOo4s",
-    "showcaseVideo": "https://youtu.be/9xnaAgxqqJs"
+    "showcaseVideo": "https://youtu.be/9xnaAgxqqJs",
+    "rank": 21
   },
   {
     "id": "blind-blizzard",
@@ -360,7 +383,8 @@
     "date": "2020-12-09",
     "levelID": "65679976",
     "video": "https://youtu.be/veFJtgFFvNM",
-    "showcaseVideo": "https://youtu.be/yozw67YK6Gc"
+    "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
+    "rank": 22
   },
   {
     "id": "blind-blizzard-97",
@@ -376,7 +400,8 @@
     "date": "2020-12-05",
     "levelID": "65679976",
     "video": "https://youtu.be/lTCdp8SwFIk",
-    "showcaseVideo": "https://youtu.be/yozw67YK6Gc"
+    "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
+    "rank": 23
   },
   {
     "id": "blind-blizzard-79",
@@ -392,7 +417,8 @@
     "date": "2020-11-27",
     "levelID": "65679976",
     "video": "https://youtu.be/3826sxJVxJM",
-    "showcaseVideo": "https://youtu.be/yozw67YK6Gc"
+    "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
+    "rank": 24
   },
   {
     "id": "3sh-in-hell",
@@ -407,7 +433,8 @@
     "date": "2020-05-17",
     "levelID": "61614466",
     "video": "https://youtu.be/E3-9s2DyjJI",
-    "showcaseVideo": "https://youtu.be/E3-9s2DyjJI"
+    "showcaseVideo": "https://youtu.be/E3-9s2DyjJI",
+    "rank": 25
   },
   {
     "id": "3sh-in-hell-89",
@@ -422,7 +449,8 @@
     "date": "2020-05-17",
     "levelID": "61614466",
     "video": "https://cdn.discordapp.com/attachments/1364175601014931527/1427111557585834145/image.png?ex=68f2f2b5&is=68f1a135&hm=bf4a0341ddaf2f47ecc200db9fdcd66d3973532eaad6f500ceaf00792cde9407&",
-    "showcaseVideo": "https://youtu.be/E3-9s2DyjJI"
+    "showcaseVideo": "https://youtu.be/E3-9s2DyjJI",
+    "rank": 26
   },
   {
     "id": "tartarus",
@@ -438,7 +466,8 @@
     "date": "2020-01-06",
     "levelID": "59075347",
     "video": "https://youtu.be/UGzWwFD3-gk",
-    "showcaseVideo": "https://youtu.be/lm1498Rfl0s"
+    "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
+    "rank": 27
   },
   {
     "id": "tartarus-98",
@@ -455,7 +484,8 @@
     "date": "2019-12-30",
     "levelID": "59075347",
     "video": "https://youtu.be/jAHi9t6l7b4",
-    "showcaseVideo": "https://youtu.be/lm1498Rfl0s"
+    "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
+    "rank": 28
   },
   {
     "id": "tartarus-97",
@@ -472,7 +502,8 @@
     "date": "2019-07-27",
     "levelID": "59075347",
     "video": "https://youtu.be/fNoPN-CwjKg",
-    "showcaseVideo": "https://youtu.be/lm1498Rfl0s"
+    "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
+    "rank": 29
   },
   {
     "id": "tartarus-91",
@@ -489,7 +520,8 @@
     "date": "2019-03-30",
     "levelID": "59075347",
     "video": "https://youtu.be/5F1IrMm2EAM",
-    "showcaseVideo": "https://youtu.be/lm1498Rfl0s"
+    "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
+    "rank": 30
   },
   {
     "id": "sonic-wave-75hz-75",
@@ -507,7 +539,8 @@
     "levelID": 26681070,
     "video": "https://www.youtube.com/watch?v=n4QCAP4tqOk",
     "showcaseVideo": "https://youtu.be/iQowrO4trlk",
-    "submitter": "TTB18"
+    "submitter": "TTB18",
+    "rank": 31
   },
   {
     "id": "sonic-wave-75hz-74",
@@ -525,7 +558,8 @@
     "levelID": 26681070,
     "video": "https://www.youtube.com/watch?v=QAD19pE0c1E",
     "showcaseVideo": "https://youtu.be/iQowrO4trlk",
-    "submitter": "TTB18"
+    "submitter": "TTB18",
+    "rank": 32
   },
   {
     "id": "plasma-pulse-finale-60hz-72",
@@ -542,7 +576,8 @@
     "date": "2017-11-04",
     "levelID": "38655495",
     "video": "https://youtu.be/efl4b9pWBQg",
-    "showcaseVideo": "https://youtu.be/CDUcdR1-uho"
+    "showcaseVideo": "https://youtu.be/CDUcdR1-uho",
+    "rank": 33
   },
   {
     "id": "bloodlust-98",
@@ -558,7 +593,8 @@
     "date": "2017-06-09",
     "levelID": "42584142",
     "video": "https://youtu.be/9YVaxTwKZEo",
-    "showcaseVideo": "https://youtu.be/pZlRHWuVDn4"
+    "showcaseVideo": "https://youtu.be/pZlRHWuVDn4",
+    "rank": 34
   },
   {
     "id": "bloodlust-97",
@@ -576,7 +612,8 @@
     "date": "2017-06-09",
     "levelID": "42584142",
     "video": "https://youtu.be/9YVaxTwKZEo&t=206",
-    "showcaseVideo": "https://youtu.be/pZlRHWuVDn4"
+    "showcaseVideo": "https://youtu.be/pZlRHWuVDn4",
+    "rank": 35
   },
   {
     "id": "bloodlust-78",
@@ -594,7 +631,8 @@
     "levelID": 42584142,
     "video": "https://clips.twitch.tv/CharmingSleepyLardStoneLightning",
     "showcaseVideo": "https://youtu.be/pZlRHWuVDn4",
-    "submitter": "Anceps"
+    "submitter": "Anceps",
+    "rank": 36
   },
   {
     "id": "bloodlust-76",
@@ -611,7 +649,8 @@
     "date": "2017-06-06",
     "levelID": "42584142",
     "video": "https://youtu.be/vgVkw_IicBo",
-    "showcaseVideo": "https://youtu.be/pZlRHWuVDn4"
+    "showcaseVideo": "https://youtu.be/pZlRHWuVDn4",
+    "rank": 37
   },
   {
     "id": "sonic-wave-mefewe-98",
@@ -626,7 +665,8 @@
     "date": "2016-03-25",
     "levelID": "88355365",
     "video": "https://youtu.be/_kAhx6B7uy0",
-    "showcaseVideo": "https://youtu.be/gRcK5Q0Dzys"
+    "showcaseVideo": "https://youtu.be/gRcK5Q0Dzys",
+    "rank": 38
   },
   {
     "id": "sonic-wave-75-copy",
@@ -642,7 +682,8 @@
     "date": "2016-03-22",
     "levelID": "26681070",
     "video": "https://www.youtube.com/watch?v=HS9sJwl63xk",
-    "showcaseVideo": "https://youtu.be/iQowrO4trlk"
+    "showcaseVideo": "https://youtu.be/iQowrO4trlk",
+    "rank": 39
   },
   {
     "id": "sonic-wave-72",
@@ -659,7 +700,8 @@
     "levelID": "26681070",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/37562566",
     "video": "https://youtu.be/7-6qselgues",
-    "showcaseVideo": "https://youtu.be/iQowrO4trlk"
+    "showcaseVideo": "https://youtu.be/iQowrO4trlk",
+    "rank": 40
   },
   {
     "id": "bloodbath",
@@ -675,7 +717,8 @@
     "date": "2015-08-12",
     "levelID": "10565740",
     "video": "https://youtu.be/twTw4fjT0ik",
-    "showcaseVideo": "https://youtu.be/Js7TtZ99J04"
+    "showcaseVideo": "https://youtu.be/Js7TtZ99J04",
+    "rank": 41
   },
   {
     "id": "bloodbath-94",
@@ -691,7 +734,8 @@
     "date": "2015-08-08",
     "levelID": "10565740",
     "video": "https://www.twitch.tv/videos/10193650",
-    "showcaseVideo": "https://youtu.be/Js7TtZ99J04"
+    "showcaseVideo": "https://youtu.be/Js7TtZ99J04",
+    "rank": 42
   },
   {
     "id": "bloodbath-91",
@@ -708,7 +752,8 @@
     "levelID": "10565740",
     "submitter": "jak",
     "video": "https://youtu.be/yP-oRWxVeHk",
-    "showcaseVideo": "https://youtu.be/Js7TtZ99J04"
+    "showcaseVideo": "https://youtu.be/Js7TtZ99J04",
+    "rank": 43
   },
   {
     "id": "bloodbath-90",
@@ -725,7 +770,8 @@
     "levelID": "10565740",
     "submitter": "Anceps",
     "video": "https://youtu.be/lZCBqIa_Jfk?t=951",
-    "showcaseVideo": "https://youtu.be/Js7TtZ99J04"
+    "showcaseVideo": "https://youtu.be/Js7TtZ99J04",
+    "rank": 44
   },
   {
     "id": "the-ultimate-phase-old",
@@ -743,7 +789,8 @@
     "levelID": 104041294,
     "video": "https://www.youtube.com/watch?v=LKp4VHT_10s",
     "showcaseVideo": "https://www.youtube.com/watch?v=PGyRS6tjJNY",
-    "submitter": "kittycatiscute"
+    "submitter": "kittycatiscute",
+    "rank": 45
   },
   {
     "id": "bloodbath-58",
@@ -760,7 +807,8 @@
     "submitter": "jak",
     "levelID": "10565740",
     "video": "https://youtu.be/pOuwvDPXw8c",
-    "showcaseVideo": "https://youtu.be/Js7TtZ99J04"
+    "showcaseVideo": "https://youtu.be/Js7TtZ99J04",
+    "rank": 46
   },
   {
     "id": "ice-carbon-diablo-x",
@@ -777,7 +825,8 @@
     "date": "2015-05-24",
     "levelID": 814678,
     "video": "https://youtu.be/mhYRW_yNtWA",
-    "showcaseVideo": "https://youtu.be/gSZVFyZg8ys"
+    "showcaseVideo": "https://youtu.be/gSZVFyZg8ys",
+    "rank": 47
   },
   {
     "id": "cataclysm-old",
@@ -795,7 +844,8 @@
     "submitter": "Anceps",
     "levelID": "115539783",
     "video": "https://youtu.be/B68E2wqkFiY",
-    "showcaseVideo": "https://youtu.be/gRozCOZKL3I"
+    "showcaseVideo": "https://youtu.be/gRozCOZKL3I",
+    "rank": 48
   },
   {
     "id": "acropolis-65-100",
@@ -812,7 +862,8 @@
     "submitter": "Arcadie",
     "levelID": 5155022,
     "video": "https://youtu.be/CxS2dY5JJ9A",
-    "showcaseVideo": "https://youtu.be/WOuerC9uuFY"
+    "showcaseVideo": "https://youtu.be/WOuerC9uuFY",
+    "rank": 49
   },
   {
     "id": "cataclysm-old-71",
@@ -830,7 +881,8 @@
     "levelID": "115539783",
     "submitter": "Anceps",
     "video": "https://www.twitch.tv/videos/44180500",
-    "showcaseVideo": "https://youtu.be/gRozCOZKL3I"
+    "showcaseVideo": "https://youtu.be/gRozCOZKL3I",
+    "rank": 50
   },
   {
     "id": "cataclysm-old-70",
@@ -848,7 +900,8 @@
     "submitter": "Anceps",
     "levelID": "115539783",
     "video": "https://www.twitch.tv/videos/44274877",
-    "showcaseVideo": "https://youtu.be/gRozCOZKL3I"
+    "showcaseVideo": "https://youtu.be/gRozCOZKL3I",
+    "rank": 51
   },
   {
     "id": "necropolis",
@@ -865,7 +918,8 @@
     "submitter": "Anceps",
     "levelID": "2241592",
     "video": "https://youtu.be/aks6z1fv5Wg",
-    "showcaseVideo": "https://youtu.be/j3SgupWqHJw"
+    "showcaseVideo": "https://youtu.be/j3SgupWqHJw",
+    "rank": 52
   },
   {
     "id": "necropolis-92",
@@ -882,7 +936,8 @@
     "submitter": "Anceps",
     "thumbnail": "https://i.ytimg.com/vi/bVUVS5dG7qQ/maxresdefault.jpg",
     "video": "https://youtu.be/FP2kZqdiAKE",
-    "showcaseVideo": "https://youtu.be/j3SgupWqHJw"
+    "showcaseVideo": "https://youtu.be/j3SgupWqHJw",
+    "rank": 53
   },
   {
     "id": "acropolis-copy",
@@ -899,7 +954,8 @@
     "submitter": "Anceps",
     "levelID": "5155022",
     "video": "https://youtu.be/4v39XU7LW7M",
-    "showcaseVideo": "https://youtu.be/WOuerC9uuFY"
+    "showcaseVideo": "https://youtu.be/WOuerC9uuFY",
+    "rank": 54
   },
   {
     "id": "necropolis-73",
@@ -916,7 +972,8 @@
     "levelID": "2241592",
     "thumbnail": "https://i.ytimg.com/vi/S2EO10Z3M74/maxresdefault.jpg",
     "video": "https://youtu.be/Q2oTRkJHmPU",
-    "showcaseVideo": "https://youtu.be/j3SgupWqHJw"
+    "showcaseVideo": "https://youtu.be/j3SgupWqHJw",
+    "rank": 55
   },
   {
     "name": "Ice cream",
@@ -932,7 +989,8 @@
       "Level",
       "Verified",
       "Rated"
-    ]
+    ],
+    "rank": 56
   },
   {
     "name": "Stereo Demoness",
@@ -948,7 +1006,8 @@
       "Level",
       "Verified",
       "Rated"
-    ]
+    ],
+    "rank": 57
   },
   {
     "id": "dual-hexagon-force",
@@ -964,7 +1023,8 @@
     "version": "1.8",
     "date": "2014-08-20",
     "levelID": "1782468",
-    "showcaseVideo": "https://youtu.be/xrXOPg6SGyU"
+    "showcaseVideo": "https://youtu.be/xrXOPg6SGyU",
+    "rank": 58
   },
   {
     "name": "Deadly ClubStep 6-100%",
@@ -981,7 +1041,8 @@
       "Progress",
       "Rated"
     ],
-    "video": "https://youtu.be/0vEYZ1LqBcI"
+    "video": "https://youtu.be/0vEYZ1LqBcI",
+    "rank": 59
   },
   {
     "id": "primary-maze",
@@ -998,7 +1059,8 @@
     "date": "2014-06-01",
     "levelID": "928589",
     "video": "https://i.ibb.co/MDncsz5D/screencapture-cafe-naver-geometrydw-2025-05-14-01-06-08.png",
-    "showcaseVideo": "https://youtu.be/bLys1KJTrdE"
+    "showcaseVideo": "https://youtu.be/bLys1KJTrdE",
+    "rank": 60
   },
   {
     "id": "xyz-step-infinity-old",
@@ -1015,7 +1077,8 @@
     "submitter": "Anceps",
     "levelID": "84619534",
     "video": "https://tinyurl.com/yuse4xbp",
-    "showcaseVideo": "https://youtu.be/tH-QfWdw5o0"
+    "showcaseVideo": "https://youtu.be/tH-QfWdw5o0",
+    "rank": 61
   },
   {
     "id": "eclipse",
@@ -1029,7 +1092,8 @@
     "version": "1.6",
     "date": "2014-04-12",
     "levelID": "535596",
-    "showcaseVideo": "https://youtu.be/HGAxTsdB_6o"
+    "showcaseVideo": "https://youtu.be/HGAxTsdB_6o",
+    "rank": 62
   },
   {
     "id": "pg-clubstep-old",
@@ -1046,7 +1110,8 @@
     "submitter": "Anceps",
     "levelID": "82961922",
     "video": "https://www.youtube.com/watch?v=mmx1OpU-Zuk",
-    "showcaseVideo": "https://youtu.be/UnhLHTybSJY"
+    "showcaseVideo": "https://youtu.be/UnhLHTybSJY",
+    "rank": 63
   },
   {
     "id": "demon-sunrise",
@@ -1062,7 +1127,8 @@
     "date": "2014-03-02",
     "levelID": "296176",
     "video": "https://youtu.be/qcfbTR7D_W8",
-    "showcaseVideo": "https://youtu.be/s5CBobn6D4c"
+    "showcaseVideo": "https://youtu.be/s5CBobn6D4c",
+    "rank": 64
   },
   {
     "id": "simg-factorial-6",
@@ -1079,7 +1145,8 @@
     "date": "2014-03-02",
     "levelID": "295984",
     "video": "https://i.ibb.co/6cV7hmz0/image.png",
-    "showcaseVideo": "https://youtu.be/WqpoqktKUk0"
+    "showcaseVideo": "https://youtu.be/WqpoqktKUk0",
+    "rank": 65
   },
   {
     "id": "bizarre-milestone-old",
@@ -1097,7 +1164,8 @@
     "date": "2014-02-27",
     "levelID": "84619568",
     "video": "https://www.youtube.com/watch?v=qY9d31tl9Ls",
-    "showcaseVideo": "https://youtu.be/t0OdXqAnAQE"
+    "showcaseVideo": "https://youtu.be/t0OdXqAnAQE",
+    "rank": 66
   },
   {
     "id": "pink-world",
@@ -1114,7 +1182,8 @@
     "date": "2014-02-15",
     "levelID": "232002",
     "video": "https://i.ibb.co/Pshk7Y0H/image.png",
-    "showcaseVideo": "https://youtu.be/ml9kkg3F_to"
+    "showcaseVideo": "https://youtu.be/ml9kkg3F_to",
+    "rank": 67
   },
   {
     "id": "simg-factorial-5-old",
@@ -1130,7 +1199,8 @@
     "date": "2014-02-14",
     "levelID": "88356137",
     "video": "https://cafe.naver.com/geometrydw/10161",
-    "showcaseVideo": "https://youtu.be/vC8gtYxIa9I"
+    "showcaseVideo": "https://youtu.be/vC8gtYxIa9I",
+    "rank": 68
   },
   {
     "id": "definite-integral",
@@ -1147,7 +1217,8 @@
     "submitter": "Anceps",
     "levelID": "180857",
     "video": "https://youtu.be/LXfNdXiWHwQ",
-    "showcaseVideo": "https://youtu.be/DcxyJps7FWk"
+    "showcaseVideo": "https://youtu.be/DcxyJps7FWk",
+    "rank": 69
   },
   {
     "id": "demons-dry-out",
@@ -1162,7 +1233,8 @@
     "version": "1.4",
     "date": "2014-01-15",
     "levelID": "153697",
-    "showcaseVideo": "https://youtu.be/L2xD-bUEVl4"
+    "showcaseVideo": "https://youtu.be/L2xD-bUEVl4",
+    "rank": 70
   },
   {
     "id": "simg-factorial-4-old",
@@ -1176,7 +1248,8 @@
     "length": "81",
     "version": "1.4",
     "date": "2014-01-14",
-    "showcaseVideo": "https://youtu.be/I2773lgoM2I"
+    "showcaseVideo": "https://youtu.be/I2773lgoM2I",
+    "rank": 71
   },
   {
     "id": "rythem-time-machine",
@@ -1193,7 +1266,8 @@
     "submitter": "Anceps",
     "levelID": "139804",
     "video": "https://m.cafe.naver.com/geometrydw/3609",
-    "showcaseVideo": "https://youtu.be/-04PnHXMGD8"
+    "showcaseVideo": "https://youtu.be/-04PnHXMGD8",
+    "rank": 72
   },
   {
     "id": "bicycle",
@@ -1208,7 +1282,8 @@
     "version": "1.4",
     "date": "2013-12-26",
     "levelID": "120432",
-    "showcaseVideo": "https://youtu.be/h-B-obfRtIw"
+    "showcaseVideo": "https://youtu.be/h-B-obfRtIw",
+    "rank": 73
   },
   {
     "name": "YCO",
@@ -1224,7 +1299,8 @@
       "Level",
       "Verified",
       "Tentative"
-    ]
+    ],
+    "rank": 74
   },
   {
     "name": "FINAL DESTINATION",
@@ -1241,7 +1317,8 @@
       "Verified",
       "Rated",
       "Tentative"
-    ]
+    ],
+    "rank": 75
   },
   {
     "name": "Extreme Park",
@@ -1257,7 +1334,8 @@
       "Level",
       "Verified",
       "Rated"
-    ]
+    ],
+    "rank": 76
   },
   {
     "name": "The Climax",
@@ -1274,7 +1352,8 @@
       "Level",
       "Verified",
       "Rated"
-    ]
+    ],
+    "rank": 77
   },
   {
     "id": "to-the-grave",
@@ -1291,7 +1370,8 @@
     "submitter": "Anceps",
     "levelID": "12556",
     "video": "https://toucharcade.com/community/threads/geometry-dash-by-robtop-games.200268/page-11#post-3005388",
-    "showcaseVideo": "https://youtu.be/9OSvZkmwZuE"
+    "showcaseVideo": "https://youtu.be/9OSvZkmwZuE",
+    "rank": 78
   },
   {
     "id": "b",
@@ -1305,7 +1385,8 @@
     "version": "1.1",
     "date": "2013-10-15",
     "levelID": "9173",
-    "showcaseVideo": "https://youtu.be/R-E8rIoEky4"
+    "showcaseVideo": "https://youtu.be/R-E8rIoEky4",
+    "rank": 79
   },
   {
     "id": "level-5",
@@ -1319,7 +1400,8 @@
     "version": "1.1",
     "date": "2013-09-13",
     "levelID": "2172",
-    "showcaseVideo": "https://youtu.be/PeNW8_M0eVI"
+    "showcaseVideo": "https://youtu.be/PeNW8_M0eVI",
+    "rank": 80
   },
   {
     "id": "blurred-lines",
@@ -1333,7 +1415,8 @@
     "version": "1.0",
     "date": "2013-08-31",
     "levelID": "1063",
-    "showcaseVideo": "https://youtu.be/dJfdQgdwvTs"
+    "showcaseVideo": "https://youtu.be/dJfdQgdwvTs",
+    "rank": 81
   },
   {
     "id": "m",
@@ -1348,7 +1431,8 @@
     "version": "1.0",
     "date": "2013-08-27",
     "levelID": "828",
-    "showcaseVideo": "https://youtu.be/tJVYJYQ2ySg"
+    "showcaseVideo": "https://youtu.be/tJVYJYQ2ySg",
+    "rank": 82
   },
   {
     "id": "the-rainbow-road",
@@ -1365,7 +1449,8 @@
     "levelID": "718",
     "submitter": "Anceps",
     "video": "https://i.ibb.co/sdCLjyC1/screencapture-cafe-naver-geometrydw-2025-05-14-01-06-08.png",
-    "showcaseVideo": "https://youtu.be/DQpmcZ0e4-o"
+    "showcaseVideo": "https://youtu.be/DQpmcZ0e4-o",
+    "rank": 83
   },
   {
     "id": "the-first-3-trials",
@@ -1382,7 +1467,8 @@
     "levelID": "308",
     "submitter": "Anceps",
     "video": "https://web.archive.org/web/20230521063805/https://cdn.discordapp.com/attachments/893466525720256582/1023533150854463498/unknown-55.png",
-    "showcaseVideo": "https://youtu.be/yskjxCar_Cw"
+    "showcaseVideo": "https://youtu.be/yskjxCar_Cw",
+    "rank": 84
   },
   {
     "name": "chill out",
@@ -1399,7 +1485,8 @@
       "Level",
       "Verified",
       "Rated"
-    ]
+    ],
+    "rank": 85
   },
   {
     "id": "cant-let-go-old",
@@ -1416,7 +1503,8 @@
     "levelID": "77237542",
     "submitter": "Anceps",
     "video": "https://xdaforums.com/t/upcoming-game-geometry-jump-by-robtop-games.2257046/#post-42155532",
-    "showcaseVideo": "https://youtu.be/RIeZSWzs50g"
+    "showcaseVideo": "https://youtu.be/RIeZSWzs50g",
+    "rank": 86
   },
   {
     "id": "ultiate-destruction",
@@ -1431,7 +1519,7 @@
     "date": "2013-04-29",
     "levelID": "125805250",
     "submitter": "Anceps",
-    "video": "https://youtu.be/727pUHwWSVg"
+    "video": "https://youtu.be/727pUHwWSVg",
+    "rank": 87
   }
 ]
-
