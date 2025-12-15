@@ -208,7 +208,7 @@ function calculateDaysLasted(currentDate, previousDate) {
 }
 
 // Timeline card (shows length, lasted # days, date)
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable }) {
   const { dateFormat } = useDateFormat();
   const handleClick = e => {
     if (devMode) {
@@ -270,6 +270,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             </div>
             <div className="thumbnail-container">
               <img src={sanitizeImageUrl(achievement.thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+              {autoThumbAvailable && (
+                <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
+              )}
             </div>
           </div>
           {/* Developer mode hover menu */}
@@ -286,9 +289,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
   );
 }
 
-const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode);
+const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable }) {
   const { dateFormat } = useDateFormat();
   const handleClick = e => {
     if (devMode) {
@@ -332,13 +335,16 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode }) 
             </div>
             <div className="thumbnail-container">
               <img src={sanitizeImageUrl(achievement.thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+              {autoThumbAvailable && (
+                <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
+              )}
             </div>
           </div>
         </div>
       </a>
     </Link>
   );
-}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode);
+}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -527,6 +533,7 @@ export default function SharedList({
   const [showNewForm, setShowNewForm] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const [duplicateThumbKeys, setDuplicateThumbKeys] = useState(new Set());
+  const [autoThumbMap, setAutoThumbMap] = useState({});
   const [newForm, setNewForm] = useState({
     name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: []
   });
@@ -601,7 +608,7 @@ export default function SharedList({
     } else {
       newVal = (name === 'video' || name === 'showcaseVideo')
         ? normalizeYoutubeUrl(value)
-        : (['version', 'levelID', 'length'].includes(name) ? Number(value) : value);
+        : ((['levelID', 'length'].includes(name) ? Number(value) : value));
     }
     setEditForm(f => ({
       ...f,
@@ -620,6 +627,13 @@ export default function SharedList({
   function handleEditFormSave() {
     const entry = {};
     Object.entries(editForm).forEach(([k, v]) => {
+      if (k === 'version') {
+        const num = Number(v);
+        if (!isNaN(num)) {
+          entry[k] = num;
+        }
+        return;
+      }
       if (k === 'levelID') {
         const num = Number(v);
         if (!isNaN(num) && num > 0) {
@@ -650,7 +664,15 @@ export default function SharedList({
       const [removed] = arr.splice(editIdx, 1);
       const updated = { ...removed, ...entry };
 
-      arr.splice(editIdx, 0, updated);
+      if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
+        const idx = Math.max(0, Math.min(arr.length, Number(entry.rank) - 1));
+        arr.splice(idx, 0, updated);
+      } else {
+        arr.splice(editIdx, 0, updated);
+      }
+
+      // renumber ranks after save
+      arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return arr;
     });
     setEditIdx(null);
@@ -890,6 +912,33 @@ export default function SharedList({
     setRandomOrderMap(map);
   }, [achievements, reordered]);
 
+  // Check which levelIDs have an available automatic thumbnail and cache results
+  useEffect(() => {
+    const items = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : achievements;
+    const ids = Array.from(new Set((items || []).map(a => (a && a.levelID) ? String(a.levelID) : '').filter(Boolean)));
+    if (!ids.length) return;
+    ids.forEach(id => {
+      if (autoThumbMap[id] !== undefined) return;
+      const url = `https://levelthumbs.prevter.me/thumbnail/${id}`;
+      // try HEAD first
+      fetch(url, { method: 'HEAD' }).then(res => {
+        if (res && res.ok) {
+          const ct = res.headers.get ? (res.headers.get('content-type') || '') : '';
+          const available = ct.startsWith && ct.startsWith('image/') ? true : true; // treat OK as available even if content-type missing
+          setAutoThumbMap(m => ({ ...m, [id]: available }));
+        } else {
+          setAutoThumbMap(m => ({ ...m, [id]: false }));
+        }
+      }).catch(() => {
+        // fallback to GET in case HEAD is blocked
+        fetch(url, { method: 'GET' }).then(res2 => {
+          if (res2 && res2.ok) setAutoThumbMap(m => ({ ...m, [id]: true }));
+          else setAutoThumbMap(m => ({ ...m, [id]: false }));
+        }).catch(() => setAutoThumbMap(m => ({ ...m, [id]: false })));
+      });
+    });
+  }, [achievements, reordered, autoThumbMap]);
+
   function handleMobileToggle() {
     setShowMobileFilters(v => !v);
   }
@@ -903,7 +952,7 @@ export default function SharedList({
     } else {
       newVal = (name === 'video' || name === 'showcaseVideo')
         ? normalizeYoutubeUrl(value)
-        : (['version', 'levelID', 'length'].includes(name) ? Number(value) : value);
+        : ((['levelID', 'length'].includes(name) ? Number(value) : value));
     }
     setNewForm(f => ({
       ...f,
@@ -925,6 +974,20 @@ export default function SharedList({
     }
     const entry = {};
     Object.entries(newForm).forEach(([k, v]) => {
+      if (k === 'version') {
+        const num = Number(v);
+        if (!isNaN(num)) {
+          entry[k] = num;
+        }
+        return;
+      }
+      if (k === 'rank') {
+        const num = Number(v);
+        if (!isNaN(num)) {
+          entry[k] = num;
+        }
+        return;
+      }
       if (k === 'levelID') {
         const num = Number(v);
         if (!isNaN(num) && num > 0) {
@@ -946,6 +1009,11 @@ export default function SharedList({
       if (!prev) {
         setScrollToIdx(0);
         newArr = [entry];
+      } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
+        const idx = Math.max(0, Math.min(prev.length, Number(entry.rank) - 1));
+        newArr = [...prev];
+        newArr.splice(idx, 0, entry);
+        setScrollToIdx(idx);
       } else if (insertIdx === null || insertIdx < 0 || insertIdx > prev.length - 1) {
         setScrollToIdx(prev.length);
         newArr = [...prev, entry];
@@ -955,6 +1023,8 @@ export default function SharedList({
         setScrollToIdx(insertIdx + 1);
       }
 
+      // renumber ranks
+      newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return newArr;
     });
     setShowNewForm(false);
@@ -978,6 +1048,16 @@ export default function SharedList({
     }
     const entry = {};
     Object.entries(newForm).forEach(([k, v]) => {
+      if (k === 'version') {
+        const num = Number(v);
+        if (!isNaN(num)) entry[k] = num;
+        return;
+      }
+        if (k === 'rank') {
+          const num = Number(v);
+          if (!isNaN(num)) entry[k] = num;
+          return;
+        }
       if (k === 'levelID') {
         const num = Number(v);
         if (!isNaN(num) && num > 0) entry[k] = num;
@@ -1080,6 +1160,7 @@ export default function SharedList({
       if (!prev) return prev;
       const arr = [...prev];
       arr.splice(idx, 1);
+      arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return arr;
     });
   }
@@ -1088,8 +1169,10 @@ export default function SharedList({
     setReordered(prev => {
       if (!prev) return prev;
       const arr = [...prev];
-      const copy = { ...arr[idx], id: arr[idx].id + '-copy' };
+      const copy = { ...arr[idx], id: (arr[idx] && arr[idx].id ? arr[idx].id : `item-${idx}`) + '-copy' };
       arr.splice(idx + 1, 0, copy);
+      // renumber ranks
+      arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       setScrollToIdx(idx + 1);
       return arr;
     });
@@ -1536,9 +1619,9 @@ export default function SharedList({
                   zIndex: 1
                 }} className={highlightedIdx === i ? 'search-highlight' : ''}>
                   { mode === 'timeline' ?
-                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} />
+                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                     :
-                    <AchievementCard achievement={a} devMode={devMode} />
+                    <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                   }
                 </div>
               </div>
@@ -1577,9 +1660,9 @@ export default function SharedList({
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
                       { mode === 'timeline' ?
-                          <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} />
+                          <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                         :
-                          <AchievementCard achievement={a} devMode={devMode} />
+                          <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                       }
                     </div>
                   );
