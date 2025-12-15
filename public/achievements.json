@@ -178,13 +178,14 @@
     "length": 38,
     "version": 2.2,
     "video": "https://youtu.be/GFzBnEWr8ZM",
-    "showcaseVideo": "https://youtu.be/2pZYTXLt1rg?si=rJXX7iC_xRdKyTGt",
+    "showcaseVideo": "https://youtu.be/2pZYTXLt1rg",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/kocmoc-unleashed1.webp",
     "submitter": "Exiled_Shade",
     "tags": [
       "Level",
       "Progress",
-      "CBF"
+      "CBF",
+      "Tentative"
     ],
     "rank": 10
   },
@@ -219,7 +220,8 @@
     "submitter": "Arcadie",
     "tags": [
       "Level",
-      "Progress"
+      "Progress",
+      "Tentative"
     ],
     "rank": 12
   },
