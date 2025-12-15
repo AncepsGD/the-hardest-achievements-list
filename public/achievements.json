@@ -7424,11 +7424,29 @@
       "Mobile",
       "Rated"
     ],
+    "rank": 417
+  },
+  {
+    "name": "SAND SAILOR 60hz",
+    "id": "sand-sailor-60hz",
+    "player": "Cejelost",
+    "levelID": 88868682,
+    "date": "2024-08-19",
+    "length": 83,
+    "version": 2.2,
+    "video": "https://youtu.be/xnRa6mb-yRo",
+    "showcaseVideo": "https://youtu.be/Pbcaz-ziZX4",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
     "rank": 418
   },
   {
     "name": "Old Blade of Justice 30-95%",
-    "id": "old-blade-of-justice-30-95-copy",
+    "id": "old-blade-of-justice-30-95-copy-copy",
     "player": "AGSEcho",
     "levelID": 56783585,
     "date": "2024-09-22",
@@ -7709,7 +7727,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 434
+    "rank": 433
   },
   {
     "name": "Sightless Sandstorm",
