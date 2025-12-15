@@ -3928,26 +3928,27 @@
     "rank": 220
   },
   {
-    "name": "Yatagarasu 60hz Mobile",
-    "id": "yatagarasu-60hz-mobile",
-    "player": "Coopersuper",
-    "levelID": 28220417,
-    "date": "2022-10-23",
-    "length": 177,
+    "name": "Cold Sweat 60hz Mobile",
+    "id": "cold-sweat-60hz-mobile",
+    "player": "SeaWolfMikes",
+    "length": 113,
     "version": 2.1,
-    "video": "https://youtu.be/86VHptwZ0KI",
-    "showcaseVideo": "https://youtu.be/lINTj6fiTes",
+    "video": "https://youtu.be/TNqFHVrt2ng",
+    "date": "2022-11-16",
+    "showcaseVideo": "https://youtu.be/ozGsB1IBLEE",
+    "levelID": 63996127,
+    "submitter": "kyle1saurus",
     "tags": [
       "Level",
       "Low Hertz",
       "Mobile",
       "Rated"
     ],
-    "rank": 221
+    "rank": 222
   },
   {
     "name": "Ouroboros 60hz Mobile 10-100%",
-    "id": "ouroboros-60hz-mobile-10-100",
+    "id": "ouroboros-60hz-mobile-10-100-copy",
     "player": "Jastro",
     "length": 137,
     "version": 2.2,
@@ -5386,26 +5387,27 @@
     "rank": 302
   },
   {
-    "name": "Cold Sweat 60hz Mobile",
-    "id": "cold-sweat-60hz-mobile",
-    "player": "SeaWolfMikes",
-    "levelID": 63996127,
-    "date": "2022-11-16",
-    "length": 113,
+    "name": "Yatagarasu 60hz Mobile",
+    "id": "yatagarasu-60hz-mobile",
+    "player": "Coopersuper",
+    "levelID": 28220417,
+    "date": "2022-10-23",
+    "length": 177,
     "version": 2.1,
-    "video": "https://youtu.be/TNqFHVrt2ng",
-    "showcaseVideo": "https://youtu.be/ozGsB1IBLEE",
+    "submitter": "noxi",
+    "video": "https://youtu.be/86VHptwZ0KI",
+    "showcaseVideo": "https://youtu.be/lINTj6fiTes",
     "tags": [
       "Level",
       "Low Hertz",
       "Mobile",
       "Rated"
     ],
-    "rank": 303
+    "rank": 304
   },
   {
     "name": "Unnerfed Natural Disaster 54-100%",
-    "id": "unnerfed-natural-disaster-54-100",
+    "id": "unnerfed-natural-disaster-54-100-copy",
     "player": "noxi",
     "levelID": 85176381,
     "date": "2025-01-14",
