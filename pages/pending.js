@@ -9,6 +9,7 @@ export default function PendingPage() {
       dataUrl="/pending.json"
       dataFileName="pending.json"
       storageKeySuffix="pending"
+      showPlatformToggle={false}
     />
   );
 }
