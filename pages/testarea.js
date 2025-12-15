@@ -20,13 +20,13 @@ export async function getStaticProps() {
 }
 
 const TIERS = [
-  { name: 'Tier I (Endgame)', count: 20 },
-  { name: 'Tier II (Master)', count: 30 },
-  { name: 'Tier III (Expert)', count: 40 },
-  { name: 'Tier IV (Advanced)', count: 60 },
-  { name: 'Tier V (Intermediate)', count: 80 },
-  { name: 'Tier VI (Developing)', count: 120 },
-  { name: 'Tier VII (Entry)', count: 150 },
+  { name: 'Tier I (Endgame)', percent: 4 },
+  { name: 'Tier II (Master)', percent: 6 },
+  { name: 'Tier III (Expert)', percent: 8 },
+  { name: 'Tier IV (Advanced)', percent: 12 },
+  { name: 'Tier V (Intermediate)', percent: 16 },
+  { name: 'Tier VI (Developing)', percent: 24 },
+  { name: 'Tier VII (Entry)', percent: 30 },
 ]
 
 export default function TestingPage({ data }) {
@@ -61,8 +61,7 @@ export default function TestingPage({ data }) {
   return (
     <div style={{ padding: 20, fontFamily: 'system-ui, Arial, sans-serif' }}>
       <h1>Achievements — Testing Page</h1>
-      <p>Source: <strong>/public/achievements.json</strong> — split sequentially by tier counts.</p>
-        <p>Source: <strong>/public/achievements.json</strong> — split sequentially by tier percentages.</p>
+      <p>Source: <strong>/public/achievements.json</strong> — split sequentially by tier percentages.</p>
 
       {groups.map((g, i) => (
         <section key={i} style={{ marginBottom: 24 }}>
