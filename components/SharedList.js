@@ -569,25 +569,49 @@ export default function SharedList({
   const [editFormCustomTags, setEditFormCustomTags] = useState('');
   const achievementRefs = useRef([]);
 
+  function resolveRealIdx(displayIdx) {
+    try {
+      if (!reordered || !Array.isArray(reordered) || reordered.length === 0) return displayIdx;
+      if (reordered[displayIdx] && devAchievements && devAchievements[displayIdx] && reordered[displayIdx].id && devAchievements[displayIdx].id && reordered[displayIdx].id === devAchievements[displayIdx].id) {
+        return displayIdx;
+      }
+      if (reordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === reordered[displayIdx].id : false) === -1)) {
+        return displayIdx;
+      }
+      const displayed = (devAchievements && devAchievements.length) ? devAchievements[displayIdx] : null;
+      if (!displayed) return displayIdx;
+      if (displayed.id) {
+        const real = reordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
+        return real === -1 ? displayIdx : real;
+      }
+      const realByObj = reordered.findIndex(x => x === displayed);
+      return realByObj === -1 ? displayIdx : realByObj;
+    } catch (e) {
+      return displayIdx;
+    }
+  }
+
   function handleMoveAchievementUp(idx) {
+    const realIdx = resolveRealIdx(idx);
     setReordered(prev => {
-      if (!prev || idx <= 0) return prev;
+      if (!prev || realIdx <= 0) return prev;
       const arr = [...prev];
-      const temp = arr[idx - 1];
-      arr[idx - 1] = arr[idx];
-      arr[idx] = temp;
+      const temp = arr[realIdx - 1];
+      arr[realIdx - 1] = arr[realIdx];
+      arr[realIdx] = temp;
       arr.forEach((a, i) => { a.rank = i + 1; });
       return arr;
     });
   }
 
   function handleMoveAchievementDown(idx) {
+    const realIdx = resolveRealIdx(idx);
     setReordered(prev => {
-      if (!prev || idx >= prev.length - 1) return prev;
+      if (!prev || realIdx >= prev.length - 1) return prev;
       const arr = [...prev];
-      const temp = arr[idx + 1];
-      arr[idx + 1] = arr[idx];
-      arr[idx] = temp;
+      const temp = arr[realIdx + 1];
+      arr[realIdx + 1] = arr[realIdx];
+      arr[realIdx] = temp;
       arr.forEach((a, i) => { a.rank = i + 1; });
       return arr;
     });
@@ -608,9 +632,10 @@ export default function SharedList({
   }
   const [scrollToIdx, setScrollToIdx] = useState(null);
   function handleEditAchievement(idx) {
-    if (!reordered || !reordered[idx]) return;
-    const a = reordered[idx];
-    setEditIdx(idx);
+    const realIdx = resolveRealIdx(idx);
+    if (!reordered || !reordered[realIdx]) return;
+    const a = reordered[realIdx];
+    setEditIdx(realIdx);
     setEditForm({
       ...a,
       version: Number(a.version) || 2,
@@ -1260,24 +1285,26 @@ export default function SharedList({
   }, [scrollToIdx, filtered, devMode]);
 
   function handleRemoveAchievement(idx) {
+    const realIdx = resolveRealIdx(idx);
     setReordered(prev => {
       if (!prev) return prev;
       const arr = [...prev];
-      arr.splice(idx, 1);
+      arr.splice(realIdx, 1);
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return arr;
     });
   }
 
   function handleDuplicateAchievement(idx) {
+    const realIdx = resolveRealIdx(idx);
     setReordered(prev => {
       if (!prev) return prev;
       const arr = [...prev];
-      const copy = { ...arr[idx], id: (arr[idx] && arr[idx].id ? arr[idx].id : `item-${idx}`) + '-copy' };
-      arr.splice(idx + 1, 0, copy);
+      const copy = { ...arr[realIdx], id: (arr[realIdx] && arr[realIdx].id ? arr[realIdx].id : `item-${realIdx}`) + '-copy' };
+      arr.splice(realIdx + 1, 0, copy);
       
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
-      setScrollToIdx(idx + 1);
+      setScrollToIdx(realIdx + 1);
       return arr;
     });
   }
@@ -1562,7 +1589,7 @@ export default function SharedList({
             }}
             dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
           />
-          {isPending ? (
+              {isPending ? (
             <div className="no-achievements">Loading...</div>
           ) : (devMode ? (
             devAchievements.map((a, i) => (
@@ -1627,7 +1654,7 @@ export default function SharedList({
                         marginRight: 8,
                       }}
                       disabled={i === 0}
-                      onClick={e => { e.stopPropagation(); handleMoveAchievementUp(i); }}
+                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleMoveAchievementUp(realIdx); }}
                     >▲</button>
                     <button
                       title="Move Down"
@@ -1650,7 +1677,7 @@ export default function SharedList({
                         marginRight: 8,
                       }}
                       disabled={i === devAchievements.length - 1}
-                      onClick={e => { e.stopPropagation(); handleMoveAchievementDown(i); }}
+                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleMoveAchievementDown(realIdx); }}
                     >▼</button>
                     <button
                       title="Edit"
@@ -1673,7 +1700,7 @@ export default function SharedList({
                       }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--info-hover, #3498db)'}
                       onMouseOut={e => e.currentTarget.style.background = 'var(--info, #2980b9)'}
-                      onClick={e => { e.stopPropagation(); handleEditAchievement(i); }}
+                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleEditAchievement(realIdx); }}
                     >✏️</button>
                     <button
                       title="Duplicate"
@@ -1696,7 +1723,7 @@ export default function SharedList({
                       }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--primary-accent-hover, #ff9800)'}
                       onMouseOut={e => e.currentTarget.style.background = 'var(--primary-accent, #e67e22)'}
-                      onClick={e => { e.stopPropagation(); handleDuplicateAchievement(i); }}
+                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleDuplicateAchievement(realIdx); }}
                     >📄</button>
                     <button
                       title="Remove"
@@ -1719,7 +1746,7 @@ export default function SharedList({
                       }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--danger-hover, #e74c3c)'}
                       onMouseOut={e => e.currentTarget.style.background = 'var(--danger, #c0392b)'}
-                      onClick={e => { e.stopPropagation(); handleRemoveAchievement(i); }}
+                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleRemoveAchievement(realIdx); }}
                     >🗑️</button>
                   </div>
                 )}
