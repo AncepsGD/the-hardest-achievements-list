@@ -260,9 +260,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             <div className="achievement-date"><strong>{achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}</strong></div>
           </div>
           <div className="tag-container">
-            {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
-              <Tag tag={tag} key={tag} />
-            ))}
+              {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
+                <Tag tag={tag} key={tag} />
+              ))}
           </div>
           <div className="achievement-details">
             <div className="text">
