@@ -17,6 +17,101 @@
     "rank": 1
   },
   {
+    "name": "ORDINARY 60hz Mobile 34%",
+    "id": "ordinary-60hz-mobile-34",
+    "player": "SeaWolfMikes",
+    "length": 25,
+    "version": 2.2,
+    "video": "https://youtu.be/MGksnkX_BTo",
+    "showcaseVideo": "https://youtu.be/h55wbCsem9E",
+    "date": "2025-06-08",
+    "submitter": "autorouting",
+    "levelID": 105593215,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 2
+  },
+  {
+    "name": "Maniacal Chains 70%",
+    "id": "maniacal-chains-70",
+    "player": "spcreat",
+    "length": 84,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=4HXPF_oGCvY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=EbGiIG8j2A0",
+    "date": "2025-12-14",
+    "submitter": "goofygdplayer",
+    "levelID": 129492846,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/48991380",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 3
+  },
+  {
+    "name": "X84 60z Mobile",
+    "id": "x84-60z-mobile",
+    "player": "timmydog",
+    "length": 83,
+    "version": 2,
+    "video": "https://youtu.be/IB9hG6-KrW0",
+    "showcaseVideo": "https://youtu.be/tS3uHx25mfM",
+    "date": "110791899",
+    "submitter": "Natalie :3",
+    "levelID": 110791899,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 4
+  },
+  {
+    "name": "ConClusion 60hz Mobile",
+    "id": "conclusion-60hz-mobile",
+    "player": "Blinkkous",
+    "length": 87,
+    "version": 2.2,
+    "video": "https://youtu.be/4xM70yGSxlo",
+    "showcaseVideo": "https://www.youtube.com/watch?v=6zHr7dmhUn0",
+    "date": "2025-07-10",
+    "submitter": "duskIIdawn",
+    "levelID": 96471171,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "removalReason": "Superseded",
+    "rank": 5
+  },
+  {
+    "name": "Starlight Summit 120hz Mobile",
+    "id": "starlight-summit-120hz-mobile",
+    "player": "Riveriya",
+    "length": 51,
+    "version": 2.2,
+    "video": "https://youtu.be/ZYnMmSns3S0",
+    "showcaseVideo": "https://youtu.be/BbNMhp09VKc",
+    "date": "2025-12-15",
+    "submitter": "Natalie :3",
+    "levelID": 114530859,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 6
+  },
+  {
     "name": "Zodiac 120hz Mobile 63%",
     "id": "zodiac-120hz-mobile-63",
     "player": "RustedNavy15",
@@ -34,7 +129,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 2
+    "rank": 7
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -54,7 +149,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 3
+    "rank": 8
   },
   {
     "name": "Thinking Space II 85%, (5), (3), 86% in a row",
@@ -70,10 +165,42 @@
     "submitter": "Exiled_Shade",
     "tags": [
       "Level",
-      "Progress",
+      "Consistency",
       "Rated"
     ],
-    "rank": 4
+    "rank": 9
+  },
+  {
+    "name": "Angelicide (Xtra8nugz) 21-40%",
+    "id": "angelicide-xtra8nugz-21-40",
+    "player": "Xtra8nuggies",
+    "length": 18,
+    "version": 2.2,
+    "video": "https://youtu.be/MxICtM7IWtc",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-14",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 10
+  },
+  {
+    "name": "Angelicide (Xtra8nugz) 15-37%",
+    "id": "angelicide-xtra8nugz-15-37-copy",
+    "player": "Xtra8nuggies",
+    "length": 20,
+    "version": 2.2,
+    "video": "https://youtu.be/MxICtM7IWtc",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-14",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 11
   },
   {
     "name": "r a g e 120hz Mobile",
@@ -87,32 +214,12 @@
     "submitter": "real1243",
     "levelID": 112834935,
     "tags": [
-      "Level",
       "Platformer",
       "Low Hertz",
       "Mobile",
       "Rated"
     ],
-    "rank": 5
-  },
-  {
-    "name": "vortex",
-    "id": "vortex",
-    "player": "MrPrizzrak",
-    "length": 0,
-    "version": 2.2,
-    "video": "https://youtu.be/JecXtDxURPo",
-    "date": "2025-11-27",
-    "submitter": "Woachi",
-    "levelID": 124275094,
-    "tags": [
-      "Level",
-      "Platformer",
-      "Verified",
-      "Rated"
-    ],
-    "rank": 6,
-    "showcaseVideo": "https://youtu.be/BbMwRW53K7c"
+    "rank": 12
   },
   {
     "name": "laith",
@@ -129,6 +236,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 7
+    "rank": 13
   }
 ]
