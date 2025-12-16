@@ -125,52 +125,6 @@ function DevModePanelInner({
       {devMode && showNewForm && !editForm && (
         <div className="devmode-form-panel">
           <h3 className="devmode-form-title">New Achievement</h3>
-          <div style={{ marginBottom: 8 }}>
-            <label style={{ color: 'var(--muted, #DFE3F5)', fontSize: 13, display: 'block', marginBottom: 4 }}>Paste from previous achievements</label>
-            <input
-              type="text"
-              placeholder="Search previous achievements by name, player, id, or levelID..."
-              value={pasteSearch}
-              onChange={e => { setPasteSearch(e.target.value); setPasteShowResults(true); }}
-              aria-label="Paste from previous achievements"
-              className="search-input"
-              style={{ width: '100%' }}
-            />
-            {pasteShowResults && pasteSearch && (
-              <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
-                {getPasteCandidates && getPasteCandidates().length === 0 ? (
-                  <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
-                ) : (
-                  getPasteCandidates && getPasteCandidates().map((p, i) => (
-                    <button
-                      key={p && p.id ? p.id : `p-${i}`}
-                      type="button"
-                      onClick={() => handlePasteSelect && handlePasteSelect(p)}
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '100%',
-                        padding: '8px',
-                        background: 'transparent',
-                        border: 'none',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        color: 'var(--text-color)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <strong style={{ fontSize: 14 }}>{p.name}</strong>
-                        <span style={{ fontSize: 12, color: '#aaa' }}>{p.player || ''} {p.id ? `— ${p.id}` : ''}</span>
-                      </div>
-                      <div style={{ fontSize: 12, color: '#999' }}>{p.levelID ? `L:${p.levelID}` : ''}</div>
-                    </button>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
           <form onSubmit={e => {e.preventDefault(); handleNewFormAdd();}} autoComplete="off">
             <label style={{display:'block',fontSize:13,marginTop:6}}>Name<input type="text" name="name" value={newForm.name} onChange={handleNewFormChange} required placeholder="Naracton Diablo X 99%" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>ID<input type="text" name="id" value={newForm.id} onChange={handleNewFormChange} required placeholder="naracton-diablo-x-99" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
@@ -197,6 +151,53 @@ function DevModePanelInner({
             <label style={{display:'block',fontSize:13,marginTop:6}}>Submitter<input type="text" name="submitter" value={newForm.submitter} onChange={handleNewFormChange} placeholder="kyle1saurus" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Level ID<input type="text" name="levelID" value={newForm.levelID} onChange={handleNewFormChange} placeholder="86407629" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Thumbnail<input type="text" name="thumbnail" value={newForm.thumbnail} onChange={handleNewFormChange} placeholder="Image URL" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
+            {/* Paste-from-previous helper placed beneath Thumbnail */}
+            <div style={{ marginTop: 8, marginBottom: 6 }}>
+              <label style={{ color: 'var(--muted, #DFE3F5)', fontSize: 13, display: 'block', marginBottom: 4 }}>Paste from previous achievements</label>
+              <input
+                type="text"
+                placeholder="Search previous achievements by name, player, id, or levelID..."
+                value={pasteSearch}
+                onChange={e => { setPasteSearch(e.target.value); setPasteShowResults(true); }}
+                aria-label="Paste from previous achievements"
+                className="search-input"
+                style={{ width: '100%' }}
+              />
+              {pasteShowResults && pasteSearch && (
+                <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
+                  {getPasteCandidates && getPasteCandidates().length === 0 ? (
+                    <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
+                  ) : (
+                    getPasteCandidates && getPasteCandidates().map((p, i) => (
+                      <button
+                        key={p && p.id ? p.id : `p-${i}`}
+                        type="button"
+                        onClick={() => handlePasteSelect && handlePasteSelect(p)}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          width: '100%',
+                          padding: '8px',
+                          background: 'transparent',
+                          border: 'none',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          color: 'var(--text-color)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <strong style={{ fontSize: 14 }}>{p.name}</strong>
+                          <span style={{ fontSize: 12, color: '#aaa' }}>{p.player || ''} {p.id ? `— ${p.id}` : ''}</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#999' }}>{p.levelID ? `L:${p.levelID}` : ''}</div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
             <div className="devmode-form-btn-row">
               <button className="devmode-btn" type="submit">Add</button>
               <button className="devmode-btn" type="button" onClick={handleNewFormCancel}>Cancel</button>
