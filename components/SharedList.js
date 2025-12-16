@@ -539,6 +539,8 @@ export default function SharedList({
   });
   const [newFormTags, setNewFormTags] = useState([]);
   const [newFormCustomTags, setNewFormCustomTags] = useState('');
+  const [pasteSearch, setPasteSearch] = useState('');
+  const [pasteShowResults, setPasteShowResults] = useState(false);
   const [insertIdx, setInsertIdx] = useState(null);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -1039,6 +1041,41 @@ export default function SharedList({
     setNewFormTags([]);
     setNewFormCustomTags('');
   }
+
+  function getPasteCandidates() {
+    const items = (devMode && reordered) ? reordered : achievements;
+    const q = (pasteSearch || '').trim().toLowerCase();
+    if (!q || !items || !items.length) return [];
+    return items.filter(a => {
+      if (!a) return false;
+      return (a.name && a.name.toLowerCase().includes(q)) ||
+             (a.player && a.player.toLowerCase().includes(q)) ||
+             (a.id && String(a.id).toLowerCase().includes(q)) ||
+             (a.levelID && String(a.levelID).toLowerCase().includes(q));
+    }).slice(0, 10);
+  }
+
+  function handlePasteSelect(item) {
+    if (!item) return;
+    const entry = { ...item };
+    entry.version = Number(entry.version) || 2;
+    entry.levelID = Number(entry.levelID) || 0;
+    entry.length = Number(entry.length) || 0;
+
+    if (editIdx !== null && editForm) {
+      setEditForm({ ...editForm, ...entry });
+      setEditFormTags(Array.isArray(entry.tags) ? [...entry.tags] : []);
+      setEditFormCustomTags('');
+    } else {
+      setNewForm(prev => ({ ...prev, ...entry }));
+      setNewFormTags(Array.isArray(entry.tags) ? [...entry.tags] : []);
+      setNewFormCustomTags('');
+      setShowNewForm(true);
+      try { setInsertIdx(getMostVisibleIdx()); } catch (e) {}
+    }
+    setPasteSearch('');
+    setPasteShowResults(false);
+  }
   const newFormPreview = useMemo(() => {
     let tags = [...newFormTags];
     if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
@@ -1404,6 +1441,54 @@ export default function SharedList({
               />
             </div>
           </div>
+          {devMode && (
+            <div style={{ width: '100%', maxWidth: 'min(95vw, 902px)', margin: '0 auto 12px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <label style={{ color: 'var(--muted, #DFE3F5)', fontSize: 13, marginBottom: 4 }}>Paste from previous achievements</label>
+              <input
+                type="text"
+                placeholder="Search previous achievements by name, player, id, or levelID..."
+                value={pasteSearch}
+                onChange={e => { setPasteSearch(e.target.value); setPasteShowResults(true); }}
+                aria-label="Paste from previous achievements"
+                className="search-input"
+                style={{ width: '100%' }}
+              />
+              {pasteShowResults && pasteSearch && (
+                <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8 }}>
+                  {getPasteCandidates().length === 0 ? (
+                    <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
+                  ) : (
+                    getPasteCandidates().map((p, i) => (
+                      <button
+                        key={p && p.id ? p.id : `p-${i}`}
+                        type="button"
+                        onClick={() => handlePasteSelect(p)}
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          width: '100%',
+                          padding: '8px',
+                          background: 'transparent',
+                          border: 'none',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          color: 'var(--text-color)'
+                        }}
+                      >
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <strong style={{ fontSize: 14 }}>{p.name}</strong>
+                          <span style={{ fontSize: 12, color: '#aaa' }}>{p.player || ''} {p.id ? `— ${p.id}` : ''}</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#999' }}>{p.levelID ? `L:${p.levelID}` : ''}</div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
           <DevModePanel
             devMode={devMode}
             handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
