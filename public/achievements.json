@@ -11485,6 +11485,25 @@
     "rank": 645
   },
   {
+    "name": "Starlight Summit 120hz Mobile",
+    "id": "starlight-summit-120hz-mobile",
+    "player": "Riveriya",
+    "length": 51,
+    "version": 2.2,
+    "video": "https://youtu.be/ZYnMmSns3S0",
+    "showcaseVideo": "https://youtu.be/BbNMhp09VKc",
+    "date": "2025-12-15",
+    "submitter": "Natalie :3",
+    "levelID": 114530859,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 646
+  },
+  {
     "name": "Sky Shredder 144hz Delay Mobile",
     "id": "sky-shredder-144hz-delay-mobile",
     "player": "Mateex",
@@ -12337,4 +12356,5 @@
     "rank": 693
   }
 ]
+
 
