@@ -541,6 +541,8 @@ export default function SharedList({
   const [newFormCustomTags, setNewFormCustomTags] = useState('');
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
+  const [extraLists, setExtraLists] = useState({});
+  const EXTRA_FILES = ['pending.json','legacy.json','platformers.json','platformertimeline.json','timeline.json','removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -1043,17 +1045,46 @@ export default function SharedList({
   }
 
   function getPasteCandidates() {
-    const items = (devMode && reordered) ? reordered : achievements;
     const q = (pasteSearch || '').trim().toLowerCase();
-    if (!q || !items || !items.length) return [];
-    return items.filter(a => {
-      if (!a) return false;
-      return (a.name && a.name.toLowerCase().includes(q)) ||
-             (a.player && a.player.toLowerCase().includes(q)) ||
-             (a.id && String(a.id).toLowerCase().includes(q)) ||
-             (a.levelID && String(a.levelID).toLowerCase().includes(q));
-    }).slice(0, 10);
+    if (!q) return [];
+
+    const base = (devMode && reordered) ? reordered || [] : achievements || [];
+
+    const extras = Object.values(extraLists).flat().filter(Boolean);
+    const items = [...base, ...extras];
+
+    const seen = new Set();
+    const matches = [];
+    for (let i = 0; i < items.length && matches.length < 10; i++) {
+      const a = items[i];
+      if (!a) continue;
+      const key = a.id || (a.name ? a.name + '|' + (a.player || '') : i);
+      if (seen.has(key)) continue;
+      const name = (a.name || '').toString().toLowerCase();
+      const player = (a.player || '').toString().toLowerCase();
+      const id = (a.id || '').toString().toLowerCase();
+      const level = (a.levelID || '').toString().toLowerCase();
+      if (name.includes(q) || player.includes(q) || id.includes(q) || level.includes(q)) {
+        matches.push(a);
+        seen.add(key);
+      }
+    }
+    return matches;
   }
+
+  useEffect(() => {
+    if (!pasteShowResults || !pasteSearch) return;
+    EXTRA_FILES.forEach(fn => {
+      if (extraLists[fn] !== undefined) return;
+      const url = `/${fn}`;
+      fetch(url).then(res => res.json()).then(data => {
+        const list = Array.isArray(data) ? data : (data.achievements || []);
+        setExtraLists(prev => ({ ...prev, [fn]: list }));
+      }).catch(() => {
+        setExtraLists(prev => ({ ...prev, [fn]: [] }));
+      });
+    });
+  }, [pasteShowResults, pasteSearch]);
 
   function handlePasteSelect(item) {
     if (!item) return;
