@@ -541,6 +541,8 @@ export default function SharedList({
   const [newFormCustomTags, setNewFormCustomTags] = useState('');
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
+  const [pasteIndex, setPasteIndex] = useState([]);
+  const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json','legacy.json','platformers.json','platformertimeline.json','timeline.json','removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
@@ -1044,33 +1046,32 @@ export default function SharedList({
   }
 
   function getPasteCandidates() {
-    const raw = (pasteSearch || '').trim();
-    if (!raw) return [];
+    const q = (debouncedPasteSearch || '').trim().toLowerCase();
+    if (!q) return [];
 
-    const tokens = raw.replace(/[\W_]+/g, ' ').split(/\s+/).filter(Boolean).map(t => t.toLowerCase());
-    if (!tokens.length) return [];
-
-    const base = (devMode && reordered) ? reordered || [] : achievements || [];
-    const extras = Object.values(extraLists).flat().filter(Boolean);
-    const items = [...base, ...extras];
-
-    const seen = new Set();
-    const matches = [];
-    for (let i = 0; i < items.length && matches.length < 10; i++) {
-      const a = items[i];
-      if (!a) continue;
-      const key = a.id || (a.name ? a.name + '|' + (a.player || '') : i);
-      if (seen.has(key)) continue;
-
-      const combined = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean).join(' ').toString().toLowerCase();
-
-      const ok = tokens.every(tok => combined.includes(tok));
-      if (ok) {
-        matches.push(a);
-        seen.add(key);
+    if (!pasteIndex || pasteIndex.length === 0) {
+      const base = (devMode && reordered) ? reordered || [] : achievements || [];
+      const extras = Object.values(extraLists).flat().filter(Boolean);
+      const items = [...base, ...extras];
+      const idx = new Array(items.length);
+      for (let i = 0; i < items.length; i++) {
+        const a = items[i];
+        idx[i] = {
+          achievement: a,
+          searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+            .filter(Boolean).join(' ').toLowerCase()
+        };
       }
+      setPasteIndex(idx);
     }
-    return matches;
+
+    const out = [];
+    for (let i = 0; i < pasteIndex.length && out.length < 50; i++) {
+      const entry = pasteIndex[i];
+      if (!entry || !entry.searchable) continue;
+      if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
+    }
+    return out;
   }
 
   useEffect(() => {
@@ -1086,6 +1087,22 @@ export default function SharedList({
       });
     });
   }, [pasteShowResults, pasteSearch]);
+
+  useEffect(() => {
+    const base = (devMode && reordered) ? reordered || [] : achievements || [];
+    const extras = Object.values(extraLists).flat().filter(Boolean);
+    const items = [...base, ...extras];
+    const idx = new Array(items.length);
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i];
+      idx[i] = {
+        achievement: a,
+        searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+          .filter(Boolean).join(' ').toLowerCase()
+      };
+    }
+    setPasteIndex(idx);
+  }, [achievements, extraLists, devMode, reordered]);
 
   function handlePasteSelect(item) {
     if (!item) return;
