@@ -1076,18 +1076,7 @@ export default function SharedList({
     setPasteSearch('');
     setPasteShowResults(false);
   }
-
-  function handleTeleportTo(item) {
-    if (!item || !filtered) return;
-    const idx = filtered.findIndex(a => a === item);
-    if (idx === -1) return;
-    setVisibleCount(prev => Math.max(prev, Math.max(20, idx + 5)));
-    setScrollToIdx(idx);
-    setHighlightedIdx(idx);
-    if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
-      document.activeElement.blur();
-    }
-  }
+  
   const newFormPreview = useMemo(() => {
     let tags = [...newFormTags];
     if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
@@ -1453,42 +1442,7 @@ export default function SharedList({
               />
             </div>
           </div>
-          {!devMode && searchLower && (
-            <div style={{ width: '100%', maxWidth: 'min(95vw, 902px)', margin: '8px auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8 }}>
-                {filtered.filter(a => a && (a.name || a.player || a.id || a.levelID)).slice(0,10).length === 0 ? (
-                  <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
-                ) : (
-                  filtered.filter(a => a && (a.name || a.player || a.id || a.levelID)).slice(0,10).map((p, i) => (
-                    <button
-                      key={p && p.id ? p.id : `t-${i}`}
-                      type="button"
-                      onClick={() => handleTeleportTo(p)}
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '100%',
-                        padding: '8px',
-                        background: 'transparent',
-                        border: 'none',
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        color: 'var(--text-color)'
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <strong style={{ fontSize: 14 }}>{p.name}</strong>
-                        <span style={{ fontSize: 12, color: '#aaa' }}>{p.player || ''} {p.id ? `— ${p.id}` : ''}</span>
-                      </div>
-                      <div style={{ fontSize: 12, color: '#999' }}>{p.levelID ? `L:${p.levelID}` : ''}</div>
-                    </button>
-                  ))
-                )}
-              </div>
-            </div>
-          )}
+          
           <DevModePanel
             devMode={devMode}
             handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
