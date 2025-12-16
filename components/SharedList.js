@@ -1654,7 +1654,7 @@ export default function SharedList({
                         marginRight: 8,
                       }}
                       disabled={i === 0}
-                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleMoveAchievementUp(realIdx); }}
+                      onClick={e => { e.stopPropagation(); handleMoveAchievementUp(i); }}
                     >▲</button>
                     <button
                       title="Move Down"
@@ -1677,7 +1677,7 @@ export default function SharedList({
                         marginRight: 8,
                       }}
                       disabled={i === devAchievements.length - 1}
-                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleMoveAchievementDown(realIdx); }}
+                      onClick={e => { e.stopPropagation(); handleMoveAchievementDown(i); }}
                     >▼</button>
                     <button
                       title="Edit"
@@ -1700,7 +1700,7 @@ export default function SharedList({
                       }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--info-hover, #3498db)'}
                       onMouseOut={e => e.currentTarget.style.background = 'var(--info, #2980b9)'}
-                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleEditAchievement(realIdx); }}
+                      onClick={e => { e.stopPropagation(); handleEditAchievement(i); }}
                     >✏️</button>
                     <button
                       title="Duplicate"
@@ -1723,7 +1723,7 @@ export default function SharedList({
                       }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--primary-accent-hover, #ff9800)'}
                       onMouseOut={e => e.currentTarget.style.background = 'var(--primary-accent, #e67e22)'}
-                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleDuplicateAchievement(realIdx); }}
+                      onClick={e => { e.stopPropagation(); handleDuplicateAchievement(i); }}
                     >📄</button>
                     <button
                       title="Remove"
@@ -1746,7 +1746,7 @@ export default function SharedList({
                       }}
                       onMouseOver={e => e.currentTarget.style.background = 'var(--danger-hover, #e74c3c)'}
                       onMouseOut={e => e.currentTarget.style.background = 'var(--danger, #c0392b)'}
-                      onClick={e => { e.stopPropagation(); const realIdx = (reordered && reordered.length) ? reordered.findIndex(x => (x && x.id) ? x.id === a.id : x === a) : i; handleRemoveAchievement(realIdx); }}
+                      onClick={e => { e.stopPropagation(); handleRemoveAchievement(i); }}
                     >🗑️</button>
                   </div>
                 )}
