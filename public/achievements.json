@@ -334,16 +334,16 @@
     "rank": 18
   },
   {
-    "name": "Heliopolis 38-92%",
-    "id": "heliopolis-38-92",
-    "player": "Abdieldevil",
-    "date": "2025-11-13",
-    "length": 80,
+    "name": "Heliopolis 29%",
+    "id": "heliopolis-29",
+    "player": "Garbag",
+    "date": "2025-10-06",
+    "length": 39,
     "version": 2.2,
-    "submitter": "axellssl",
-    "video": "https://youtu.be/iFKVLUSAQC8?t=89",
+    "video": "https://www.youtube.com/watch?v=aXXKEnmaZd4",
     "showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
+    "submitter": "MindCap",
     "tags": [
       "Level",
       "Progress"
@@ -604,23 +604,6 @@
     "rank": 33
   },
   {
-    "name": "Heliopolis 29%",
-    "id": "heliopolis-29",
-    "player": "Garbag",
-    "date": "2025-10-06",
-    "length": 39,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=aXXKEnmaZd4",
-    "showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
-    "submitter": "MindCap",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 34
-  },
-  {
     "name": "Vehemence (Wpopoff old) 39%",
     "id": "vehemence-wpopoff-old-39",
     "player": "wPopoff",
@@ -636,7 +619,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 35
+    "rank": 34
   },
   {
     "name": "Old Orochi 40%, (4), 40%, 43% in a row",
@@ -654,7 +637,7 @@
       "Consistency",
       "CBF"
     ],
-    "rank": 36
+    "rank": 35
   },
   {
     "name": "BOOBAWAMBA",
@@ -672,7 +655,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 37
+    "rank": 36
   },
   {
     "name": "Exasperation 67%",
@@ -690,7 +673,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 38
+    "rank": 37
   },
   {
     "name": "Quanteuse processing",
@@ -708,7 +691,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 39
+    "rank": 38
   },
   {
     "name": "Azure Flare (VERTOP) 36-91%",
@@ -727,7 +710,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 40
+    "rank": 39
   },
   {
     "name": "Sweeping Demon 2 (Taiago) 21-87%",
@@ -744,7 +727,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 41
+    "rank": 40
   },
   {
     "name": "Every End",
@@ -762,7 +745,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 42
+    "rank": 41
   },
   {
     "name": "KOCMOC UNLEASHED 57%",
@@ -780,7 +763,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 43
+    "rank": 42
   },
   {
     "name": "andromeda",
@@ -798,7 +781,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 44
+    "rank": 43
   },
   {
     "name": "Sweeping Demon 2 (Taiago) 73%",
@@ -815,7 +798,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 45
+    "rank": 44
   },
   {
     "name": "Sweeping Demon 2 (Taiago) 39-100%",
@@ -832,7 +815,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 46
+    "rank": 45
   },
   {
     "name": "Azure Flare (VERTOP) 49%",
@@ -850,7 +833,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 47
+    "rank": 46
   },
   {
     "name": "Amethyst (Trick) 61%",
@@ -868,7 +851,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 48
+    "rank": 47
   },
   {
     "name": "Acheron (Riot) 17-92%",
@@ -887,7 +870,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 49
+    "rank": 48
   },
   {
     "name": "Acheron (Riot) 9-82%",
@@ -906,7 +889,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 50
+    "rank": 49
   },
   {
     "name": "VSC 72%, 100% in a row",
@@ -923,7 +906,7 @@
       "Challenge",
       "Consistency"
     ],
-    "rank": 51
+    "rank": 50
   },
   {
     "name": "Avernus 28-100%, 23-95% in a row",
@@ -941,7 +924,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 52
+    "rank": 51
   },
   {
     "name": "Silent clubstep 5-25%x2, 5-64% in a row",
@@ -959,7 +942,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 53
+    "rank": 52
   },
   {
     "name": "Renevant 60hz",
@@ -977,7 +960,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 54
+    "rank": 53
   },
   {
     "name": "Unnerfed Slaughterhouse",
@@ -994,7 +977,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 55
+    "rank": 54
   },
   {
     "name": "Silent clubstep (Old) 5-100% 5 deaths, 99.97 accuracy",
@@ -1013,7 +996,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 56
+    "rank": 55
   },
   {
     "name": "Silent clubstep (Old) 26%",
@@ -1031,7 +1014,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 57
+    "rank": 56
   },
   {
     "name": "Subsuming Vortex (Renn241)",
@@ -1050,7 +1033,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 58
+    "rank": 57
   },
   {
     "name": "Silent clubstep",
@@ -1068,7 +1051,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 59
+    "rank": 58
   },
   {
     "name": "Aquamarine",
@@ -1086,7 +1069,7 @@
       "Verified",
       "CBF"
     ],
-    "rank": 60
+    "rank": 59
   },
   {
     "name": "Exasperation 65-100%",
@@ -1103,7 +1086,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 61
+    "rank": 60
   },
   {
     "name": "Silent Acropolis unn 31%, 54% in a row",
@@ -1121,7 +1104,7 @@
       "Consistency",
       "CBF"
     ],
-    "rank": 62
+    "rank": 61
   },
   {
     "name": "Acheron 24-100%, 17-96% in a row",
@@ -1139,7 +1122,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 63
+    "rank": 62
   },
   {
     "name": "Anathema",
@@ -1157,7 +1140,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 64
+    "rank": 63
   },
   {
     "name": "Vehemence (Wpopoff) 27%",
@@ -1174,7 +1157,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 65
+    "rank": 64
   },
   {
     "name": "Angelicide (Xtra8nugz) 37-100% 8 deaths, 99.83 accuracy",
@@ -1193,7 +1176,7 @@
       "Noclip",
       "Progress"
     ],
-    "rank": 66
+    "rank": 65
   },
   {
     "name": "Acheron 97 challenge 2.1",
@@ -1211,7 +1194,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 67
+    "rank": 66
   },
   {
     "name": "Acheron buffed 2.1",
@@ -1228,7 +1211,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 68
+    "rank": 67
   },
   {
     "name": "Acheron 2.1",
@@ -1246,7 +1229,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 69
+    "rank": 68
   },
   {
     "name": "Vehemence 24-54%",
@@ -1263,7 +1246,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 70
+    "rank": 69
   },
   {
     "name": "Tunnel of Despair 59%, 100% in a row",
@@ -1281,7 +1264,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 71
+    "rank": 70
   },
   {
     "name": "Vehemence 33-59%",
@@ -1298,7 +1281,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 72
+    "rank": 71
   },
   {
     "name": "Sakupen circles (Old)",
@@ -1315,6 +1298,23 @@
       "Level",
       "Verified",
       "CBF"
+    ],
+    "rank": 72
+  },
+  {
+    "name": "Heliopolis 27-68%",
+    "id": "heliopolis-27-68",
+    "player": "Abdieldevil",
+    "date": "2025-10-02",
+    "length": 59,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=rDR2hB65po4&t=708",
+    "showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Progress"
     ],
     "rank": 73
   },
@@ -1592,16 +1592,16 @@
     "rank": 88
   },
   {
-    "name": "Heliopolis 27-68%",
-    "id": "heliopolis-27-68",
+    "name": "Heliopolis 38-92%",
+    "id": "heliopolis-38-92",
     "player": "Abdieldevil",
-    "date": "2025-10-02",
-    "length": 59,
+    "date": "2025-11-13",
+    "length": 80,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=rDR2hB65po4&t=708",
+    "submitter": "axellssl",
+    "video": "https://www.youtube.com/watch?v=iFKVLUSAQC8&t=89",
     "showcaseVideo": "https://youtu.be/sNl2Vg5RXv4",
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/heliopolis2.webp",
-    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
       "Progress"
@@ -12318,5 +12318,3 @@
     "rank": 693
   }
 ]
-
-
