@@ -25,11 +25,16 @@ function DevModePanelInner({
   handleShowNewForm,
   newFormPreview,
   handleCheckDuplicateThumbnails,
-  onImportAchievementsJson
+  onImportAchievementsJson,
+  pasteSearch,
+  setPasteSearch,
+  pasteShowResults,
+  setPasteShowResults,
+  getPasteCandidates,
+  handlePasteSelect
 }) {
   return (
     <>
-      {/* Floating dev mode controls */}
       {devMode && (
         <div className="devmode-floating-panel">
           <span className="devmode-title">Developer Mode Enabled (SHIFT+M)</span>
@@ -57,7 +62,6 @@ function DevModePanelInner({
                     }
                   };
                   reader.readAsText(file);
-                  // Reset input so user can re-import same file if needed
                   e.target.value = '';
                 }}
               />
@@ -66,7 +70,6 @@ function DevModePanelInner({
           </div>
         </div>
       )}
-      {/* Edit achievement form (dev mode) */}
       {devMode && editIdx !== null && editForm && (
         <div className="devmode-form-panel">
           <h3 className="devmode-form-title">Edit Achievement</h3>
@@ -119,10 +122,55 @@ function DevModePanelInner({
           </div>
         </div>
       )}
-      {/* New achievement form (dev mode) */}
       {devMode && showNewForm && !editForm && (
         <div className="devmode-form-panel">
           <h3 className="devmode-form-title">New Achievement</h3>
+          <div style={{ marginBottom: 8 }}>
+            <label style={{ color: 'var(--muted, #DFE3F5)', fontSize: 13, display: 'block', marginBottom: 4 }}>Paste from previous achievements</label>
+            <input
+              type="text"
+              placeholder="Search previous achievements by name, player, id, or levelID..."
+              value={pasteSearch}
+              onChange={e => { setPasteSearch(e.target.value); setPasteShowResults(true); }}
+              aria-label="Paste from previous achievements"
+              className="search-input"
+              style={{ width: '100%' }}
+            />
+            {pasteShowResults && pasteSearch && (
+              <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
+                {getPasteCandidates && getPasteCandidates().length === 0 ? (
+                  <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
+                ) : (
+                  getPasteCandidates && getPasteCandidates().map((p, i) => (
+                    <button
+                      key={p && p.id ? p.id : `p-${i}`}
+                      type="button"
+                      onClick={() => handlePasteSelect && handlePasteSelect(p)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                        padding: '8px',
+                        background: 'transparent',
+                        border: 'none',
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        color: 'var(--text-color)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <strong style={{ fontSize: 14 }}>{p.name}</strong>
+                        <span style={{ fontSize: 12, color: '#aaa' }}>{p.player || ''} {p.id ? `— ${p.id}` : ''}</span>
+                      </div>
+                      <div style={{ fontSize: 12, color: '#999' }}>{p.levelID ? `L:${p.levelID}` : ''}</div>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
           <form onSubmit={e => {e.preventDefault(); handleNewFormAdd();}} autoComplete="off">
             <label style={{display:'block',fontSize:13,marginTop:6}}>Name<input type="text" name="name" value={newForm.name} onChange={handleNewFormChange} required placeholder="Naracton Diablo X 99%" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>ID<input type="text" name="id" value={newForm.id} onChange={handleNewFormChange} required placeholder="naracton-diablo-x-99" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
@@ -166,7 +214,6 @@ function DevModePanelInner({
 }
 
 const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
-  // Shallow compare important state/refs to avoid unnecessary re-renders
   return prev.devMode === next.devMode
     && prev.editIdx === next.editIdx
     && prev.showNewForm === next.showNewForm
@@ -177,7 +224,11 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.handleCopyJson === next.handleCopyJson
     && prev.handleShowNewForm === next.handleShowNewForm
   && prev.handleCheckDuplicateThumbnails === next.handleCheckDuplicateThumbnails
-    && prev.onImportAchievementsJson === next.onImportAchievementsJson;
+    && prev.onImportAchievementsJson === next.onImportAchievementsJson
+    && prev.pasteSearch === next.pasteSearch
+    && prev.pasteShowResults === next.pasteShowResults
+    && prev.getPasteCandidates === next.getPasteCandidates
+    && prev.handlePasteSelect === next.handlePasteSelect;
 });
 
 export default DevModePanel;
