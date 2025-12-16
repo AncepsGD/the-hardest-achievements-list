@@ -39,7 +39,7 @@ function DevModePanelInner({
         <div className="devmode-floating-panel">
           <span className="devmode-title">Developer Mode Enabled (SHIFT+M)</span>
           <div className="devmode-btn-row" style={{gap: 8}}>
-            <button className="devmode-btn" onClick={handleCopyJson}>Copy achievements.json</button>
+            <button className="devmode-btn" onClick={handleCopyJson}>Copy .json</button>
             <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails}>Check duplicate thumbnails</button>
             <label className="devmode-btn" style={{display:'inline-block',cursor:'pointer',margin:0}}>
               Import achievements.json
