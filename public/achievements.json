@@ -57,6 +57,25 @@
     "rank": 3
   },
   {
+    "name": "Thinking Space II 85%, (5), (3), 86% in a row",
+    "id": "thinking-space-ii-85-5-3-86-in-a-row",
+    "player": "wPopoff",
+    "levelID": 119544028,
+    "length": 127,
+    "version": 2.2,
+    "video": "https://youtu.be/2UhP7ifPbTE",
+    "showcaseVideo": "https://youtu.be/7xZ-xgeDyuc",
+    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
+    "date": "2025-10-29",
+    "submitter": "Exiled_Shade",
+    "tags": [
+      "Level",
+      "Consistency",
+      "Rated"
+    ],
+    "rank": 4
+  },
+  {
     "name": "Flamewall 73%, (0), 100% in a row",
     "id": "flamewall-73-0-100-in-a-row",
     "player": "Cuatrocientos",
@@ -12318,3 +12337,4 @@
     "rank": 693
   }
 ]
+
