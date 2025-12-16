@@ -1174,8 +1174,11 @@ export default function SharedList({
   }, [newForm, newFormTags, newFormCustomTags]);
 
   function handleCopyJson() {
-    if (!reordered) return;
-    const json = JSON.stringify(reordered.map(r => ({ ...r })), null, 2);
+    const source = devMode
+      ? ((reordered && reordered.length) ? reordered : (devAchievements && devAchievements.length ? devAchievements : achievements))
+      : ((reordered && reordered.length) ? reordered : achievements);
+    if (!source || !source.length) return;
+    const json = JSON.stringify(source.map(r => ({ ...r })), null, 2);
     const filename = usePlatformers
       ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
       : dataFileName;
