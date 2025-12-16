@@ -181,15 +181,14 @@ function formatDate(date, dateFormat) {
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-// Add timeline-specific helpers
 function parseAsLocal(d) {
   if (!d) return null;
   const s = String(d).trim();
-  // treat unknown parts as invalid for calculations
+  
   if (s.includes('?')) return null;
   try {
     if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-      // Use local parsing for YYYY-MM-DD
+      
       return new Date(s.replace(/-/g, '/'));
     }
     return new Date(s);
@@ -207,9 +206,9 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-// Timeline card (shows length, lasted # days, date)
 function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable }) {
   const { dateFormat } = useDateFormat();
+  const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -223,7 +222,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
     const days = calculateDaysLasted(achievement.date, previousAchievement.date);
     lastedLabel = typeof days === 'number' ? `Lasted ${days} days` : 'Lasted N/A days';
   } else {
-    // top item or missing previous -> days since achievement to today
+    
     const today = new Date();
     const achievementDate = parseAsLocal(achievement && achievement.date);
     if (!achievement || !achievement.date || !achievementDate || isNaN(achievementDate)) {
@@ -252,9 +251,11 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           onMouseLeave={onHoverLeave}
         >
           <div className="rank-date-container">
-            <div className="achievement-length">
-              {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
-            </div>
+            {!isPlatformer && (
+              <div className="achievement-length">
+                {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
+              </div>
+            )}
             <div className="lasted-days">{lastedLabel}</div>
             <div className="achievement-date"><strong>{achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}</strong></div>
           </div>
@@ -275,7 +276,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               )}
             </div>
           </div>
-          {/* Developer mode hover menu */}
+          {}
           {onEdit && (
             <div className="hover-menu" style={{ display: isHovered ? 'flex' : 'none' }}>
               <button className="hover-menu-btn" onClick={onEdit} title="Edit achievement">
@@ -293,6 +294,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
 
 const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable }) {
   const { dateFormat } = useDateFormat();
+  const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -315,9 +317,11 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           style={{ cursor: 'pointer' }}
         >
           <div className="rank-date-container">
-            <div className="achievement-length">
-              {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
-            </div>
+            {!isPlatformer && (
+              <div className="achievement-length">
+                {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
+              </div>
+            )}
             <div className="achievement-date">
               {achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}
             </div>
@@ -690,7 +694,6 @@ export default function SharedList({
         arr.splice(editIdx, 0, updated);
       }
 
-      // renumber ranks after save
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return arr;
     });
@@ -712,7 +715,6 @@ export default function SharedList({
     if (usePlatformers) {
       if (dataFileName === 'achievements.json' || dataUrl.endsWith('/achievements.json')) file = '/platformers.json';
       else if (dataFileName === 'timeline.json' || dataUrl.endsWith('/timeline.json')) file = '/platformertimeline.json';
-      else if (dataFileName === 'pending.json' || dataUrl.endsWith('/pending.json')) file = '/platformers.json';
     }
     fetch(file)
       .then(res => res.json())
@@ -931,7 +933,6 @@ export default function SharedList({
     setRandomOrderMap(map);
   }, [achievements, reordered]);
 
-  // Check which levelIDs have an available automatic thumbnail and cache results
   useEffect(() => {
     const items = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : achievements;
     const ids = Array.from(new Set((items || []).map(a => (a && a.levelID) ? String(a.levelID) : '').filter(Boolean)));
@@ -939,17 +940,17 @@ export default function SharedList({
     ids.forEach(id => {
       if (autoThumbMap[id] !== undefined) return;
       const url = `https://levelthumbs.prevter.me/thumbnail/${id}`;
-      // try HEAD first
+      
       fetch(url, { method: 'HEAD' }).then(res => {
         if (res && res.ok) {
           const ct = res.headers.get ? (res.headers.get('content-type') || '') : '';
-          const available = ct.startsWith && ct.startsWith('image/') ? true : true; // treat OK as available even if content-type missing
+          const available = ct.startsWith && ct.startsWith('image/') ? true : true; 
           setAutoThumbMap(m => ({ ...m, [id]: available }));
         } else {
           setAutoThumbMap(m => ({ ...m, [id]: false }));
         }
       }).catch(() => {
-        // fallback to GET in case HEAD is blocked
+        
         fetch(url, { method: 'GET' }).then(res2 => {
           if (res2 && res2.ok) setAutoThumbMap(m => ({ ...m, [id]: true }));
           else setAutoThumbMap(m => ({ ...m, [id]: false }));
@@ -1274,7 +1275,7 @@ export default function SharedList({
       const arr = [...prev];
       const copy = { ...arr[idx], id: (arr[idx] && arr[idx].id ? arr[idx].id : `item-${idx}`) + '-copy' };
       arr.splice(idx + 1, 0, copy);
-      // renumber ranks
+      
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       setScrollToIdx(idx + 1);
       return arr;
