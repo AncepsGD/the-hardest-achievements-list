@@ -475,10 +475,23 @@ export default function SharedList({
   const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
   const [sortKey, setSortKey] = useState(() => {
-    try { return typeof window !== 'undefined' ? (localStorage.getItem('sortKey') || 'rank') : 'rank'; } catch (e) { return 'rank'; }
+    try {
+      if (typeof window !== 'undefined') {
+        const v = window.localStorage.getItem(`thal_sort_key_${storageKeySuffix}`);
+        if (v) return v;
+      }
+    } catch (e) {}
+    return storageKeySuffix === 'pending' ? 'date' : 'rank';
   });
+
   const [sortDir, setSortDir] = useState(() => {
-    try { return typeof window !== 'undefined' ? localStorage.getItem('sortDir') || 'asc' : 'asc'; } catch (e) { return 'asc'; }
+    try {
+      if (typeof window !== 'undefined') {
+        const v = window.localStorage.getItem(`thal_sort_dir_${storageKeySuffix}`);
+        if (v) return v;
+      }
+    } catch (e) {}
+    return storageKeySuffix === 'pending' ? 'desc' : 'asc';
   });
 
   const compareByKey = useCallback((a, b, key) => {
