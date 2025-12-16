@@ -1377,9 +1377,9 @@ export default function SharedList({
                       aria-checked={usePlatformers}
                       tabIndex={0}
                     >
-                      <span className="inner-label label-left">Platformer</span>
+                      <span className="inner-label label-left">Classic</span>
                       <span className="thumb" aria-hidden="true" />
-                      <span className="inner-label label-right">Classic</span>
+                      <span className="inner-label label-right">Platformer</span>
                     </span>
                   </label>
                 )}
@@ -1464,9 +1464,9 @@ export default function SharedList({
                     aria-checked={usePlatformers}
                     tabIndex={0}
                   >
-                    <span className="inner-label label-left">Platformer</span>
+                    <span className="inner-label label-left">Classic</span>
                     <span className="thumb" aria-hidden="true" />
-                    <span className="inner-label label-right">Classic</span>
+                    <span className="inner-label label-right">Platformer</span>
                   </span>
                 </label>
               )}
