@@ -152,25 +152,6 @@
     "rank": 8
   },
   {
-    "name": "Thinking Space II 85%, (5), (3), 86% in a row",
-    "id": "thinking-space-ii-85-5-3-86-in-a-row",
-    "player": "wPopoff",
-    "levelID": 119544028,
-    "length": 127,
-    "version": 2.2,
-    "video": "https://youtu.be/2UhP7ifPbTE",
-    "showcaseVideo": "https://youtu.be/7xZ-xgeDyuc",
-    "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/thinking-space-ii2.webp",
-    "date": "2025-10-29",
-    "submitter": "Exiled_Shade",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Rated"
-    ],
-    "rank": 9
-  },
-  {
     "name": "Angelicide (Xtra8nugz) 21-40%",
     "id": "angelicide-xtra8nugz-21-40",
     "player": "Xtra8nuggies",
@@ -184,7 +165,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 10
+    "rank": 9
   },
   {
     "name": "Angelicide (Xtra8nugz) 15-37%",
@@ -200,7 +181,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 11
+    "rank": 10
   },
   {
     "name": "r a g e 120hz Mobile",
@@ -219,7 +200,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 12
+    "rank": 11
   },
   {
     "name": "laith",
@@ -236,6 +217,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 13
+    "rank": 12
   }
 ]
