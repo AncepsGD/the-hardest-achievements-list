@@ -1027,7 +1027,6 @@ export default function SharedList({
         setScrollToIdx(insertIdx + 1);
       }
 
-      // renumber ranks
       newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return newArr;
     });
@@ -1045,11 +1044,13 @@ export default function SharedList({
   }
 
   function getPasteCandidates() {
-    const q = (pasteSearch || '').trim().toLowerCase();
-    if (!q) return [];
+    const raw = (pasteSearch || '').trim();
+    if (!raw) return [];
+
+    const tokens = raw.replace(/[\W_]+/g, ' ').split(/\s+/).filter(Boolean).map(t => t.toLowerCase());
+    if (!tokens.length) return [];
 
     const base = (devMode && reordered) ? reordered || [] : achievements || [];
-
     const extras = Object.values(extraLists).flat().filter(Boolean);
     const items = [...base, ...extras];
 
@@ -1060,11 +1061,11 @@ export default function SharedList({
       if (!a) continue;
       const key = a.id || (a.name ? a.name + '|' + (a.player || '') : i);
       if (seen.has(key)) continue;
-      const name = (a.name || '').toString().toLowerCase();
-      const player = (a.player || '').toString().toLowerCase();
-      const id = (a.id || '').toString().toLowerCase();
-      const level = (a.levelID || '').toString().toLowerCase();
-      if (name.includes(q) || player.includes(q) || id.includes(q) || level.includes(q)) {
+
+      const combined = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean).join(' ').toString().toLowerCase();
+
+      const ok = tokens.every(tok => combined.includes(tok));
+      if (ok) {
         matches.push(a);
         seen.add(key);
       }
