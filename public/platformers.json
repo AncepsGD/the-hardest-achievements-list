@@ -379,23 +379,6 @@
     "rank": 23
   },
   {
-    "name": "The Elephants Foot (Unnerfed) 120hz Mobile",
-    "id": "the-elephants-foot-unnerfed-120hz-mobile",
-    "player": "CuriousTheFurious",
-    "levelID": 109553133,
-    "tags": [
-      "Platformer",
-      "Low Hertz",
-      "Mobile"
-    ],
-    "version": 2.2,
-    "date": "2025-08-15",
-    "video": "https://youtu.be/KaHvcARUVC0",
-    "submitter": "kyle1saurus",
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/109553133",
-    "rank": 24
-  },
-  {
     "name": "Dead Of Night (World Record)",
     "id": "dead-of-night-world-record",
     "player": "Freddy3",
@@ -411,7 +394,7 @@
       "Platformer",
       "Rated"
     ],
-    "rank": 25
+    "rank": 24
   },
   {
     "name": "glungus",
@@ -428,7 +411,7 @@
     "video": "https://youtu.be/pC1CEQapXfo",
     "showcaseVideo": "https://youtu.be/muYSrubZ1kk",
     "submitter": "kyle1saurus",
-    "rank": 26
+    "rank": 25
   },
   {
     "name": "IWannaPlatformerList",
@@ -446,7 +429,7 @@
     "showcaseVideo": "https://youtu.be/MezgqDHtbos",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/122391065",
     "submitter": "kyle1saurus",
-    "rank": 27
+    "rank": 26
   },
   {
     "name": "HEAVIER METAL",
@@ -462,7 +445,7 @@
     "video": "https://www.youtube.com/watch?v=7SG2_AKQp0o",
     "showcaseVideo": "https://youtu.be/hch8_j5grCc",
     "submitter": "kyle1saurus",
-    "rank": 28
+    "rank": 27
   },
   {
     "name": "Exaltation (Deathless)",
@@ -479,7 +462,7 @@
       "Deathless",
       "Rated"
     ],
-    "rank": 29
+    "rank": 28
   },
   {
     "name": "im happy 4 you 120hz Mobile",
@@ -497,7 +480,7 @@
     "video": "https://youtu.be/dHT7RFtakUA",
     "showcaseVideo": "https://youtu.be/OyoxEZ7BizE",
     "submitter": "toolazytogetausername",
-    "rank": 30
+    "rank": 29
   },
   {
     "name": "Void World (Deathless)",
@@ -514,11 +497,30 @@
     "video": "https://youtu.be/lgFxok5_MBo",
     "showcaseVideo": "https://youtu.be/D0K6eHjngVE",
     "submitter": "legoyoshi3",
-    "rank": 31
+    "rank": 30
+  },
+  {
+    "name": "r a g e 120Hz Mobile",
+    "id": "r-a-g-e-120hz-mobile",
+    "player": "CuriousTheFurious",
+    "levelID": 112834935,
+    "version": 2.2,
+    "date": "2025-12-12",
+    "video": "https://youtu.be/1achEISOKFA",
+    "showcaseVideo": "https://youtu.be/qmX0dGKgg8Y",
+    "submitter": "CuriousTheFurious",
+    "tags": [
+      "Platformer",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 31,
+    "length": 0
   },
   {
     "name": "Null 120hz Mobile",
-    "id": "null-120hz-mobile",
+    "id": "null-120hz-mobile-copy",
     "player": "CuriousTheFurious",
     "levelID": 104031134,
     "version": 2.2,
@@ -533,6 +535,24 @@
       "Rated"
     ],
     "rank": 32
+  },
+  {
+    "name": "The Elephants Foot (Unnerfed) 120hz Mobile",
+    "id": "the-elephants-foot-unnerfed-120hz-mobile",
+    "player": "CuriousTheFurious",
+    "levelID": 109553133,
+    "tags": [
+      "Platformer",
+      "Low Hertz",
+      "Mobile"
+    ],
+    "version": 2.2,
+    "date": "2025-08-15",
+    "video": "https://youtu.be/KaHvcARUVC0",
+    "submitter": "kyle1saurus",
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/109553133",
+    "rank": 33,
+    "length": 0
   },
   {
     "name": "Crime And Punishment (All Coins)",
@@ -550,7 +570,7 @@
       "Coin Route",
       "Rated"
     ],
-    "rank": 33
+    "rank": 34
   },
   {
     "name": "Closed Square X",
@@ -566,7 +586,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 34
+    "rank": 35
   },
   {
     "name": "ECSTASIS unnerfed",
@@ -584,7 +604,7 @@
     "showcaseVideo": "https://youtu.be/6XORDGEYXuw",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/111338608",
     "submitter": "toolazytogetausername",
-    "rank": 35
+    "rank": 36
   },
   {
     "name": "The Elephants Foot 120hz Mobile",
@@ -601,7 +621,7 @@
     "video": "https://youtu.be/c8vfGS2HBKA",
     "showcaseVideo": "https://youtu.be/iSxoIGgQGKs",
     "submitter": "kyle1saurus",
-    "rank": 36
+    "rank": 37
   },
   {
     "name": "Cl5u37r0ph0b1a",
@@ -617,7 +637,7 @@
     "video": "https://www.youtube.com/watch?v=1Y0f-vEXw1Y",
     "showcaseVideo": "https://youtu.be/il1EO5KBhKM",
     "submitter": "kyle1saurus",
-    "rank": 37
+    "rank": 38
   },
   {
     "name": "Boring Uber",
@@ -633,7 +653,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 38
+    "rank": 39
   },
   {
     "name": "Pandora",
@@ -649,7 +669,7 @@
     "showcaseVideo": "https://youtu.be/AhJzEvB6bSw",
     "video": "https://www.youtube.com/watch?v=HXM6_i_sZ-8",
     "submitter": "kyle1saurus",
-    "rank": 39
+    "rank": 40
   },
   {
     "name": "Magadan Grotto X",
@@ -667,7 +687,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 40
+    "rank": 41
   },
   {
     "name": "Rabbit Hole",
@@ -684,7 +704,7 @@
     "video": "https://www.youtube.com/watch?v=2wtM1fajXMg",
     "showcaseVideo": "https://youtu.be/PxNYUWCxI7Q",
     "submitter": "kyle1saurus",
-    "rank": 41
+    "rank": 42
   },
   {
     "name": "Crime And Punishment",
@@ -702,7 +722,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 42
+    "rank": 43
   },
   {
     "name": "CaveOfTheScarletSky",
@@ -719,7 +739,7 @@
     "video": "https://www.youtube.com/watch?v=hJuDlPPyn5I",
     "showcaseVideo": "https://youtu.be/-9QSOrQx5Ic",
     "submitter": "kyle1saurus",
-    "rank": 43
+    "rank": 44
   },
   {
     "name": "vortex (Unnerfed)",
@@ -737,7 +757,7 @@
     "showcaseVideo": "https://youtu.be/BbMwRW53K7c",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/124275094",
     "submitter": "kyle1saurus",
-    "rank": 44,
+    "rank": 45,
     "length": 0
   },
   {
@@ -756,7 +776,7 @@
     "showcaseVideo": "https://youtu.be/BbMwRW53K7c",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/124275094",
     "submitter": "Woachi",
-    "rank": 45,
+    "rank": 46,
     "length": null
   },
   {
@@ -775,7 +795,7 @@
     "video": "https://www.youtube.com/watch?v=JOQczmRTJbM",
     "showcaseVideo": "https://youtu.be/awz0zAwxzCU",
     "submitter": "toolazytogetausername",
-    "rank": 46
+    "rank": 47
   },
   {
     "name": "r a g e (Coin)",
@@ -792,7 +812,7 @@
     "showcaseVideo": "https://youtu.be/qmX0dGKgg8Y",
     "video": "https://www.youtube.com/watch?v=HrnReFr3_X0",
     "submitter": "Woachi",
-    "rank": 47,
+    "rank": 48,
     "length": 0
   },
   {
@@ -810,7 +830,7 @@
     "showcaseVideo": "https://youtu.be/qmX0dGKgg8Y",
     "video": "https://www.youtube.com/watch?v=HrnReFr3_X0",
     "submitter": "kyle1saurus",
-    "rank": 48
+    "rank": 49
   },
   {
     "name": "m1ss y0u",
@@ -826,7 +846,7 @@
     "showcaseVideo": "https://youtu.be/CX5ec2-chNg",
     "video": "https://youtu.be/CHCX3drDa-k",
     "submitter": "TYATYAPKA",
-    "rank": 49,
+    "rank": 50,
     "length": null
   },
   {
@@ -843,7 +863,7 @@
     "showcaseVideo": "https://youtu.be/1bH5pHq3t48",
     "video": "https://www.youtube.com/watch?v=9tt4Bg1mgCg",
     "submitter": "kyle1saurus",
-    "rank": 50
+    "rank": 51
   },
   {
     "name": "MT UBER",
@@ -860,7 +880,7 @@
     "showcaseVideo": "https://youtu.be/nCtxpKHBlqM",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/123260275",
     "submitter": "kyle1saurus",
-    "rank": 51
+    "rank": 52
   },
   {
     "name": "Lexapro 45%",
@@ -877,7 +897,7 @@
       "Platformer",
       "Progress"
     ],
-    "rank": 52
+    "rank": 53
   },
   {
     "name": "The Blooming Garden",
@@ -894,7 +914,7 @@
     "video": "https://www.youtube.com/watch?v=FtLZsx5TAFk",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/115979065",
     "submitter": "kyle1saurus",
-    "rank": 53
+    "rank": 54
   },
   {
     "name": "Zenith Of The Sky (3rd Coin)",
@@ -912,7 +932,7 @@
       "Coin Route",
       "Rated"
     ],
-    "rank": 54
+    "rank": 55
   },
   {
     "name": "The Elephants Foot (Unnerfed)",
@@ -929,7 +949,7 @@
     "showcaseVideo": null,
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/109553133",
     "submitter": "kyle1saurus",
-    "rank": 55
+    "rank": 56
   },
   {
     "name": "Trials Of Infinity",
@@ -945,7 +965,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 56
+    "rank": 57
   },
   {
     "name": "Null (Buffdate)",
@@ -962,7 +982,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 57
+    "rank": 58
   },
   {
     "name": "Null",
@@ -979,7 +999,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 58
+    "rank": 59
   },
   {
     "name": "GRID unLOCK",
@@ -995,7 +1015,7 @@
     "showcaseVideo": "https://youtu.be/glIdqS-YBCQ",
     "video": "https://www.youtube.com/watch?v=FDBy8X4azkM",
     "submitter": "kyle1saurus",
-    "rank": 59
+    "rank": 60
   },
   {
     "name": "TM3",
@@ -1011,7 +1031,7 @@
     "video": "https://www.youtube.com/watch?v=afV1u4fttl4",
     "showcaseVideo": "https://youtu.be/RA4O1RQOnsU",
     "submitter": "kyle1saurus",
-    "rank": 60
+    "rank": 61
   },
   {
     "name": "Feverest Dream (3rd Coin)",
@@ -1029,7 +1049,7 @@
       "Coin Route",
       "Rated"
     ],
-    "rank": 61
+    "rank": 62
   },
   {
     "name": "ascend",
@@ -1046,7 +1066,7 @@
     "showcaseVideo": "https://youtu.be/Rkm8AyDtnno",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/124303654",
     "submitter": "kyle1saurus",
-    "rank": 62
+    "rank": 63
   },
   {
     "name": "Starlight Cyclone",
@@ -1063,7 +1083,7 @@
     "video": "https://www.youtube.com/watch?v=VsQN1_oo_54",
     "showcaseVideo": "https://youtu.be/tiSkNTl9UFc",
     "submitter": "kyle1saurus",
-    "rank": 63
+    "rank": 64
   },
   {
     "name": "Physics Issue Plus (Coin)",
@@ -1080,7 +1100,7 @@
       "Verified",
       "Coin Route"
     ],
-    "rank": 64
+    "rank": 65
   },
   {
     "name": "Uhm Huh",
@@ -1097,7 +1117,7 @@
     "video": "https://www.youtube.com/watch?v=bW3CcwkWOgE",
     "showcaseVideo": "https://youtu.be/w_jc5Lwe2sE",
     "submitter": "kyle1saurus",
-    "rank": 65
+    "rank": 66
   },
   {
     "name": "Tower Of Infinity (Deathless)",
@@ -1114,7 +1134,7 @@
     "showcaseVideo": "https://youtu.be/9iZZFUC2QVo",
     "video": "https://www.youtube.com/watch?v=rmKva5pbYgk",
     "submitter": "toolazytogetausername",
-    "rank": 66
+    "rank": 67
   },
   {
     "name": "The Elephants Foot",
@@ -1130,7 +1150,7 @@
     "video": "https://youtu.be/buYqlALqLJg",
     "showcaseVideo": "https://youtu.be/iSxoIGgQGKs",
     "submitter": "kyle1saurus",
-    "rank": 67
+    "rank": 68
   },
   {
     "name": "High gravity is SWAG",
@@ -1147,7 +1167,7 @@
     "showcaseVideo": "https://youtu.be/IdXZRYNRQrc",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/121386057",
     "submitter": "kyle1saurus",
-    "rank": 68
+    "rank": 69
   },
   {
     "name": "im happy 4 you",
@@ -1164,7 +1184,7 @@
     "video": "https://www.youtube.com/watch?v=rvdQE3EyG-k",
     "showcaseVideo": "https://youtu.be/OyoxEZ7BizE",
     "submitter": "kyle1saurus",
-    "rank": 69
+    "rank": 70
   },
   {
     "name": "Super Temu Guy",
@@ -1180,7 +1200,7 @@
     "video": "https://www.youtube.com/watch?v=wA1aQ-2V2hA",
     "showcaseVideo": "https://youtu.be/PrdGhbMM7_g",
     "submitter": "kyle1saurus",
-    "rank": 70
+    "rank": 71
   },
   {
     "name": "Medramint",
@@ -1197,7 +1217,7 @@
     "video": "https://youtu.be/ZXOpADmmQvQ",
     "showcaseVideo": "https://youtu.be/U3A_qBbMiFo",
     "submitter": "kyle1saurus",
-    "rank": 71
+    "rank": 72
   },
   {
     "name": "Trouncy Ball",
@@ -1213,7 +1233,7 @@
     "date": "2025-01-08",
     "video": "https://www.youtube.com/watch?v=tPEF_7unndU",
     "submitter": "kyle1saurus",
-    "rank": 72
+    "rank": 73
   },
   {
     "name": "Yimu",
@@ -1230,7 +1250,7 @@
     "video": "https://www.youtube.com/watch?v=EKyhlg9U7yI",
     "showcaseVideo": "https://youtu.be/FXKretE53V0",
     "submitter": "kyle1saurus",
-    "rank": 73
+    "rank": 74
   },
   {
     "name": "cell tower (All Coins)",
@@ -1246,7 +1266,7 @@
       "Platformer",
       "Coin Route"
     ],
-    "rank": 74
+    "rank": 75
   },
   {
     "name": "apricot tower",
@@ -1262,7 +1282,7 @@
     "video": "https://www.youtube.com/watch?v=SY6H1jsWSUs",
     "showcaseVideo": "https://youtu.be/NekuZdV0_i8",
     "submitter": "kyle1saurus",
-    "rank": 75
+    "rank": 76
   },
   {
     "name": "Super egg hunt 64",
@@ -1278,7 +1298,7 @@
     "video": "https://www.youtube.com/watch?v=7rm9nLXt_wQ",
     "showcaseVideo": "https://youtu.be/DT-9rh4mvAs",
     "submitter": "kyle1saurus",
-    "rank": 76
+    "rank": 77
   },
   {
     "name": "rainbow tylenol",
@@ -1294,7 +1314,7 @@
     "video": "https://www.youtube.com/watch?v=X9lfKKl-WE8",
     "showcaseVideo": "https://youtu.be/YdJVesuWD3w",
     "submitter": "kyle1saurus",
-    "rank": 77
+    "rank": 78
   },
   {
     "name": "cell tower",
@@ -1310,7 +1330,7 @@
     "video": "https://www.youtube.com/watch?v=cFTUGNtkAx8",
     "showcaseVideo": "https://youtu.be/dFbuMG9yMkA",
     "submitter": "kyle1saurus",
-    "rank": 78
+    "rank": 79
   },
   {
     "name": "Mastery Of The Slope (Deathless)",
@@ -1327,7 +1347,7 @@
       "Deathless",
       "Rated"
     ],
-    "rank": 79
+    "rank": 80
   },
   {
     "name": "light plastic",
@@ -1344,7 +1364,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 80
+    "rank": 81
   },
   {
     "name": "Lava Trials II",
@@ -1362,7 +1382,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 81
+    "rank": 82
   },
   {
     "name": "Dead Of Night",
@@ -1379,7 +1399,7 @@
     "video": "https://www.youtube.com/watch?v=NGPjBdJUI2c",
     "showcaseVideo": "https://youtu.be/ew6RUiXebp4",
     "submitter": "kyle1saurus",
-    "rank": 82
+    "rank": 83
   },
   {
     "name": "Pozor Morozova Final",
@@ -1395,7 +1415,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 83
+    "rank": 84
   },
   {
     "name": "Crystal River",
@@ -1412,7 +1432,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 84
+    "rank": 85
   },
   {
     "name": "ungafos jp practice",
@@ -1428,7 +1448,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 85
+    "rank": 86
   },
   {
     "name": "Project BUZZKILL",
@@ -1445,6 +1465,6 @@
     "showcaseVideo": "https://youtu.be/awz0zAwxzCU",
     "video": "https://www.youtube.com/watch?v=HjBLO7flVtY",
     "submitter": "kyle1saurus",
-    "rank": 86
+    "rank": 87
   }
 ]
