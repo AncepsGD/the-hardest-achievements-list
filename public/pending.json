@@ -165,25 +165,6 @@
     "rank": 9
   },
   {
-    "name": "r a g e 120hz Mobile",
-    "id": "rage-120hz-mobile",
-    "player": "CuriousTheFurious",
-    "length": 0,
-    "version": 2.2,
-    "video": "https://youtu.be/1achEISOKFA",
-    "showcaseVideo": "https://youtu.be/qmX0dGKgg8Y",
-    "date": "2025-12-12",
-    "submitter": "real1243",
-    "levelID": 112834935,
-    "tags": [
-      "Platformer",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
-    ],
-    "rank": 10
-  },
-  {
     "name": "laith",
     "id": "laith",
     "player": "Pepesito",
@@ -198,6 +179,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 11
+    "rank": 10
   }
 ]
