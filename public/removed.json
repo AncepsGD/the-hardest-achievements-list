@@ -1451,5 +1451,44 @@
             "CBF",
             "Rated"
         ]
+  },
+  {
+    "name": "qoUEO 120hz Mobile",
+    "id": "qoueo-120hz-mobile",
+    "player": "DENISKA",
+    "date": "2025-07-21",
+    "length": 52,
+    "version": 2.2,
+    "levelID": 81721025,
+    "video": "https://youtu.be/rX_NEeaxXmU",
+    "showcaseVideo": "https://youtu.be/B9TTGawbKOc",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 535
+  },
+  {
+    "name": "Verdant Landscape 120hz Mobile 17-93%",
+    "id": "verdant-landscape-120hz-mobile-17-93",
+    "player": "Que2Yo",
+    "date": "2025-11-29",
+    "length": 60,
+    "version": 2.2,
+    "levelID": 76543324,
+    "video": "https://youtu.be/vhjCWVLrdlQ",
+    "showcaseVideo": "https://youtu.be/dSbox0NKuXs",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ],
+    "rank": 587
   }
 ]
