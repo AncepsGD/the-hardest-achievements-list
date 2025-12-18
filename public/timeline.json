@@ -33,7 +33,8 @@
       "Level",
       "Consistency",
       "2P",
-      "CBF"
+      "CBF",
+      "Tentative"
     ],
     "rank": 2
   },
@@ -223,7 +224,8 @@
     "tags": [
       "Level",
       "Verified",
-      "Rated"
+      "Rated",
+      "Tentative"
     ],
     "rank": 12
   },
@@ -311,7 +313,8 @@
     "submitter": "Garbag",
     "tags": [
       "Level",
-      "Progress"
+      "Progress",
+      "Tentative"
     ],
     "rank": 17
   },
@@ -475,10 +478,10 @@
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/127997391",
     "tags": [
       "Level",
-      "Verified",
       "Consistency",
       "CBF",
-      "Rated"
+      "Rated",
+      "Tentative"
     ],
     "rank": 26
   },
@@ -1645,16 +1648,16 @@
     "rank": 91
   },
   {
-    "name": "Old Orochi 83%",
-    "id": "old-orochi-83",
+    "name": "Old Orochi 81%",
+    "id": "old-orochi-81",
     "player": "SeptaGon7",
-    "date": "2025-12-18",
+    "date": "2025-11-08",
     "length": 78,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=ZzSeMPBm-sI",
+    "video": "https://youtu.be/JSdttMSGUSw",
     "showcaseVideo": "https://youtu.be/kOjaffK5Rgo",
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/36712371",
-    "submitter": "Lily",
+    "submitter": "Exiled_Shade",
     "tags": [
       "Level",
       "Progress",
