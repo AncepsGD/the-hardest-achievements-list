@@ -33,8 +33,7 @@
       "Level",
       "Consistency",
       "2P",
-      "CBF",
-      "Tentative"
+      "CBF"
     ],
     "rank": 2
   },
@@ -53,7 +52,8 @@
       "Level",
       "Progress",
       "2P",
-      "CBF"
+      "CBF",
+      "Tentative"
     ],
     "rank": 3
   },
