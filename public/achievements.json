@@ -33,7 +33,8 @@
       "Level",
       "Consistency",
       "2P",
-      "CBF"
+      "CBF",
+      "Tentative"
     ],
     "rank": 2
   },
@@ -223,7 +224,8 @@
     "tags": [
       "Level",
       "Verified",
-      "Rated"
+      "Rated",
+      "Tentative"
     ],
     "rank": 12
   },
@@ -329,7 +331,8 @@
     "submitter": "Garbag",
     "tags": [
       "Level",
-      "Progress"
+      "Progress",
+      "Tentative"
     ],
     "rank": 18
   },
@@ -496,7 +499,8 @@
       "Verified",
       "Consistency",
       "CBF",
-      "Rated"
+      "Rated",
+      "Tentative"
     ],
     "rank": 27
   },
