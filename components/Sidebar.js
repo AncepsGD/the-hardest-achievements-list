@@ -32,6 +32,7 @@ const sources = useMemo(() => [
 
 const randomPoolRef = useRef(null);
 const [randomPoolReady, setRandomPoolReady] = useState(false);
+const randomPoolFetchInFlightRef = useRef(false);
 
 const safeFetchJson = async (src) => {
   try {
@@ -55,12 +56,36 @@ const safeFetchJson = async (src) => {
   }
 };
 
+const safeFetchJsonIds = async (src) => {
+  try {
+    const res = await fetch(src);
+    const text = await res.text();
+    try {
+      const parsed = JSON.parse(text);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((x) => x && x.id).filter(Boolean);
+    } catch (err) {
+      try {
+        const clean = text.replace(/[\u0000-\u001F]+/g, '');
+        const parsed = JSON.parse(clean);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map((x) => x && x.id).filter(Boolean);
+      } catch (err2) {
+        console.warn('Failed to parse JSON ids from', src, err2);
+        return [];
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to fetch', src, err);
+    return [];
+  }
+};
+
 const handleRandomClick = useCallback(
   async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
-      
       if (randomPoolRef.current && randomPoolRef.current.length > 0) {
         const ids = randomPoolRef.current;
         const id = ids[Math.floor(Math.random() * ids.length)];
@@ -70,15 +95,27 @@ const handleRandomClick = useCallback(
         }
       }
 
-      const results = await Promise.all(sources.map((s) => safeFetchJson(s)));
-      const all = results.flat().filter(Boolean).flatMap((data) =>
-        Array.isArray(data) ? data.filter((a) => a && a.id && a.name) : []
-      );
-      if (all.length === 0) return;
+      if (randomPoolFetchInFlightRef.current) return;
+      randomPoolFetchInFlightRef.current = true;
 
-      const random = all[Math.floor(Math.random() * all.length)];
-      router.push(`/achievement/${random.id}`);
+      const results = await Promise.all(sources.map((s) => safeFetchJsonIds(s)));
+      const ids = results.flat().filter(Boolean);
+      if (ids.length === 0) {
+        randomPoolFetchInFlightRef.current = false;
+        return;
+      }
+
+      randomPoolRef.current = ids;
+      try {
+        sessionStorage.setItem('randomPoolIds', JSON.stringify(ids));
+      } catch (e) {}
+      setRandomPoolReady(true);
+
+      const id = ids[Math.floor(Math.random() * ids.length)];
+      if (id) router.push(`/achievement/${id}`);
+      randomPoolFetchInFlightRef.current = false;
     } catch (err) {
+      randomPoolFetchInFlightRef.current = false;
       console.error('Random selection failed', err);
     }
   },
@@ -112,11 +149,8 @@ useEffect(() => {
   let cancelled = false;
   (async () => {
     try {
-      const results = await Promise.all(sources.map((s) => safeFetchJson(s)));
-      const ids = results
-        .flat()
-        .filter(Boolean)
-        .flatMap((data) => (Array.isArray(data) ? data.map((x) => x && x.id).filter(Boolean) : []));
+      const results = await Promise.all(sources.map((s) => safeFetchJsonIds(s)));
+      const ids = results.flat().filter(Boolean);
       if (cancelled) return;
       if (ids.length > 0) {
         randomPoolRef.current = ids;
