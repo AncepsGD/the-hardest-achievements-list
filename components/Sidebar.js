@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
@@ -21,20 +21,33 @@ function SidebarInner() {
     }
   });
 
-const sources = [
+const sources = useMemo(() => [
   '/achievements.json',
   '/legacy.json',
   '/pending.json',
   '/platformers.json',
   '/platformertimeline.json',
   '/timeline.json',
-];
+], []);
+
+const randomPoolRef = useRef(null);
+const [randomPoolReady, setRandomPoolReady] = useState(false);
 
 const handleRandomClick = useCallback(
   async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
+      
+      if (randomPoolRef.current && randomPoolRef.current.length > 0) {
+        const ids = randomPoolRef.current;
+        const id = ids[Math.floor(Math.random() * ids.length)];
+        if (id) {
+          router.push(`/achievement/${id}`);
+          return;
+        }
+      }
+
       const results = await Promise.all(
         sources.map(async (src) => {
           const res = await fetch(src);
@@ -54,6 +67,51 @@ const handleRandomClick = useCallback(
   },
   [router]
 );
+
+useEffect(() => {
+  if (typeof window === 'undefined') return;
+  try {
+    const cached = sessionStorage.getItem('randomPoolIds');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        randomPoolRef.current = parsed;
+        setRandomPoolReady(true);
+        return;
+      }
+    }
+  } catch (e) {
+    
+  }
+
+  let cancelled = false;
+  (async () => {
+    try {
+      const results = await Promise.all(
+        sources.map(async (src) => {
+          const res = await fetch(src);
+          const data = await res.json();
+          return data.filter((a) => a && a.id && a.name).map((x) => x.id);
+        })
+      );
+      if (cancelled) return;
+      const ids = results.flat().filter(Boolean);
+      if (ids.length > 0) {
+        randomPoolRef.current = ids;
+        try {
+          sessionStorage.setItem('randomPoolIds', JSON.stringify(ids));
+        } catch (e) {}
+        setRandomPoolReady(true);
+      }
+    } catch (err) {
+      console.error('Prefetch random pool failed', err);
+    }
+  })();
+
+  return () => {
+    cancelled = true;
+  };
+}, []);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
