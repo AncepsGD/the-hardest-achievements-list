@@ -654,9 +654,13 @@ export default function SharedList({
 
       newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
     } else {
-      newVal = (name === 'video' || name === 'showcaseVideo')
-        ? normalizeYoutubeUrl(value)
-        : ((['levelID', 'length'].includes(name) ? Number(value) : value));
+
+      if (name === 'video' || name === 'showcaseVideo') {
+        const norm = normalizeYoutubeUrl(value);
+        newVal = devMode ? (norm || String(value || '').trim()) : norm;
+      } else {
+        newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
+      }
     }
     setEditForm(f => ({
       ...f,
@@ -703,8 +707,16 @@ export default function SharedList({
     }
     if (tags.length > 0) entry.tags = tags;
 
-    if (entry.video) entry.video = normalizeYoutubeUrl(entry.video);
-    if (entry.showcaseVideo) entry.showcaseVideo = normalizeYoutubeUrl(entry.showcaseVideo);
+    if (entry.video) {
+      const nv = normalizeYoutubeUrl(entry.video);
+      if (nv) entry.video = nv;
+      else if (!devMode) delete entry.video;
+    }
+    if (entry.showcaseVideo) {
+      const nv2 = normalizeYoutubeUrl(entry.showcaseVideo);
+      if (nv2) entry.showcaseVideo = nv2;
+      else if (!devMode) delete entry.showcaseVideo;
+    }
 
     setReordered(prev => {
       if (!prev) return prev;
@@ -995,9 +1007,12 @@ export default function SharedList({
 
       newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
     } else {
-      newVal = (name === 'video' || name === 'showcaseVideo')
-        ? normalizeYoutubeUrl(value)
-        : ((['levelID', 'length'].includes(name) ? Number(value) : value));
+      if (name === 'video' || name === 'showcaseVideo') {
+        const norm = normalizeYoutubeUrl(value);
+        newVal = devMode ? (norm || String(value || '').trim()) : norm;
+      } else {
+        newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
+      }
     }
     setNewForm(f => ({
       ...f,
@@ -1047,8 +1062,16 @@ export default function SharedList({
       }
     });
     if (tags.length > 0) entry.tags = tags;
-    if (entry.video) entry.video = normalizeYoutubeUrl(entry.video);
-    if (entry.showcaseVideo) entry.showcaseVideo = normalizeYoutubeUrl(entry.showcaseVideo);
+    if (entry.video) {
+      const nv = normalizeYoutubeUrl(entry.video);
+      if (nv) entry.video = nv;
+      else if (!devMode) delete entry.video;
+    }
+    if (entry.showcaseVideo) {
+      const nv2 = normalizeYoutubeUrl(entry.showcaseVideo);
+      if (nv2) entry.showcaseVideo = nv2;
+      else if (!devMode) delete entry.showcaseVideo;
+    }
     setReordered(prev => {
       let newArr;
       if (!prev) {
