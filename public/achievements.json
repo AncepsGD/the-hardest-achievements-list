@@ -134,6 +134,25 @@
     "rank": 7
   },
   {
+    "name": "Flamewall",
+    "id": "flamewall",
+    "player": "Cuatrocientos",
+    "date": "2025-09-21",
+    "length": 407,
+    "version": 2.2,
+    "submitter": "TYATYAPKA",
+    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
+    "levelID": 126242564,
+    "video": "https://youtu.be/x4Io4zkWVRw",
+    "showcaseVideo": "https://youtu.be/zCATQH_ZeQ4",
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
+    ],
+    "rank": 8
+  },
+  {
     "name": "Amethyst",
     "id": "amethyst",
     "player": "wPopoff",
@@ -150,7 +169,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 8
+    "rank": 9
   },
   {
     "name": "GRIEF (Feb. 2025) 25-100%",
@@ -169,7 +188,7 @@
       "2P",
       "CBF"
     ],
-    "rank": 9
+    "rank": 10
   },
   {
     "name": "GRIEF (Jan. 2025) 17-92%",
@@ -188,7 +207,7 @@
       "2P",
       "CBF"
     ],
-    "rank": 10
+    "rank": 11
   },
   {
     "name": "KOCMOC UNLEASHED (May 2025) 14-78%",
@@ -205,26 +224,6 @@
       "Level",
       "Progress",
       "CBF",
-      "Tentative"
-    ],
-    "rank": 11
-  },
-  {
-    "name": "Flamewall",
-    "id": "flamewall",
-    "player": "Cuatrocientos",
-    "date": "2025-09-21",
-    "length": 407,
-    "version": 2.2,
-    "submitter": "TYATYAPKA",
-    "thumbnail": "https://i.ytimg.com/vi/8de-8JPymqA/hq720.jpg",
-    "levelID": 126242564,
-    "video": "https://youtu.be/x4Io4zkWVRw",
-    "showcaseVideo": "https://youtu.be/zCATQH_ZeQ4",
-    "tags": [
-      "Level",
-      "Verified",
-      "Rated",
       "Tentative"
     ],
     "rank": 12
