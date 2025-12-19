@@ -496,6 +496,7 @@
     "thumbnail": "https://levelthumbs.prevter.me/thumbnail/127997391",
     "tags": [
       "Level",
+      "Verified",
       "Consistency",
       "CBF",
       "Rated",
@@ -8711,7 +8712,7 @@
     "name": "Wasureta 60hz",
     "id": "wasureta-60hz",
     "player": "Shaggy712",
-    "levelID": 63476401,
+    "levelID": 64658786,
     "date": "2024-08-13",
     "version": 2.1,
     "submitter": "TYATYAPKA",
@@ -8723,7 +8724,7 @@
       "Rated"
     ],
     "rank": 490,
-    "length": 58
+    "length": 56
   },
   {
     "name": "Make Paul Dance",
