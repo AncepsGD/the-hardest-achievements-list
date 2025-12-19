@@ -33,6 +33,28 @@ const sources = useMemo(() => [
 const randomPoolRef = useRef(null);
 const [randomPoolReady, setRandomPoolReady] = useState(false);
 
+const safeFetchJson = async (src) => {
+  try {
+    const res = await fetch(src);
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (err) {
+      
+      try {
+        const clean = text.replace(/[\u0000-\u001F]+/g, '');
+        return JSON.parse(clean);
+      } catch (err2) {
+        console.warn('Failed to parse JSON from', src, err2);
+        return [];
+      }
+    }
+  } catch (err) {
+    console.warn('Failed to fetch', src, err);
+    return [];
+  }
+};
+
 const handleRandomClick = useCallback(
   async (e) => {
     e.preventDefault();
@@ -48,15 +70,10 @@ const handleRandomClick = useCallback(
         }
       }
 
-      const results = await Promise.all(
-        sources.map(async (src) => {
-          const res = await fetch(src);
-          const data = await res.json();
-          return data.filter((a) => a && a.id && a.name);
-        })
+      const results = await Promise.all(sources.map((s) => safeFetchJson(s)));
+      const all = results.flat().filter(Boolean).flatMap((data) =>
+        Array.isArray(data) ? data.filter((a) => a && a.id && a.name) : []
       );
-
-      const all = results.flat();
       if (all.length === 0) return;
 
       const random = all[Math.floor(Math.random() * all.length)];
@@ -73,11 +90,19 @@ useEffect(() => {
   try {
     const cached = sessionStorage.getItem('randomPoolIds');
     if (cached) {
-      const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        randomPoolRef.current = parsed;
-        setRandomPoolReady(true);
-        return;
+      try {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          randomPoolRef.current = parsed;
+          setRandomPoolReady(true);
+          return;
+        }
+      } catch (parseErr) {
+        
+        try {
+          sessionStorage.removeItem('randomPoolIds');
+        } catch (e) {}
+        console.warn('Cleared corrupted randomPoolIds cache', parseErr);
       }
     }
   } catch (e) {
@@ -87,15 +112,12 @@ useEffect(() => {
   let cancelled = false;
   (async () => {
     try {
-      const results = await Promise.all(
-        sources.map(async (src) => {
-          const res = await fetch(src);
-          const data = await res.json();
-          return data.filter((a) => a && a.id && a.name).map((x) => x.id);
-        })
-      );
+      const results = await Promise.all(sources.map((s) => safeFetchJson(s)));
+      const ids = results
+        .flat()
+        .filter(Boolean)
+        .flatMap((data) => (Array.isArray(data) ? data.map((x) => x && x.id).filter(Boolean) : []));
       if (cancelled) return;
-      const ids = results.flat().filter(Boolean);
       if (ids.length > 0) {
         randomPoolRef.current = ids;
         try {
