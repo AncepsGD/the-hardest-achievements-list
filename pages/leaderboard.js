@@ -7,18 +7,33 @@ import Sidebar from '../components/Sidebar';
 import Link from 'next/link';
 
 function getLeaderboard(achievements) {
-
   const leaderboard = {};
   const N = achievements.length;
   if (N === 0) return [];
 
-  const EXPONENT = 1.5;
+  const N_REF = 1000; 
+  const TOP_K = 50; 
+  const EXPONENT_TOP = 1.5; 
+  const EXPONENT_REST = 0.7; 
+  const POINTS_MULTIPLIER = 100; 
+  const ALPHA = 0.9; 
 
-  const POINTS_MULTIPLIER = 100;
-  const rawWeights = achievements.map((_, index) => Math.pow(N - index, EXPONENT));
+  const rawWeights = achievements.map((_, index) => {
+    const i = index; 
+    const topBoundaryValue = Math.max(N_REF - (TOP_K - 1), 1);
+    const currValue = Math.max(N_REF - i, 1);
+    if (i < TOP_K) {
+      return Math.pow(currValue, EXPONENT_TOP);
+    }
+    
+    const topAtBoundary = Math.pow(topBoundaryValue, EXPONENT_TOP);
+    const ratio = currValue / topBoundaryValue;
+    return topAtBoundary * Math.pow(Math.max(ratio, 0.0001), EXPONENT_REST);
+  });
+
   const sumRaw = rawWeights.reduce((a, b) => a + b, 0);
-
-  const scale = (N / sumRaw) * POINTS_MULTIPLIER;
+  
+  const scale = (N_REF / sumRaw) * POINTS_MULTIPLIER;
   const pointsById = {};
   achievements.forEach((ach, index) => {
     pointsById[ach.id] = rawWeights[index] * scale;
@@ -26,22 +41,36 @@ function getLeaderboard(achievements) {
 
   achievements.forEach((achievement, index) => {
     const playerName = (achievement.player || '').trim();
-
     if (playerName === '-') return;
-    const pts = pointsById[achievement.id] || 0;
-    const augmented = { ...achievement, points: pts, mainRank: index + 1 };
+    const rawPts = pointsById[achievement.id] || 0;
+    const augmented = { ...achievement, points: rawPts, mainRank: index + 1 };
+
     if (leaderboard[playerName]) {
-      leaderboard[playerName].points += pts;
+      leaderboard[playerName].rawPoints += rawPts;
+      leaderboard[playerName].effectivePoints += Math.pow(rawPts, ALPHA);
       leaderboard[playerName].count += 1;
       leaderboard[playerName].achievements.push(augmented);
     } else {
-      leaderboard[playerName] = { points: pts, count: 1, achievements: [augmented] };
+      leaderboard[playerName] = {
+        rawPoints: rawPts,
+        effectivePoints: Math.pow(rawPts, ALPHA),
+        count: 1,
+        achievements: [augmented],
+      };
     }
   });
 
   return Object.entries(leaderboard)
-    .sort(([, a], [, b]) => b.points - a.points)
-    .map(([player, stats], index) => ({ player, ...stats, rank: index + 1 }));
+    .map(([player, stats]) => ({
+      player,
+      
+      points: stats.effectivePoints,
+      rawPoints: stats.rawPoints,
+      count: stats.count,
+      achievements: stats.achievements,
+    }))
+    .sort((a, b) => b.points - a.points)
+    .map((row, index) => ({ ...row, rank: index + 1 }));
 }
 
 function LeaderboardRow({ player, points, count, achievements, rank, allAchievements }) {
