@@ -7,33 +7,48 @@ import Sidebar from '../components/Sidebar';
 import Link from 'next/link';
 
 function getLeaderboard(achievements) {
+
   const leaderboard = {};
-  const totalAchievements = achievements.length;
+  const N = achievements.length;
+  if (N === 0) return [];
+  
+  const EXPONENT = 1.5;
+  
+  const rawWeights = achievements.map((_, index) => Math.pow(N - index, EXPONENT));
+  const sumRaw = rawWeights.reduce((a, b) => a + b, 0);
+  
+  const scale = N / sumRaw;
+  const pointsById = {};
+  achievements.forEach((ach, index) => {
+    pointsById[ach.id] = rawWeights[index] * scale;
+  });
+
   achievements.forEach((achievement, index) => {
     const playerName = (achievement.player || '').trim();
-    // Skip placeholder/anonymous player entries
+    
     if (playerName === '-') return;
-    let points = totalAchievements - index; // Rank-based points
+    const pts = pointsById[achievement.id] || 0;
+    const augmented = { ...achievement, points: pts, mainRank: index + 1 };
     if (leaderboard[playerName]) {
-      leaderboard[playerName].points += points;
+      leaderboard[playerName].points += pts;
       leaderboard[playerName].count += 1;
-      leaderboard[playerName].achievements.push(achievement);
+      leaderboard[playerName].achievements.push(augmented);
     } else {
-      leaderboard[playerName] = { points, count: 1, achievements: [achievement] };
+      leaderboard[playerName] = { points: pts, count: 1, achievements: [augmented] };
     }
   });
-  // Sort players by total points
+
   return Object.entries(leaderboard)
     .sort(([, a], [, b]) => b.points - a.points)
     .map(([player, stats], index) => ({ player, ...stats, rank: index + 1 }));
 }
 
 function LeaderboardRow({ player, points, count, achievements, rank, allAchievements }) {
-  // Find hardest achievement (lowest index in achievements list)
+  
   let hardest = null;
   let hardestRank = allAchievements.length + 1;
   achievements.forEach(ach => {
-    const r = allAchievements.findIndex(a => a.id === ach.id) + 1;
+    const r = ach.mainRank || (allAchievements.findIndex(a => a.id === ach.id) + 1);
     if (r > 0 && r < hardestRank) {
       hardestRank = r;
       hardest = ach;
@@ -45,7 +60,7 @@ function LeaderboardRow({ player, points, count, achievements, rank, allAchievem
       <tr className="clickable-row" onClick={() => setShow(s => !s)} style={{ cursor: 'pointer' }}>
         <td>#{rank}</td>
         <td>{player}</td>
-        <td style={{ textAlign: 'left' }}>{(points / 10).toFixed(1)}</td>
+        <td style={{ textAlign: 'left' }}>{points.toFixed(1)}</td>
         <td>{count}</td>
         <td>{hardest ? <Link href={`/achievement/${hardest.id}`}>{hardest.name}</Link> : '-'}</td>
       </tr>
@@ -54,15 +69,15 @@ function LeaderboardRow({ player, points, count, achievements, rank, allAchievem
           <td colSpan={5}>
             <ul style={{ listStyleType: 'none', margin: 0, padding: 0 }}>
               {achievements.map((ach) => {
-                const mainListRank = allAchievements.findIndex(a => a.id === ach.id) + 1;
-                let pts = allAchievements.length - (mainListRank - 1);
-                const pointsDisplay = `+${(pts / 10).toFixed(1)}`;
-                return (
-                  <li key={ach.id}>
-                    {pointsDisplay} · #{mainListRank} ·
-                    <Link href={`/achievement/${ach.id}`}>{ach.name}</Link>
-                  </li>
-                );
+                  const mainListRank = ach.mainRank || (allAchievements.findIndex(a => a.id === ach.id) + 1);
+                  const pts = ach.points ?? (allAchievements.length - (mainListRank - 1));
+                  const pointsDisplay = `+${pts.toFixed(1)}`;
+                  return (
+                    <li key={ach.id}>
+                      {pointsDisplay} · #{mainListRank} ·
+                      <Link href={`/achievement/${ach.id}`}>{ach.name}</Link>
+                    </li>
+                  );
               })}
             </ul>
           </td>
