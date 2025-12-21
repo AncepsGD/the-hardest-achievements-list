@@ -11,13 +11,14 @@ function getLeaderboard(achievements) {
   const leaderboard = {};
   const N = achievements.length;
   if (N === 0) return [];
-  
+
   const EXPONENT = 1.5;
-  
+
+  const POINTS_MULTIPLIER = 100;
   const rawWeights = achievements.map((_, index) => Math.pow(N - index, EXPONENT));
   const sumRaw = rawWeights.reduce((a, b) => a + b, 0);
-  
-  const scale = N / sumRaw;
+
+  const scale = (N / sumRaw) * POINTS_MULTIPLIER;
   const pointsById = {};
   achievements.forEach((ach, index) => {
     pointsById[ach.id] = rawWeights[index] * scale;
@@ -25,7 +26,7 @@ function getLeaderboard(achievements) {
 
   achievements.forEach((achievement, index) => {
     const playerName = (achievement.player || '').trim();
-    
+
     if (playerName === '-') return;
     const pts = pointsById[achievement.id] || 0;
     const augmented = { ...achievement, points: pts, mainRank: index + 1 };
@@ -44,7 +45,7 @@ function getLeaderboard(achievements) {
 }
 
 function LeaderboardRow({ player, points, count, achievements, rank, allAchievements }) {
-  
+
   let hardest = null;
   let hardestRank = allAchievements.length + 1;
   achievements.forEach(ach => {
@@ -60,7 +61,7 @@ function LeaderboardRow({ player, points, count, achievements, rank, allAchievem
       <tr className="clickable-row" onClick={() => setShow(s => !s)} style={{ cursor: 'pointer' }}>
         <td>#{rank}</td>
         <td>{player}</td>
-        <td style={{ textAlign: 'left' }}>{points.toFixed(1)}</td>
+        <td style={{ textAlign: 'left' }}>{points.toFixed(0)}</td>
         <td>{count}</td>
         <td>{hardest ? <Link href={`/achievement/${hardest.id}`}>{hardest.name}</Link> : '-'}</td>
       </tr>
@@ -69,15 +70,15 @@ function LeaderboardRow({ player, points, count, achievements, rank, allAchievem
           <td colSpan={5}>
             <ul style={{ listStyleType: 'none', margin: 0, padding: 0 }}>
               {achievements.map((ach) => {
-                  const mainListRank = ach.mainRank || (allAchievements.findIndex(a => a.id === ach.id) + 1);
-                  const pts = ach.points ?? (allAchievements.length - (mainListRank - 1));
-                  const pointsDisplay = `+${pts.toFixed(1)}`;
-                  return (
-                    <li key={ach.id}>
-                      {pointsDisplay} · #{mainListRank} ·
-                      <Link href={`/achievement/${ach.id}`}>{ach.name}</Link>
-                    </li>
-                  );
+                const mainListRank = ach.mainRank || (allAchievements.findIndex(a => a.id === ach.id) + 1);
+                const pts = ach.points ?? (allAchievements.length - (mainListRank - 1));
+                const pointsDisplay = `+${pts.toFixed(0)}`;
+                return (
+                  <li key={ach.id}>
+                    {pointsDisplay} · #{mainListRank} ·
+                    <Link href={`/achievement/${ach.id}`}>{ach.name}</Link>
+                  </li>
+                );
               })}
             </ul>
           </td>
