@@ -946,7 +946,7 @@ export default function SharedList({
         const newR = Number(m.newRank) || 0;
         if (newR === oldR - 1) {
           for (const removedRank of removedRanks) {
-            if (oldR > removedRank && oldR === removedRank + 1) {
+            if (oldR > removedRank) {
               suppressedIds.add(m.achievement.id);
               break;
             }
