@@ -33,8 +33,7 @@ function DevModePanelInner({
   getPasteCandidates,
   handlePasteSelect,
   generateAndCopyChangelog,
-  clearChangelog,
-  changeLogCount
+  
 }) {
   return (
     <>
@@ -70,14 +69,9 @@ function DevModePanelInner({
               />
             </label>
             <button className="devmode-btn" onClick={handleShowNewForm}>New Achievement</button>
-            <button className="devmode-btn" onClick={generateAndCopyChangelog} style={{backgroundColor: changeLogCount > 0 ? '#28a745' : undefined}}>
-              Copy Changelog ({changeLogCount})
+            <button className="devmode-btn" onClick={generateAndCopyChangelog} style={{backgroundColor: '#28a745'}}>
+              Copy Changelog
             </button>
-            {changeLogCount > 0 && (
-              <button className="devmode-btn" onClick={clearChangelog} style={{backgroundColor: '#dc3545'}}>
-                Clear Log
-              </button>
-            )}
           </div>
         </div>
       )}
@@ -241,9 +235,7 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.pasteShowResults === next.pasteShowResults
     && prev.getPasteCandidates === next.getPasteCandidates
     && prev.handlePasteSelect === next.handlePasteSelect
-    && prev.generateAndCopyChangelog === next.generateAndCopyChangelog
-    && prev.clearChangelog === next.clearChangelog
-    && prev.changeLogCount === next.changeLogCount;
+    && prev.generateAndCopyChangelog === next.generateAndCopyChangelog;
 });
 
 export default DevModePanel;
