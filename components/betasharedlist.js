@@ -998,7 +998,16 @@ export default function SharedList({
       return true;
     });
 
-    const formatted = filteredChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+    let formatted = filteredChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+
+    if (!formatted || formatted.trim() === '') {
+      const moveOnly = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
+      if (moveOnly && moveOnly.length) {
+        const upsFirst = [...moveOnly].sort((a, b) => (a.type === 'movedUp' ? -1 : 1));
+        const alt = upsFirst.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+        if (alt && alt.trim()) formatted = alt;
+      }
+    }
 
     if (!formatted) {
       alert('No changes detected');
