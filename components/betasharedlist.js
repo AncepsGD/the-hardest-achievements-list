@@ -938,6 +938,46 @@ export default function SharedList({
         }
       }
     }
+    if (moveChanges && moveChanges.length) {
+      const movesMap = new Map();
+      moveChanges.forEach(m => {
+        if (!m || !m.achievement) return;
+        const id = m.achievement.id;
+        movesMap.set(id, {
+          oldRank: Number(m.oldRank) || null,
+          newRank: Number(m.newRank) || null,
+          type: m.type,
+          achievement: m.achievement
+        });
+      });
+
+      for (const [id, mv] of movesMap.entries()) {
+        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+        const delta = mv.newRank - mv.oldRank;
+        if (delta === 0) continue;
+        if (delta < 0) {
+          const low = mv.newRank;
+          const high = mv.oldRank - 1;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+              suppressedIds.add(otherId);
+            }
+          }
+        } else {
+          const low = mv.oldRank + 1;
+          const high = mv.newRank;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+              suppressedIds.add(otherId);
+            }
+          }
+        }
+      }
+    }
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
       if (!a || !a.achievement || suppressedIds.has(a.achievement.id)) continue;
