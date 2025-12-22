@@ -12,6 +12,96 @@ import DevModePanel from '../components/DevModePanel';
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
 
+function getAchievementContext(achievement, allAchievements, index) {
+  const below = index > 0 ? allAchievements[index - 1]?.name : null;
+  const above = index < allAchievements.length - 1 ? allAchievements[index + 1]?.name : null;
+  return { below, above };
+}
+
+function formatChangelogEntry(change, achievements) {
+  const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
+
+  if (!achievement) return '';
+
+  const name = achievement.name || 'Unknown';
+  const rank = achievement.rank || '?';
+  const allAchievements = achievements || [];
+  const newIdx = allAchievements.findIndex(a => a.id === achievement.id);
+  const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
+
+  let entry = '';
+
+  switch (type) {
+    case 'added':
+      entry = `🟢 **${name}** added at #${rank}`;
+      if (context.below) entry += `\n> Below ${context.below}`;
+      if (context.above) entry += `\n> Above ${context.above}`;
+      break;
+
+    case 'removed':
+      entry = `🔴 **${name}** removed from #${oldRank || rank}`;
+      if (oldAchievement) {
+        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
+        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+      }
+      break;
+
+    case 'movedUp':
+      entry = `🔼 **${name}** moved up from #${oldRank} to #${rank}`;
+      if (context.below) entry += `\n> Now below ${context.below}`;
+      if (context.above) entry += `\n> Now above ${context.above}`;
+      break;
+
+    case 'movedDown':
+      entry = `🔽 **${name}** moved down from #${oldRank} to #${rank}`;
+      if (context.below) entry += `\n> Now below ${context.below}`;
+      if (context.above) entry += `\n> Now above ${context.above}`;
+      break;
+
+    case 'renamed':
+      entry = `⚪ ${oldAchievement?.name || 'Unknown'} updated to **${name}**`;
+      break;
+
+    case 'addedWithRemovals':
+      entry = `<:updatedup:1375890567870812322> **${name}** added at #${rank}`;
+      if (context.below) entry += `\n> Now below ${context.below}`;
+      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (removedDuplicates && removedDuplicates.length > 0) {
+        entry += `\n>\n> Achievement(s) removed for redundancy:`;
+        removedDuplicates.forEach(dup => {
+          entry += `\n> 🔴 ${dup.name} (#${dup.rank})`;
+        });
+      }
+      break;
+
+    case 'removedWithReadds':
+      entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
+      if (oldAchievement) {
+        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
+        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+      }
+      if (readdedAchievements && readdedAchievements.length > 0) {
+        entry += `\n>\n> Achievement(s) re-added due to renewed relevance:`;
+        readdedAchievements.forEach(re => {
+          entry += `\n> 🟢 ${re.name} (#${re.rank})`;
+        });
+      }
+      break;
+
+    case 'timelineAdded':
+      entry = `🟡 **${name}** added to the Timeline at ${achievement.date || 'Unknown date'}`;
+      break;
+
+    case 'timelineRemoved':
+      entry = `<:timelineremove:1375894648383606945> **${name}** removed from the Timeline at ${achievement.date || 'Unknown date'}`;
+      break;
+  }
+
+  return entry;
+}
+
 const AVAILABLE_TAGS = [
   "Level", "Challenge", "Platformer", "Verified", "Deathless", "Coin Route", "Low Hertz", "Mobile", "Speedhack",
   "Noclip", "Miscellaneous", "Progress", "Consistency", "Speedrun",
@@ -184,11 +274,11 @@ function formatDate(date, dateFormat) {
 function parseAsLocal(d) {
   if (!d) return null;
   const s = String(d).trim();
-  
+
   if (s.includes('?')) return null;
   try {
     if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-      
+
       return new Date(s.replace(/-/g, '/'));
     }
     return new Date(s);
@@ -222,7 +312,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
     const days = calculateDaysLasted(achievement.date, previousAchievement.date);
     lastedLabel = typeof days === 'number' ? `Lasted ${days} days` : 'Lasted N/A days';
   } else {
-    
+
     const today = new Date();
     const achievementDate = parseAsLocal(achievement && achievement.date);
     if (!achievement || !achievement.date || !achievementDate || isNaN(achievementDate)) {
@@ -260,9 +350,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             <div className="achievement-date"><strong>{achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}</strong></div>
           </div>
           <div className="tag-container">
-              {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
-                <Tag tag={tag} key={tag} />
-              ))}
+            {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
+              <Tag tag={tag} key={tag} />
+            ))}
           </div>
           <div className="achievement-details">
             <div className="text">
@@ -276,7 +366,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               )}
             </div>
           </div>
-          {}
+          { }
           {onEdit && (
             <div className="hover-menu" style={{ display: isHovered ? 'flex' : 'none' }}>
               <button className="hover-menu-btn" onClick={onEdit} title="Edit achievement">
@@ -425,7 +515,7 @@ export default function SharedList({
 
     const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
 
-  setManualSearch(rawQuery);
+    setManualSearch(rawQuery);
     setSearchJumpPending(true);
     setVisibleCount(0);
 
@@ -478,13 +568,14 @@ export default function SharedList({
   const { dateFormat, setDateFormat } = useDateFormat();
   const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
+  const [changeLog, setChangeLog] = useState([]);
   const [sortKey, setSortKey] = useState(() => {
     try {
       if (typeof window !== 'undefined') {
         const v = window.localStorage.getItem(`thal_sort_key_${storageKeySuffix}`);
         if (v) return v;
       }
-    } catch (e) {}
+    } catch (e) { }
     return storageKeySuffix === 'pending' ? 'date' : 'rank';
   });
 
@@ -494,7 +585,7 @@ export default function SharedList({
         const v = window.localStorage.getItem(`thal_sort_dir_${storageKeySuffix}`);
         if (v) return v;
       }
-    } catch (e) {}
+    } catch (e) { }
     return storageKeySuffix === 'pending' ? 'desc' : 'asc';
   });
 
@@ -561,7 +652,7 @@ export default function SharedList({
   const [pasteIndex, setPasteIndex] = useState([]);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [extraLists, setExtraLists] = useState({});
-  const EXTRA_FILES = ['pending.json','legacy.json','platformers.json','platformertimeline.json','timeline.json','removed.json'];
+  const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState(null);
@@ -600,6 +691,16 @@ export default function SharedList({
       arr[realIdx - 1] = arr[realIdx];
       arr[realIdx] = temp;
       arr.forEach((a, i) => { a.rank = i + 1; });
+
+      if (devMode && arr[realIdx - 1]) {
+        logChange({
+          type: 'movedUp',
+          achievement: arr[realIdx - 1],
+          oldRank: realIdx + 1,
+          oldIndex: realIdx
+        });
+      }
+
       return arr;
     });
   }
@@ -613,6 +714,16 @@ export default function SharedList({
       arr[realIdx + 1] = arr[realIdx];
       arr[realIdx] = temp;
       arr.forEach((a, i) => { a.rank = i + 1; });
+
+      if (devMode && arr[realIdx + 1]) {
+        logChange({
+          type: 'movedDown',
+          achievement: arr[realIdx + 1],
+          oldRank: realIdx + 1,
+          oldIndex: realIdx
+        });
+      }
+
       return arr;
     });
   }
@@ -724,6 +835,14 @@ export default function SharedList({
       const [removed] = arr.splice(editIdx, 1);
       const updated = { ...removed, ...entry };
 
+      if (devMode && removed && removed.name !== updated.name) {
+        logChange({
+          type: 'renamed',
+          oldAchievement: removed,
+          achievement: updated
+        });
+      }
+
       if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
         const idx = Math.max(0, Math.min(arr.length, Number(entry.rank) - 1));
         arr.splice(idx, 0, updated);
@@ -745,6 +864,36 @@ export default function SharedList({
     setEditForm(null);
     setEditFormTags([]);
     setEditFormCustomTags('');
+  }
+
+  function logChange(change) {
+    setChangeLog(prev => [...prev, change]);
+  }
+
+  function generateAndCopyChangelog() {
+    const formatted = changeLog
+      .map(change => formatChangelogEntry(change, reordered || achievements))
+      .filter(entry => entry.trim() !== '')
+      .join('\n\n');
+
+    if (!formatted) {
+      alert('No changes to log');
+      return;
+    }
+
+    if (navigator && navigator.clipboard) {
+      navigator.clipboard.writeText(formatted).then(() => {
+        alert('Changelog copied to clipboard!');
+      }).catch(() => {
+        alert('Failed to copy to clipboard');
+      });
+    } else {
+      alert('Clipboard API not available');
+    }
+  }
+
+  function clearChangelog() {
+    setChangeLog([]);
   }
 
   useEffect(() => {
@@ -904,7 +1053,7 @@ export default function SharedList({
     if (sortKey === 'random') {
       const copy = [...base];
       const getKey = item => (item && item.id) ? String(item.id) : `__idx_${base.indexOf(item)}`;
-      copy.sort((x, y) => ( (randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0) ));
+      copy.sort((x, y) => ((randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0)));
       return copy;
     }
     const copy = [...base];
@@ -945,7 +1094,7 @@ export default function SharedList({
     if (sortKey === 'random') {
       const copy = [...baseDev];
       const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
-      copy.sort((x, y) => ( (randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0) ));
+      copy.sort((x, y) => ((randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0)));
       if (sortDir === 'desc') copy.reverse();
       return copy;
     }
@@ -977,17 +1126,17 @@ export default function SharedList({
     ids.forEach(id => {
       if (autoThumbMap[id] !== undefined) return;
       const url = `https://levelthumbs.prevter.me/thumbnail/${id}`;
-      
+
       fetch(url, { method: 'HEAD' }).then(res => {
         if (res && res.ok) {
           const ct = res.headers.get ? (res.headers.get('content-type') || '') : '';
-          const available = ct.startsWith && ct.startsWith('image/') ? true : true; 
+          const available = ct.startsWith && ct.startsWith('image/') ? true : true;
           setAutoThumbMap(m => ({ ...m, [id]: available }));
         } else {
           setAutoThumbMap(m => ({ ...m, [id]: false }));
         }
       }).catch(() => {
-        
+
         fetch(url, { method: 'GET' }).then(res2 => {
           if (res2 && res2.ok) setAutoThumbMap(m => ({ ...m, [id]: true }));
           else setAutoThumbMap(m => ({ ...m, [id]: false }));
@@ -1074,24 +1223,39 @@ export default function SharedList({
     }
     setReordered(prev => {
       let newArr;
+      let insertedIdx = 0;
       if (!prev) {
         setScrollToIdx(0);
         newArr = [entry];
+        insertedIdx = 0;
       } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
         const idx = Math.max(0, Math.min(prev.length, Number(entry.rank) - 1));
         newArr = [...prev];
         newArr.splice(idx, 0, entry);
         setScrollToIdx(idx);
+        insertedIdx = idx;
       } else if (insertIdx === null || insertIdx < 0 || insertIdx > prev.length - 1) {
         setScrollToIdx(prev.length);
         newArr = [...prev, entry];
+        insertedIdx = prev.length;
       } else {
         newArr = [...prev];
         newArr.splice(insertIdx + 1, 0, entry);
         setScrollToIdx(insertIdx + 1);
+        insertedIdx = insertIdx + 1;
       }
 
       newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
+
+      if (devMode) {
+        logChange({
+          type: 'added',
+          achievement: entry,
+          oldIndex: null,
+          newIndex: insertedIdx
+        });
+      }
+
       return newArr;
     });
     setShowNewForm(false);
@@ -1182,12 +1346,12 @@ export default function SharedList({
       setNewFormTags(Array.isArray(entry.tags) ? [...entry.tags] : []);
       setNewFormCustomTags('');
       setShowNewForm(true);
-      try { setInsertIdx(getMostVisibleIdx()); } catch (e) {}
+      try { setInsertIdx(getMostVisibleIdx()); } catch (e) { }
     }
     setPasteSearch('');
     setPasteShowResults(false);
   }
-  
+
   const newFormPreview = useMemo(() => {
     let tags = [...newFormTags];
     if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
@@ -1202,11 +1366,11 @@ export default function SharedList({
         if (!isNaN(num)) entry[k] = num;
         return;
       }
-        if (k === 'rank') {
-          const num = Number(v);
-          if (!isNaN(num)) entry[k] = num;
-          return;
-        }
+      if (k === 'rank') {
+        const num = Number(v);
+        if (!isNaN(num)) entry[k] = num;
+        return;
+      }
       if (k === 'levelID') {
         const num = Number(v);
         if (!isNaN(num) && num > 0) entry[k] = num;
@@ -1312,8 +1476,20 @@ export default function SharedList({
     setReordered(prev => {
       if (!prev) return prev;
       const arr = [...prev];
+      const removed = arr[realIdx];
       arr.splice(realIdx, 1);
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
+
+      if (devMode && removed) {
+        logChange({
+          type: 'removed',
+          oldAchievement: removed,
+          achievement: removed,
+          oldRank: removed.rank,
+          oldIndex: realIdx
+        });
+      }
+
       return arr;
     });
   }
@@ -1325,7 +1501,7 @@ export default function SharedList({
       const arr = [...prev];
       const copy = { ...arr[realIdx], id: (arr[realIdx] && arr[realIdx].id ? arr[realIdx].id : `item-${realIdx}`) + '-copy' };
       arr.splice(realIdx + 1, 0, copy);
-      
+
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       setScrollToIdx(realIdx + 1);
       return arr;
@@ -1391,7 +1567,7 @@ export default function SharedList({
                       onChange={e => {
                         const next = !!e.target.checked;
                         setUsePlatformers(next);
-                        try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
+                        try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) { }
                       }}
                     />
                     <span
@@ -1446,7 +1622,7 @@ export default function SharedList({
                   onChange={e => {
                     const v = e.target.value;
                     setSortKey(v);
-                    try { localStorage.setItem('sortKey', v); } catch (err) {}
+                    try { localStorage.setItem('sortKey', v); } catch (err) { }
                   }}
                   style={{ padding: '6px 8px', borderRadius: 6, background: 'var(--primary-bg)', color: 'var(--text-color)', border: '1px solid var(--hover-bg)' }}
                 >
@@ -1463,7 +1639,7 @@ export default function SharedList({
                   onClick={() => {
                     const next = sortDir === 'asc' ? 'desc' : 'asc';
                     setSortDir(next);
-                    try { localStorage.setItem('sortDir', next); } catch (err) {}
+                    try { localStorage.setItem('sortDir', next); } catch (err) { }
                   }}
                   style={{ padding: '6px 10px', borderRadius: 6, background: 'var(--primary-accent)', color: '#fff', border: 'none', cursor: 'pointer' }}
                 >
@@ -1478,7 +1654,7 @@ export default function SharedList({
                     onChange={e => {
                       const next = !!e.target.checked;
                       setUsePlatformers(next);
-                      try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) {}
+                      try { localStorage.setItem('usePlatformers', next ? '1' : '0'); } catch (err) { }
                     }}
                   />
                   <span
@@ -1509,7 +1685,7 @@ export default function SharedList({
           </div>
         )}
       </header>
-      <MobileSidebarOverlay 
+      <MobileSidebarOverlay
         isOpen={isMobile && showSidebar}
         onClose={() => setShowSidebar(false)}
       />
@@ -1544,7 +1720,7 @@ export default function SharedList({
           })}
         </div>
         <section className="achievements achievements-section">
-          <div style={{ width: '100%'}}>
+          <div style={{ width: '100%' }}>
             <div className="search-bar" style={{ width: '100%', maxWidth: 'min(95vw, 902px)', margin: '0 auto' }}>
               <input
                 type="text"
@@ -1558,7 +1734,7 @@ export default function SharedList({
               />
             </div>
           </div>
-          
+
           <DevModePanel
             devMode={devMode}
             handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
@@ -1590,6 +1766,9 @@ export default function SharedList({
             handleCopyJson={handleCopyJson}
             handleShowNewForm={handleShowNewForm}
             newFormPreview={newFormPreview}
+            generateAndCopyChangelog={generateAndCopyChangelog}
+            clearChangelog={clearChangelog}
+            changeLogCount={changeLog.length}
             onImportAchievementsJson={json => {
               let imported = Array.isArray(json) ? json : (json.achievements || []);
               if (!Array.isArray(imported)) {
@@ -1612,7 +1791,7 @@ export default function SharedList({
             }}
             dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
           />
-              {isPending ? (
+          {isPending ? (
             <div className="no-achievements">Loading...</div>
           ) : (devMode ? (
             devAchievements.map((a, i) => (
@@ -1779,7 +1958,7 @@ export default function SharedList({
                   position: 'relative',
                   zIndex: 1
                 }} className={highlightedIdx === i ? 'search-highlight' : ''}>
-                  { mode === 'timeline' ?
+                  {mode === 'timeline' ?
                     <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                     :
                     <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
@@ -1820,10 +1999,10 @@ export default function SharedList({
                   const isDup = duplicateThumbKeys.has((thumb || '').trim());
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
-                      { mode === 'timeline' ?
-                          <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                      {mode === 'timeline' ?
+                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                         :
-                          <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                        <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                       }
                     </div>
                   );
@@ -1833,7 +2012,7 @@ export default function SharedList({
           ))}
         </section>
       </main>
-      <div aria-live="polite" aria-atomic="true" style={{position:'absolute', left:-9999, top:'auto', width:1, height:1, overflow:'hidden'}}>
+      <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
         {noMatchMessage}
       </div>
     </>
