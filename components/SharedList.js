@@ -981,6 +981,10 @@ export default function SharedList({
         const removedChange = removedChanges[j];
         if (!removedChange.achievement) continue;
 
+        const sameRank = Number(addedChange.achievement.rank) === Number(removedChange.achievement.rank);
+        
+        if (sameRank) continue;
+
         if (areRelated(addedChange.achievement, removedChange.achievement)) {
           related.push(j);
         }
@@ -1009,6 +1013,10 @@ export default function SharedList({
         const addedChange = addedChanges[i];
         if (!addedChange.achievement) continue;
         if (addedChange.type === 'addedWithRemovals') continue;
+
+        const sameRank = Number(removedChange.achievement.rank) === Number(addedChange.achievement.rank);
+        
+        if (sameRank) continue;
 
         if (areRelated(addedChange.achievement, removedChange.achievement)) {
           related.push(addedChange);
