@@ -18,7 +18,7 @@ function getAchievementContext(achievement, allAchievements, index) {
   return { below, above };
 }
 
-function formatChangelogEntry(change, achievements) {
+function formatChangelogEntry(change, achievements, mode) {
   const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
 
   if (!achievement) return '';
@@ -915,13 +915,15 @@ export default function SharedList({
 
     for (const [id, a] of byIdOriginal.entries()) {
       if (!byIdCurrent.has(id)) {
-        changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank });
+        const changeType = mode === 'timeline' ? 'timelineRemoved' : 'removed';
+        changes.push({ type: changeType, achievement: a, oldAchievement: a, oldRank: a.rank });
       }
     }
 
     for (const [id, a] of byIdCurrent.entries()) {
       if (!byIdOriginal.has(id)) {
-        changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
+        const changeType = mode === 'timeline' ? 'timelineAdded' : 'added';
+        changes.push({ type: changeType, achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
       }
     }
 
@@ -936,7 +938,7 @@ export default function SharedList({
 
       const oldRank = Number(orig.rank) || null;
       const newRank = Number(curr.rank) || null;
-      if (oldRank != null && newRank != null && oldRank !== newRank) {
+      if (mode !== 'timeline' && oldRank != null && newRank != null && oldRank !== newRank) {
         changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
       }
     }
@@ -1184,6 +1186,7 @@ export default function SharedList({
     const baseList = current;
     const filteredChanges = changesList.filter(c => {
       if (!c) return false;
+      if (mode === 'timeline' && (c.type === 'movedUp' || c.type === 'movedDown' || c.type === 'swapped')) return false;
       if ((c.type === 'movedUp' || c.type === 'movedDown') && c.achievement && suppressedIds.has(c.achievement.id)) return false;
       return true;
     });
@@ -1254,7 +1257,7 @@ export default function SharedList({
       }
     }
 
-    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode)).filter(s => s && s.trim()).join('\n\n');
 
     if (!formatted || formatted.trim() === '') {
       const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
@@ -1275,7 +1278,7 @@ export default function SharedList({
             else chosen.push(arr[0]);
           }
         }
-        const alt = chosen.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+        const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode)).filter(s => s && s.trim()).join('\n\n');
         if (alt && alt.trim()) formatted = alt;
       }
     }
