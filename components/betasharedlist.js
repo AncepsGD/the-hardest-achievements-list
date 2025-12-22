@@ -998,7 +998,27 @@ export default function SharedList({
       return true;
     });
 
-    let formatted = filteredChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+    const finalChanges = [...filteredChanges];
+    for (let i = 0; i < finalChanges.length; i++) {
+      const x = finalChanges[i];
+      if (!x || !(x.type === 'movedUp' || x.type === 'movedDown') || !x.achievement) continue;
+      for (let j = i + 1; j < finalChanges.length; j++) {
+        const y = finalChanges[j];
+        if (!y || !(y.type === 'movedUp' || y.type === 'movedDown') || !y.achievement) continue;
+        if (x.oldRank === y.newRank && x.newRank === y.oldRank) {
+          if (x.type === 'movedUp' && y.type === 'movedDown') {
+            finalChanges.splice(j, 1);
+            j--;
+          } else if (y.type === 'movedUp' && x.type === 'movedDown') {
+            finalChanges.splice(i, 1);
+            i--;
+            break;
+          }
+        }
+      }
+    }
+
+    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
 
     if (!formatted || formatted.trim() === '') {
       const moveOnly = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
