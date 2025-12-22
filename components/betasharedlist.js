@@ -920,8 +920,24 @@ export default function SharedList({
       }
     }
 
+    const addedPositions = changes.filter(c => c && c.type === 'added' && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
     const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
+
+    if (addedPositions && addedPositions.length) {
+      for (const m of moveChanges) {
+        if (!m || !m.achievement) continue;
+        if (m.type === 'movedDown') {
+          const oldR = Number(m.oldRank) || 0;
+          const newR = Number(m.newRank) || 0;
+          const delta = newR - oldR;
+          if (delta === 1) {
+            const affected = addedPositions.some(pos => Number(pos) <= newR);
+            if (affected) suppressedIds.add(m.achievement.id);
+          }
+        }
+      }
+    }
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
       if (!a || !a.achievement || suppressedIds.has(a.achievement.id)) continue;
