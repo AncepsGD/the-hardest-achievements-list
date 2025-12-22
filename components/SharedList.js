@@ -867,11 +867,11 @@ export default function SharedList({
       if (!prev) return prev;
       const arr = [...prev];
       const original = arr[editIdx];
-      
+
       const newRank = entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' ? Number(entry.rank) : null;
       const oldRank = original ? Number(original.rank) : null;
       const rankIsChanging = newRank !== null && !isNaN(newRank) && newRank !== oldRank;
-      
+
       if (rankIsChanging) {
         const [removed] = arr.splice(editIdx, 1);
         const updated = { ...removed, ...entry };
@@ -954,26 +954,54 @@ export default function SharedList({
 
     function areRelated(ach1, ach2) {
       if (!ach1 || !ach2) return false;
-      
+
       const base1 = getLevelBase(ach1.name);
       const base2 = getLevelBase(ach2.name);
       const player1 = (ach1.player || '').toLowerCase().trim();
       const player2 = (ach2.player || '').toLowerCase().trim();
-      
+
       if (base1 === base2 && player1 === player2 && player1) return true;
-      
+
       if (base1 && base2 && (base1.includes(base2) || base2.includes(base1))) return true;
-      
+
       return false;
     }
 
     const addedChanges = changes.filter(c => c && c.type === 'added');
     const removedChanges = changes.filter(c => c && c.type === 'removed');
     const suppressedIndices = new Set();
+    const convertedToRenames = new Set();
 
     for (let i = 0; i < addedChanges.length; i++) {
       const addedChange = addedChanges[i];
       if (!addedChange.achievement) continue;
+
+      for (let j = 0; j < removedChanges.length; j++) {
+        if (suppressedIndices.has(j)) continue;
+        const removedChange = removedChanges[j];
+        if (!removedChange.achievement) continue;
+
+        const sameRank = Number(addedChange.achievement.rank) === Number(removedChange.achievement.rank);
+
+        if (sameRank && areRelated(addedChange.achievement, removedChange.achievement)) {
+          const addIdx = changes.indexOf(addedChange);
+          if (addIdx !== -1) {
+            changes[addIdx] = {
+              type: 'renamed',
+              oldAchievement: removedChange.achievement,
+              achievement: addedChange.achievement
+            };
+            convertedToRenames.add(addIdx);
+          }
+          suppressedIndices.add(j);
+          break;
+        }
+      }
+    }
+
+    for (let i = 0; i < addedChanges.length; i++) {
+      const addedChange = addedChanges[i];
+      if (!addedChange.achievement || convertedToRenames.has(changes.indexOf(addedChange))) continue;
 
       const related = [];
       for (let j = 0; j < removedChanges.length; j++) {
@@ -982,7 +1010,7 @@ export default function SharedList({
         if (!removedChange.achievement) continue;
 
         const sameRank = Number(addedChange.achievement.rank) === Number(removedChange.achievement.rank);
-        
+
         if (sameRank) continue;
 
         if (areRelated(addedChange.achievement, removedChange.achievement)) {
@@ -1013,9 +1041,10 @@ export default function SharedList({
         const addedChange = addedChanges[i];
         if (!addedChange.achievement) continue;
         if (addedChange.type === 'addedWithRemovals') continue;
+        if (convertedToRenames.has(changes.indexOf(addedChange))) continue;
 
         const sameRank = Number(removedChange.achievement.rank) === Number(addedChange.achievement.rank);
-        
+
         if (sameRank) continue;
 
         if (areRelated(addedChange.achievement, removedChange.achievement)) {
@@ -1044,7 +1073,7 @@ export default function SharedList({
 
     const addedPositions = changesList.filter(c => c && (c.type === 'added' || c.type === 'addedWithRemovals') && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
     const removedRanks = changesList.filter(c => c && (c.type === 'removed' || c.type === 'removedWithReadds')).map(c => Number(c.oldRank || 0));
-    
+
     const readdedPositions = [];
     const removedDuplicateRanks = [];
     changesList.forEach(c => {
@@ -1059,10 +1088,10 @@ export default function SharedList({
         });
       }
     });
-    
+
     const allAddedPositions = [...addedPositions, ...readdedPositions];
     const allRemovedRanks = [...removedRanks, ...removedDuplicateRanks];
-    
+
     const moveChanges = changesList.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
 
