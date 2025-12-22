@@ -105,11 +105,19 @@ function formatChangelogEntry(change, achievements) {
       break;
 
     case 'timelineAdded':
-      entry = `🟡 **${name}** added to the Timeline at ${achievement.date || 'Unknown date'}`;
+      {
+        const raw = formatDate(achievement.date, 'YYYY/MM/DD');
+        const iso = raw && raw !== 'N/A' ? raw.replace(/\//g, '-') : (achievement.date || 'Unknown date');
+        entry = `🟡 **${name}** added to the Timeline at ${iso}`;
+      }
       break;
 
     case 'timelineRemoved':
-      entry = `<:timelineremove:1375894648383606945> **${name}** removed from the Timeline at ${achievement.date || 'Unknown date'}`;
+      {
+        const rawR = formatDate(achievement.date, 'YYYY/MM/DD');
+        const isoR = rawR && rawR !== 'N/A' ? rawR.replace(/\//g, '-') : (achievement.date || 'Unknown date');
+        entry = `<:timelineremove:1375894648383606945> **${name}** removed from the Timeline at ${isoR}`;
+      }
       break;
   }
 
@@ -910,13 +918,13 @@ export default function SharedList({
 
     for (const [id, a] of byIdOriginal.entries()) {
       if (!byIdCurrent.has(id)) {
-        changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank });
+        changes.push({ type: (mode === 'timeline' ? 'timelineRemoved' : 'removed'), achievement: a, oldAchievement: a, oldRank: a.rank });
       }
     }
 
     for (const [id, a] of byIdCurrent.entries()) {
       if (!byIdOriginal.has(id)) {
-        changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
+        changes.push({ type: (mode === 'timeline' ? 'timelineAdded' : 'added'), achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
       }
     }
 
@@ -934,7 +942,7 @@ export default function SharedList({
       }
     }
 
-    const addedPositions = changes.filter(c => c && c.type === 'added' && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
+    const addedPositions = changes.filter(c => c && (c.type === 'added' || c.type === 'timelineAdded') && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
     const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
 
