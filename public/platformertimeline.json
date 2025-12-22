@@ -10,7 +10,8 @@
     "tags": [
       "Platformer",
       "Progress"
-    ]
+    ],
+    "rank": 1
   },
   {
     "name": "The Abyss (Deathless)",
@@ -26,7 +27,8 @@
     "date": "2024-12-09",
     "showcaseVideo": "https://youtu.be/RKP5NVBdunc",
     "video": "https://youtu.be/Grw8DT3v8PA",
-    "submitter": "toolazytogetausername"
+    "submitter": "toolazytogetausername",
+    "rank": 2
   },
   {
     "name": "CONVOLUTION",
@@ -34,28 +36,30 @@
     "player": "GToast",
     "levelID": 105724358,
     "tags": [
-      "Verified",
       "Platformer",
+      "Verified",
       "Rated"
     ],
     "version": 2.2,
     "date": "2024-08-13",
     "showcaseVideo": "https://youtu.be/rcSQvDWvswI",
     "video": "https://www.youtube.com/watch?v=bfASf1-aK2M",
-    "submitter": "kyle1saurus"
+    "submitter": "kyle1saurus",
+    "rank": 3
   },
   {
     "name": "Closed Square X",
-  "id": "closed-square-x",
-  "player": "zXdasfsa",
-  "version": 2.2,
-  "video": "https://youtu.be/mx_VDrBApiY",
-  "date": "2024-07-09",
-  "levelID": 107457912,
-  "tags": [
-    "Platformer",
-    "Verified"
-  ]
+    "id": "closed-square-x",
+    "player": "zXdasfsa",
+    "version": 2.2,
+    "video": "https://youtu.be/mx_VDrBApiY",
+    "date": "2024-07-09",
+    "levelID": 107457912,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 4
   },
   {
     "name": "Cl5u37r0ph0b1a",
@@ -63,14 +67,15 @@
     "player": "Aibyou",
     "levelID": 112059085,
     "tags": [
-      "Verified",
-      "Platformer"
+      "Platformer",
+      "Verified"
     ],
     "version": 2.2,
     "date": "2024-03-14",
     "video": "https://www.youtube.com/watch?v=1Y0f-vEXw1Y",
     "showcaseVideo": "https://youtu.be/il1EO5KBhKM",
-    "submitter": "kyle1saurus"
+    "submitter": "kyle1saurus",
+    "rank": 5
   },
   {
     "name": "YiiK A PostAlbertRPG",
@@ -83,9 +88,10 @@
     "submitter": "BUGDAY BEY",
     "levelID": 100353881,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 6
   },
   {
     "name": "GEETHINS II",
@@ -98,9 +104,10 @@
     "submitter": "kyle1saurus",
     "levelID": 99666837,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 7
   },
   {
     "name": "Bramble Scramble",
@@ -113,9 +120,10 @@
     "submitter": "kyle1saurus",
     "levelID": 99126990,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 8
   },
   {
     "name": "Whg3 Lv5 (Old)",
@@ -127,57 +135,10 @@
     "submitter": "kyle1saurus",
     "levelID": 99022488,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "The Tower XXII (Deathless)",
-    "id": "the-tower-xxii-deathless",
-    "player": "layla",
-    "version": 2.2,
-    "video": "https://youtu.be/8Q2SSCGJvJ4",
-    "showcaseVideo": "https://youtu.be/UIKaTKrWwdc",
-    "date": "2024-01-10",
-    "submitter": "kyle1saurus",
-    "levelID": 97692058,
-    "tags": [
       "Platformer",
-      "Deathless",
-      "Rated"
-    ]
-  },
-  {
-    "name": "i wanna be the guy (Deathless)",
-    "id": "i-wanna-be-the-guy-deathless",
-    "player": "layla",
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=kCLPYbtMKG0",
-    "showcaseVideo": "https://youtu.be/iwaWy9ILH_k",
-    "date": "2024-01-10",
-    "submitter": "mikoshii",
-    "levelID": 97543536,
-    "tags": [
-      "Platformer",
-      "Deathless",
-      "Rated"
-    ]
-  },
-  {
-    "name": "The Abyss (Old)",
-    "id": "the-abyss-old",
-    "player": "mikoshii",
-    "version": 2.2,
-    "video": "https://youtu.be/2hIhD4q8rGo",
-    "showcaseVideo": "https://youtu.be/RKP5NVBdunc",
-    "date": "2024-01-08",
-    "submitter": "kyle1saurus",
-    "levelID": 98163412,
-    "tags": [
-      "Verified",
-      "Platformer",
-      "Outdated Version"
-    ]
+      "Verified"
+    ],
+    "rank": 9
   },
   {
     "name": "HYPER GRAVITRON",
@@ -190,9 +151,10 @@
     "submitter": "kyle1saurus",
     "levelID": 98745817,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 10
   },
   {
     "name": "INFINITY TRIALS",
@@ -205,9 +167,10 @@
     "submitter": "kyle1saurus",
     "levelID": 97730554,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 11
   },
   {
     "name": "The Tower XXII (Old)",
@@ -220,186 +183,136 @@
     "submitter": "kyle1saurus",
     "levelID": 97692058,
     "tags": [
-      "Verified",
       "Platformer",
+      "Verified",
       "Outdated Version"
-    ]
+    ],
+    "rank": 12
   },
   {
-    "name": "Wendys Revenge",
-    "id": "wendys-revenge",
-    "player": "hoshyvention",
+    "name": "Infinity Trial",
+    "id": "infinity-trial",
+    "player": "drakisdumb",
+    "length": 0,
     "version": 2.2,
-    "video": "https://youtu.be/0ulumTnAO_E",
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-22",
-    "submitter": "kyle1saurus",
-    "levelID": 97687438,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
+    "video": "https://youtu.be/rtJkHgDuZXM",
+    "showcaseVideo": "https://www.youtube.com/watch?v=h8zQDOil0tw",
+    "date": "2023-07-26",
+    "submitter": "Anceps",
+    "tags": [],
+    "rank": 13,
+    "levelID": 99978836
   },
   {
-    "name": "VENUS",
-    "id": "ven-us",
-    "player": "DrakXD109",
+    "name": "Duxe Flareon",
+    "id": "duxe-flareon",
+    "player": "juangaming",
+    "length": 0,
     "version": 2.2,
-    "video": "https://youtu.be/oKm37Ztq0s0",
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-21",
-    "submitter": "kyle1saurus",
-    "levelID": 97524369,
+    "video": "https://youtu.be/nkAFYberbYo",
+    "date": "2023-02-18",
+    "submitter": "Anceps",
+    "levelID": 119136075,
     "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "yassan 2",
-    "id": "yassan-2",
-    "player": "Eandis",
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=Rh_row8_Kmo",
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-21",
-    "submitter": "kyle1saurus",
-    "levelID": 97496699,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "Fight Of Light",
-    "id": "fight-of-light",
-    "player": "Athani",
-    "version": 2.2,
-    "video": "https://youtu.be/nOjqgF33VUE",
-    "showcaseVideo": "https://youtu.be/76JeJWWNVSw",
-    "date": "2023-12-20",
-    "submitter": "kyle1saurus",
-    "levelID": 97494505,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "poomp box",
-    "id": "poomp-box",
-    "player": "Drakosa",
-    "version": 2.2,
-    "video": "https://youtu.be/_WAYCuRAzW8",
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-20",
-    "submitter": "kyle1saurus",
-    "levelID": 97474662,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "ATONE THE PAPIADA",
-    "id": "atone-the-papiada",
-    "player": "DrakXD109",
-    "version": 2.2,
-    "video": "https://youtu.be/WO_TYnLNChY",
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-19",
-    "submitter": "kyle1saurus",
-    "levelID": 97462911,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "rising lava",
-    "id": "rising-lava",
-    "player": "doramee",
-    "version": 2.2,
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-19",
-    "submitter": "kyle1saurus",
-    "levelID": 97462196,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "jetpack challenge",
-    "id": "jetpack-challenge",
-    "player": "Zaiko2k",
-    "version": 2.2,
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-19",
-    "submitter": "kyle1saurus",
-    "levelID": 97461955,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "platformer challenge",
-    "id": "platformer-challenge",
-    "player": "RDR789",
-    "version": 2.2,
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-19",
-    "submitter": "kyle1saurus",
-    "levelID": 97459765,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "Climb Of Rage",
-    "id": "climb-of-rage",
-    "player": "fluffy3263590",
-    "version": 2.2,
-    "showcaseVideo": "https://youtu.be/nOjqgF33VUE",
-    "date": "2023-12-19",
-    "submitter": "kyle1saurus",
-    "levelID": 97458938,
-    "tags": [
-      "Verified",
-      "Platformer"
-    ]
-  },
-  {
-    "name": "The Secret Hollow (Unnerfed)",
-    "id": "the-secret-hollow-unnerfed",
-    "player": "RobTop",
-    "version": 2.2,
-    "showcaseVideo": "https://youtu.be/nAft3_7nCrQ",
-    "date": "2023-12-19",
-    "submitter": "kyle1saurus",
-    "levelID": 106003426,
-    "tags": [
-      "Verified",
       "Platformer",
+      "Verified"
+    ],
+    "rank": 14
+  },
+  {
+    "name": "Lava Trials",
+    "id": "lava-trials",
+    "player": "LikeGG",
+    "length": 0,
+    "video": "https://www.youtube.com/watch?v=H8sMvZgEHYE",
+    "date": "2022-11-06",
+    "submitter": "Anceps",
+    "levelID": 118880785,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 15
+  },
+  {
+    "name": "Tower of Geometry",
+    "id": "tower-of-geometry",
+    "player": "MacaroniBoi",
+    "length": 0,
+    "video": "https://www.youtube.com/watch?v=AGFBYa19CmY",
+    "date": "2022-04-20",
+    "submitter": "Anceps",
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 16,
+    "version": 2,
+    "levelID": 97787386,
+    "showcaseVideo": "https://www.youtube.com/watch?v=p2nl-fG6aas"
+  },
+  {
+    "name": "Avoidster",
+    "id": "avoidster",
+    "player": "skelox",
+    "length": 0,
+    "version": 2,
+    "video": "https://www.youtube.com/watch?v=ZkdaEvccYok",
+    "showcaseVideo": "https://www.youtube.com/watch?v=0S1rthBdx9A",
+    "date": "2022-02-03",
+    "submitter": "Anceps",
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 17,
+    "levelID": 36523712
+  },
+  {
+    "name": "Desert Temple",
+    "id": "desert-temple",
+    "player": "pcarlos321r",
+    "length": 0,
+    "video": "https://www.youtube.com/watch?v=48UdG7VtyJY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=48UdG7VtyJY",
+    "date": "2021-12-29",
+    "submitter": "Anceps",
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 18
+  },
+  {
+    "name": "Robot Trial",
+    "id": "robot-trial",
+    "player": "sanez",
+    "length": 0,
+    "video": "https://www.youtube.com/watch?v=NglciNKDIUY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=bLmuusOHi7k",
+    "date": "2021-07-25",
+    "submitter": "Anceps",
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 19
+  },
+  {
+    "name": "Infinity Trials (Old)",
+    "id": "infinity-trials-old",
+    "player": "TheSac9009",
+    "length": 0,
+    "video": "https://www.youtube.com/watch?v=qGfwBD2q1WM",
+    "date": "2019-02-26",
+    "submitter": "Anceps",
+    "tags": [
+      "Platformer",
+      "Verified",
       "Outdated Version"
-    ]
-  },
-  {
-    "name": "The Cellar",
-    "id": "the-cellar",
-    "player": "RobTop",
-    "version": 2.2,
-    "video": "https://youtu.be/17YwHnNGScY",
-    "showcaseVideo": "https://youtu.be/nAft3_7nCrQ",
-    "date": "2023-05-16",
-    "submitter": "kyle1saurus",
-    "levelID": 97459509,
-    "tags": [
-      "Verified",
-      "Platformer",
-      "Rated"
-    ]
+    ],
+    "rank": 20,
+    "version": 2,
+    "levelID": 119262956
   }
 ]
