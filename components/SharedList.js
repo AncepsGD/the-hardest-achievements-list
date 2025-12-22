@@ -938,6 +938,23 @@ export default function SharedList({
     const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
 
+    const removedRanks = changes.filter(c => c && c.type === 'removed').map(c => Number(c.oldRank || 0));
+    if (removedRanks && removedRanks.length) {
+      for (const m of moveChanges) {
+        if (!m || !m.achievement || m.type !== 'movedUp') continue;
+        const oldR = Number(m.oldRank) || 0;
+        const newR = Number(m.newRank) || 0;
+        if (newR === oldR - 1) {
+          for (const removedRank of removedRanks) {
+            if (oldR > removedRank && oldR === removedRank + 1) {
+              suppressedIds.add(m.achievement.id);
+              break;
+            }
+          }
+        }
+      }
+    }
+
     if (addedPositions && addedPositions.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement) continue;
