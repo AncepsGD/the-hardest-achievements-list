@@ -893,137 +893,91 @@ export default function SharedList({
     current.forEach(a => { if (a && a.id) byIdCurrent.set(a.id, a); });
 
     const changes = [];
+
     for (const [id, a] of byIdOriginal.entries()) {
       if (!byIdCurrent.has(id)) {
         changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank });
       }
     }
+
     for (const [id, a] of byIdCurrent.entries()) {
       if (!byIdOriginal.has(id)) {
         changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
       }
     }
-    const origIds = (original || []).map(a => a && a.id);
-    const currIds = (current || []).map(a => a && a.id);
-    const idSet = new Set([...origIds.filter(Boolean), ...currIds.filter(Boolean)]);
-    for (const id of idSet) {
-      const orig = byIdOriginal.get(id);
+
+    for (const [id, orig] of byIdOriginal.entries()) {
+      if (!byIdCurrent.has(id)) continue;
       const curr = byIdCurrent.get(id);
-      if (orig && curr) {
-        if ((orig.name || '') !== (curr.name || '')) {
-          changes.push({ type: 'renamed', oldAchievement: orig, achievement: curr });
-        }
-        const oldIdx = origIds.indexOf(id);
-        const newIdx = currIds.indexOf(id);
-        if (oldIdx !== -1 && newIdx !== -1 && oldIdx !== newIdx) {
-          const oldRank = oldIdx + 1;
-          const newRank = newIdx + 1;
-          changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
-        }
+      if (!curr) continue;
+      if ((orig.name || '') !== (curr.name || '')) {
+        changes.push({ type: 'renamed', oldAchievement: orig, achievement: curr });
+      }
+      const oldRank = Number(orig.rank) || null;
+      const newRank = Number(curr.rank) || null;
+      if (oldRank != null && newRank != null && oldRank !== newRank) {
+        changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
       }
     }
 
     const addedPositions = changes.filter(c => c && c.type === 'added' && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
+    const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
+
     if (addedPositions && addedPositions.length) {
-      for (const c of changes) {
-        if (!c || !c.achievement) continue;
-        if (c.type === 'movedDown') {
-          const oldR = Number(c.oldRank) || 0;
-          const newR = Number(c.newRank) || 0;
+      for (const m of moveChanges) {
+        if (!m || !m.achievement) continue;
+        if (m.type === 'movedDown') {
+          const oldR = Number(m.oldRank) || 0;
+          const newR = Number(m.newRank) || 0;
           const delta = newR - oldR;
           if (delta === 1) {
             const affected = addedPositions.some(pos => Number(pos) <= newR);
-            if (affected) suppressedIds.add(c.achievement.id);
+            if (affected) suppressedIds.add(m.achievement.id);
           }
         }
       }
     }
+    if (moveChanges && moveChanges.length) {
+      const movesMap = new Map();
+      moveChanges.forEach(m => {
+        if (!m || !m.achievement) return;
+        const id = m.achievement.id;
+        movesMap.set(id, {
+          oldRank: Number(m.oldRank) || null,
+          newRank: Number(m.newRank) || null,
+          type: m.type,
+          achievement: m.achievement
+        });
+      });
 
-    const added = changes.filter(c => c && c.type === 'added');
-    const removed = changes.filter(c => c && c.type === 'removed');
-    const consumedRemovals = new Set();
-    const consumedAdds = new Set();
-
-    function nameTokens(s) {
-      if (!s) return [];
-      return String(s).toLowerCase().split(/[^a-z0-9]+/).filter(t => t && t.length > 1);
-    }
-
-    function similarity(a, b) {
-      const ta = nameTokens(a);
-      const tb = nameTokens(b);
-      if (!ta.length || !tb.length) return 0;
-      const setA = new Set(ta);
-      const setB = new Set(tb);
-      let inter = 0;
-      setA.forEach(x => { if (setB.has(x)) inter++; });
-      const union = new Set([...setA, ...setB]).size;
-      return union === 0 ? 0 : inter / union;
-    }
-
-    const extraGrouped = [];
-
-    for (let i = 0; i < added.length; i++) {
-      const a = added[i];
-      if (!a || !a.achievement) continue;
-      const matches = [];
-      for (let j = 0; j < removed.length; j++) {
-        const r = removed[j];
-        if (!r || !r.achievement) continue;
-        if (consumedRemovals.has(j)) continue;
-        const sim = similarity(a.achievement.name, r.achievement.name);
-        const contains = (String(a.achievement.name || '').toLowerCase().includes(String(r.achievement.name || '').toLowerCase()) || String(r.achievement.name || '').toLowerCase().includes(String(a.achievement.name || '').toLowerCase()));
-        if (sim >= 0.25 || contains) {
-          matches.push({ index: j, removed: r });
+      for (const [id, mv] of movesMap.entries()) {
+        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+        const delta = mv.newRank - mv.oldRank;
+        if (delta === 0) continue;
+        if (delta < 0) {
+          const low = mv.newRank;
+          const high = mv.oldRank - 1;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+              suppressedIds.add(otherId);
+            }
+          }
+        } else {
+          const low = mv.oldRank + 1;
+          const high = mv.newRank;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+              suppressedIds.add(otherId);
+            }
+          }
         }
       }
-      if (matches.length > 0) {
-        const removedDuplicates = matches.map(m => m.removed.achievement).filter(Boolean);
-        extraGrouped.push({ type: 'addedWithRemovals', achievement: a.achievement, removedDuplicates });
-        matches.forEach(m => consumedRemovals.add(m.index));
-        consumedAdds.add(i);
-      }
     }
-
-    for (let i = 0; i < removed.length; i++) {
-      if (consumedRemovals.has(i)) continue;
-      const r = removed[i];
-      const matches = [];
-      for (let j = 0; j < added.length; j++) {
-        if (consumedAdds.has(j)) continue;
-        const a = added[j];
-        const sim = similarity(a.achievement.name, r.achievement.name);
-        const contains = (String(a.achievement.name || '').toLowerCase().includes(String(r.achievement.name || '').toLowerCase()) || String(r.achievement.name || '').toLowerCase().includes(String(a.achievement.name || '').toLowerCase()));
-        if (sim >= 0.25 || contains) {
-          matches.push({ index: j, added: a });
-        }
-      }
-      if (matches.length > 0) {
-        const readded = matches.map(m => m.added.achievement).filter(Boolean);
-        extraGrouped.push({ type: 'removedWithReadds', achievement: r.achievement, readdedAchievements: readded });
-        matches.forEach(m => consumedAdds.add(m.index));
-        consumedRemovals.add(i);
-      }
-    }
-
-    const remaining = [];
-    for (const c of changes) {
-      if (!c) continue;
-      if (c.type === 'added') {
-        const idx = added.indexOf(c);
-        if (idx !== -1 && consumedAdds.has(idx)) continue;
-      }
-      if (c.type === 'removed') {
-        const idx = removed.indexOf(c);
-        if (idx !== -1 && consumedRemovals.has(idx)) continue;
-      }
-      remaining.push(c);
-    }
-    const combinedChanges = [...extraGrouped, ...remaining];
-    changes.length = 0;
-    Array.prototype.push.apply(changes, combinedChanges);
-    const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
       if (!a || !a.achievement || suppressedIds.has(a.achievement.id)) continue;
