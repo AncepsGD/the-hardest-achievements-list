@@ -1186,6 +1186,7 @@ export default function SharedList({
     const baseList = current;
     const filteredChanges = changesList.filter(c => {
       if (!c) return false;
+      if (mode === 'timeline' && (c.type === 'movedUp' || c.type === 'movedDown' || c.type === 'swapped')) return false;
       if ((c.type === 'movedUp' || c.type === 'movedDown') && c.achievement && suppressedIds.has(c.achievement.id)) return false;
       return true;
     });
