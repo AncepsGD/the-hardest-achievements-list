@@ -11,32 +11,37 @@ function getLeaderboard(achievements) {
   const N = achievements.length;
   if (N === 0) return [];
 
-  const N_REF = 1000; 
-  const TOP_K = 50; 
-  const EXPONENT_TOP = 1.5; 
+  const TOP_K = 15; 
+  const EXPONENT_TOP = 1.25; 
   const EXPONENT_REST = 0.7; 
   const POINTS_MULTIPLIER = 100; 
-  const ALPHA = 0.9; 
+  const ALPHA = 0.9;
+  const LOG_COMPRESSION_C = 10;
+  const DIMINISHING_RETURNS_K = 0.01; 
+  const MIN_POINTS = 1; 
+
+  const topBoundaryPercentile = 1 - ((TOP_K - 1) / Math.max(N - 1, 1));
 
   const rawWeights = achievements.map((_, index) => {
-    const i = index; 
-    const topBoundaryValue = Math.max(N_REF - (TOP_K - 1), 1);
-    const currValue = Math.max(N_REF - i, 1);
-    if (i < TOP_K) {
-      return Math.pow(currValue, EXPONENT_TOP);
-    }
+    const i = index;
     
-    const topAtBoundary = Math.pow(topBoundaryValue, EXPONENT_TOP);
-    const ratio = currValue / topBoundaryValue;
+    const percentile = 1 - (i / Math.max(N - 1, 1));
+    
+    if (i < TOP_K) {
+      
+      return Math.pow(percentile, EXPONENT_TOP);
+    }
+
+    const topAtBoundary = Math.pow(topBoundaryPercentile, EXPONENT_TOP);
+    const ratio = percentile / topBoundaryPercentile;
     return topAtBoundary * Math.pow(Math.max(ratio, 0.0001), EXPONENT_REST);
   });
 
-  const sumRaw = rawWeights.reduce((a, b) => a + b, 0);
-  
-  const scale = (N_REF / sumRaw) * POINTS_MULTIPLIER;
   const pointsById = {};
   achievements.forEach((ach, index) => {
-    pointsById[ach.id] = rawWeights[index] * scale;
+    const compressed = Math.log(1 + rawWeights[index] / LOG_COMPRESSION_C);
+    const pointsValue = Math.max(compressed * POINTS_MULTIPLIER, MIN_POINTS);
+    pointsById[ach.id] = pointsValue;
   });
 
   achievements.forEach((achievement, index) => {
@@ -58,6 +63,12 @@ function getLeaderboard(achievements) {
         achievements: [augmented],
       };
     }
+  });
+
+  Object.values(leaderboard).forEach(playerStats => {
+    const count = playerStats.count;
+    const playerMultiplier = 1 / (1 + DIMINISHING_RETURNS_K * Math.max(count - 1, 0));
+    playerStats.effectivePoints *= playerMultiplier;
   });
 
   return Object.entries(leaderboard)
