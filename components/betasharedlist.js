@@ -978,6 +978,90 @@ export default function SharedList({
         }
       }
     }
+
+    const added = changes.filter(c => c && c.type === 'added').map(c => ({ ...c }));
+    const removed = changes.filter(c => c && c.type === 'removed').map(c => ({ ...c }));
+    const consumedRemovals = new Set();
+    const consumedAdds = new Set();
+
+    function nameTokens(s) {
+      if (!s) return [];
+      return String(s).toLowerCase().split(/[^a-z0-9]+/).filter(t => t && t.length > 1);
+    }
+
+    function similarity(a, b) {
+      const ta = nameTokens(a);
+      const tb = nameTokens(b);
+      if (!ta.length || !tb.length) return 0;
+      const setA = new Set(ta);
+      const setB = new Set(tb);
+      let inter = 0;
+      setA.forEach(x => { if (setB.has(x)) inter++; });
+      const union = new Set([...setA, ...setB]).size;
+      return union === 0 ? 0 : inter / union;
+    }
+
+    const extraGrouped = [];
+
+    for (let i = 0; i < added.length; i++) {
+      const a = added[i];
+      if (!a || !a.achievement) continue;
+      const matches = [];
+      for (let j = 0; j < removed.length; j++) {
+        const r = removed[j];
+        if (!r || !r.achievement) continue;
+        if (consumedRemovals.has(j)) continue;
+        const sim = similarity(a.achievement.name, r.achievement.name);
+        const contains = (String(a.achievement.name || '').toLowerCase().includes(String(r.achievement.name || '').toLowerCase()) || String(r.achievement.name || '').toLowerCase().includes(String(a.achievement.name || '').toLowerCase()));
+        if (sim >= 0.25 || contains) {
+          matches.push({ index: j, removed: r });
+        }
+      }
+      if (matches.length > 0) {
+        const removedDuplicates = matches.map(m => m.removed.achievement).filter(Boolean);
+        extraGrouped.push({ type: 'addedWithRemovals', achievement: a.achievement, removedDuplicates });
+        matches.forEach(m => consumedRemovals.add(m.index));
+        consumedAdds.add(i);
+      }
+    }
+
+    for (let i = 0; i < removed.length; i++) {
+      if (consumedRemovals.has(i)) continue;
+      const r = removed[i];
+      const matches = [];
+      for (let j = 0; j < added.length; j++) {
+        if (consumedAdds.has(j)) continue;
+        const a = added[j];
+        const sim = similarity(a.achievement.name, r.achievement.name);
+        const contains = (String(a.achievement.name || '').toLowerCase().includes(String(r.achievement.name || '').toLowerCase()) || String(r.achievement.name || '').toLowerCase().includes(String(a.achievement.name || '').toLowerCase()));
+        if (sim >= 0.25 || contains) {
+          matches.push({ index: j, added: a });
+        }
+      }
+      if (matches.length > 0) {
+        const readded = matches.map(m => m.added.achievement).filter(Boolean);
+        extraGrouped.push({ type: 'removedWithReadds', achievement: r.achievement, readdedAchievements: readded });
+        matches.forEach(m => consumedAdds.add(m.index));
+        consumedRemovals.add(i);
+      }
+    }
+
+    const remaining = [];
+    for (const c of changes) {
+      if (!c) continue;
+      if (c.type === 'added') {
+        const idx = added.indexOf(c);
+        if (idx !== -1 && consumedAdds.has(idx)) continue;
+      }
+      if (c.type === 'removed') {
+        const idx = removed.indexOf(c);
+        if (idx !== -1 && consumedRemovals.has(idx)) continue;
+      }
+      remaining.push(c);
+    }
+    const combinedChanges = [...extraGrouped, ...remaining];
+    changes.length = 0;
+    Array.prototype.push.apply(changes, combinedChanges);
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
       if (!a || !a.achievement || suppressedIds.has(a.achievement.id)) continue;
@@ -1019,6 +1103,31 @@ export default function SharedList({
       } catch (e) {
         alert('Clipboard API not available');
       }
+    }
+  }
+
+  function resetChanges() {
+    if (!originalAchievements || !originalAchievements.length) {
+      alert('No original JSON loaded to reset to.');
+      return;
+    }
+    const ok = typeof window !== 'undefined' ? window.confirm('Are you sure you want to reset all changes and restore the original JSON?') : true;
+    if (!ok) return;
+    try {
+      const restored = originalAchievements.map(a => ({ ...a }));
+      setReordered(restored);
+      setDevMode(false);
+      setEditIdx(null);
+      setEditForm(null);
+      setEditFormTags([]);
+      setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
+      setNewFormTags([]);
+      setNewFormCustomTags('');
+      setInsertIdx(null);
+      setScrollToIdx(0);
+    } catch (e) {
+      console.error('Failed to reset changes', e);
+      alert('Failed to reset changes');
     }
   }
 
@@ -1888,7 +1997,7 @@ export default function SharedList({
             handleShowNewForm={handleShowNewForm}
             newFormPreview={newFormPreview}
             generateAndCopyChangelog={generateAndCopyChangelog}
-
+            resetChanges={resetChanges}
             onImportAchievementsJson={json => {
               let imported = Array.isArray(json) ? json : (json.achievements || []);
               if (!Array.isArray(imported)) {
