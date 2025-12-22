@@ -31,7 +31,10 @@ function DevModePanelInner({
   pasteShowResults,
   setPasteShowResults,
   getPasteCandidates,
-  handlePasteSelect
+  handlePasteSelect,
+  generateAndCopyChangelog,
+  clearChangelog,
+  changeLogCount
 }) {
   return (
     <>
@@ -67,6 +70,14 @@ function DevModePanelInner({
               />
             </label>
             <button className="devmode-btn" onClick={handleShowNewForm}>New Achievement</button>
+            <button className="devmode-btn" onClick={generateAndCopyChangelog} style={{backgroundColor: changeLogCount > 0 ? '#28a745' : undefined}}>
+              Copy Changelog ({changeLogCount})
+            </button>
+            {changeLogCount > 0 && (
+              <button className="devmode-btn" onClick={clearChangelog} style={{backgroundColor: '#dc3545'}}>
+                Clear Log
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -151,7 +162,7 @@ function DevModePanelInner({
             <label style={{display:'block',fontSize:13,marginTop:6}}>Submitter<input type="text" name="submitter" value={newForm.submitter} onChange={handleNewFormChange} placeholder="kyle1saurus" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Level ID<input type="text" name="levelID" value={newForm.levelID} onChange={handleNewFormChange} placeholder="86407629" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Thumbnail<input type="text" name="thumbnail" value={newForm.thumbnail} onChange={handleNewFormChange} placeholder="Image URL" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
-            {/* Paste-from-previous helper placed beneath Thumbnail */}
+            {}
             <div style={{ marginTop: 8, marginBottom: 6 }}>
               <label style={{ color: 'var(--muted, #DFE3F5)', fontSize: 13, display: 'block', marginBottom: 4 }}>Paste from previous achievements</label>
               <input
@@ -224,12 +235,15 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.newFormPreview === next.newFormPreview
     && prev.handleCopyJson === next.handleCopyJson
     && prev.handleShowNewForm === next.handleShowNewForm
-  && prev.handleCheckDuplicateThumbnails === next.handleCheckDuplicateThumbnails
+    && prev.handleCheckDuplicateThumbnails === next.handleCheckDuplicateThumbnails
     && prev.onImportAchievementsJson === next.onImportAchievementsJson
     && prev.pasteSearch === next.pasteSearch
     && prev.pasteShowResults === next.pasteShowResults
     && prev.getPasteCandidates === next.getPasteCandidates
-    && prev.handlePasteSelect === next.handlePasteSelect;
+    && prev.handlePasteSelect === next.handlePasteSelect
+    && prev.generateAndCopyChangelog === next.generateAndCopyChangelog
+    && prev.clearChangelog === next.clearChangelog
+    && prev.changeLogCount === next.changeLogCount;
 });
 
 export default DevModePanel;
