@@ -1259,6 +1259,27 @@ export default function SharedList({
       if (nv2) entry.showcaseVideo = nv2;
       else if (!devMode) delete entry.showcaseVideo;
     }
+    const baseBefore = (devMode && reordered) ? reordered : (reordered || achievements) || [];
+    let predictedInsertedIdx = 0;
+    if (!baseBefore || baseBefore.length === 0) {
+      predictedInsertedIdx = 0;
+    } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
+      predictedInsertedIdx = Math.max(0, Math.min(baseBefore.length, Number(entry.rank) - 1));
+    } else if (insertIdx === null || insertIdx < 0 || insertIdx > baseBefore.length - 1) {
+      predictedInsertedIdx = baseBefore.length;
+    } else {
+      predictedInsertedIdx = insertIdx + 1;
+    }
+
+    if (devMode) {
+      logChange({
+        type: 'added',
+        achievement: entry,
+        oldIndex: null,
+        newIndex: predictedInsertedIdx
+      });
+    }
+
     setReordered(prev => {
       let newArr;
       let insertedIdx = 0;
@@ -1284,15 +1305,6 @@ export default function SharedList({
       }
 
       newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
-
-      if (devMode) {
-        logChange({
-          type: 'added',
-          achievement: entry,
-          oldIndex: null,
-          newIndex: insertedIdx
-        });
-      }
 
       return newArr;
     });
