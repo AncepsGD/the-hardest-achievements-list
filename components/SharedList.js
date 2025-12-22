@@ -59,6 +59,20 @@ function formatChangelogEntry(change, achievements) {
       if (context.above) entry += `\n> Now above ${context.above}`;
       break;
 
+    case 'swapped':
+      {
+        const a = achievement;
+        const b = oldAchievement;
+        const nameA = (a && a.name) ? a.name : 'Unknown';
+        const nameB = (b && b.name) ? b.name : 'Unknown';
+        const newA = (newRank != null) ? newRank : (a && a.rank) ? a.rank : '?';
+        const newB = (change && change.newRankB != null) ? change.newRankB : (b && b.rank) ? b.rank : '?';
+        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**.`;
+        entry += `\n> Now ${nameA} is #${newA}`;
+        entry += `\n> And ${nameB} is #${newB}`;
+      }
+      break;
+
     case 'renamed':
       entry = `⚪ ${oldAchievement?.name || 'Unknown'} updated to **${name}**`;
       break;
@@ -100,6 +114,40 @@ function formatChangelogEntry(change, achievements) {
   }
 
   return entry;
+}
+
+function formatDate(date, dateFormat) {
+  if (!date) return 'N/A';
+  function parseAsLocal(input) {
+    if (input instanceof Date) return input;
+    if (typeof input === 'number') return new Date(input);
+    if (typeof input !== 'string') return new Date(input);
+
+    const m = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      return new Date(y, mo - 1, d);
+    }
+
+    return new Date(input);
+  }
+
+  const d = parseAsLocal(date);
+  if (isNaN(d)) return 'N/A';
+  const yy = String(d.getFullYear()).slice(-2);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
+  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
+  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
+  try {
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  } catch (e) {
+    return `${yyyy}-${mm}-${dd}`;
+  }
 }
 
 const AVAILABLE_TAGS = [
@@ -212,15 +260,26 @@ function getThumbnailUrl(achievement, isMobile) {
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
   const tagStates = {};
   allTags.forEach(tag => {
-    if (filterTags.include.includes(tag)) tagStates[tag] = 'include';
-    else if (filterTags.exclude.includes(tag)) tagStates[tag] = 'exclude';
+    if ((filterTags && filterTags.include || []).includes(tag)) tagStates[tag] = 'include';
+    else if ((filterTags && filterTags.exclude || []).includes(tag)) tagStates[tag] = 'exclude';
     else tagStates[tag] = 'neutral';
   });
 
   function handlePillClick(tag) {
-    if (tagStates[tag] === 'neutral') setFilterTags(prev => ({ ...prev, include: [...prev.include, tag] }));
-    else if (tagStates[tag] === 'include') setFilterTags(prev => ({ ...prev, include: prev.include.filter(t => t !== tag), exclude: [...prev.exclude, tag] }));
-    else setFilterTags(prev => ({ ...prev, exclude: prev.exclude.filter(t => t !== tag) }));
+    const state = tagStates[tag];
+    const include = Array.isArray(filterTags.include) ? [...filterTags.include] : [];
+    const exclude = Array.isArray(filterTags.exclude) ? [...filterTags.exclude] : [];
+
+    if (state === 'neutral') {
+      if (!include.includes(tag)) include.push(tag);
+    } else if (state === 'include') {
+      const idx = include.indexOf(tag); if (idx !== -1) include.splice(idx, 1);
+      if (!exclude.includes(tag)) exclude.push(tag);
+    } else if (state === 'exclude') {
+      const idx = exclude.indexOf(tag); if (idx !== -1) exclude.splice(idx, 1);
+    }
+
+    setFilterTags({ include, exclude });
   }
 
   return (
@@ -239,7 +298,7 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       {allTags.length === 0 ? (
         <span style={{ color: '#aaa', fontSize: 13 }}>Loading tags...</span>
       ) : (
-        allTags.sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
+        allTags.sort((a, b) => (TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase()))).map(tag => (
           <Tag
             key={tag}
             tag={tag}
@@ -252,36 +311,20 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       )}
     </div>
   );
-}
 
-function formatDate(date, dateFormat) {
-  if (!date) return 'N/A';
-
-  if (typeof date === 'string' && date.includes('?')) return date;
-  const d = new Date(date);
-  if (isNaN(d)) return 'N/A';
-  d.setDate(d.getDate() + 1);
-  const yy = String(d.getFullYear()).slice(-2);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
-  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
-  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
-  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 function parseAsLocal(d) {
   if (!d) return null;
   const s = String(d).trim();
-
   if (s.includes('?')) return null;
   try {
     if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
-
-      return new Date(s.replace(/-/g, '/'));
+      return new Date(s + 'T00:00:00');
     }
-    return new Date(s);
+    const parsed = new Date(s);
+    if (isNaN(parsed)) return null;
+    return parsed;
   } catch (e) {
     return null;
   }
@@ -568,7 +611,8 @@ export default function SharedList({
   const { dateFormat, setDateFormat } = useDateFormat();
   const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
-  const [changeLog, setChangeLog] = useState([]);
+
+  const [originalAchievements, setOriginalAchievements] = useState(null);
   const [sortKey, setSortKey] = useState(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -693,12 +737,7 @@ export default function SharedList({
       arr.forEach((a, i) => { a.rank = i + 1; });
 
       if (devMode && arr[realIdx - 1]) {
-        logChange({
-          type: 'movedUp',
-          achievement: arr[realIdx - 1],
-          oldRank: realIdx + 1,
-          oldIndex: realIdx
-        });
+
       }
 
       return arr;
@@ -716,12 +755,7 @@ export default function SharedList({
       arr.forEach((a, i) => { a.rank = i + 1; });
 
       if (devMode && arr[realIdx + 1]) {
-        logChange({
-          type: 'movedDown',
-          achievement: arr[realIdx + 1],
-          oldRank: realIdx + 1,
-          oldIndex: realIdx
-        });
+
       }
 
       return arr;
@@ -835,14 +869,6 @@ export default function SharedList({
       const [removed] = arr.splice(editIdx, 1);
       const updated = { ...removed, ...entry };
 
-      if (devMode && removed && removed.name !== updated.name) {
-        logChange({
-          type: 'renamed',
-          oldAchievement: removed,
-          achievement: updated
-        });
-      }
-
       if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
         const idx = Math.max(0, Math.min(arr.length, Number(entry.rank) - 1));
         arr.splice(idx, 0, updated);
@@ -866,72 +892,265 @@ export default function SharedList({
     setEditFormCustomTags('');
   }
 
-  function logChange(change) {
-    setChangeLog(prev => [...prev, change]);
-  }
-
   function generateAndCopyChangelog() {
-    const baseList = reordered || achievements || [];
-    const processedIds = new Set();
-    const mergedChanges = [];
+    const original = originalAchievements || [];
+    const current = (reordered && reordered.length) ? reordered : achievements || [];
 
-    for (let i = 0; i < changeLog.length; i++) {
-      const change = changeLog[i];
-      if (!change) continue;
-      const { type, achievement } = change;
-
-      if ((type === 'movedUp' || type === 'movedDown') && achievement && achievement.id) {
-        const id = achievement.id;
-        if (processedIds.has(id)) {
-          continue;
-        }
-
-        const firstOldRank = change.oldRank;
-
-        const finalAch = baseList.find(a => a && a.id === id) || null;
-        const finalRank = finalAch ? finalAch.rank : (change.rank || null);
-
-        let mergedType = type;
-        if (finalRank != null && firstOldRank != null) {
-          if (finalRank > firstOldRank) mergedType = 'movedDown';
-          else if (finalRank < firstOldRank) mergedType = 'movedUp';
-        }
-
-        mergedChanges.push({
-          type: mergedType,
-          achievement: finalAch || achievement,
-          oldRank: firstOldRank,
-          oldIndex: change.oldIndex
-        });
-        processedIds.add(id);
-      } else {
-        mergedChanges.push(change);
-      }
-    }
-
-    const formatted = mergedChanges
-      .map(change => formatChangelogEntry(change, baseList))
-      .filter(entry => entry.trim() !== '')
-      .join('\n\n');
-
-    if (!formatted) {
-      alert('No changes to log');
+    if (!original || !original.length) {
+      alert('Original JSON not available to diff against.');
       return;
     }
 
-    if (navigator && navigator.clipboard) {
-      navigator.clipboard.writeText(formatted).then(() => {
-        alert('Changelog copied to clipboard!');
-      }).catch(() => {
-        alert('Failed to copy to clipboard');
+    const byIdOriginal = new Map();
+    original.forEach(a => { if (a && a.id) byIdOriginal.set(a.id, a); });
+    const byIdCurrent = new Map();
+    current.forEach(a => { if (a && a.id) byIdCurrent.set(a.id, a); });
+
+    const changes = [];
+
+    for (const [id, a] of byIdOriginal.entries()) {
+      if (!byIdCurrent.has(id)) {
+        changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank });
+      }
+    }
+
+    for (const [id, a] of byIdCurrent.entries()) {
+      if (!byIdOriginal.has(id)) {
+        changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
+      }
+    }
+
+    for (const [id, orig] of byIdOriginal.entries()) {
+      if (!byIdCurrent.has(id)) continue;
+      const curr = byIdCurrent.get(id);
+      if (!curr) continue;
+      if ((orig.name || '') !== (curr.name || '')) {
+        changes.push({ type: 'renamed', oldAchievement: orig, achievement: curr });
+      }
+      const oldRank = Number(orig.rank) || null;
+      const newRank = Number(curr.rank) || null;
+      if (oldRank != null && newRank != null && oldRank !== newRank) {
+        changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
+      }
+    }
+
+    const addedPositions = changes.filter(c => c && c.type === 'added' && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
+    const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
+    const suppressedIds = new Set();
+
+    if (addedPositions && addedPositions.length) {
+      for (const m of moveChanges) {
+        if (!m || !m.achievement) continue;
+        if (m.type === 'movedDown') {
+          const oldR = Number(m.oldRank) || 0;
+          const newR = Number(m.newRank) || 0;
+          const delta = newR - oldR;
+          if (delta === 1) {
+            const affected = addedPositions.some(pos => Number(pos) <= newR);
+            if (affected) suppressedIds.add(m.achievement.id);
+          }
+        }
+      }
+    }
+    if (moveChanges && moveChanges.length) {
+      const movesMap = new Map();
+      moveChanges.forEach(m => {
+        if (!m || !m.achievement) return;
+        const id = m.achievement.id;
+        movesMap.set(id, {
+          oldRank: Number(m.oldRank) || null,
+          newRank: Number(m.newRank) || null,
+          type: m.type,
+          achievement: m.achievement
+        });
       });
+
+      for (const [id, mv] of movesMap.entries()) {
+        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+        const delta = mv.newRank - mv.oldRank;
+        if (delta === 0) continue;
+        if (delta < 0) {
+          const low = mv.newRank;
+          const high = mv.oldRank - 1;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+              suppressedIds.add(otherId);
+            }
+          }
+        } else {
+          const low = mv.oldRank + 1;
+          const high = mv.newRank;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+              suppressedIds.add(otherId);
+            }
+          }
+        }
+      }
+    }
+    for (let i = 0; i < moveChanges.length; i++) {
+      const a = moveChanges[i];
+      if (!a || !a.achievement || suppressedIds.has(a.achievement.id)) continue;
+      for (let j = i + 1; j < moveChanges.length; j++) {
+        const b = moveChanges[j];
+        if (!b || !b.achievement || suppressedIds.has(b.achievement.id)) continue;
+        if (a.oldRank === b.newRank && a.newRank === b.oldRank) {
+          if (a.type === 'movedUp' && b.type === 'movedDown') suppressedIds.add(b.achievement.id);
+          else if (b.type === 'movedUp' && a.type === 'movedDown') suppressedIds.add(a.achievement.id);
+        }
+      }
+    }
+
+    const baseList = current;
+    const filteredChanges = changes.filter(c => {
+      if (!c) return false;
+      if ((c.type === 'movedUp' || c.type === 'movedDown') && c.achievement && suppressedIds.has(c.achievement.id)) return false;
+      return true;
+    });
+
+    const finalChanges = [...filteredChanges];
+    {
+      const used = new Set();
+      const collapsed = [];
+      for (let i = 0; i < finalChanges.length; i++) {
+        if (used.has(i)) continue;
+        const a = finalChanges[i];
+        if (!a || !(a.type === 'movedUp' || a.type === 'movedDown') || !a.achievement) {
+          collapsed.push(a);
+          used.add(i);
+          continue;
+        }
+        let found = -1;
+        for (let j = i + 1; j < finalChanges.length; j++) {
+          if (used.has(j)) continue;
+          const b = finalChanges[j];
+          if (!b || !(b.type === 'movedUp' || b.type === 'movedDown') || !b.achievement) continue;
+          if (a.oldRank === b.newRank && a.newRank === b.oldRank) {
+            found = j;
+            break;
+          }
+        }
+        if (found !== -1) {
+          const b = finalChanges[found];
+          const swap = {
+            type: 'swapped',
+            achievement: a.achievement,
+            oldAchievement: b.achievement,
+            oldRank: a.oldRank,
+            newRank: a.newRank,
+            newRankB: b.newRank,
+            oldRankB: b.oldRank
+          };
+          collapsed.push(swap);
+          used.add(i);
+          used.add(found);
+        } else {
+          collapsed.push(a);
+          used.add(i);
+        }
+      }
+      for (let k = 0; k < finalChanges.length; k++) {
+        if (!used.has(k)) collapsed.push(finalChanges[k]);
+      }
+      finalChanges.length = 0;
+      for (const it of collapsed) finalChanges.push(it);
+    }
+    for (let i = 0; i < finalChanges.length; i++) {
+      const x = finalChanges[i];
+      if (!x || !(x.type === 'movedUp' || x.type === 'movedDown') || !x.achievement) continue;
+      for (let j = i + 1; j < finalChanges.length; j++) {
+        const y = finalChanges[j];
+        if (!y || !(y.type === 'movedUp' || y.type === 'movedDown') || !y.achievement) continue;
+        if (x.oldRank === y.newRank && x.newRank === y.oldRank) {
+          if (x.type === 'movedUp' && y.type === 'movedDown') {
+            finalChanges.splice(j, 1);
+            j--;
+          } else if (y.type === 'movedUp' && x.type === 'movedDown') {
+            finalChanges.splice(i, 1);
+            i--;
+            break;
+          }
+        }
+      }
+    }
+
+    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+
+    if (!formatted || formatted.trim() === '') {
+      const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
+      if (moveOnly && moveOnly.length) {
+        const byPair = new Map();
+        moveOnly.forEach(m => {
+          const key = `${Math.min(m.oldRank, m.newRank)}:${Math.max(m.oldRank, m.newRank)}`;
+          if (!byPair.has(key)) byPair.set(key, []);
+          byPair.get(key).push(m);
+        });
+        const chosen = [];
+        for (const arr of byPair.values()) {
+          if (!arr || !arr.length) continue;
+          if (arr.length === 1) chosen.push(arr[0]);
+          else {
+            const up = arr.find(x => x.type === 'movedUp');
+            if (up) chosen.push(up);
+            else chosen.push(arr[0]);
+          }
+        }
+        const alt = chosen.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+        if (alt && alt.trim()) formatted = alt;
+      }
+    }
+
+    if (!formatted) {
+      alert('No changes detected');
+      return;
+    }
+
+    if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(formatted).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
     } else {
-      alert('Clipboard API not available');
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = formatted;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('Changelog copied to clipboard!');
+      } catch (e) {
+        alert('Clipboard API not available');
+      }
     }
   }
 
-  function clearChangelog() {
-    setChangeLog([]);
+  function resetChanges() {
+    if (!originalAchievements || !originalAchievements.length) {
+      alert('No original JSON loaded to reset to.');
+      return;
+    }
+    const ok = typeof window !== 'undefined' ? window.confirm('Are you sure you want to reset all changes and restore the original JSON?') : true;
+    if (!ok) return;
+    try {
+      const restored = originalAchievements.map(a => ({ ...a }));
+      setReordered(restored);
+      setDevMode(false);
+      setEditIdx(null);
+      setEditForm(null);
+      setEditFormTags([]);
+      setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
+      setNewFormTags([]);
+      setNewFormCustomTags('');
+      setInsertIdx(null);
+      setScrollToIdx(0);
+    } catch (e) {
+      console.error('Failed to reset changes', e);
+      alert('Failed to reset changes');
+    }
   }
 
   useEffect(() => {
@@ -947,9 +1166,11 @@ export default function SharedList({
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
         if (dataFileName === 'pending.json') {
           setAchievements(valid);
+          setOriginalAchievements(valid.map((a, i) => ({ ...a, rank: i + 1 })));
         } else {
           const withRank = valid.map((a, i) => ({ ...a, rank: i + 1 }));
           setAchievements(withRank);
+          setOriginalAchievements(withRank.map(a => ({ ...a })));
         }
         const tags = new Set();
         valid.forEach(a => (a.tags || []).forEach(t => tags.add(t)));
@@ -1271,15 +1492,6 @@ export default function SharedList({
       predictedInsertedIdx = insertIdx + 1;
     }
 
-    if (devMode) {
-      logChange({
-        type: 'added',
-        achievement: entry,
-        oldIndex: null,
-        newIndex: predictedInsertedIdx
-      });
-    }
-
     setReordered(prev => {
       let newArr;
       let insertedIdx = 0;
@@ -1529,16 +1741,6 @@ export default function SharedList({
       const removed = arr[realIdx];
       arr.splice(realIdx, 1);
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
-
-      if (devMode && removed) {
-        logChange({
-          type: 'removed',
-          oldAchievement: removed,
-          achievement: removed,
-          oldRank: removed.rank,
-          oldIndex: realIdx
-        });
-      }
 
       return arr;
     });
@@ -1817,8 +2019,7 @@ export default function SharedList({
             handleShowNewForm={handleShowNewForm}
             newFormPreview={newFormPreview}
             generateAndCopyChangelog={generateAndCopyChangelog}
-            clearChangelog={clearChangelog}
-            changeLogCount={changeLog.length}
+            resetChanges={resetChanges}
             onImportAchievementsJson={json => {
               let imported = Array.isArray(json) ? json : (json.achievements || []);
               if (!Array.isArray(imported)) {
