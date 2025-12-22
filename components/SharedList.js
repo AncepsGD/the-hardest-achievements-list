@@ -1097,50 +1097,42 @@ export default function SharedList({
     const moveChanges = changesList.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
 
-    const hasAdditionsOrRemovals = allAddedPositions.length > 0 || allRemovedRanks.length > 0;
-    if (hasAdditionsOrRemovals) {
+    if (allAddedPositions && allAddedPositions.length) {
       for (const m of moveChanges) {
-        if (m && m.achievement) {
-          suppressedIds.add(m.achievement.id);
+        if (!m || !m.achievement || m.type !== 'movedDown') continue;
+        const oldR = Number(m.oldRank) || 0;
+        const newR = Number(m.newRank) || 0;
+        const delta = newR - oldR;
+        if (delta === 1) {
+          const causedByAddition = allAddedPositions.some(pos => {
+            const addPos = Number(pos);
+            return addPos <= newR;
+          });
+          if (causedByAddition) suppressedIds.add(m.achievement.id);
         }
       }
-    } else {
-      if (allAddedPositions && allAddedPositions.length) {
-        for (const m of moveChanges) {
-          if (!m || !m.achievement || m.type !== 'movedDown') continue;
-          const oldR = Number(m.oldRank) || 0;
-          const newR = Number(m.newRank) || 0;
-          const delta = newR - oldR;
-          if (delta === 1) {
-            const causedByAddition = allAddedPositions.some(pos => {
-              const addPos = Number(pos);
-              return addPos <= newR;
-            });
-            if (causedByAddition) suppressedIds.add(m.achievement.id);
-          }
-        }
-      }
+    }
 
-      if (allRemovedRanks && allRemovedRanks.length) {
-        for (const m of moveChanges) {
-          if (!m || !m.achievement || m.type !== 'movedUp') continue;
-          const oldR = Number(m.oldRank) || 0;
-          const newR = Number(m.newRank) || 0;
-          const delta = oldR - newR;
-          if (delta === 1) {
-            const causedByRemoval = allRemovedRanks.some(pos => {
-              const remPos = Number(pos);
-              return remPos <= oldR;
-            });
-            if (causedByRemoval) suppressedIds.add(m.achievement.id);
-          }
+    if (allRemovedRanks && allRemovedRanks.length) {
+      for (const m of moveChanges) {
+        if (!m || !m.achievement || m.type !== 'movedUp') continue;
+        const oldR = Number(m.oldRank) || 0;
+        const newR = Number(m.newRank) || 0;
+        const delta = oldR - newR;
+        if (delta === 1) {
+          const causedByRemoval = allRemovedRanks.some(pos => {
+            const remPos = Number(pos);
+            return remPos <= oldR;
+          });
+          if (causedByRemoval) suppressedIds.add(m.achievement.id);
         }
       }
-      if (moveChanges && moveChanges.length) {
-        const movesMap = new Map();
-        moveChanges.forEach(m => {
-          if (!m || !m.achievement) return;
-          const id = m.achievement.id;
+    }
+    if (moveChanges && moveChanges.length) {
+      const movesMap = new Map();
+      moveChanges.forEach(m => {
+        if (!m || !m.achievement) return;
+        const id = m.achievement.id;
           movesMap.set(id, {
             oldRank: Number(m.oldRank) || null,
             newRank: Number(m.newRank) || null,
@@ -1177,7 +1169,6 @@ export default function SharedList({
             }
           }
         }
-      }
     }
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
