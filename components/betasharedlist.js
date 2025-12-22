@@ -1023,6 +1023,7 @@ export default function SharedList({
         const a = finalChanges[i];
         if (!a || !(a.type === 'movedUp' || a.type === 'movedDown') || !a.achievement) {
           collapsed.push(a);
+          used.add(i);
           continue;
         }
         let found = -1;
