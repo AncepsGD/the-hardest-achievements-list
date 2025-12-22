@@ -1031,17 +1031,36 @@ export default function SharedList({
 
     const addedPositions = changesList.filter(c => c && (c.type === 'added' || c.type === 'addedWithRemovals') && c.achievement && c.achievement.rank).map(c => Number(c.achievement.rank));
     const removedRanks = changesList.filter(c => c && (c.type === 'removed' || c.type === 'removedWithReadds')).map(c => Number(c.oldRank || 0));
+    
+    const readdedPositions = [];
+    const removedDuplicateRanks = [];
+    changesList.forEach(c => {
+      if (c && c.type === 'removedWithReadds' && c.readdedAchievements) {
+        c.readdedAchievements.forEach(a => {
+          if (a && a.rank) readdedPositions.push(Number(a.rank));
+        });
+      }
+      if (c && c.type === 'addedWithRemovals' && c.removedDuplicates) {
+        c.removedDuplicates.forEach(a => {
+          if (a && a.rank) removedDuplicateRanks.push(Number(a.rank));
+        });
+      }
+    });
+    
+    const allAddedPositions = [...addedPositions, ...readdedPositions];
+    const allRemovedRanks = [...removedRanks, ...removedDuplicateRanks];
+    
     const moveChanges = changesList.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
 
-    if (addedPositions && addedPositions.length) {
+    if (allAddedPositions && allAddedPositions.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement || m.type !== 'movedDown') continue;
         const oldR = Number(m.oldRank) || 0;
         const newR = Number(m.newRank) || 0;
         const delta = newR - oldR;
         if (delta === 1) {
-          const causedByAddition = addedPositions.some(pos => {
+          const causedByAddition = allAddedPositions.some(pos => {
             const addPos = Number(pos);
             return addPos <= newR;
           });
@@ -1050,14 +1069,14 @@ export default function SharedList({
       }
     }
 
-    if (removedRanks && removedRanks.length) {
+    if (allRemovedRanks && allRemovedRanks.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement || m.type !== 'movedUp') continue;
         const oldR = Number(m.oldRank) || 0;
         const newR = Number(m.newRank) || 0;
         const delta = oldR - newR;
         if (delta === 1) {
-          const causedByRemoval = removedRanks.some(pos => {
+          const causedByRemoval = allRemovedRanks.some(pos => {
             const remPos = Number(pos);
             return remPos <= oldR;
           });
