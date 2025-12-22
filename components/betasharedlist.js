@@ -938,7 +938,7 @@ export default function SharedList({
 
       const oldRank = Number(orig.rank) || null;
       const newRank = Number(curr.rank) || null;
-      if (oldRank != null && newRank != null && oldRank !== newRank) {
+      if (mode !== 'timeline' && oldRank != null && newRank != null && oldRank !== newRank) {
         changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
       }
     }
