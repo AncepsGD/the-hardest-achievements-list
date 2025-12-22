@@ -1097,74 +1097,83 @@ export default function SharedList({
     const moveChanges = changesList.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
 
-    if (allAddedPositions && allAddedPositions.length) {
+    const hasAdditionsOrRemovals = allAddedPositions.length > 0 || allRemovedRanks.length > 0;
+    if (hasAdditionsOrRemovals) {
       for (const m of moveChanges) {
-        if (!m || !m.achievement || m.type !== 'movedDown') continue;
-        const oldR = Number(m.oldRank) || 0;
-        const newR = Number(m.newRank) || 0;
-        const delta = newR - oldR;
-        if (delta === 1) {
-          const causedByAddition = allAddedPositions.some(pos => {
-            const addPos = Number(pos);
-            return addPos <= newR;
-          });
-          if (causedByAddition) suppressedIds.add(m.achievement.id);
+        if (m && m.achievement) {
+          suppressedIds.add(m.achievement.id);
         }
       }
-    }
-
-    if (allRemovedRanks && allRemovedRanks.length) {
-      for (const m of moveChanges) {
-        if (!m || !m.achievement || m.type !== 'movedUp') continue;
-        const oldR = Number(m.oldRank) || 0;
-        const newR = Number(m.newRank) || 0;
-        const delta = oldR - newR;
-        if (delta === 1) {
-          const causedByRemoval = allRemovedRanks.some(pos => {
-            const remPos = Number(pos);
-            return remPos <= oldR;
-          });
-          if (causedByRemoval) suppressedIds.add(m.achievement.id);
-        }
-      }
-    }
-    if (moveChanges && moveChanges.length) {
-      const movesMap = new Map();
-      moveChanges.forEach(m => {
-        if (!m || !m.achievement) return;
-        const id = m.achievement.id;
-        movesMap.set(id, {
-          oldRank: Number(m.oldRank) || null,
-          newRank: Number(m.newRank) || null,
-          type: m.type,
-          achievement: m.achievement
-        });
-      });
-
-      for (const [id, mv] of movesMap.entries()) {
-        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
-        const delta = mv.newRank - mv.oldRank;
-        if (delta === 0) continue;
-        if (delta < 0) {
-          const low = mv.newRank;
-          const high = mv.oldRank - 1;
-          for (const [otherId, other] of movesMap.entries()) {
-            if (otherId === id) continue;
-            if (suppressedIds.has(otherId)) continue;
-            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
-              suppressedIds.add(otherId);
-            }
+    } else {
+      if (allAddedPositions && allAddedPositions.length) {
+        for (const m of moveChanges) {
+          if (!m || !m.achievement || m.type !== 'movedDown') continue;
+          const oldR = Number(m.oldRank) || 0;
+          const newR = Number(m.newRank) || 0;
+          const delta = newR - oldR;
+          if (delta === 1) {
+            const causedByAddition = allAddedPositions.some(pos => {
+              const addPos = Number(pos);
+              return addPos <= newR;
+            });
+            if (causedByAddition) suppressedIds.add(m.achievement.id);
           }
-        } else {
-          const low = mv.oldRank + 1;
-          const high = mv.newRank;
-          for (const [otherId, other] of movesMap.entries()) {
-            if (otherId === id) continue;
-            if (suppressedIds.has(otherId)) continue;
-            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
-              suppressedIds.add(otherId);
+        }
+      }
+
+      if (allRemovedRanks && allRemovedRanks.length) {
+        for (const m of moveChanges) {
+          if (!m || !m.achievement || m.type !== 'movedUp') continue;
+          const oldR = Number(m.oldRank) || 0;
+          const newR = Number(m.newRank) || 0;
+          const delta = oldR - newR;
+          if (delta === 1) {
+            const causedByRemoval = allRemovedRanks.some(pos => {
+              const remPos = Number(pos);
+              return remPos <= oldR;
+            });
+            if (causedByRemoval) suppressedIds.add(m.achievement.id);
+          }
+        }
+      }
+      if (moveChanges && moveChanges.length) {
+        const movesMap = new Map();
+        moveChanges.forEach(m => {
+          if (!m || !m.achievement) return;
+          const id = m.achievement.id;
+          movesMap.set(id, {
+            oldRank: Number(m.oldRank) || null,
+            newRank: Number(m.newRank) || null,
+            type: m.type,
+            achievement: m.achievement
+          });
+        });
+
+        for (const [id, mv] of movesMap.entries()) {
+          if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+          const delta = mv.newRank - mv.oldRank;
+          if (delta === 0) continue;
+          if (delta < 0) {
+            const low = mv.newRank;
+            const high = mv.oldRank - 1;
+            for (const [otherId, other] of movesMap.entries()) {
+              if (otherId === id) continue;
+              if (suppressedIds.has(otherId)) continue;
+              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+                suppressedIds.add(otherId);
+              }
+            }
+          } else {
+            const low = mv.oldRank + 1;
+            const high = mv.newRank;
+            for (const [otherId, other] of movesMap.entries()) {
+              if (otherId === id) continue;
+              if (suppressedIds.has(otherId)) continue;
+              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+                suppressedIds.add(otherId);
+              }
             }
           }
         }
