@@ -218,21 +218,9 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
   });
 
   function handlePillClick(tag) {
-    setFilterTags(prev => {
-      const include = Array.isArray(prev.include) ? [...prev.include] : [];
-      const exclude = Array.isArray(prev.exclude) ? [...prev.exclude] : [];
-      const inIdx = include.indexOf(tag);
-      const exIdx = exclude.indexOf(tag);
-      if (inIdx !== -1) {
-        include.splice(inIdx, 1);
-        if (!exclude.includes(tag)) exclude.push(tag);
-      } else if (exIdx !== -1) {
-        exclude.splice(exIdx, 1);
-      } else {
-        include.push(tag);
-      }
-      return { include, exclude };
-    });
+    if (tagStates[tag] === 'neutral') setFilterTags(prev => ({ ...prev, include: [...prev.include, tag] }));
+    else if (tagStates[tag] === 'include') setFilterTags(prev => ({ ...prev, include: prev.include.filter(t => t !== tag), exclude: [...prev.exclude, tag] }));
+    else setFilterTags(prev => ({ ...prev, exclude: prev.exclude.filter(t => t !== tag) }));
   }
 
   return (
@@ -264,6 +252,39 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       )}
     </div>
   );
+}
+
+function formatDate(date, dateFormat) {
+  if (!date) return 'N/A';
+
+  if (typeof date === 'string' && date.includes('?')) return date;
+  const d = new Date(date);
+  if (isNaN(d)) return 'N/A';
+  d.setDate(d.getDate() + 1);
+  const yy = String(d.getFullYear()).slice(-2);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
+  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
+  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function parseAsLocal(d) {
+  if (!d) return null;
+  const s = String(d).trim();
+
+  if (s.includes('?')) return null;
+  try {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+
+      return new Date(s.replace(/-/g, '/'));
+    }
+    return new Date(s);
+  } catch (e) {
+    return null;
+  }
 }
 
 function calculateDaysLasted(currentDate, previousDate) {
@@ -447,7 +468,6 @@ export default function SharedList({
   const [visibleCount, setVisibleCount] = useState(100);
   const [searchJumpPending, setSearchJumpPending] = useState(false);
   const listRef = useRef(null);
-  const originalAchievementsRef = useRef(null);
   const [search, setSearch] = useState('');
   const [manualSearch, setManualSearch] = useState('');
   const [highlightedIdx, setHighlightedIdx] = useState(null);
@@ -851,10 +871,45 @@ export default function SharedList({
   }
 
   function generateAndCopyChangelog() {
-    const baseList = devMode && reordered ? reordered || [] : ((reordered && reordered.length) ? reordered : achievements) || [];
-    const changes = computeDiffChanges();
+    const baseList = reordered || achievements || [];
+    const processedIds = new Set();
+    const mergedChanges = [];
 
-    const formatted = changes
+    for (let i = 0; i < changeLog.length; i++) {
+      const change = changeLog[i];
+      if (!change) continue;
+      const { type, achievement } = change;
+
+      if ((type === 'movedUp' || type === 'movedDown') && achievement && achievement.id) {
+        const id = achievement.id;
+        if (processedIds.has(id)) {
+          continue;
+        }
+
+        const firstOldRank = change.oldRank;
+
+        const finalAch = baseList.find(a => a && a.id === id) || null;
+        const finalRank = finalAch ? finalAch.rank : (change.rank || null);
+
+        let mergedType = type;
+        if (finalRank != null && firstOldRank != null) {
+          if (finalRank > firstOldRank) mergedType = 'movedDown';
+          else if (finalRank < firstOldRank) mergedType = 'movedUp';
+        }
+
+        mergedChanges.push({
+          type: mergedType,
+          achievement: finalAch || achievement,
+          oldRank: firstOldRank,
+          oldIndex: change.oldIndex
+        });
+        processedIds.add(id);
+      } else {
+        mergedChanges.push(change);
+      }
+    }
+
+    const formatted = mergedChanges
       .map(change => formatChangelogEntry(change, baseList))
       .filter(entry => entry.trim() !== '')
       .join('\n\n');
@@ -892,11 +947,9 @@ export default function SharedList({
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
         if (dataFileName === 'pending.json') {
           setAchievements(valid);
-          originalAchievementsRef.current = valid.map((a, i) => ({ ...a, rank: Number(a.rank) || i + 1 }));
         } else {
           const withRank = valid.map((a, i) => ({ ...a, rank: i + 1 }));
           setAchievements(withRank);
-          originalAchievementsRef.current = withRank.map(a => ({ ...a }));
         }
         const tags = new Set();
         valid.forEach(a => (a.tags || []).forEach(t => tags.add(t)));
@@ -1129,48 +1182,6 @@ export default function SharedList({
       });
     });
   }, [achievements, reordered, autoThumbMap]);
-
-  function computeDiffChanges() {
-    const origRaw = originalAchievementsRef.current || [];
-    const baseList = devMode && reordered ? reordered || [] : ((reordered && reordered.length) ? reordered : achievements) || [];
-
-    const orig = (Array.isArray(origRaw) ? origRaw : []).map((a, i) => ({ ...a, rank: Number(a.rank) || i + 1, __idx: i }));
-    const cur = (Array.isArray(baseList) ? baseList : []).map((a, i) => ({ ...a, rank: Number(a.rank) || i + 1, __idx: i }));
-
-    const origById = new Map();
-    orig.forEach((a, i) => { if (a && a.id) origById.set(a.id, { ...a, __idx: i }); });
-    const curById = new Map();
-    cur.forEach((a, i) => { if (a && a.id) curById.set(a.id, { ...a, __idx: i }); });
-
-    const changes = [];
-
-    for (const [id, c] of curById.entries()) {
-      if (!origById.has(id)) {
-        changes.push({ type: 'added', achievement: c, oldIndex: null, newIndex: c.__idx, oldRank: null, newRank: c.rank });
-      }
-    }
-
-    for (const [id, o] of origById.entries()) {
-      if (!curById.has(id)) {
-        changes.push({ type: 'removed', achievement: o, oldAchievement: o, oldIndex: o.__idx, oldRank: o.rank });
-      }
-    }
-
-    for (const [id, c] of curById.entries()) {
-      if (!origById.has(id)) continue;
-      const o = origById.get(id);
-      if (!o) continue;
-      if ((o.name || '') !== (c.name || '')) {
-        changes.push({ type: 'renamed', achievement: c, oldAchievement: o });
-      }
-      if (o.rank !== c.rank) {
-        const type = c.rank > o.rank ? 'movedDown' : 'movedUp';
-        changes.push({ type, achievement: c, oldRank: o.rank, newRank: c.rank, oldIndex: o.__idx, newIndex: c.__idx });
-      }
-    }
-
-    return changes;
-  }
 
   function handleMobileToggle() {
     setShowMobileFilters(v => !v);
@@ -1807,7 +1818,7 @@ export default function SharedList({
             newFormPreview={newFormPreview}
             generateAndCopyChangelog={generateAndCopyChangelog}
             clearChangelog={clearChangelog}
-            changeLogCount={computeDiffChanges().length}
+            changeLogCount={changeLog.length}
             onImportAchievementsJson={json => {
               let imported = Array.isArray(json) ? json : (json.achievements || []);
               if (!Array.isArray(imported)) {
@@ -1817,14 +1828,12 @@ export default function SharedList({
               imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
               try {
                 const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
-                originalAchievementsRef.current = imported.map(a => ({ ...a }));
                 setReordered(imported);
                 setDevMode(true);
                 if (idx !== null && typeof setScrollToIdx === 'function') {
                   requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
                 }
               } catch (e) {
-                originalAchievementsRef.current = imported.map(a => ({ ...a }));
                 setReordered(imported);
                 setDevMode(true);
               }
