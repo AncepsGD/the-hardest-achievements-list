@@ -141,8 +141,8 @@
     "rank": 9
   },
   {
-    "name": "HYPER GRAVITRON",
-    "id": "hyper-gravitron",
+    "name": "HYPER GRAVITRON (All Coins)",
+    "id": "hyper-gravitron-all-coins",
     "player": "Exsii",
     "version": 2.2,
     "video": "https://youtu.be/og4iOb22elI",
@@ -152,9 +152,11 @@
     "levelID": 98745817,
     "tags": [
       "Platformer",
-      "Verified"
+      "Verified",
+      "Coin Route"
     ],
-    "rank": 10
+    "rank": 10,
+    "length": 0
   },
   {
     "name": "INFINITY TRIALS",
