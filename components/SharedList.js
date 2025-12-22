@@ -871,8 +871,46 @@ export default function SharedList({
   }
 
   function generateAndCopyChangelog() {
-    const formatted = changeLog
-      .map(change => formatChangelogEntry(change, reordered || achievements))
+    const baseList = reordered || achievements || [];
+    const processedIds = new Set();
+    const mergedChanges = [];
+
+    for (let i = 0; i < changeLog.length; i++) {
+      const change = changeLog[i];
+      if (!change) continue;
+      const { type, achievement } = change;
+
+      if ((type === 'movedUp' || type === 'movedDown') && achievement && achievement.id) {
+        const id = achievement.id;
+        if (processedIds.has(id)) {
+          continue;
+        }
+
+        const firstOldRank = change.oldRank;
+
+        const finalAch = baseList.find(a => a && a.id === id) || null;
+        const finalRank = finalAch ? finalAch.rank : (change.rank || null);
+
+        let mergedType = type;
+        if (finalRank != null && firstOldRank != null) {
+          if (finalRank > firstOldRank) mergedType = 'movedDown';
+          else if (finalRank < firstOldRank) mergedType = 'movedUp';
+        }
+
+        mergedChanges.push({
+          type: mergedType,
+          achievement: finalAch || achievement,
+          oldRank: firstOldRank,
+          oldIndex: change.oldIndex
+        });
+        processedIds.add(id);
+      } else {
+        mergedChanges.push(change);
+      }
+    }
+
+    const formatted = mergedChanges
+      .map(change => formatChangelogEntry(change, baseList))
       .filter(entry => entry.trim() !== '')
       .join('\n\n');
 
