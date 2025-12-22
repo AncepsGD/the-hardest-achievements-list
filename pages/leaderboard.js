@@ -14,7 +14,7 @@ function getLeaderboard(achievements) {
   const TOP_K = 15; 
   const EXPONENT_TOP = 1.25; 
   const EXPONENT_REST = 0.7; 
-  const POINTS_MULTIPLIER = 100; 
+  const POINTS_MULTIPLIER = 1000; 
   const ALPHA = 0.9;
   const LOG_COMPRESSION_C = 10;
   const DIMINISHING_RETURNS_K = 0.01; 
