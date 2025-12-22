@@ -234,7 +234,8 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 15
+    "rank": 15,
+    "version": 2.2
   },
   {
     "name": "Tower of Geometry",
@@ -249,7 +250,7 @@
       "Verified"
     ],
     "rank": 16,
-    "version": 2,
+    "version": 2.2,
     "levelID": 97787386,
     "showcaseVideo": "https://www.youtube.com/watch?v=p2nl-fG6aas"
   },
@@ -258,7 +259,7 @@
     "id": "avoidster",
     "player": "skelox",
     "length": 0,
-    "version": 2,
+    "version": 2.2,
     "video": "https://www.youtube.com/watch?v=ZkdaEvccYok",
     "showcaseVideo": "https://www.youtube.com/watch?v=0S1rthBdx9A",
     "date": "2022-02-03",
@@ -283,7 +284,8 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 18
+    "rank": 18,
+    "version": 2.2
   },
   {
     "name": "Robot Trial",
@@ -298,7 +300,25 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 19
+    "rank": 19,
+    "version": 2.2
+  },
+  {
+    "name": "Robot Trial (Old)",
+    "id": "robot-trial-old",
+    "player": "sanez",
+    "length": 0,
+    "video": "https://www.youtube.com/watch?v=PdXVJ_sorgM",
+    "showcaseVideo": "https://www.youtube.com/watch?v=bLmuusOHi7k",
+    "date": "2021-05-08",
+    "submitter": "lapitzlazuli",
+    "tags": [
+      "Platformer",
+      "Verified",
+      "Outdated Version"
+    ],
+    "rank": 20,
+    "version": 2.2
   },
   {
     "name": "Infinity Trials (Old)",
@@ -313,8 +333,8 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 20,
-    "version": 2,
+    "rank": 21,
+    "version": 2.2,
     "levelID": 119262956
   }
 ]
