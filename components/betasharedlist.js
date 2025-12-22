@@ -59,6 +59,20 @@ function formatChangelogEntry(change, achievements) {
       if (context.above) entry += `\n> Now above ${context.above}`;
       break;
 
+    case 'swapped':
+      {
+        const a = achievement;
+        const b = oldAchievement;
+        const nameA = (a && a.name) ? a.name : 'Unknown';
+        const nameB = (b && b.name) ? b.name : 'Unknown';
+        const newA = (newRank != null) ? newRank : (a && a.rank) ? a.rank : '?';
+        const newB = (change && change.newRankB != null) ? change.newRankB : (b && b.rank) ? b.rank : '?';
+        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**.`;
+        entry += `\n> Now ${nameA} is #${newA}`;
+        entry += `\n> And ${nameB} is #${newB}`;
+      }
+      break;
+
     case 'renamed':
       entry = `⚪ ${oldAchievement?.name || 'Unknown'} updated to **${name}**`;
       break;
@@ -999,6 +1013,51 @@ export default function SharedList({
     });
 
     const finalChanges = [...filteredChanges];
+    {
+      const used = new Set();
+      const collapsed = [];
+      for (let i = 0; i < finalChanges.length; i++) {
+        if (used.has(i)) continue;
+        const a = finalChanges[i];
+        if (!a || !(a.type === 'movedUp' || a.type === 'movedDown') || !a.achievement) {
+          collapsed.push(a);
+          continue;
+        }
+        let found = -1;
+        for (let j = i + 1; j < finalChanges.length; j++) {
+          if (used.has(j)) continue;
+          const b = finalChanges[j];
+          if (!b || !(b.type === 'movedUp' || b.type === 'movedDown') || !b.achievement) continue;
+          if (a.oldRank === b.newRank && a.newRank === b.oldRank) {
+            found = j;
+            break;
+          }
+        }
+        if (found !== -1) {
+          const b = finalChanges[found];
+          const swap = {
+            type: 'swapped',
+            achievement: a.achievement,
+            oldAchievement: b.achievement,
+            oldRank: a.oldRank,
+            newRank: a.newRank,
+            newRankB: b.newRank,
+            oldRankB: b.oldRank
+          };
+          collapsed.push(swap);
+          used.add(i);
+          used.add(found);
+        } else {
+          collapsed.push(a);
+          used.add(i);
+        }
+      }
+      for (let k = 0; k < finalChanges.length; k++) {
+        if (!used.has(k)) collapsed.push(finalChanges[k]);
+      }
+      finalChanges.length = 0;
+      for (const it of collapsed) finalChanges.push(it);
+    }
     for (let i = 0; i < finalChanges.length; i++) {
       const x = finalChanges[i];
       if (!x || !(x.type === 'movedUp' || x.type === 'movedDown') || !x.achievement) continue;
@@ -1021,10 +1080,25 @@ export default function SharedList({
     let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
 
     if (!formatted || formatted.trim() === '') {
-      const moveOnly = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
+      const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
       if (moveOnly && moveOnly.length) {
-        const upsFirst = [...moveOnly].sort((a, b) => (a.type === 'movedUp' ? -1 : 1));
-        const alt = upsFirst.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+        const byPair = new Map();
+        moveOnly.forEach(m => {
+          const key = `${Math.min(m.oldRank, m.newRank)}:${Math.max(m.oldRank, m.newRank)}`;
+          if (!byPair.has(key)) byPair.set(key, []);
+          byPair.get(key).push(m);
+        });
+        const chosen = [];
+        for (const arr of byPair.values()) {
+          if (!arr || !arr.length) continue;
+          if (arr.length === 1) chosen.push(arr[0]);
+          else {
+            const up = arr.find(x => x.type === 'movedUp');
+            if (up) chosen.push(up);
+            else chosen.push(arr[0]);
+          }
+        }
+        const alt = chosen.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
         if (alt && alt.trim()) formatted = alt;
       }
     }
