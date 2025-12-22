@@ -67,7 +67,7 @@ function formatChangelogEntry(change, achievements, mode) {
         const nameB = (b && b.name) ? b.name : 'Unknown';
         const newA = (newRank != null) ? newRank : (a && a.rank) ? a.rank : '?';
         const newB = (change && change.newRankB != null) ? change.newRankB : (b && b.rank) ? b.rank : '?';
-        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**.`;
+        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**`;
         entry += `\n> Now ${nameA} is #${newA}`;
         entry += `\n> And ${nameB} is #${newB}`;
       }
@@ -1096,10 +1096,25 @@ export default function SharedList({
 
     const moveChanges = changesList.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
+    const swappedIds = new Set();
+
+    for (let i = 0; i < moveChanges.length; i++) {
+      const a = moveChanges[i];
+      if (!a || !a.achievement) continue;
+      for (let j = i + 1; j < moveChanges.length; j++) {
+        const b = moveChanges[j];
+        if (!b || !b.achievement) continue;
+        if (a.oldRank === b.newRank && a.newRank === b.oldRank) {
+          swappedIds.add(a.achievement.id);
+          swappedIds.add(b.achievement.id);
+        }
+      }
+    }
 
     if (allAddedPositions && allAddedPositions.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement || m.type !== 'movedDown') continue;
+        if (swappedIds.has(m.achievement.id)) continue;
         const oldR = Number(m.oldRank) || 0;
         const newR = Number(m.newRank) || 0;
         const delta = newR - oldR;
@@ -1116,6 +1131,7 @@ export default function SharedList({
     if (allRemovedRanks && allRemovedRanks.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement || m.type !== 'movedUp') continue;
+        if (swappedIds.has(m.achievement.id)) continue;
         const oldR = Number(m.oldRank) || 0;
         const newR = Number(m.newRank) || 0;
         const delta = oldR - newR;
