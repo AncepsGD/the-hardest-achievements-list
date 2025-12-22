@@ -298,9 +298,9 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
     </div>
   );
 
-  }
+}
 
-  function parseAsLocal(d) {
+function parseAsLocal(d) {
   if (!d) return null;
   const s = String(d).trim();
   if (s.includes('?')) return null;
@@ -597,7 +597,7 @@ export default function SharedList({
   const { dateFormat, setDateFormat } = useDateFormat();
   const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
-  const [changeLog, setChangeLog] = useState([]);
+
   const [originalAchievements, setOriginalAchievements] = useState(null);
   const [sortKey, setSortKey] = useState(() => {
     try {
@@ -723,12 +723,7 @@ export default function SharedList({
       arr.forEach((a, i) => { a.rank = i + 1; });
 
       if (devMode && arr[realIdx - 1]) {
-        logChange({
-          type: 'movedUp',
-          achievement: arr[realIdx - 1],
-          oldRank: realIdx + 1,
-          oldIndex: realIdx
-        });
+
       }
 
       return arr;
@@ -746,12 +741,7 @@ export default function SharedList({
       arr.forEach((a, i) => { a.rank = i + 1; });
 
       if (devMode && arr[realIdx + 1]) {
-        logChange({
-          type: 'movedDown',
-          achievement: arr[realIdx + 1],
-          oldRank: realIdx + 1,
-          oldIndex: realIdx
-        });
+
       }
 
       return arr;
@@ -865,14 +855,6 @@ export default function SharedList({
       const [removed] = arr.splice(editIdx, 1);
       const updated = { ...removed, ...entry };
 
-      if (devMode && removed && removed.name !== updated.name) {
-        logChange({
-          type: 'renamed',
-          oldAchievement: removed,
-          achievement: updated
-        });
-      }
-
       if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
         const idx = Math.max(0, Math.min(arr.length, Number(entry.rank) - 1));
         arr.splice(idx, 0, updated);
@@ -896,72 +878,71 @@ export default function SharedList({
     setEditFormCustomTags('');
   }
 
-  function logChange(change) {
-    setChangeLog(prev => [...prev, change]);
-  }
-
   function generateAndCopyChangelog() {
-    const baseList = reordered || achievements || [];
-    const processedIds = new Set();
-    const mergedChanges = [];
+    const original = originalAchievements || [];
+    const current = (reordered && reordered.length) ? reordered : achievements || [];
 
-    for (let i = 0; i < changeLog.length; i++) {
-      const change = changeLog[i];
-      if (!change) continue;
-      const { type, achievement } = change;
-
-      if ((type === 'movedUp' || type === 'movedDown') && achievement && achievement.id) {
-        const id = achievement.id;
-        if (processedIds.has(id)) {
-          continue;
-        }
-
-        const firstOldRank = change.oldRank;
-
-        const finalAch = baseList.find(a => a && a.id === id) || null;
-        const finalRank = finalAch ? finalAch.rank : (change.rank || null);
-
-        let mergedType = type;
-        if (finalRank != null && firstOldRank != null) {
-          if (finalRank > firstOldRank) mergedType = 'movedDown';
-          else if (finalRank < firstOldRank) mergedType = 'movedUp';
-        }
-
-        mergedChanges.push({
-          type: mergedType,
-          achievement: finalAch || achievement,
-          oldRank: firstOldRank,
-          oldIndex: change.oldIndex
-        });
-        processedIds.add(id);
-      } else {
-        mergedChanges.push(change);
-      }
-    }
-
-    const formatted = mergedChanges
-      .map(change => formatChangelogEntry(change, baseList))
-      .filter(entry => entry.trim() !== '')
-      .join('\n\n');
-
-    if (!formatted) {
-      alert('No changes to log');
+    if (!original || !original.length) {
+      alert('Original JSON not available to diff against.');
       return;
     }
 
-    if (navigator && navigator.clipboard) {
-      navigator.clipboard.writeText(formatted).then(() => {
-        alert('Changelog copied to clipboard!');
-      }).catch(() => {
-        alert('Failed to copy to clipboard');
-      });
-    } else {
-      alert('Clipboard API not available');
-    }
-  }
+    const byIdOriginal = new Map();
+    original.forEach(a => { if (a && a.id) byIdOriginal.set(a.id, a); });
+    const byIdCurrent = new Map();
+    current.forEach(a => { if (a && a.id) byIdCurrent.set(a.id, a); });
 
-  function clearChangelog() {
-    setChangeLog([]);
+    const changes = [];
+
+    for (const [id, a] of byIdOriginal.entries()) {
+      if (!byIdCurrent.has(id)) {
+        changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank });
+      }
+    }
+
+    for (const [id, a] of byIdCurrent.entries()) {
+      if (!byIdOriginal.has(id)) {
+        changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null });
+      }
+    }
+
+    for (const [id, orig] of byIdOriginal.entries()) {
+      if (!byIdCurrent.has(id)) continue;
+      const curr = byIdCurrent.get(id);
+      if (!curr) continue;
+      if ((orig.name || '') !== (curr.name || '')) {
+        changes.push({ type: 'renamed', oldAchievement: orig, achievement: curr });
+      }
+      const oldRank = Number(orig.rank) || null;
+      const newRank = Number(curr.rank) || null;
+      if (oldRank != null && newRank != null && oldRank !== newRank) {
+        changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
+      }
+    }
+
+    const baseList = current;
+    const formatted = changes.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+
+    if (!formatted) {
+      alert('No changes detected');
+      return;
+    }
+
+    if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      navigator.clipboard.writeText(formatted).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
+    } else {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = formatted;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert('Changelog copied to clipboard!');
+      } catch (e) {
+        alert('Clipboard API not available');
+      }
+    }
   }
 
   useEffect(() => {
@@ -1303,15 +1284,6 @@ export default function SharedList({
       predictedInsertedIdx = insertIdx + 1;
     }
 
-    if (devMode) {
-      logChange({
-        type: 'added',
-        achievement: entry,
-        oldIndex: null,
-        newIndex: predictedInsertedIdx
-      });
-    }
-
     setReordered(prev => {
       let newArr;
       let insertedIdx = 0;
@@ -1561,16 +1533,6 @@ export default function SharedList({
       const removed = arr[realIdx];
       arr.splice(realIdx, 1);
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
-
-      if (devMode && removed) {
-        logChange({
-          type: 'removed',
-          oldAchievement: removed,
-          achievement: removed,
-          oldRank: removed.rank,
-          oldIndex: realIdx
-        });
-      }
 
       return arr;
     });
@@ -1849,8 +1811,7 @@ export default function SharedList({
             handleShowNewForm={handleShowNewForm}
             newFormPreview={newFormPreview}
             generateAndCopyChangelog={generateAndCopyChangelog}
-            clearChangelog={clearChangelog}
-            changeLogCount={changeLog.length}
+
             onImportAchievementsJson={json => {
               let imported = Array.isArray(json) ? json : (json.achievements || []);
               if (!Array.isArray(imported)) {
