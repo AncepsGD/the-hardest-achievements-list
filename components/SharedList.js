@@ -18,7 +18,7 @@ function getAchievementContext(achievement, allAchievements, index) {
   return { below, above };
 }
 
-function formatChangelogEntry(change, achievements, mode = '') {
+function formatChangelogEntry(change, achievements) {
   const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
 
   if (!achievement) return '';
@@ -33,27 +33,17 @@ function formatChangelogEntry(change, achievements, mode = '') {
 
   switch (type) {
     case 'added':
-      if (mode === 'timeline') {
-        const date = achievement.date || 'Unknown date';
-        entry = `🟡 **${name}** added to the Timeline at ${date}`;
-      } else {
-        entry = `🟢 **${name}** added at #${rank}`;
-        if (context.below) entry += `\n> Below ${context.below}`;
-        if (context.above) entry += `\n> Above ${context.above}`;
-      }
+      entry = `🟢 **${name}** added at #${rank}`;
+      if (context.below) entry += `\n> Below ${context.below}`;
+      if (context.above) entry += `\n> Above ${context.above}`;
       break;
 
     case 'removed':
-      if (mode === 'timeline') {
-        const date = (oldAchievement && oldAchievement.date) ? oldAchievement.date : (achievement.date || 'Unknown date');
-        entry = `<:timelineremove:1375894648383606945> **${name}** removed from the Timeline at ${date}`;
-      } else {
-        entry = `🔴 **${name}** removed from #${oldRank || rank}`;
-        if (oldAchievement) {
-          const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
-        }
+      entry = `🔴 **${name}** removed from #${oldRank || rank}`;
+      if (oldAchievement) {
+        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
+        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
       }
       break;
 
@@ -902,7 +892,7 @@ export default function SharedList({
     setEditFormCustomTags('');
   }
 
-  function generateAndCopyChangelog(passMode = mode) {
+  function generateAndCopyChangelog() {
     const original = originalAchievements || [];
     const current = (reordered && reordered.length) ? reordered : achievements || [];
 
@@ -1090,7 +1080,7 @@ export default function SharedList({
       }
     }
 
-    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, passMode)).filter(s => s && s.trim()).join('\n\n');
+    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
 
     if (!formatted || formatted.trim() === '') {
       const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
@@ -1111,7 +1101,7 @@ export default function SharedList({
             else chosen.push(arr[0]);
           }
         }
-        const alt = chosen.map(c => formatChangelogEntry(c, baseList, passMode)).filter(s => s && s.trim()).join('\n\n');
+        const alt = chosen.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
         if (alt && alt.trim()) formatted = alt;
       }
     }
