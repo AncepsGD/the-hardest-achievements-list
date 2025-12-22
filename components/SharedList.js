@@ -866,14 +866,19 @@ export default function SharedList({
     setReordered(prev => {
       if (!prev) return prev;
       const arr = [...prev];
-      const [removed] = arr.splice(editIdx, 1);
-      const updated = { ...removed, ...entry };
-
-      if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
-        const idx = Math.max(0, Math.min(arr.length, Number(entry.rank) - 1));
+      const original = arr[editIdx];
+      
+      const newRank = entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' ? Number(entry.rank) : null;
+      const oldRank = original ? Number(original.rank) : null;
+      const rankIsChanging = newRank !== null && !isNaN(newRank) && newRank !== oldRank;
+      
+      if (rankIsChanging) {
+        const [removed] = arr.splice(editIdx, 1);
+        const updated = { ...removed, ...entry };
+        const idx = Math.max(0, Math.min(arr.length, newRank - 1));
         arr.splice(idx, 0, updated);
       } else {
-        arr.splice(editIdx, 0, updated);
+        arr[editIdx] = { ...original, ...entry };
       }
 
       arr.forEach((a, i) => { if (a) a.rank = i + 1; });
