@@ -920,8 +920,29 @@ export default function SharedList({
       }
     }
 
+    const moveChanges = changes.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
+    const suppressedIds = new Set();
+    for (let i = 0; i < moveChanges.length; i++) {
+      const a = moveChanges[i];
+      if (!a || !a.achievement || suppressedIds.has(a.achievement.id)) continue;
+      for (let j = i + 1; j < moveChanges.length; j++) {
+        const b = moveChanges[j];
+        if (!b || !b.achievement || suppressedIds.has(b.achievement.id)) continue;
+        if (a.oldRank === b.newRank && a.newRank === b.oldRank) {
+          if (a.type === 'movedUp' && b.type === 'movedDown') suppressedIds.add(b.achievement.id);
+          else if (b.type === 'movedUp' && a.type === 'movedDown') suppressedIds.add(a.achievement.id);
+        }
+      }
+    }
+
     const baseList = current;
-    const formatted = changes.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
+    const filteredChanges = changes.filter(c => {
+      if (!c) return false;
+      if ((c.type === 'movedUp' || c.type === 'movedDown') && c.achievement && suppressedIds.has(c.achievement.id)) return false;
+      return true;
+    });
+
+    const formatted = filteredChanges.map(c => formatChangelogEntry(c, baseList)).filter(s => s && s.trim()).join('\n\n');
 
     if (!formatted) {
       alert('No changes detected');
