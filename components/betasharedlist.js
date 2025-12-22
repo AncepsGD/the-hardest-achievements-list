@@ -975,6 +975,7 @@ export default function SharedList({
           for (const [otherId, other] of movesMap.entries()) {
             if (otherId === id) continue;
             if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
             if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
               suppressedIds.add(otherId);
             }
@@ -985,6 +986,7 @@ export default function SharedList({
           for (const [otherId, other] of movesMap.entries()) {
             if (otherId === id) continue;
             if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
             if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
               suppressedIds.add(otherId);
             }
