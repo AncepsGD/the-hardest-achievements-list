@@ -29,34 +29,52 @@ function formatChangelogEntry(change, achievements, mode) {
   const newIdx = allAchievements.findIndex(a => a.id === achievement.id);
   const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
 
+  const showOnlyOneContext = mode === 'dev';
+
   let entry = '';
 
   switch (type) {
     case 'added':
       entry = `🟢 **${name}** added at #${rank}`;
-      if (context.below) entry += `\n> Below ${context.below}`;
-      if (context.above) entry += `\n> Above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Below ${context.below}`;
+        if (context.above) entry += `\n> Above ${context.above}`;
+      }
       break;
 
     case 'removed':
       entry = `🔴 **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
         const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        if (showOnlyOneContext) {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        } else {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        }
       }
       break;
 
     case 'movedUp':
       entry = `🔼 **${name}** moved up from #${oldRank} to #${rank}`;
-      if (context.below) entry += `\n> Now below ${context.below}`;
-      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
       break;
 
     case 'movedDown':
       entry = `🔽 **${name}** moved down from #${oldRank} to #${rank}`;
-      if (context.below) entry += `\n> Now below ${context.below}`;
-      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
       break;
 
     case 'swapped':
@@ -79,8 +97,12 @@ function formatChangelogEntry(change, achievements, mode) {
 
     case 'addedWithRemovals':
       entry = `<:updatedup:1375890567870812322> **${name}** added at #${rank}`;
-      if (context.below) entry += `\n> Now below ${context.below}`;
-      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
       if (removedDuplicates && removedDuplicates.length > 0) {
         entry += `\n>\n> Achievement(s) removed for redundancy:`;
         removedDuplicates.forEach(dup => {
@@ -93,8 +115,12 @@ function formatChangelogEntry(change, achievements, mode) {
       entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
         const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        if (showOnlyOneContext) {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        } else {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        }
       }
       if (readdedAchievements && readdedAchievements.length > 0) {
         entry += `\n>\n> Achievement(s) re-added due to renewed relevance:`;
