@@ -1359,24 +1359,6 @@
     "rank": 75
   },
   {
-    "name": "Sonic Wave Infinity (Slithium) 72%, 65% in a row",
-    "id": "sonic-wave-infinity-slithium-72-65-in-a-row",
-    "player": "HipoAR",
-    "length": 167,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=cJCiUAkBOBk",
-    "showcaseVideo": "https://youtu.be/Ag381Ey-pWs",
-    "date": "2025-12-09",
-    "submitter": "SeptaGon7",
-    "levelID": 129774598,
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ],
-    "rank": 76
-  },
-  {
     "name": "Blue Avernus",
     "id": "blue-avernus",
     "player": "KlimK",
@@ -12413,3 +12395,4 @@
     "rank": 698
   }
 ]
+
