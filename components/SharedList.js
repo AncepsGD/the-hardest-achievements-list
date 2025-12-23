@@ -927,6 +927,36 @@ export default function SharedList({
     const original = originalAchievements || [];
     const current = (reordered && reordered.length) ? reordered : achievements || [];
 
+    if (dataFileName === 'pending.json') {
+      if (!current || !current.length) {
+        alert('No pending achievements to copy.');
+        return;
+      }
+      let formatted = ':clock3: **Achievements in pending...**\\n';
+      current.forEach(a => {
+        const id = a && a.id ? encodeURIComponent(a.id) : '';
+        const name = a && a.name ? a.name : 'Unknown';
+        formatted += `> [${name}](https://thal.vercel.app/achievement/${id})\\n`;
+      });
+
+      if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(formatted).then(() => alert('Pending list copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
+      } else {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = formatted;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          alert('Pending list copied to clipboard!');
+        } catch (e) {
+          alert('Clipboard API not available');
+        }
+      }
+      return;
+    }
+
     if (!original || !original.length) {
       alert('Original JSON not available to diff against.');
       return;
