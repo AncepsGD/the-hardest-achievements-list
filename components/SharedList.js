@@ -932,11 +932,11 @@ export default function SharedList({
         alert('No pending achievements to copy.');
         return;
       }
-      let formatted = ':clock3: **Achievements in pending...**\\n';
+      let formatted = ':clock3: **Achievements in pending...**\n';
       current.forEach(a => {
         const id = a && a.id ? encodeURIComponent(a.id) : '';
         const name = a && a.name ? a.name : 'Unknown';
-        formatted += `> [${name}](https://thal.vercel.app/achievement/${id})\\n`;
+        formatted += `> [${name}](https://thal.vercel.app/achievement/${id})\n`;
       });
 
       if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
