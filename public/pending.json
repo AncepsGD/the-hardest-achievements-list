@@ -17,6 +17,178 @@
     "rank": 1
   },
   {
+    "name": "Crystal Crusher 144hz",
+    "id": "crystal-crusher-144hz",
+    "player": "Nsaynchkn",
+    "length": 62,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=indZhMML8lg",
+    "showcaseVideo": "https://youtu.be/zOB0eLE_mKM",
+    "date": "2025-12-03",
+    "submitter": "kyle1saurus",
+    "levelID": 93732702,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "2P",
+      "Rated"
+    ],
+    "rank": 2
+  },
+  {
+    "name": "Sonic Wave Infinity (Slithium)",
+    "id": "sonic-wave-infinity-slithium",
+    "player": "HipoAR",
+    "length": 122,
+    "version": 2.2,
+    "video": "https://youtu.be/av5D0_M6hso",
+    "showcaseVideo": "https://youtu.be/Ag381Ey-pWs",
+    "date": "2025-12-19",
+    "submitter": "Natalie :3",
+    "levelID": 129774598,
+    "tags": [
+      "Level",
+      "Verified",
+      "CBF"
+    ],
+    "rank": 3
+  },
+  {
+    "name": "Sonic Wave Infinity (Slithium) 72%, 65% in a row",
+    "id": "sonic-wave-infinity-slithium-72-65-in-a-row",
+    "player": "HipoAR",
+    "length": 167,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=cJCiUAkBOBk",
+    "showcaseVideo": "https://youtu.be/Ag381Ey-pWs",
+    "date": "2025-12-09",
+    "submitter": "SeptaGon7",
+    "levelID": 129774598,
+    "tags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
+    "rank": 4
+  },
+  {
+    "name": "PLS",
+    "id": "pls",
+    "player": "Superkobster",
+    "length": null,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=YQiWxOmL5Ek",
+    "showcaseVideo": "https://www.youtube.com/watch?v=DlF5Bo3b0KU",
+    "date": "2025-12-22",
+    "submitter": "Arcadie",
+    "levelID": 129930924,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 5
+  },
+  {
+    "name": "Vehemence 53-78%",
+    "id": "vehemence-53-78",
+    "player": "A6",
+    "length": 31,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=ilwu_okbDuY&t=9623s",
+    "showcaseVideo": "https://www.youtube.com/watch?v=9SxqlWV5OxI",
+    "date": "2025-12-21",
+    "submitter": "Skeletonette",
+    "levelID": 96572223,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "removalReason": "Redundancy",
+    "rank": 6
+  },
+  {
+    "name": "The Yandere 60hz",
+    "id": "the-yandere-60hz",
+    "player": "Cejelost",
+    "length": 151,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=kMLJO6eGj-I",
+    "showcaseVideo": "https://www.youtube.com/watch?v=Hw9uAM5ZGXs",
+    "date": "2025-12-10",
+    "submitter": "Arcadie",
+    "levelID": 54615662,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
+    "rank": 7
+  },
+  {
+    "name": "BANG BANG 55-100%",
+    "id": "bang-bang-55-100",
+    "player": "Jori",
+    "length": 32,
+    "version": 2.2,
+    "video": "https://youtu.be/W_w3W3UYhKY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=i0Evt57AYt8",
+    "date": "2025-12-19",
+    "submitter": "Natalie :3",
+    "levelID": 129244221,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 8
+  },
+  {
+    "name": "BANG BANG 64%",
+    "id": "bang-bang-64-copy",
+    "player": "Jori",
+    "length": 40,
+    "version": 2.2,
+    "video": "https://youtu.be/W_w3W3UYhKY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=i0Evt57AYt8",
+    "date": "2025-12-19",
+    "submitter": "Natalie :3",
+    "levelID": 129244221,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 9
+  },
+  {
+    "name": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row",
+    "id": "last-stop-15-14-4-55-7-15-13-in-a-row",
+    "player": "aytch0008",
+    "length": 28,
+    "version": 2.2,
+    "video": "https://youtu.be/VIzP6XkJSMU",
+    "showcaseVideo": "https://youtu.be/OyFvsJ0RRKE",
+    "date": "2025-12-22",
+    "submitter": "aytch0008",
+    "levelID": 64815983,
+    "tags": [],
+    "rank": 10
+  },
+  {
+    "name": "ULTRA PARACOSM 91%",
+    "id": "ultra-paracosm-91",
+    "player": "Wity",
+    "length": 66,
+    "version": 2.2,
+    "video": "https://youtu.be/nuoSvINCKm8",
+    "showcaseVideo": "https://youtu.be/E0sQ4n9gCfc",
+    "date": "2025-12-22",
+    "submitter": "WITY",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 11
+  },
+  {
     "name": "ORDINARY 60hz Mobile 34%",
     "id": "ordinary-60hz-mobile-34",
     "player": "SeaWolfMikes",
@@ -33,7 +205,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 2
+    "rank": 12
   },
   {
     "name": "Maniacal Chains 85%",
@@ -51,7 +223,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 3
+    "rank": 13
   },
   {
     "name": "X84 60z Mobile",
@@ -70,7 +242,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 4
+    "rank": 14
   },
   {
     "name": "ConClusion 60hz Mobile",
@@ -90,7 +262,7 @@
       "Rated"
     ],
     "removalReason": "Superseded",
-    "rank": 5
+    "rank": 15
   },
   {
     "name": "Zodiac 120hz Mobile 63%",
@@ -110,7 +282,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 6
+    "rank": 16
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -130,7 +302,24 @@
       "Progress",
       "Rated"
     ],
-    "rank": 7
+    "rank": 17
+  },
+  {
+    "name": "Dramatic",
+    "id": "dramatic",
+    "player": "rinjello",
+    "length": 64,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=Usxo-EXGdIk&t=448",
+    "showcaseVideo": "https://www.youtube.com/watch?v=Usxo-EXGdIk&t=80",
+    "date": "2025-12-18",
+    "submitter": "kyle1saurus",
+    "levelID": 129640849,
+    "tags": [
+      "Level",
+      "Verified"
+    ],
+    "rank": 18
   },
   {
     "name": "Angelicide (Xtra8nugz) 21-40%",
@@ -146,11 +335,27 @@
       "Level",
       "Progress"
     ],
-    "rank": 8
+    "rank": 19
+  },
+  {
+    "name": "Angelicide (Xtra8nugz) 13%",
+    "id": "angelicide-xtra8nugz-13",
+    "player": "Xtra8nuggies",
+    "length": 13,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=gwQ1hEcDJ3g",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-21",
+    "submitter": "kittycatiscute",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 20
   },
   {
     "name": "Angelicide (Xtra8nugz) 15-37%",
-    "id": "angelicide-xtra8nugz-15-37-copy",
+    "id": "angelicide-xtra8nugz-15-37-copy-copy",
     "player": "Xtra8nuggies",
     "length": 20,
     "version": 2.2,
@@ -162,7 +367,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 9
+    "rank": 21
   },
   {
     "name": "laith",
@@ -179,6 +384,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 10
+    "rank": 22
   }
 ]
