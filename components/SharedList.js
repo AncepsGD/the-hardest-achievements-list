@@ -932,8 +932,20 @@ export default function SharedList({
         alert('No pending achievements to copy.');
         return;
       }
+      const sorted = [...current].sort((a, b) => {
+        try {
+          const da = parseAsLocal(a && a.date);
+          const db = parseAsLocal(b && b.date);
+          const ta = da && !isNaN(da) ? da.getTime() : 0;
+          const tb = db && !isNaN(db) ? db.getTime() : 0;
+          return tb - ta;
+        } catch (e) {
+          return 0;
+        }
+      });
+
       let formatted = ':clock3: **Achievements in pending...**\n';
-      current.forEach(a => {
+      sorted.forEach(a => {
         const id = a && a.id ? encodeURIComponent(a.id) : '';
         const name = a && a.name ? a.name : 'Unknown';
         formatted += `> [${name}](https://thal.vercel.app/achievement/${id})\n`;
