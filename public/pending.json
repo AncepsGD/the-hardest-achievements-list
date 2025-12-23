@@ -55,42 +55,6 @@
     "rank": 3
   },
   {
-    "name": "Sonic Wave Infinity (Slithium)",
-    "id": "sonic-wave-infinity-slithium",
-    "player": "HipoAR",
-    "length": 122,
-    "version": 2.2,
-    "video": "https://youtu.be/av5D0_M6hso",
-    "showcaseVideo": "https://youtu.be/Ag381Ey-pWs",
-    "date": "2025-12-19",
-    "submitter": "Natalie :3",
-    "levelID": 129774598,
-    "tags": [
-      "Level",
-      "Verified",
-      "CBF"
-    ],
-    "rank": 4
-  },
-  {
-    "name": "Sonic Wave Infinity (Slithium) 72%, 65% in a row",
-    "id": "sonic-wave-infinity-slithium-72-65-in-a-row",
-    "player": "HipoAR",
-    "length": 167,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=cJCiUAkBOBk",
-    "showcaseVideo": "https://youtu.be/Ag381Ey-pWs",
-    "date": "2025-12-09",
-    "submitter": "SeptaGon7",
-    "levelID": 129774598,
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ],
-    "rank": 5
-  },
-  {
     "name": "PLS",
     "id": "pls",
     "player": "Superkobster",
@@ -105,7 +69,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 6
+    "rank": 4
   },
   {
     "name": "Vehemence 53-78%",
@@ -123,25 +87,7 @@
       "Progress"
     ],
     "removalReason": "Redundancy",
-    "rank": 7
-  },
-  {
-    "name": "The Yandere 60hz",
-    "id": "the-yandere-60hz",
-    "player": "Cejelost",
-    "length": 151,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=kMLJO6eGj-I",
-    "showcaseVideo": "https://www.youtube.com/watch?v=Hw9uAM5ZGXs",
-    "date": "2025-12-10",
-    "submitter": "Arcadie",
-    "levelID": 54615662,
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Rated"
-    ],
-    "rank": 8
+    "rank": 5
   },
   {
     "name": "BANG BANG 55-100%",
@@ -158,7 +104,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 9
+    "rank": 6
   },
   {
     "name": "BANG BANG 64%",
@@ -175,7 +121,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 10
+    "rank": 7
   },
   {
     "name": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row",
@@ -189,7 +135,7 @@
     "submitter": "aytch0008",
     "levelID": 64815983,
     "tags": [],
-    "rank": 11
+    "rank": 8
   },
   {
     "name": "ULTRA PARACOSM 91%",
@@ -205,7 +151,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 12
+    "rank": 9
   },
   {
     "name": "ORDINARY 60hz Mobile 34%",
@@ -224,25 +170,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 13
-  },
-  {
-    "name": "Maniacal Chains 85%",
-    "id": "maniacal-chains-85",
-    "player": "spcreat",
-    "length": 102,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=MMx38Lbu754",
-    "showcaseVideo": "https://www.youtube.com/watch?v=EbGiIG8j2A0",
-    "date": "2025-12-16",
-    "submitter": "goofygdplayer",
-    "levelID": 129492846,
-    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/48991380",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 14
+    "rank": 10
   },
   {
     "name": "X84 60z Mobile",
@@ -261,7 +189,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 15
+    "rank": 11
   },
   {
     "name": "ConClusion 60hz Mobile",
@@ -281,7 +209,7 @@
       "Rated"
     ],
     "removalReason": "Superseded",
-    "rank": 16
+    "rank": 12
   },
   {
     "name": "Zodiac 120hz Mobile 63%",
@@ -301,7 +229,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 17
+    "rank": 13
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -321,7 +249,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 18
+    "rank": 14
   },
   {
     "name": "Dramatic",
@@ -338,24 +266,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 19
-  },
-  {
-    "name": "Silent Circles (Starchman Buffed) 81-100%",
-    "id": "silent-circles-starchman-buffed-81-100%",
-    "player": "Juls",
-    "length": 13,
-    "version": 2.2,
-    "video": "https://youtu.be/BqObmMGMTDg",
-    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "date": "2025-12-15",
-    "submitter": "Excryst",
-    "tags": [
-      "Level",
-      "Progress",
-      "CBF"
-    ],
-    "rank": 20
+    "rank": 15
   },
   {
     "name": "Angelicide (Xtra8nugz) 21-40%",
@@ -371,7 +282,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 21
+    "rank": 16
   },
   {
     "name": "Angelicide (Xtra8nugz) 13%",
@@ -387,7 +298,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 22
+    "rank": 17
   },
   {
     "name": "Angelicide (Xtra8nugz) 15-37%",
@@ -403,7 +314,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 23
+    "rank": 18
   },
   {
     "name": "laith",
@@ -420,6 +331,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 24
+    "rank": 19
   }
 ]
