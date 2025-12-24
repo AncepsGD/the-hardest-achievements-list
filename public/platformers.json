@@ -1419,22 +1419,6 @@
     "rank": 84
   },
   {
-    "name": "Pozor Morozova Final",
-    "id": "pozor-morozova-final",
-    "player": "VoPlat",
-    "levelID": 127562552,
-    "date": "2025-10-30",
-    "version": 2.2,
-    "submitter": "kyle1saurus",
-    "video": "https://www.youtube.com/live/bHXqfp3YrNU?t=1h17m57s",
-    "showcaseVideo": null,
-    "tags": [
-      "Platformer",
-      "Verified"
-    ],
-    "rank": 85
-  },
-  {
     "name": "Crystal River",
     "id": "crystal-river",
     "player": "IvanCrafter026",
@@ -1449,7 +1433,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 86
+    "rank": 85
   },
   {
     "name": "ungafos jp practice",
@@ -1465,7 +1449,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 87
+    "rank": 86
   },
   {
     "name": "Project BUZZKILL",
@@ -1482,6 +1466,6 @@
     "showcaseVideo": "https://youtu.be/awz0zAwxzCU",
     "video": "https://www.youtube.com/watch?v=HjBLO7flVtY",
     "submitter": "kyle1saurus",
-    "rank": 88
+    "rank": 87
   }
 ]
