@@ -206,6 +206,9 @@ useEffect(() => {
         <Link href="/timeline" className="sidebar-link" style={{ color: '#DFE3F5' }}>
           Timeline
         </Link>
+        <Link href="/legacy" className="sidebar-link" style={{ color: '#DFE3F5' }}>
+          Legacy
+        </Link>
         <Link href="/leaderboard" className="sidebar-link" style={{ color: '#DFE3F5' }}>
           Leaderboard
         </Link>
