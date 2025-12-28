@@ -451,7 +451,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
 
 const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
@@ -484,7 +484,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             <div className="achievement-date">
               {achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}
             </div>
-            <div className="rank"><strong>#{achievement.rank}</strong></div>
+            <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
           </div>
           <div className="tag-container">
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
@@ -507,7 +507,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       </a>
     </Link>
   );
-}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
+}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank);
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -523,7 +523,8 @@ export default function SharedList({
   dataFileName = 'achievements.json',
   storageKeySuffix = 'achievements',
   mode = '',
-  showPlatformToggle = true
+  showPlatformToggle = true,
+  rankOffset = 0,
 }) {
   const [achievements, setAchievements] = useState([]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
@@ -2474,7 +2475,11 @@ export default function SharedList({
                   {mode === 'timeline' ?
                     <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                     :
-                    <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                    (() => {
+                      const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
+                      const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} />;
+                    })()
                   }
                 </div>
               </div>
@@ -2515,7 +2520,11 @@ export default function SharedList({
                       {mode === 'timeline' ?
                         <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                         :
-                        <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                        (() => {
+                          const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
+                          const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} />;
+                        })()
                       }
                     </div>
                   );
