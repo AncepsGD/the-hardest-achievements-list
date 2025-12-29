@@ -28,9 +28,7 @@
     "submitter": "Excryst",
     "levelID": 71025973,
     "tags": [
-      "Level",
       "Low Hertz",
-      "Progress",
       "Rated"
     ],
     "rank": 2
@@ -70,7 +68,7 @@
       "Progress"
     ],
     "removalReason": "Redundancy",
-    "rank": 5
+    "rank": 4
   },
   {
     "name": "BANG BANG 55-100%",
@@ -87,7 +85,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 6
+    "rank": 5
   },
   {
     "name": "BANG BANG 64%",
@@ -104,7 +102,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 7
+    "rank": 6
   },
   {
     "name": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row",
@@ -117,8 +115,11 @@
     "date": "2025-12-22",
     "submitter": "aytch0008",
     "levelID": 64815983,
-    "tags": [],
-    "rank": 8
+    "tags": [
+      "Challenge",
+      "Consistency"
+    ],
+    "rank": 7
   },
   {
     "name": "ULTRA PARACOSM 91%",
@@ -134,7 +135,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 9
+    "rank": 8
   },
   {
     "name": "ORDINARY 60hz Mobile 34%",
@@ -151,9 +152,10 @@
       "Level",
       "Low Hertz",
       "Mobile",
+      "Progress",
       "Rated"
     ],
-    "rank": 10
+    "rank": 9
   },
   {
     "name": "X84 60z Mobile",
@@ -172,7 +174,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 11
+    "rank": 10
   },
   {
     "name": "ConClusion 60hz Mobile",
@@ -192,7 +194,7 @@
       "Rated"
     ],
     "removalReason": "Superseded",
-    "rank": 12
+    "rank": 11
   },
   {
     "name": "Zodiac 120hz Mobile 63%",
@@ -212,7 +214,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 13
+    "rank": 12
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -232,7 +234,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 14
+    "rank": 13
   },
   {
     "name": "Dramatic",
@@ -249,7 +251,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 15
+    "rank": 14
   },
   {
     "name": "Angelicide (Xtra8nugz) 21-40%",
@@ -265,7 +267,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 16
+    "rank": 15
   },
   {
     "name": "Angelicide (Xtra8nugz) 13%",
@@ -281,7 +283,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 17
+    "rank": 16
   },
   {
     "name": "Angelicide (Xtra8nugz) 15-37%",
@@ -297,7 +299,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 18
+    "rank": 17
   },
   {
     "name": "laith",
@@ -314,6 +316,6 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 19
+    "rank": 18
   }
 ]

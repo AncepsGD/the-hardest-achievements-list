@@ -49,16 +49,20 @@ export default function AboutUs() {
             <ul>
               <li><strong>Arcadie</strong></li>
               <li><strong>jak</strong></li>
-              <li><strong>zXdasfsa</strong></li>
-              <li><strong>Glow</strong></li>
               <li><strong>exiled_shade</strong></li>
-              <li><strong>kyle1saurus</strong></li>
-              <li><strong>goofygdplayer_</strong></li>
               <li><strong>TYATYAPKA</strong></li>
+            </ul>
+            <h3>List Helper</h3>
+            <ul>
+              <li><strong>goofygdplayer_</strong></li>
             </ul>
             <h3>Server Moderator</h3>
             <ul>
               <li><strong>Grave</strong></li>
+            </ul>
+            <h3>Trial Moderator</h3>
+            <ul>
+              <li><strong>stax</strong></li>
             </ul>
             <h3>Tag Definitions</h3>
             <ul>
