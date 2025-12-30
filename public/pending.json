@@ -1,5 +1,160 @@
 [
   {
+    "name": "KOCMOC UNLEASHED (Nerfed) 76%, 70% in a row",
+    "id": "kocmoc-unleashed-nerfed-76-70-in-a-row",
+    "player": "Arshadow",
+    "length": 107,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=Fyf8XHwM91s&t=4438s",
+    "date": "2025-12-27",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
+    "rank": 1
+  },
+  {
+    "name": "fake sunrise",
+    "id": "fake-sunrise",
+    "player": "Tanuklen",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/CYhrraooYoM",
+    "showcaseVideo": "https://www.youtube.com/watch?v=wI1YsqXSiyI",
+    "date": "2025-12-30",
+    "submitter": "Natalie :3",
+    "levelID": 120213958,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 2
+  },
+  {
+    "name": "Cautious 43-89%",
+    "id": "cautious-43-89%",
+    "player": "pozhh",
+    "length": 46,
+    "version": 2.2,
+    "video": "https://youtu.be/T6_Qn1rAPB8",
+    "showcaseVideo": "https://www.youtube.com/watch?v=4sHsPbM_kdI",
+    "date": "2025-12-28",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 3
+  },
+  {
+    "name": "Cl5u37r0ph0b1a 120hz Mobile",
+    "id": "cl5u37r0ph0b1a-120hz-mobile",
+    "player": "real1243",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/4UWIFoVv60s",
+    "showcaseVideo": "https://youtu.be/il1EO5KBhKM",
+    "date": "2025-12-28",
+    "submitter": "real1243",
+    "levelID": 112059085,
+    "tags": [
+      "Platformer",
+      "Low Hertz",
+      "Mobile"
+    ],
+    "rank": 4
+  },
+  {
+    "name": "KOCMOC UNLEASHED (Buffed) 66-100% 2 deaths, 99.94 accuracy",
+    "id": "kocmoc-unleashed-buffed-66-100-2-deaths-9994-accuracy",
+    "player": "Arshadow",
+    "length": 33,
+    "version": 2.2,
+    "video": "https://youtu.be/G6--DYm-jrU",
+    "date": "2025-12-23",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 5
+  },
+  {
+    "name": "Silent Clubstep II 38-66%",
+    "id": "silent-clubstep-ii-38-66",
+    "player": "SkittleCatastrophe",
+    "length": 28,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=v1AkSs3dm0c",
+    "showcaseVideo": "https://youtu.be/mCj_PjC3rs0",
+    "date": "2025-12-30",
+    "submitter": "Excryst",
+    "levelID": 78614226,
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 6
+  },
+  {
+    "name": "KOCMOC UNLEASHED (Buffed) 14-52% 3 deaths, 99.84 accuracy",
+    "id": "kocmoc-unleashed-buffed-14-52-3-deaths-9984-accuracy",
+    "player": "Arshadow",
+    "length": 33,
+    "version": 2.2,
+    "video": "https://youtu.be/0adwqDUbqlA",
+    "date": "2025-12-23",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 7
+  },
+  {
+    "name": "KOCMOC UNLEASHED (Buffed) 49-80% 2 deaths",
+    "id": "kocmoc-unleashed-buffed-49-80-2-deaths",
+    "player": "Arshadow",
+    "length": 18,
+    "version": 2.2,
+    "video": "https://youtu.be/54Ycdlw4SRg",
+    "date": "2025-12-23",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 8
+  },
+  {
+    "name": "Shardscapes 60hz Mobile",
+    "id": "shardscapes-60hz-mobile",
+    "player": "The5Sharks",
+    "length": 78,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=WtOT-z6zCng",
+    "showcaseVideo": "https://youtu.be/gtOsT67txFs",
+    "date": "2025-12-24",
+    "submitter": "Natalie :3",
+    "levelID": 79997992,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 9
+  },
+  {
     "name": "Hell Affinity 53%",
     "id": "hell-affinity-53",
     "player": "NordstromUSA",
@@ -14,7 +169,40 @@
       "Level",
       "Progress"
     ],
-    "rank": 1
+    "rank": 10
+  },
+  {
+    "name": "im tired",
+    "id": "im-tired",
+    "player": "VoPlat",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/y-_qFemFI2k",
+    "date": "2025-12-22",
+    "submitter": "Arcadie",
+    "levelID": 115455334,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 11
+  },
+  {
+    "name": "waking up again",
+    "id": "waking-up-again",
+    "player": "MaddyGMD",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=J20eIalCgfg",
+    "showcaseVideo": "https://www.youtube.com/watch?v=Y84Qs0q4Av4",
+    "date": "2025-12-22",
+    "submitter": "Arcadie",
+    "levelID": 129921223,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 12
   },
   {
     "name": "Oblivion 120hz",
@@ -31,7 +219,40 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 2
+    "rank": 13
+  },
+  {
+    "name": "Solaria (nintenfox)",
+    "id": "solaria-nintenfox",
+    "player": "nintenfox",
+    "length": 25,
+    "version": 2.2,
+    "video": "https://youtu.be/5mGOuFql7GI",
+    "date": "2025-11-13",
+    "submitter": "Arcadie",
+    "levelID": 128075288,
+    "tags": [
+      "Challenge",
+      "Verified"
+    ],
+    "rank": 14
+  },
+  {
+    "name": "Forgotten Maiden",
+    "id": "forgotten-maiden",
+    "player": "sydno",
+    "length": 17,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=iulSolHQcw0",
+    "showcaseVideo": "https://www.youtube.com/watch?v=rBrNKND3gvo",
+    "date": "2025-12-27",
+    "submitter": "TYATYAPKA",
+    "levelID": 130217575,
+    "tags": [
+      "Challenge",
+      "Verified"
+    ],
+    "rank": 15
   },
   {
     "name": "Crystal Crusher 144hz",
@@ -50,25 +271,59 @@
       "2P",
       "Rated"
     ],
-    "rank": 3
+    "rank": 16
   },
   {
-    "name": "Vehemence 53-78%",
-    "id": "vehemence-53-78",
-    "player": "A6",
-    "length": 31,
+    "name": "Angelicide (Xtra8nugz) 3-26%",
+    "id": "angelicide-xtra8nugz-3-26",
+    "player": "Xtra8nuggies",
+    "length": 26,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=ilwu_okbDuY&t=9623s",
+    "video": "https://youtube.com/clip/UgkxL28O2DP_SLskYBZ3eqL0ObGGi1shMHlH",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-30",
+    "submitter": "BenjiWii",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 17
+  },
+  {
+    "name": "Vehemence 40-69%",
+    "id": "vehemence-40-69",
+    "player": "A6",
+    "length": 34,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=8KzHbJxHcWU&t=12340s",
     "showcaseVideo": "https://www.youtube.com/watch?v=9SxqlWV5OxI",
-    "date": "2025-12-21",
-    "submitter": "Skeletonette",
+    "date": "2025-12-28",
+    "submitter": "TYATYAPKA",
     "levelID": 96572223,
     "tags": [
       "Level",
       "Progress"
     ],
     "removalReason": "Redundancy",
-    "rank": 4
+    "rank": 18
+  },
+  {
+    "name": "Vehemence 39-73%",
+    "id": "vehemence-39-73",
+    "player": "A6",
+    "length": 41,
+    "version": 2.2,
+    "video": "https://youtu.be/U3i-ceYaIEg",
+    "showcaseVideo": "https://www.youtube.com/watch?v=9SxqlWV5OxI",
+    "date": "2025-12-30",
+    "submitter": "Excryst",
+    "levelID": 96572223,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "removalReason": "Redundancy",
+    "rank": 19
   },
   {
     "name": "BANG BANG 55-100%",
@@ -85,7 +340,43 @@
       "Level",
       "Progress"
     ],
-    "rank": 5
+    "rank": 20
+  },
+  {
+    "name": "Blooming Blossoms",
+    "id": "blooming-blossoms",
+    "player": "piesy",
+    "length": 96,
+    "version": 2.2,
+    "video": "https://youtu.be/GU-qfLRoDMo",
+    "showcaseVideo": "https://youtu.be/yFSErX4trnQ",
+    "date": "2025-12-28",
+    "submitter": "goofygdplayer",
+    "levelID": 130293163,
+    "tags": [
+      "Level",
+      "Verified",
+      "Tentative"
+    ],
+    "rank": 21
+  },
+  {
+    "name": "Gracefully 60hz",
+    "id": "gracefully-60hz",
+    "player": "Cejelost",
+    "length": 147,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=qndRRusOzlE",
+    "showcaseVideo": "https://www.youtube.com/watch?v=FqV6HNfCZiI",
+    "date": "2025-12-26",
+    "submitter": "Arcadie",
+    "levelID": 88226064,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
+    "rank": 22
   },
   {
     "name": "BANG BANG 64%",
@@ -102,7 +393,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 6
+    "rank": 23
   },
   {
     "name": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row",
@@ -119,7 +410,23 @@
       "Challenge",
       "Consistency"
     ],
-    "rank": 7
+    "rank": 24
+  },
+  {
+    "name": "LIMBO (Unnerfed) 90%",
+    "id": "limbo-unnerfed-90%",
+    "player": "BGram",
+    "length": 182,
+    "version": 2.2,
+    "video": "https://youtu.be/CKJ4KfaF1u0",
+    "showcaseVideo": "https://www.youtube.com/watch?v=ryBbuH_SPbs",
+    "date": "2022-11-22",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 25
   },
   {
     "name": "ULTRA PARACOSM 91%",
@@ -135,7 +442,25 @@
       "Level",
       "Progress"
     ],
-    "rank": 8
+    "rank": 26
+  },
+  {
+    "name": "Silent clubstep (Sailence) 31%",
+    "id": "silent-clubstep-sailence-31",
+    "player": "Emp",
+    "length": 26,
+    "version": 2.2,
+    "video": "https://youtu.be/uaQoXBOci8o",
+    "showcaseVideo": "https://www.youtube.com/watch?v=KNQj-7AAjhM",
+    "date": "2025-12-24",
+    "submitter": "Emp",
+    "levelID": 13173489,
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 27
   },
   {
     "name": "ORDINARY 60hz Mobile 34%",
@@ -155,7 +480,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 9
+    "rank": 28
   },
   {
     "name": "X84 60z Mobile",
@@ -174,7 +499,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 10
+    "rank": 29
   },
   {
     "name": "ConClusion 60hz Mobile",
@@ -194,18 +519,35 @@
       "Rated"
     ],
     "removalReason": "Superseded",
-    "rank": 11
+    "rank": 30
   },
   {
-    "name": "Zodiac 120hz Mobile 63%",
-    "id": "zodiac-120hz-mobile-63",
-    "player": "RustedNavy15",
-    "length": 131,
-    "version": 2,
-    "video": "https://www.youtube.com/watch?v=i3DyEk90-u4&start=5199",
+    "name": "Silent Circles (Starchman) 47-89%",
+    "id": "silent-circles-starchman-47-89",
+    "player": "Juls",
+    "length": 28,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=KzXNTfQUo8s",
+    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
+    "date": "2025-12-26",
+    "submitter": "kittycatiscute",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 31
+  },
+  {
+    "name": "Zodiac 144hz Mobile 78%",
+    "id": "zodiac-144hz-mobile-78",
+    "player": "Vergus",
+    "length": 158,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=buObSXwAPuc&t=1s",
     "showcaseVideo": "https://youtu.be/9ZX_EHHpf04",
-    "date": "2025-12-13",
-    "submitter": "Excryst",
+    "date": "2025-12-03",
+    "submitter": "hyperboll",
     "levelID": 52374843,
     "tags": [
       "Level",
@@ -214,7 +556,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 12
+    "rank": 32
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -234,7 +576,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 13
+    "rank": 33
   },
   {
     "name": "Dramatic",
@@ -251,7 +593,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 14
+    "rank": 34
   },
   {
     "name": "Angelicide (Xtra8nugz) 21-40%",
@@ -267,23 +609,23 @@
       "Level",
       "Progress"
     ],
-    "rank": 15
+    "rank": 35
   },
   {
-    "name": "Angelicide (Xtra8nugz) 13%",
-    "id": "angelicide-xtra8nugz-13",
+    "name": "Angelicide (Xtra8nugz) 19%",
+    "id": "angelicide-xtra8nugz-19",
     "player": "Xtra8nuggies",
-    "length": 13,
+    "length": 18,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=gwQ1hEcDJ3g",
+    "video": "https://www.youtube.com/watch?v=dJhWtoPkXk4",
     "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-12-21",
-    "submitter": "kittycatiscute",
+    "date": "2025-12-26",
+    "submitter": "Excryst",
     "tags": [
       "Level",
       "Progress"
     ],
-    "rank": 16
+    "rank": 36
   },
   {
     "name": "Angelicide (Xtra8nugz) 15-37%",
@@ -299,7 +641,24 @@
       "Level",
       "Progress"
     ],
-    "rank": 17
+    "rank": 37
+  },
+  {
+    "name": "Reality Spirituality",
+    "id": "reality-spirituality",
+    "player": "LordVadercraft",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/mWTqh3X00yM",
+    "showcaseVideo": "https://youtu.be/9QoecJbSKwY",
+    "date": "2025-12-28",
+    "submitter": "TYATYAPKA",
+    "levelID": 130304231,
+    "tags": [
+      "Level",
+      "Verified"
+    ],
+    "rank": 38
   },
   {
     "name": "laith",
@@ -316,6 +675,61 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 18
+    "rank": 39
+  },
+  {
+    "name": "SARY NEVER CLEAR (Optic Sunflow) 2.2 88%",
+    "id": "sary-never-clear-optic-sunflow-88",
+    "player": "noname228gg",
+    "length": 66,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=oZo5QhoK66U",
+    "showcaseVideo": "https://youtu.be/a-xQc7_GnA8",
+    "date": "2025-12-21",
+    "submitter": "hyperboll",
+    "levelID": 609629,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 40
+  },
+  {
+    "name": "Trueffet 120hz Mobile",
+    "id": "trueffet-120hz-mobile",
+    "player": "Belw",
+    "length": 74,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=00TRKykJeZ4",
+    "showcaseVideo": "https://youtu.be/qkQidB9aPLA",
+    "date": "2025-12-28",
+    "submitter": "stax",
+    "levelID": 71434979,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 41
+  },
+  {
+    "name": "Cognition 60hz Mobile",
+    "id": "cognition-60hz-mobile",
+    "player": "Siaxid",
+    "length": 62,
+    "version": 2.2,
+    "video": "https://youtu.be/VHlMLSaSfbM",
+    "showcaseVideo": "https://www.youtube.com/watch?v=_fY_jzKmBuU",
+    "date": "2025-12-28",
+    "submitter": "TYATYAPKA",
+    "levelID": 57600307,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 42
   }
 ]
