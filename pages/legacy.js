@@ -44,6 +44,7 @@ export default function LegacyPage() {
       storageKeySuffix="legacy"
       showPlatformToggle={false}
       rankOffset={rankOffset}
+      showTiers={false}
     />
   );
 }
