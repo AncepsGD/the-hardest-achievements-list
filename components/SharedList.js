@@ -692,10 +692,14 @@ export default function SharedList({
   rankOffset = 0,
   showTiers = false,
 }) {
+  let file = '';
   if (typeof window !== 'undefined') {
-    const file = window.location.pathname;
-    console.warn('[SharedList] showTiers:', showTiers, 'file:', file);
+    file = window.location.pathname;
+  } else if (typeof global !== 'undefined' && global.process && global.process.cwd) {
+    file = global.process.cwd();
   }
+  console.warn('[SHAREDLIST_DEBUG]', { showTiers, file, env: typeof window !== 'undefined' ? 'client' : 'server' });
+  console.trace('[SHAREDLIST_DEBUG_TRACE]');
   const [achievements, setAchievements] = useState([]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
