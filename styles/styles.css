@@ -2489,12 +2489,18 @@ main,
 .sidebar-mobile-overlay.hidden * {
   pointer-events: none !important;
 }
+
+.achievement-item {
+  padding-right: 90px;
+  position: relative;
+}
+
 .tier-badge {
   position: absolute;
   right: 0;
   top: 0;
   height: 100%;
-  min-width: 80px;
+  width: 90px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2502,28 +2508,52 @@ main,
   z-index: 3;
   padding: 8px 12px;
   box-sizing: border-box;
+  background: var(--card-bg, #1a1a1a);
+  border-left: 2px solid transparent;
+  background-image: linear-gradient(var(--card-bg, #1a1a1a), var(--card-bg, #1a1a1a)),
+                    linear-gradient(90deg, rgba(0,0,0,0), var(--tier-gradient-color, #FFD700));
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  overflow: hidden;
+}
+
+.tier-badge::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--tier-gradient-color, #FFD700) 0%, rgba(255,215,0,0) 100%);
+  z-index: -1;
 }
 
 .tier-label {
   font-weight: 700;
   font-size: 13px;
-  color: #000;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   line-height: 1.2;
+  z-index: 4;
 }
 
 .tier-subtitle {
   font-size: 11px;
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   margin-top: 2px;
   line-height: 1.2;
+  z-index: 4;
 }
 
 @media (max-width: 768px) {
+  .achievement-item {
+    padding-right: 75px;
+  }
+
   .tier-badge {
-    min-width: 70px;
+    width: 75px;
     padding: 6px 10px;
   }
 
@@ -2538,8 +2568,12 @@ main,
 }
 
 @media (max-width: 480px) {
+  .achievement-item {
+    padding-right: 65px;
+  }
+
   .tier-badge {
-    min-width: 60px;
+    width: 65px;
     padding: 4px 8px;
   }
 
