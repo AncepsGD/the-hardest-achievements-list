@@ -218,43 +218,7 @@ function hasRatedAndVerified(item) {
   }
 
   const lower = tags.map(t => String(t).toLowerCase());
-  if (lower.includes('rated') && lower.includes('verified')) return true;
-
-  try {
-    const s = JSON.stringify(item).toLowerCase();
-    return s.includes('rated') && s.includes('verified');
-  } catch (e) {
-    return false;
-  }
-}
-
-function hasRatedOrVerified(item) {
-  if (!item) return false;
-
-  if (item.rated === true || item.verified === true) return true;
-
-  const collect = (val) => {
-    if (!val) return [];
-    if (Array.isArray(val)) return val.map(String);
-    if (typeof val === 'object') return [JSON.stringify(val)];
-    return [String(val)];
-  };
-
-  const tags = [];
-  tags.push(...collect(item.tags));
-  tags.push(...collect(item.tag));
-  tags.push(...collect(item.labels));
-  tags.push(...collect(item.label));
-  tags.push(...collect(item.status));
-  tags.push(...collect(item.meta));
-  if (item.achievement && typeof item.achievement === 'object') {
-    tags.push(...collect(item.achievement.tags));
-    tags.push(...collect(item.achievement.label));
-    tags.push(...collect(item.achievement.status));
-  }
-
-  const lower = tags.map(t => String(t).toLowerCase());
-  if (lower.includes('rated') || lower.includes('verified')) return true;
+  if ((lower.includes('rated') || lower.includes('verified'))) return true;
 
   try {
     const s = JSON.stringify(item).toLowerCase();
@@ -285,30 +249,15 @@ function getTierByRank(rank, totalAchievements, achievements = []) {
     let foundIndex = -1;
     const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
     for (let offset = 0; offset <= maxOffset; offset++) {
-      const backward = targetLastIndex - offset;
-      if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
-        foundIndex = backward;
-        break;
-      }
       const forward = targetLastIndex + offset;
       if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
         foundIndex = forward;
         break;
       }
-    }
-
-    if (foundIndex < 0) {
-      for (let offset = 0; offset <= maxOffset; offset++) {
-        const backward = targetLastIndex - offset;
-        if (backward >= start - 1 && backward < totalAchievements && hasRatedOrVerified(achievements[backward])) {
-          foundIndex = backward;
-          break;
-        }
-        const forward = targetLastIndex + offset;
-        if (forward < totalAchievements && forward >= start - 1 && hasRatedOrVerified(achievements[forward])) {
-          foundIndex = forward;
-          break;
-        }
+      const backward = targetLastIndex - offset;
+      if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
+        foundIndex = backward;
+        break;
       }
     }
 
@@ -624,30 +573,15 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
         let foundIndex = -1;
         const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
         for (let offset = 0; offset <= maxOffset; offset++) {
-          const backward = targetLastIndex - offset;
-          if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
-            foundIndex = backward;
-            break;
-          }
           const forward = targetLastIndex + offset;
           if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
             foundIndex = forward;
             break;
           }
-        }
-
-        if (foundIndex < 0) {
-          for (let offset = 0; offset <= maxOffset; offset++) {
-            const backward = targetLastIndex - offset;
-            if (backward >= start - 1 && backward < totalAchievements && hasRatedOrVerified(achievements[backward])) {
-              foundIndex = backward;
-              break;
-            }
-            const forward = targetLastIndex + offset;
-            if (forward < totalAchievements && forward >= start - 1 && hasRatedOrVerified(achievements[forward])) {
-              foundIndex = forward;
-              break;
-            }
+          const backward = targetLastIndex - offset;
+          if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
+            foundIndex = backward;
+            break;
           }
         }
 
