@@ -285,28 +285,28 @@ function getTierByRank(rank, totalAchievements, achievements = []) {
     let foundIndex = -1;
     const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
     for (let offset = 0; offset <= maxOffset; offset++) {
-      const forward = targetLastIndex + offset;
-      if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
-        foundIndex = forward;
-        break;
-      }
       const backward = targetLastIndex - offset;
       if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
         foundIndex = backward;
+        break;
+      }
+      const forward = targetLastIndex + offset;
+      if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
+        foundIndex = forward;
         break;
       }
     }
 
     if (foundIndex < 0) {
       for (let offset = 0; offset <= maxOffset; offset++) {
-        const forward = targetLastIndex + offset;
-        if (forward < totalAchievements && forward >= start - 1 && hasRatedOrVerified(achievements[forward])) {
-          foundIndex = forward;
-          break;
-        }
         const backward = targetLastIndex - offset;
         if (backward >= start - 1 && backward < totalAchievements && hasRatedOrVerified(achievements[backward])) {
           foundIndex = backward;
+          break;
+        }
+        const forward = targetLastIndex + offset;
+        if (forward < totalAchievements && forward >= start - 1 && hasRatedOrVerified(achievements[forward])) {
+          foundIndex = forward;
           break;
         }
       }
