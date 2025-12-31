@@ -551,7 +551,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements);
-  
+
   const getBaselineForTier = (tierObj) => {
     if (!tierObj || !achievements.length) return null;
     const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
@@ -563,15 +563,14 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       remainingToAllocate -= 1;
       idx += 1;
     }
-    
+
     let start = 1;
     for (let i = 0; i < TIERS.length; i++) {
+      const size = sizes[i];
+      const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
       if (TIERS[i].name === tierObj.name && TIERS[i].subtitle === tierObj.subtitle) {
-        const size = sizes[i];
-        const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
-
         let foundIndex = -1;
-        const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
+        const maxOffset = Math.max(targetLastIndex - (start - 1), totalAchievements - 1 - targetLastIndex);
         for (let offset = 0; offset <= maxOffset; offset++) {
           const forward = targetLastIndex + offset;
           if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
@@ -584,24 +583,22 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             break;
           }
         }
-
         let endRank;
         if (foundIndex >= 0) {
           endRank = foundIndex;
         } else {
           endRank = Math.min(totalAchievements - 1, start + size - 2);
         }
-
         if (endRank >= 0 && endRank < achievements.length) {
           return achievements[endRank]?.name || 'Unknown';
         }
         return null;
       }
-      start += sizes[i];
+      start = start + size;
     }
     return null;
   };
-  
+
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -612,7 +609,14 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
   return (
     <Link href={`/achievement/${encodeURIComponent(achievement.id)}`} passHref legacyBehavior>
       <a
-        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+        style={{
+          textDecoration: 'none',
+          color: 'inherit',
+          cursor: devMode ? 'not-allowed' : 'pointer',
+          pointerEvents: devMode ? 'none' : 'auto',
+          opacity: devMode ? 0.5 : 1,
+          transition: 'opacity 0.1s',
+        }}
         onClick={handleClick}
         onMouseDown={handleClick}
         tabIndex={devMode ? -1 : 0}
@@ -621,7 +625,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
         <div
           className="achievement-item"
           tabIndex={0}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: devMode ? 'not-allowed' : 'pointer', pointerEvents: devMode ? 'none' : 'auto', opacity: devMode ? 0.5 : 1, transition: 'opacity 0.1s' }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
