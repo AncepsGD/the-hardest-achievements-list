@@ -9,6 +9,7 @@ export default function ListPage() {
       dataUrl="/achievements.json"
       dataFileName="achievements.json"
       storageKeySuffix="achievements"
+      showTiers={true}
     />
   );
 }
