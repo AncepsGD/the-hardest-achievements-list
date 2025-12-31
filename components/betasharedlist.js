@@ -2636,7 +2636,7 @@ export default function SharedList({
                         (() => {
                           const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
                           const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={filtered.length} achievements={filtered} />;
+                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} />;
                         })()
                       }
                     </div>
