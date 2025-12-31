@@ -12,6 +12,20 @@ export const TIERS = [
 
 const tierCache = new WeakMap();
 
+function computeSizes(totalAchievements) {
+  const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
+  let allocated = sizes.reduce((a, b) => a + b, 0);
+  let remainingToAllocate = totalAchievements - allocated;
+  let idx = 0;
+  const len = TIERS.length;
+  while (remainingToAllocate > 0 && len > 0) {
+    sizes[idx % len] += 1;
+    remainingToAllocate -= 1;
+    idx += 1;
+  }
+  return sizes;
+}
+
 export function computeTierBoundaries(totalAchievements, achievements = []) {
   if (!achievements || typeof achievements !== 'object') return null;
   const cached = tierCache.get(achievements);
@@ -19,33 +33,24 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
     return cached.boundaries;
   }
 
-  const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
-  let allocated = sizes.reduce((a, b) => a + b, 0);
-  let remainingToAllocate = totalAchievements - allocated;
-  let idx = 0;
-  while (remainingToAllocate > 0 && TIERS.length > 0) {
-    sizes[idx % sizes.length] += 1;
-    remainingToAllocate -= 1;
-    idx += 1;
+  const sizes = computeSizes(totalAchievements);
+
+  const flags = new Array(totalAchievements);
+  for (let i = 0; i < totalAchievements; i++) {
+    flags[i] = hasRatedAndVerified(achievements[i]);
   }
 
   let start = 1;
   const boundaries = [];
   for (let i = 0; i < TIERS.length; i++) {
     const size = sizes[i];
-    const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
+    const tierStartIdx = start - 1;
+    const tierEndIdx = Math.min(totalAchievements - 1, start + size - 1);
 
     let foundIndex = -1;
-    const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
-    for (let offset = 0; offset <= maxOffset; offset++) {
-      const forward = targetLastIndex + offset;
-      if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
-        foundIndex = forward;
-        break;
-      }
-      const backward = targetLastIndex - offset;
-      if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
-        foundIndex = backward;
+    for (let j = tierEndIdx; j >= tierStartIdx; j--) {
+      if (j >= 0 && j < totalAchievements && flags[j]) {
+        foundIndex = j;
         break;
       }
     }
@@ -61,7 +66,7 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
     start = endRank + 1;
   }
 
-  tierCache.set(achievements, { totalAchievements, boundaries });
+  tierCache.set(achievements, { totalAchievements, boundaries, sizes, flags });
   return boundaries;
 }
 
@@ -69,28 +74,49 @@ function hasRatedAndVerified(item) {
   if (!item) return false;
   if (item.rated === true && item.verified === true) return true;
 
-  const collect = (val) => {
-    if (!val) return [];
-    if (Array.isArray(val)) return val.map(String);
-    if (typeof val === 'object') return [JSON.stringify(val)];
-    return [String(val)];
+  const checkStringOrArray = (val) => {
+    if (!val) return false;
+    if (typeof val === 'string') {
+      const s = val.toLowerCase();
+      return s.includes('rated') && s.includes('verified');
+    }
+    if (Array.isArray(val)) {
+      let hasRated = false;
+      let hasVerified = false;
+      for (let i = 0; i < val.length; i++) {
+        const v = val[i] == null ? '' : String(val[i]).toLowerCase();
+        if (!hasRated && v.includes('rated')) hasRated = true;
+        if (!hasVerified && v.includes('verified')) hasVerified = true;
+        if (hasRated && hasVerified) return true;
+      }
+      return false;
+    }
+    if (typeof val === 'object') {
+      for (const k in val) {
+        if (!Object.prototype.hasOwnProperty.call(val, k)) continue;
+        const v = val[k];
+        if (v == null) continue;
+        const s = String(v).toLowerCase();
+        if (s.includes('rated') && s.includes('verified')) return true;
+      }
+      return false;
+    }
+    return false;
   };
 
-  const tags = [];
-  tags.push(...collect(item.tags));
-  tags.push(...collect(item.tag));
-  tags.push(...collect(item.labels));
-  tags.push(...collect(item.label));
-  tags.push(...collect(item.status));
-  tags.push(...collect(item.meta));
-  if (item.achievement && typeof item.achievement === 'object') {
-    tags.push(...collect(item.achievement.tags));
-    tags.push(...collect(item.achievement.label));
-    tags.push(...collect(item.achievement.status));
-  }
+  if (checkStringOrArray(item.tags)) return true;
+  if (checkStringOrArray(item.tag)) return true;
+  if (checkStringOrArray(item.labels)) return true;
+  if (checkStringOrArray(item.label)) return true;
+  if (checkStringOrArray(item.status)) return true;
+  if (checkStringOrArray(item.meta)) return true;
 
-  const lower = tags.map(t => String(t).toLowerCase());
-  if (lower.includes('rated') && lower.includes('verified')) return true;
+  const ach = item.achievement;
+  if (ach && typeof ach === 'object') {
+    if (checkStringOrArray(ach.tags)) return true;
+    if (checkStringOrArray(ach.label)) return true;
+    if (checkStringOrArray(ach.status)) return true;
+  }
 
   try {
     const s = JSON.stringify(item).toLowerCase();
@@ -115,45 +141,27 @@ export function getTierByRank(rank, totalAchievements, achievements = [], enable
 
 export function getBaselineForTier(tierObj, totalAchievements, achievements = []) {
   if (!tierObj || !achievements.length) return null;
-  const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
-  let allocated = sizes.reduce((a, b) => a + b, 0);
-  let remainingToAllocate = totalAchievements - allocated;
-  let idx = 0;
-  while (remainingToAllocate > 0 && TIERS.length > 0) {
-    sizes[idx % sizes.length] += 1;
-    remainingToAllocate -= 1;
-    idx += 1;
+  let cached = tierCache.get(achievements);
+  if (!cached || cached.totalAchievements !== totalAchievements) {
+    computeTierBoundaries(totalAchievements, achievements);
+    cached = tierCache.get(achievements);
   }
+  if (!cached) return null;
 
-  let start = 1;
-  for (let i = 0; i < TIERS.length; i++) {
-    const size = sizes[i];
-    const tierStartIdx = start - 1;
-    const tierEndIdx = Math.min(totalAchievements - 1, start + size - 1);
-    if (TIERS[i].name === tierObj.name && TIERS[i].subtitle === tierObj.subtitle) {
-      let foundIndex = -1;
-      const maxOffset = Math.max(tierEndIdx - tierStartIdx, totalAchievements - 1 - tierEndIdx);
-      for (let offset = 0; offset <= maxOffset; offset++) {
-        const forward = tierEndIdx + offset;
-        if (forward < totalAchievements && forward >= tierStartIdx && hasRatedAndVerified(achievements[forward])) {
-          foundIndex = forward;
-          break;
-        }
-        const backward = tierEndIdx - offset;
-        if (backward >= tierStartIdx && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
-          foundIndex = backward;
-          break;
-        }
+  const { boundaries = [], flags = [] } = cached;
+
+  for (let i = 0; i < boundaries.length; i++) {
+    const b = boundaries[i];
+    const t = TIERS[b.tierIndex];
+    if (t.name === tierObj.name && t.subtitle === tierObj.subtitle) {
+      const startIdx = Math.max(0, b.start - 1);
+      const endIdx = Math.min(totalAchievements - 1, b.end - 1);
+      for (let j = endIdx; j >= startIdx; j--) {
+        if (flags[j] && j < achievements.length) return achievements[j]?.name || 'Unknown';
       }
-      if (foundIndex >= 0 && foundIndex < achievements.length) {
-        return achievements[foundIndex]?.name || 'Unknown';
-      }
-      if (tierEndIdx >= tierStartIdx && tierEndIdx < achievements.length) {
-        return achievements[tierEndIdx]?.name || 'Unknown';
-      }
+      if (endIdx >= 0 && endIdx < achievements.length) return achievements[endIdx]?.name || 'Unknown';
       return null;
     }
-    start = start + size;
   }
   return null;
 }
