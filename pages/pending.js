@@ -10,6 +10,7 @@ export default function PendingPage() {
       dataFileName="pending.json"
       storageKeySuffix="pending"
       showPlatformToggle={false}
+      showTiers={false}
     />
   );
 }
