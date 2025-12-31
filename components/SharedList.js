@@ -548,7 +548,6 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
 const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
 
 const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [] }) {
-  const [hoverTier, setHoverTier] = useState(false);
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements);
@@ -618,27 +617,14 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             ))}
             {tier && (
               <div 
-                className="tier-tag-wrapper"
-                onMouseEnter={() => setHoverTier(true)}
-                onMouseLeave={() => setHoverTier(false)}
+                className="tier-tag"
+                style={{
+                  '--tier-gradient-start': tier.gradientStart,
+                  '--tier-gradient-end': tier.gradientEnd,
+                }}
+                title={`${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${getBaselineForTier(tier) || 'Unknown'}`}
               >
-                <div 
-                  className="tier-tag"
-                  style={{
-                    '--tier-gradient-start': tier.gradientStart,
-                    '--tier-gradient-end': tier.gradientEnd,
-                    position: 'relative',
-                  }}
-                >
-                  <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
-                </div>
-                {hoverTier && (
-                  <div className="tier-tooltip">
-                    <div className="tier-tooltip-title">{tier.name} – {tier.subtitle}</div>
-                    <div className="tier-tooltip-percent">{tier.percent}% of achievements</div>
-                    <div className="tier-tooltip-baseline">Baseline is {getBaselineForTier(tier) || 'Unknown'}</div>
-                  </div>
-                )}
+                <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
               </div>
             )}
           </div>
