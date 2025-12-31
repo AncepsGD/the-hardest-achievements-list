@@ -563,12 +563,37 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       remainingToAllocate -= 1;
       idx += 1;
     }
+    
     let start = 1;
     for (let i = 0; i < TIERS.length; i++) {
       if (TIERS[i].name === tierObj.name && TIERS[i].subtitle === tierObj.subtitle) {
-        const baselineIdx = start + sizes[i] - 2;
-        if (baselineIdx >= 0 && baselineIdx < achievements.length) {
-          return achievements[baselineIdx]?.name || 'Unknown';
+        const size = sizes[i];
+        const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
+
+        let foundIndex = -1;
+        const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
+        for (let offset = 0; offset <= maxOffset; offset++) {
+          const forward = targetLastIndex + offset;
+          if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
+            foundIndex = forward;
+            break;
+          }
+          const backward = targetLastIndex - offset;
+          if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
+            foundIndex = backward;
+            break;
+          }
+        }
+
+        let endRank;
+        if (foundIndex >= 0) {
+          endRank = foundIndex;
+        } else {
+          endRank = Math.min(totalAchievements - 1, start + size - 2);
+        }
+
+        if (endRank >= 0 && endRank < achievements.length) {
+          return achievements[endRank]?.name || 'Unknown';
         }
         return null;
       }
