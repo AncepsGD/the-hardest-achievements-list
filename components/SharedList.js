@@ -2657,7 +2657,7 @@ export default function SharedList({
                     (() => {
                       const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
                       const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} achievements={devAchievements} mode={mode} usePlatformers={usePlatformers} />;
+                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} achievements={devAchievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} />;
                     })()
                   }
                 </div>
@@ -2702,7 +2702,7 @@ export default function SharedList({
                         (() => {
                           const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
                           const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} />;
+                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} />;
                         })()
                       }
                     </div>
