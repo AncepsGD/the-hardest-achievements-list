@@ -12,17 +12,32 @@ export const TIERS = [
 
 const tierCache = new WeakMap();
 
+let _isLegacyOrPendingCached = null;
 function isLegacyOrPending() {
+  if (_isLegacyOrPendingCached !== null) return _isLegacyOrPendingCached;
+  let result = false;
   try {
-    if (typeof window === 'undefined') return false;
-    const path = (window.location && window.location.pathname) ? window.location.pathname.toLowerCase() : '';
-    if (path.endsWith('/legacy.js') || path.endsWith('/pending.js') || path.endsWith('/legacy') || path.endsWith('/pending')) return true;
-    const href = (window.location && window.location.href) ? window.location.href.toLowerCase() : '';
-    if (href.includes('legacy.js') || href.includes('pending.js')) return true;
-    const scriptSrc = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) ? document.currentScript.src.toLowerCase() : '';
-    if (scriptSrc.endsWith('/legacy.js') || scriptSrc.endsWith('/pending.js')) return true;
-  } catch (e) {}
-  return false;
+    if (typeof window === 'undefined') {
+      result = false;
+    } else {
+      const path = (window.location && window.location.pathname) ? window.location.pathname.toLowerCase() : '';
+      if (path.endsWith('/legacy.js') || path.endsWith('/pending.js') || path.endsWith('/legacy') || path.endsWith('/pending')) {
+        result = true;
+      } else {
+        const href = (window.location && window.location.href) ? window.location.href.toLowerCase() : '';
+        if (href.includes('legacy.js') || href.includes('pending.js')) {
+          result = true;
+        } else {
+          const scriptSrc = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) ? document.currentScript.src.toLowerCase() : '';
+          if (scriptSrc.endsWith('/legacy.js') || scriptSrc.endsWith('/pending.js')) result = true;
+        }
+      }
+    }
+  } catch (e) {
+    result = false;
+  }
+  _isLegacyOrPendingCached = result;
+  return result;
 }
 
 function computeSizes(totalAchievements) {
@@ -49,8 +64,10 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
 
   const sizes = computeSizes(totalAchievements);
 
-  const flags = new Array(totalAchievements);
-  for (let i = 0; i < totalAchievements; i++) {
+  const flags = new Array(totalAchievements).fill(false);
+  const achLen = Array.isArray(achievements) ? achievements.length : 0;
+  const limit = Math.min(totalAchievements, achLen);
+  for (let i = 0; i < limit; i++) {
     flags[i] = hasRatedAndVerified(achievements[i]);
   }
 
@@ -58,6 +75,10 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
   const boundaries = [];
   for (let i = 0; i < TIERS.length; i++) {
     const size = sizes[i];
+    if (size <= 0) {
+      boundaries.push({ start, end: Math.min(totalAchievements, start - 1), tierIndex: i });
+      continue;
+    }
     const tierStartIdx = start - 1;
     const tierEndIdx = Math.min(totalAchievements - 1, start + size - 1);
 
@@ -78,6 +99,13 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
 
     boundaries.push({ start, end: endRank, tierIndex: i });
     start = endRank + 1;
+    if (start > totalAchievements) {
+
+      for (let k = i + 1; k < TIERS.length; k++) {
+        boundaries.push({ start: totalAchievements + 1, end: totalAchievements, tierIndex: k });
+      }
+      break;
+    }
   }
 
   tierCache.set(achievements, { totalAchievements, boundaries, sizes, flags });
@@ -87,6 +115,8 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
 function hasRatedAndVerified(item) {
   if (!item) return false;
   if (item.rated === true && item.verified === true) return true;
+
+  const toLower = (v) => (v == null ? '' : String(v).toLowerCase());
 
   const checkStringOrArray = (val) => {
     if (!val) return false;
@@ -98,7 +128,7 @@ function hasRatedAndVerified(item) {
       let hasRated = false;
       let hasVerified = false;
       for (let i = 0; i < val.length; i++) {
-        const v = val[i] == null ? '' : String(val[i]).toLowerCase();
+        const v = toLower(val[i]);
         if (!hasRated && v.includes('rated')) hasRated = true;
         if (!hasVerified && v.includes('verified')) hasVerified = true;
         if (hasRated && hasVerified) return true;
@@ -108,10 +138,8 @@ function hasRatedAndVerified(item) {
     if (typeof val === 'object') {
       for (const k in val) {
         if (!Object.prototype.hasOwnProperty.call(val, k)) continue;
-        const v = val[k];
-        if (v == null) continue;
-        const s = String(v).toLowerCase();
-        if (s.includes('rated') && s.includes('verified')) return true;
+        const v = toLower(val[k]);
+        if (v.includes('rated') && v.includes('verified')) return true;
       }
       return false;
     }
@@ -132,12 +160,7 @@ function hasRatedAndVerified(item) {
     if (checkStringOrArray(ach.status)) return true;
   }
 
-  try {
-    const s = JSON.stringify(item).toLowerCase();
-    return s.includes('rated') && s.includes('verified');
-  } catch (e) {
-    return false;
-  }
+  return false;
 }
 
 export function getTierByRank(rank, totalAchievements, achievements = [], enableTiers = true) {
