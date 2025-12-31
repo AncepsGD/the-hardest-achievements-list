@@ -192,7 +192,6 @@ const TIERS = [
   { name: 'Tier VII', subtitle: 'Entry', percent: 30, gradientStart: '#B955F7', gradientEnd: '#6B21A8' },
 ];
 
-let FORCE_DISABLE_TIERS = false;
 function hasRatedAndVerified(item) {
   if (!item) return false;
 
@@ -229,9 +228,14 @@ function hasRatedAndVerified(item) {
   }
 }
 
-function getTierByRank(rank, totalAchievements, achievements = []) {
-  if (FORCE_DISABLE_TIERS) return null;
-  if (!rank || !totalAchievements || rank <= 0) return null;
+const tierCache = new WeakMap();
+
+function computeTierBoundaries(totalAchievements, achievements = []) {
+  if (!achievements || typeof achievements !== 'object') return null;
+  const cached = tierCache.get(achievements);
+  if (cached && cached.totalAchievements === totalAchievements && Array.isArray(cached.boundaries)) {
+    return cached.boundaries;
+  }
 
   const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
   let allocated = sizes.reduce((a, b) => a + b, 0);
@@ -244,6 +248,7 @@ function getTierByRank(rank, totalAchievements, achievements = []) {
   }
 
   let start = 1;
+  const boundaries = [];
   for (let i = 0; i < TIERS.length; i++) {
     const size = sizes[i];
     const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
@@ -270,11 +275,22 @@ function getTierByRank(rank, totalAchievements, achievements = []) {
       endRank = Math.min(totalAchievements, start + size - 1);
     }
 
-    if (rank >= start && rank <= endRank) {
-      return TIERS[i];
-    }
-
+    boundaries.push({ start, end: endRank, tierIndex: i });
     start = endRank + 1;
+  }
+
+  tierCache.set(achievements, { totalAchievements, boundaries });
+  return boundaries;
+}
+
+function getTierByRank(rank, totalAchievements, achievements = [], enableTiers = true) {
+  if (!enableTiers) return null;
+  if (!rank || !totalAchievements || rank <= 0) return null;
+
+  const boundaries = computeTierBoundaries(totalAchievements, achievements) || [];
+  for (let i = 0; i < boundaries.length; i++) {
+    const b = boundaries[i];
+    if (rank >= b.start && rank <= b.end) return TIERS[b.tierIndex];
   }
 
   return null;
@@ -463,9 +479,9 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false }) {
   const { dateFormat } = useDateFormat();
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements);
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, showTiers === true);
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
     if (devMode) {
@@ -548,12 +564,12 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
   );
 }
 
-const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
+const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.showTiers === next.showTiers && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements);
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements);
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, showTiers === true);
 
   const getBaselineForTier = (tierObj) => {
     if (!tierObj || !achievements.length) return null;
@@ -674,7 +690,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       </a>
     </Link>
   );
-}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank && prev.showRank === next.showRank && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements && prev.mode === next.mode && prev.usePlatformers === next.usePlatformers);
+}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank && prev.showRank === next.showRank && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements && prev.mode === next.mode && prev.usePlatformers === next.usePlatformers && prev.showTiers === next.showTiers);
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -696,7 +712,6 @@ export default function SharedList({
 }) {
   if (storageKeySuffix === 'legacy' || storageKeySuffix === 'pending') {
     showTiers = false;
-    FORCE_DISABLE_TIERS = true;
   }
   let file = '';
   if (typeof window !== 'undefined') {
@@ -2664,7 +2679,7 @@ export default function SharedList({
                   zIndex: 1
                 }} className={highlightedIdx === i ? 'search-highlight' : ''}>
                   {mode === 'timeline' ?
-                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={devAchievements.length} achievements={devAchievements} showTiers={showTiers === true} />
                     :
                     (() => {
                       const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
@@ -2709,7 +2724,7 @@ export default function SharedList({
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
                       {mode === 'timeline' ?
-                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers === true} />
                         :
                         (() => {
                           const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
