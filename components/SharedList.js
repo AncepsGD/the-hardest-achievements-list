@@ -684,6 +684,10 @@ function useDebouncedValue(value, delay) {
 }
 
 export default function SharedList({
+    if (typeof window !== 'undefined') {
+      const file = window.location.pathname;
+      console.warn('[SharedList] showTiers:', showTiers, 'file:', file);
+    }
   dataUrl = '/achievements.json',
   dataFileName = 'achievements.json',
   storageKeySuffix = 'achievements',
