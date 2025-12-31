@@ -12,6 +12,19 @@ export const TIERS = [
 
 const tierCache = new WeakMap();
 
+function isLegacyOrPending() {
+  try {
+    if (typeof window === 'undefined') return false;
+    const path = (window.location && window.location.pathname) ? window.location.pathname.toLowerCase() : '';
+    if (path.endsWith('/legacy.js') || path.endsWith('/pending.js') || path.endsWith('/legacy') || path.endsWith('/pending')) return true;
+    const href = (window.location && window.location.href) ? window.location.href.toLowerCase() : '';
+    if (href.includes('legacy.js') || href.includes('pending.js')) return true;
+    const scriptSrc = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) ? document.currentScript.src.toLowerCase() : '';
+    if (scriptSrc.endsWith('/legacy.js') || scriptSrc.endsWith('/pending.js')) return true;
+  } catch (e) {}
+  return false;
+}
+
 function computeSizes(totalAchievements) {
   const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
   let allocated = sizes.reduce((a, b) => a + b, 0);
@@ -27,6 +40,7 @@ function computeSizes(totalAchievements) {
 }
 
 export function computeTierBoundaries(totalAchievements, achievements = []) {
+  if (isLegacyOrPending()) return null;
   if (!achievements || typeof achievements !== 'object') return null;
   const cached = tierCache.get(achievements);
   if (cached && cached.totalAchievements === totalAchievements && Array.isArray(cached.boundaries)) {
@@ -127,7 +141,7 @@ function hasRatedAndVerified(item) {
 }
 
 export function getTierByRank(rank, totalAchievements, achievements = [], enableTiers = true) {
-  if (!enableTiers) return null;
+  if (!enableTiers || isLegacyOrPending()) return null;
   if (!rank || !totalAchievements || rank <= 0) return null;
 
   const boundaries = computeTierBoundaries(totalAchievements, achievements) || [];
@@ -140,6 +154,7 @@ export function getTierByRank(rank, totalAchievements, achievements = [], enable
 }
 
 export function getBaselineForTier(tierObj, totalAchievements, achievements = []) {
+  if (isLegacyOrPending()) return null;
   if (!tierObj || !achievements.length) return null;
   let cached = tierCache.get(achievements);
   if (!cached || cached.totalAchievements !== totalAchievements) {
@@ -168,6 +183,7 @@ export function getBaselineForTier(tierObj, totalAchievements, achievements = []
 
 export default function TierTag({ tier, totalAchievements, achievements = [] }) {
   if (!tier) return null;
+  if (isLegacyOrPending()) return null;
   const baseline = getBaselineForTier(tier, totalAchievements, achievements) || 'Unknown';
   const title = `${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${baseline}`;
   const style = {
