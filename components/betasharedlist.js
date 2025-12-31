@@ -29,34 +29,52 @@ function formatChangelogEntry(change, achievements, mode) {
   const newIdx = allAchievements.findIndex(a => a.id === achievement.id);
   const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
 
+  const showOnlyOneContext = mode === 'dev';
+
   let entry = '';
 
   switch (type) {
     case 'added':
       entry = `🟢 **${name}** added at #${rank}`;
-      if (context.below) entry += `\n> Below ${context.below}`;
-      if (context.above) entry += `\n> Above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Below ${context.below}`;
+        if (context.above) entry += `\n> Above ${context.above}`;
+      }
       break;
 
     case 'removed':
       entry = `🔴 **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
         const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        if (showOnlyOneContext) {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        } else {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        }
       }
       break;
 
     case 'movedUp':
       entry = `🔼 **${name}** moved up from #${oldRank} to #${rank}`;
-      if (context.below) entry += `\n> Now below ${context.below}`;
-      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
       break;
 
     case 'movedDown':
       entry = `🔽 **${name}** moved down from #${oldRank} to #${rank}`;
-      if (context.below) entry += `\n> Now below ${context.below}`;
-      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
       break;
 
     case 'swapped':
@@ -67,7 +85,7 @@ function formatChangelogEntry(change, achievements, mode) {
         const nameB = (b && b.name) ? b.name : 'Unknown';
         const newA = (newRank != null) ? newRank : (a && a.rank) ? a.rank : '?';
         const newB = (change && change.newRankB != null) ? change.newRankB : (b && b.rank) ? b.rank : '?';
-        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**.`;
+        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**`;
         entry += `\n> Now ${nameA} is #${newA}`;
         entry += `\n> And ${nameB} is #${newB}`;
       }
@@ -79,8 +97,12 @@ function formatChangelogEntry(change, achievements, mode) {
 
     case 'addedWithRemovals':
       entry = `<:updatedup:1375890567870812322> **${name}** added at #${rank}`;
-      if (context.below) entry += `\n> Now below ${context.below}`;
-      if (context.above) entry += `\n> Now above ${context.above}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
       if (removedDuplicates && removedDuplicates.length > 0) {
         entry += `\n>\n> Achievement(s) removed for redundancy:`;
         removedDuplicates.forEach(dup => {
@@ -93,8 +115,12 @@ function formatChangelogEntry(change, achievements, mode) {
       entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
         const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-        if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-        if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        if (showOnlyOneContext) {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        } else {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        }
       }
       if (readdedAchievements && readdedAchievements.length > 0) {
         entry += `\n>\n> Achievement(s) re-added due to renewed relevance:`;
@@ -155,6 +181,42 @@ const AVAILABLE_TAGS = [
   "Noclip", "Miscellaneous", "Progress", "Consistency", "Speedrun",
   "2P", "CBF", "Rated", "Formerly Rated", "Outdated Version", "Tentative"
 ];
+
+const TIERS = [
+  { name: 'Tier I', subtitle: 'Endgame', percent: 4, gradientStart: '#FFD700', gradientEnd: '#FF8C00' },
+  { name: 'Tier II', subtitle: 'Master', percent: 6, gradientStart: '#E8E8E8', gradientEnd: '#999999' },
+  { name: 'Tier III', subtitle: 'Expert', percent: 8, gradientStart: '#D4AF37', gradientEnd: '#8B6914' },
+  { name: 'Tier IV', subtitle: 'Advanced', percent: 12, gradientStart: '#FF5555', gradientEnd: '#BB0000' },
+  { name: 'Tier V', subtitle: 'Intermediate', percent: 16, gradientStart: '#5B9BF5', gradientEnd: '#1E40AF' },
+  { name: 'Tier VI', subtitle: 'Developing', percent: 24, gradientStart: '#65C641', gradientEnd: '#0D7F2F' },
+  { name: 'Tier VII', subtitle: 'Entry', percent: 30, gradientStart: '#B955F7', gradientEnd: '#6B21A8' },
+];
+
+function getTierByRank(rank, totalAchievements) {
+  if (!rank || !totalAchievements || rank <= 0) return null;
+  
+  const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
+  let allocated = sizes.reduce((a, b) => a + b, 0);
+  let remainingToAllocate = totalAchievements - allocated;
+  let idx = 0;
+  while (remainingToAllocate > 0 && TIERS.length > 0) {
+    sizes[idx % sizes.length] += 1;
+    remainingToAllocate -= 1;
+    idx += 1;
+  }
+  
+  let start = 0;
+  for (let i = 0; i < TIERS.length; i++) {
+    const size = sizes[i];
+    const end = start + size;
+    if (rank >= start + 1 && rank <= end) {
+      return TIERS[i];
+    }
+    start = end;
+  }
+  
+  return null;
+}
 
 function normalizeYoutubeUrl(input) {
   if (!input || typeof input !== 'string') return input;
@@ -425,9 +487,10 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
 
 const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
+  const tier = getTierByRank(achievement.rank, totalAchievements);
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -458,7 +521,9 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             <div className="achievement-date">
               {achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}
             </div>
-            <div className="rank"><strong>#{achievement.rank}</strong></div>
+            {showRank && (
+              <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
+            )}
           </div>
           <div className="tag-container">
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
@@ -477,11 +542,22 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               )}
             </div>
           </div>
+          {tier && (
+            <div 
+              className="tier-badge"
+              style={{
+                background: `linear-gradient(135deg, ${tier.gradientStart} 0%, ${tier.gradientEnd} 100%)`,
+              }}
+            >
+              <div className="tier-label">{tier.name}</div>
+              <div className="tier-subtitle">{tier.subtitle}</div>
+            </div>
+          )}
         </div>
       </a>
     </Link>
   );
-}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
+}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank && prev.showRank === next.showRank && prev.totalAchievements === next.totalAchievements);
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -497,7 +573,8 @@ export default function SharedList({
   dataFileName = 'achievements.json',
   storageKeySuffix = 'achievements',
   mode = '',
-  showPlatformToggle = true
+  showPlatformToggle = true,
+  rankOffset = 0,
 }) {
   const [achievements, setAchievements] = useState([]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
@@ -611,6 +688,8 @@ export default function SharedList({
   const { dateFormat, setDateFormat } = useDateFormat();
   const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
+
+  const hideRank = storageKeySuffix === 'pending' || dataFileName === 'pending.json';
 
   const [originalAchievements, setOriginalAchievements] = useState(null);
   const [sortKey, setSortKey] = useState(() => {
@@ -901,6 +980,48 @@ export default function SharedList({
     const original = originalAchievements || [];
     const current = (reordered && reordered.length) ? reordered : achievements || [];
 
+    if (dataFileName === 'pending.json') {
+      if (!current || !current.length) {
+        alert('No pending achievements to copy.');
+        return;
+      }
+      const sorted = [...current].sort((a, b) => {
+        try {
+          const da = parseAsLocal(a && a.date);
+          const db = parseAsLocal(b && b.date);
+          const ta = da && !isNaN(da) ? da.getTime() : 0;
+          const tb = db && !isNaN(db) ? db.getTime() : 0;
+          return tb - ta;
+        } catch (e) {
+          return 0;
+        }
+      });
+
+      let formatted = ':clock3: **Achievements in pending...**\n';
+      sorted.forEach(a => {
+        const id = a && a.id ? encodeURIComponent(a.id) : '';
+        const name = a && a.name ? a.name : 'Unknown';
+        formatted += `> [${name}](https://thal.vercel.app/achievement/${id})\n`;
+      });
+
+      if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(formatted).then(() => alert('Pending list copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
+      } else {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = formatted;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          alert('Pending list copied to clipboard!');
+        } catch (e) {
+          alert('Clipboard API not available');
+        }
+      }
+      return;
+    }
+
     if (!original || !original.length) {
       alert('Original JSON not available to diff against.');
       return;
@@ -1096,10 +1217,25 @@ export default function SharedList({
 
     const moveChanges = changesList.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
     const suppressedIds = new Set();
+    const swappedIds = new Set();
+
+    for (let i = 0; i < moveChanges.length; i++) {
+      const a = moveChanges[i];
+      if (!a || !a.achievement) continue;
+      for (let j = i + 1; j < moveChanges.length; j++) {
+        const b = moveChanges[j];
+        if (!b || !b.achievement) continue;
+        if (a.oldRank === b.newRank && a.newRank === b.oldRank) {
+          swappedIds.add(a.achievement.id);
+          swappedIds.add(b.achievement.id);
+        }
+      }
+    }
 
     if (allAddedPositions && allAddedPositions.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement || m.type !== 'movedDown') continue;
+        if (swappedIds.has(m.achievement.id)) continue;
         const oldR = Number(m.oldRank) || 0;
         const newR = Number(m.newRank) || 0;
         const delta = newR - oldR;
@@ -1116,6 +1252,7 @@ export default function SharedList({
     if (allRemovedRanks && allRemovedRanks.length) {
       for (const m of moveChanges) {
         if (!m || !m.achievement || m.type !== 'movedUp') continue;
+        if (swappedIds.has(m.achievement.id)) continue;
         const oldR = Number(m.oldRank) || 0;
         const newR = Number(m.newRank) || 0;
         const delta = oldR - newR;
@@ -1128,47 +1265,48 @@ export default function SharedList({
         }
       }
     }
+
     if (moveChanges && moveChanges.length) {
       const movesMap = new Map();
       moveChanges.forEach(m => {
         if (!m || !m.achievement) return;
         const id = m.achievement.id;
-        movesMap.set(id, {
-          oldRank: Number(m.oldRank) || null,
-          newRank: Number(m.newRank) || null,
-          type: m.type,
-          achievement: m.achievement
+          movesMap.set(id, {
+            oldRank: Number(m.oldRank) || null,
+            newRank: Number(m.newRank) || null,
+            type: m.type,
+            achievement: m.achievement
+          });
         });
-      });
 
-      for (const [id, mv] of movesMap.entries()) {
-        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
-        const delta = mv.newRank - mv.oldRank;
-        if (delta === 0) continue;
-        if (delta < 0) {
-          const low = mv.newRank;
-          const high = mv.oldRank - 1;
-          for (const [otherId, other] of movesMap.entries()) {
-            if (otherId === id) continue;
-            if (suppressedIds.has(otherId)) continue;
-            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
-              suppressedIds.add(otherId);
+        for (const [id, mv] of movesMap.entries()) {
+          if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+          const delta = mv.newRank - mv.oldRank;
+          if (delta === 0) continue;
+          if (delta < 0) {
+            const low = mv.newRank;
+            const high = mv.oldRank - 1;
+            for (const [otherId, other] of movesMap.entries()) {
+              if (otherId === id) continue;
+              if (suppressedIds.has(otherId)) continue;
+              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+                suppressedIds.add(otherId);
+              }
             }
-          }
-        } else {
-          const low = mv.oldRank + 1;
-          const high = mv.newRank;
-          for (const [otherId, other] of movesMap.entries()) {
-            if (otherId === id) continue;
-            if (suppressedIds.has(otherId)) continue;
-            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
-              suppressedIds.add(otherId);
+          } else {
+            const low = mv.oldRank + 1;
+            const high = mv.newRank;
+            for (const [otherId, other] of movesMap.entries()) {
+              if (otherId === id) continue;
+              if (suppressedIds.has(otherId)) continue;
+              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+                suppressedIds.add(otherId);
+              }
             }
           }
         }
-      }
     }
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
@@ -2389,7 +2527,11 @@ export default function SharedList({
                   {mode === 'timeline' ?
                     <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                     :
-                    <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                    (() => {
+                      const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
+                      const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} />;
+                    })()
                   }
                 </div>
               </div>
@@ -2430,7 +2572,11 @@ export default function SharedList({
                       {mode === 'timeline' ?
                         <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
                         :
-                        <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} />
+                        (() => {
+                          const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
+                          const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={filtered.length} />;
+                        })()
                       }
                     </div>
                   );
