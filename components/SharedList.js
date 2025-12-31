@@ -618,16 +618,20 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             ))}
             {tier && (
               <div 
-                className="tier-tag"
-                style={{
-                  '--tier-gradient-start': tier.gradientStart,
-                  '--tier-gradient-end': tier.gradientEnd,
-                  position: 'relative',
-                }}
+                className="tier-tag-wrapper"
                 onMouseEnter={() => setHoverTier(true)}
                 onMouseLeave={() => setHoverTier(false)}
               >
-                <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
+                <div 
+                  className="tier-tag"
+                  style={{
+                    '--tier-gradient-start': tier.gradientStart,
+                    '--tier-gradient-end': tier.gradientEnd,
+                    position: 'relative',
+                  }}
+                >
+                  <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
+                </div>
                 {hoverTier && (
                   <div className="tier-tooltip">
                     <div className="tier-tooltip-title">{tier.name} – {tier.subtitle}</div>
