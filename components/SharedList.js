@@ -463,6 +463,7 @@ function calculateDaysLasted(currentDate, previousDate) {
 
 function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable }) {
   const { dateFormat } = useDateFormat();
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements);
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
     if (devMode) {
@@ -636,6 +637,18 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             </div>
             {showRank && (
               <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
+              {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
+                <div 
+                  className="tier-tag"
+                  style={{
+                    '--tier-gradient-start': tier.gradientStart,
+                    '--tier-gradient-end': tier.gradientEnd,
+                  }}
+                  title={`${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${getBaselineForTier(tier) || 'Unknown'}`}
+                >
+                  <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
+                </div>
+              )}
             )}
           </div>
           <div className="tag-container">
