@@ -2493,40 +2493,29 @@ main,
 .tier-tag {
   display: inline-flex;
   align-items: center;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  background: linear-gradient(135deg, var(--tier-gradient-start, #FFD700), var(--tier-gradient-end, #FF8C00));
-  white-space: nowrap;
+  justify-content: center;
+  padding: 6px 12px 6px 10px;
   margin-left: auto;
   flex-shrink: 0;
-}
-
-.tier-tag-name {
+  font-family: 'Comfortaa', Arial, sans-serif;
+  font-size: 12px;
   font-weight: 700;
-  font-size: 11px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  background: linear-gradient(135deg, var(--tier-gradient-start, #FFD700), var(--tier-gradient-end, #FF8C00));
+  white-space: nowrap;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-.tier-tag-subtitle {
-  font-size: 9px;
+.tier-tag-text {
   margin-left: 2px;
-  opacity: 0.9;
 }
 
 @media (max-width: 480px) {
   .tier-tag {
-    padding: 3px 6px;
-    font-size: 10px;
-  }
-
-  .tier-tag-name {
-    font-size: 10px;
-  }
-
-  .tier-tag-subtitle {
-    font-size: 8px;
+    padding: 5px 10px 5px 8px;
+    font-size: 11px;
   }
 }
