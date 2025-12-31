@@ -698,8 +698,17 @@ export default function SharedList({
   } else if (typeof global !== 'undefined' && global.process && global.process.cwd) {
     file = global.process.cwd();
   }
-  console.warn('[SHAREDLIST_DEBUG]', { showTiers, file, env: typeof window !== 'undefined' ? 'client' : 'server' });
-  console.trace('[SHAREDLIST_DEBUG_TRACE]');
+  try {
+    const _fileLower = String(file || '').toLowerCase();
+    const _dataFileLower = String(dataFileName || '').toLowerCase();
+    const _suppress = ['legacy.json', 'pending.json', 'legacy.js', 'pending.js'];
+    const shouldLog = !_suppress.some(n => n === _dataFileLower || _fileLower.includes(n));
+    if (shouldLog) {
+      console.warn('[SHAREDLIST_DEBUG]', { showTiers, file, env: typeof window !== 'undefined' ? 'client' : 'server' });
+      console.trace('[SHAREDLIST_DEBUG_TRACE]');
+    }
+  } catch (e) {
+  }
   const [achievements, setAchievements] = useState([]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
