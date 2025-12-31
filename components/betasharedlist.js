@@ -598,8 +598,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
                   '--tier-gradient-end': tier.gradientEnd,
                 }}
               >
-                <span className="tier-tag-name">{tier.name}</span>
-                <span className="tier-tag-subtitle">{tier.subtitle}</span>
+                <span className="tier-tag-text">{tier.name} ({tier.subtitle})</span>
               </div>
             )}
           </div>
