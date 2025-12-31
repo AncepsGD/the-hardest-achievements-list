@@ -2505,7 +2505,7 @@ main,
   background: linear-gradient(135deg, var(--tier-gradient-start, #FFD700), var(--tier-gradient-end, #FF8C00));
   white-space: nowrap;
   position: relative;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%, 8px 50%);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 8px 100%, 0 50%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
