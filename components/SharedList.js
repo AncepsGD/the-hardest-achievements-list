@@ -692,6 +692,9 @@ export default function SharedList({
   rankOffset = 0,
   showTiers = false,
 }) {
+  if (storageKeySuffix === 'legacy' || storageKeySuffix === 'pending') {
+    showTiers = false;
+  }
   let file = '';
   if (typeof window !== 'undefined') {
     file = window.location.pathname;
