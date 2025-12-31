@@ -2507,6 +2507,13 @@ main,
   position: relative;
   clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 8px 100%, 0 50%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+}
+
+.tier-tag-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
 .tier-tag-text {
@@ -2524,9 +2531,10 @@ main,
   padding: 8px 12px;
   white-space: nowrap;
   font-size: 11px;
-  z-index: 1000;
+  z-index: 1001;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   animation: tooltipFadeIn 0.2s ease-out;
+  pointer-events: none;
 }
 
 @keyframes tooltipFadeIn {
