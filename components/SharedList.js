@@ -637,18 +637,18 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             </div>
             {showRank && (
               <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
-              {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
-                <div 
-                  className="tier-tag"
-                  style={{
-                    '--tier-gradient-start': tier.gradientStart,
-                    '--tier-gradient-end': tier.gradientEnd,
-                  }}
-                  title={`${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${getBaselineForTier(tier) || 'Unknown'}`}
-                >
-                  <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
-                </div>
-              )}
+            )}
+            {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
+              <div 
+                className="tier-tag"
+                style={{
+                  '--tier-gradient-start': tier.gradientStart,
+                  '--tier-gradient-end': tier.gradientEnd,
+                }}
+                title={`${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${getBaselineForTier(tier) || 'Unknown'}`}
+              >
+                <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
+              </div>
             )}
           </div>
           <div className="tag-container">
