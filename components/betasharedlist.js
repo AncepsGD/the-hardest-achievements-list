@@ -590,6 +590,18 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
+            {tier && (
+              <div 
+                className="tier-tag"
+                style={{
+                  '--tier-gradient-start': tier.gradientStart,
+                  '--tier-gradient-end': tier.gradientEnd,
+                }}
+              >
+                <span className="tier-tag-name">{tier.name}</span>
+                <span className="tier-tag-subtitle">{tier.subtitle}</span>
+              </div>
+            )}
           </div>
           <div className="achievement-details">
             <div className="text">
@@ -603,17 +615,6 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               )}
             </div>
           </div>
-          {tier && (
-            <div 
-              className="tier-badge"
-              style={{
-                '--tier-gradient-color': tier.gradientStart,
-              }}
-            >
-              <div className="tier-label">{tier.name}</div>
-              <div className="tier-subtitle">{tier.subtitle}</div>
-            </div>
-          )}
         </div>
       </a>
     </Link>
