@@ -1,4 +1,4 @@
-# Ignore local artifacts, big media, and OneDrive sync files
+/thumbnails
 .DS_Store
 Thumbs.db
 node_modules/
@@ -27,6 +27,5 @@ Release-*
 *.ai
 *.md
 **/node_modules/**
-# OneDrive desktop sync files
 ~*
-.~lock.*
+.~lock.*  
