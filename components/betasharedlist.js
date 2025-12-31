@@ -192,9 +192,45 @@ const TIERS = [
   { name: 'Tier VII', subtitle: 'Entry', percent: 30, gradientStart: '#B955F7', gradientEnd: '#6B21A8' },
 ];
 
-function getTierByRank(rank, totalAchievements) {
+function hasRatedAndVerified(item) {
+  if (!item) return false;
+
+  if (item.rated === true && item.verified === true) return true;
+
+  const collect = (val) => {
+    if (!val) return [];
+    if (Array.isArray(val)) return val.map(String);
+    if (typeof val === 'object') return [JSON.stringify(val)];
+    return [String(val)];
+  };
+
+  const tags = [];
+  tags.push(...collect(item.tags));
+  tags.push(...collect(item.tag));
+  tags.push(...collect(item.labels));
+  tags.push(...collect(item.label));
+  tags.push(...collect(item.status));
+  tags.push(...collect(item.meta));
+  if (item.achievement && typeof item.achievement === 'object') {
+    tags.push(...collect(item.achievement.tags));
+    tags.push(...collect(item.achievement.label));
+    tags.push(...collect(item.achievement.status));
+  }
+
+  const lower = tags.map(t => String(t).toLowerCase());
+  if (lower.includes('rated') && lower.includes('verified')) return true;
+
+  try {
+    const s = JSON.stringify(item).toLowerCase();
+    return s.includes('rated') && s.includes('verified');
+  } catch (e) {
+    return false;
+  }
+}
+
+function getTierByRank(rank, totalAchievements, achievements = []) {
   if (!rank || !totalAchievements || rank <= 0) return null;
-  
+
   const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
   let allocated = sizes.reduce((a, b) => a + b, 0);
   let remainingToAllocate = totalAchievements - allocated;
@@ -204,17 +240,42 @@ function getTierByRank(rank, totalAchievements) {
     remainingToAllocate -= 1;
     idx += 1;
   }
-  
-  let start = 0;
+
+  let start = 1; // ranks are 1-indexed
   for (let i = 0; i < TIERS.length; i++) {
     const size = sizes[i];
-    const end = start + size;
-    if (rank >= start + 1 && rank <= end) {
+    const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
+
+    // Try to find a rated+verified achievement near the tier boundary
+    let foundIndex = -1;
+    const maxOffset = Math.max(targetLastIndex - start, totalAchievements - 1 - targetLastIndex);
+    for (let offset = 0; offset <= maxOffset; offset++) {
+      const forward = targetLastIndex + offset;
+      if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
+        foundIndex = forward;
+        break;
+      }
+      const backward = targetLastIndex - offset;
+      if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
+        foundIndex = backward;
+        break;
+      }
+    }
+
+    let endRank;
+    if (foundIndex >= 0) {
+      endRank = foundIndex + 1; // convert back to 1-indexed rank
+    } else {
+      endRank = Math.min(totalAchievements, start + size - 1);
+    }
+
+    if (rank >= start && rank <= endRank) {
       return TIERS[i];
     }
-    start = end;
+
+    start = endRank + 1;
   }
-  
+
   return null;
 }
 
@@ -487,10 +548,10 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
 
 const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable);
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [] }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
-  const tier = getTierByRank(achievement.rank, totalAchievements);
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements);
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -546,7 +607,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             <div 
               className="tier-badge"
               style={{
-                background: `linear-gradient(135deg, ${tier.gradientStart} 0%, ${tier.gradientEnd} 100%)`,
+                '--tier-gradient-color': tier.gradientStart,
               }}
             >
               <div className="tier-label">{tier.name}</div>
@@ -557,7 +618,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       </a>
     </Link>
   );
-}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank && prev.showRank === next.showRank && prev.totalAchievements === next.totalAchievements);
+}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank && prev.showRank === next.showRank && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements);
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -2530,7 +2591,7 @@ export default function SharedList({
                     (() => {
                       const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
                       const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} />;
+                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} achievements={devAchievements} />;
                     })()
                   }
                 </div>
@@ -2575,7 +2636,7 @@ export default function SharedList({
                         (() => {
                           const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
                           const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={filtered.length} />;
+                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={filtered.length} achievements={filtered} />;
                         })()
                       }
                     </div>
