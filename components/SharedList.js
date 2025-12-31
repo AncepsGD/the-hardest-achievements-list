@@ -192,6 +192,7 @@ const TIERS = [
   { name: 'Tier VII', subtitle: 'Entry', percent: 30, gradientStart: '#B955F7', gradientEnd: '#6B21A8' },
 ];
 
+let FORCE_DISABLE_TIERS = false;
 function hasRatedAndVerified(item) {
   if (!item) return false;
 
@@ -229,6 +230,7 @@ function hasRatedAndVerified(item) {
 }
 
 function getTierByRank(rank, totalAchievements, achievements = []) {
+  if (FORCE_DISABLE_TIERS) return null;
   if (!rank || !totalAchievements || rank <= 0) return null;
 
   const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
@@ -694,6 +696,7 @@ export default function SharedList({
 }) {
   if (storageKeySuffix === 'legacy' || storageKeySuffix === 'pending') {
     showTiers = false;
+    FORCE_DISABLE_TIERS = true;
   }
   let file = '';
   if (typeof window !== 'undefined') {
