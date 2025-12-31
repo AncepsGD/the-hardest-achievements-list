@@ -567,30 +567,16 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     let start = 1;
     for (let i = 0; i < TIERS.length; i++) {
       const size = sizes[i];
-      const targetLastIndex = Math.min(totalAchievements - 1, start + size - 1);
+      const tierStartIdx = start - 1;
+      const tierEndIdx = Math.min(totalAchievements - 1, start + size - 1);
       if (TIERS[i].name === tierObj.name && TIERS[i].subtitle === tierObj.subtitle) {
-        let foundIndex = -1;
-        const maxOffset = Math.max(targetLastIndex - (start - 1), totalAchievements - 1 - targetLastIndex);
-        for (let offset = 0; offset <= maxOffset; offset++) {
-          const forward = targetLastIndex + offset;
-          if (forward < totalAchievements && forward >= start - 1 && hasRatedAndVerified(achievements[forward])) {
-            foundIndex = forward;
-            break;
-          }
-          const backward = targetLastIndex - offset;
-          if (backward >= start - 1 && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
-            foundIndex = backward;
-            break;
+        for (let idx = tierEndIdx; idx >= tierStartIdx; idx--) {
+          if (hasRatedAndVerified(achievements[idx])) {
+            return achievements[idx]?.name || 'Unknown';
           }
         }
-        let endRank;
-        if (foundIndex >= 0) {
-          endRank = foundIndex;
-        } else {
-          endRank = Math.min(totalAchievements - 1, start + size - 2);
-        }
-        if (endRank >= 0 && endRank < achievements.length) {
-          return achievements[endRank]?.name || 'Unknown';
+        if (tierEndIdx >= tierStartIdx && tierEndIdx < achievements.length) {
+          return achievements[tierEndIdx]?.name || 'Unknown';
         }
         return null;
       }
