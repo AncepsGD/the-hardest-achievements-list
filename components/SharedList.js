@@ -570,10 +570,22 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       const tierStartIdx = start - 1;
       const tierEndIdx = Math.min(totalAchievements - 1, start + size - 1);
       if (TIERS[i].name === tierObj.name && TIERS[i].subtitle === tierObj.subtitle) {
-        for (let idx = tierEndIdx; idx >= tierStartIdx; idx--) {
-          if (hasRatedAndVerified(achievements[idx])) {
-            return achievements[idx]?.name || 'Unknown';
+        let foundIndex = -1;
+        const maxOffset = Math.max(tierEndIdx - tierStartIdx, totalAchievements - 1 - tierEndIdx);
+        for (let offset = 0; offset <= maxOffset; offset++) {
+          const forward = tierEndIdx + offset;
+          if (forward < totalAchievements && forward >= tierStartIdx && hasRatedAndVerified(achievements[forward])) {
+            foundIndex = forward;
+            break;
           }
+          const backward = tierEndIdx - offset;
+          if (backward >= tierStartIdx && backward < totalAchievements && hasRatedAndVerified(achievements[backward])) {
+            foundIndex = backward;
+            break;
+          }
+        }
+        if (foundIndex >= 0 && foundIndex < achievements.length) {
+          return achievements[foundIndex]?.name || 'Unknown';
         }
         if (tierEndIdx >= tierStartIdx && tierEndIdx < achievements.length) {
           return achievements[tierEndIdx]?.name || 'Unknown';
