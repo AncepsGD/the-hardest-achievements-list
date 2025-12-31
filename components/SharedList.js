@@ -566,7 +566,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     let start = 1;
     for (let i = 0; i < TIERS.length; i++) {
       if (TIERS[i].name === tierObj.name && TIERS[i].subtitle === tierObj.subtitle) {
-        const baselineIdx = start - 1;
+        const baselineIdx = start + sizes[i] - 2;
         if (baselineIdx >= 0 && baselineIdx < achievements.length) {
           return achievements[baselineIdx]?.name || 'Unknown';
         }
