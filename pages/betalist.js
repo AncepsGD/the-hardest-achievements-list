@@ -3,13 +3,12 @@ import React from 'react';
 
 const SharedList = dynamic(() => import('../components/betasharedlist'), { ssr: false });
 
-export default function TimelinePage() {
+export default function ListPage() {
   return (
     <SharedList
-      dataUrl="/timeline.json"
-      dataFileName="timeline.json"
-      storageKeySuffix="timeline"
-      mode="timeline"
+      dataUrl="/achievements.json"
+      dataFileName="achievements.json"
+      storageKeySuffix="achievements"
     />
   );
 }
