@@ -2501,7 +2501,7 @@ main,
   font-size: 12px;
   font-weight: 700;
   color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 1px 3px rgba(0, 0, 0, 0.8);
   background: linear-gradient(135deg, var(--tier-gradient-start, #FFD700), var(--tier-gradient-end, #FF8C00));
   white-space: nowrap;
   position: relative;
