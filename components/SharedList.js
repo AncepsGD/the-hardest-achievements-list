@@ -425,6 +425,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
+            {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
+            )}
           </div>
           <div className="achievement-details">
             <div className="text">
@@ -500,9 +503,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {showRank && (
               <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
             )}
-            {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
-            )}
+            
           </div>
           <div className="tag-container">
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
