@@ -509,6 +509,9 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
+            {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
+            )}
           </div>
           <div className="achievement-details">
             <div className="text">
