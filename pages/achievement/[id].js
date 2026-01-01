@@ -8,6 +8,66 @@ import { useState, useEffect } from 'react';
 import { useDateFormat } from '../../components/DateFormatContext';
 import Tag, { TAG_PRIORITY_ORDER } from '../../components/Tag';
 
+export async function getStaticPaths() {
+  const achievementsPath = path.join(process.cwd(), 'public', 'achievements.json');
+  const timelinePath = path.join(process.cwd(), 'public', 'timeline.json');
+  const platformersPath = path.join(process.cwd(), 'public', 'platformers.json');
+  const platformerTimelinePath = path.join(process.cwd(), 'public', 'platformertimeline.json');
+  const pendingPath = path.join(process.cwd(), 'public', 'pending.json');
+  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json'); // added
+
+  let achievements = [], timeline = [], platformers = [], platformerTimeline = [], pending = [], legacy = [];
+
+  try { achievements = JSON.parse(fs.readFileSync(achievementsPath, 'utf8')); } catch {}
+  try { timeline = JSON.parse(fs.readFileSync(timelinePath, 'utf8')); } catch {}
+  try { platformers = JSON.parse(fs.readFileSync(platformersPath, 'utf8')); } catch {}
+  try { platformerTimeline = JSON.parse(fs.readFileSync(platformerTimelinePath, 'utf8')); } catch {}
+  try { pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8')); } catch {}
+  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {} // added
+
+  const combinedData = [...achievements, ...timeline, ...platformers, ...platformerTimeline, ...pending, ...legacy];
+  const paths = combinedData
+    .filter(a => a && a.id && a.name)
+    .map(a => ({ params: { id: a.id.toString() } }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  const achievementsPath = path.join(process.cwd(), 'public', 'achievements.json');
+  const timelinePath = path.join(process.cwd(), 'public', 'timeline.json');
+  const platformersPath = path.join(process.cwd(), 'public', 'platformers.json');
+  const platformerTimelinePath = path.join(process.cwd(), 'public', 'platformertimeline.json');
+  const pendingPath = path.join(process.cwd(), 'public', 'pending.json');
+  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json'); // added
+
+  let achievements = [], timeline = [], platformers = [], platformerTimeline = [], pending = [], legacy = [];
+
+  try { achievements = JSON.parse(fs.readFileSync(achievementsPath, 'utf8')); } catch {}
+  try { timeline = JSON.parse(fs.readFileSync(timelinePath, 'utf8')); } catch {}
+  try { platformers = JSON.parse(fs.readFileSync(platformersPath, 'utf8')); } catch {}
+  try { platformerTimeline = JSON.parse(fs.readFileSync(platformerTimelinePath, 'utf8')); } catch {}
+  try { pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8')); } catch {}
+  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {} // added
+
+  const combinedData = [...achievements, ...timeline, ...platformers, ...platformerTimeline, ...pending, ...legacy]
+    .filter(a => a && a.id && a.name);
+
+  const achievement = combinedData.find(a => a.id.toString() === params.id) || null;
+
+  let placement = null;
+  if (achievement) {
+    const achIndex = achievements.findIndex(a => a && a.id && a.id.toString() === params.id);
+    if (achIndex !== -1) placement = achIndex + 1;
+    else {
+      const platIndex = platformers.findIndex(a => a && a.id && a.id.toString() === params.id);
+      if (platIndex !== -1) placement = platIndex + 1;
+    }
+  }
+
+  return { props: { achievement, placement } };
+}
+
 export default function AchievementPage({ achievement, placement }) {
   const [copyMsg, setCopyMsg] = useState('');
   const [isMobile, setIsMobile] = useState(false);
@@ -53,7 +113,7 @@ export default function AchievementPage({ achievement, placement }) {
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   }
   function formatLength(length) {
-
+    // Only treat null / undefined / empty string as "no length"
     if (length === null || length === undefined || length === '') return 'N/A';
     const num = Number(length);
     if (isNaN(num)) return 'N/A';
