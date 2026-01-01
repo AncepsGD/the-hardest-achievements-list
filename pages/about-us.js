@@ -45,7 +45,7 @@ export default function AboutUs() {
             <ul>
               <li><strong>Anceps</strong></li>
             </ul>
-            <h3>List Editor</h3>
+            <h3>(test) List Editor</h3>
             <ul>
               <li><strong>Arcadie</strong></li>
               <li><strong>jak</strong></li>
@@ -165,6 +165,7 @@ export default function AboutUs() {
     </>
   );
 }
+
 
 
 
