@@ -14,7 +14,7 @@ export async function getStaticPaths() {
   const platformersPath = path.join(process.cwd(), 'public', 'platformers.json');
   const platformerTimelinePath = path.join(process.cwd(), 'public', 'platformertimeline.json');
   const pendingPath = path.join(process.cwd(), 'public', 'pending.json');
-  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json'); // added
+  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json');
 
   let achievements = [], timeline = [], platformers = [], platformerTimeline = [], pending = [], legacy = [];
 
@@ -23,7 +23,7 @@ export async function getStaticPaths() {
   try { platformers = JSON.parse(fs.readFileSync(platformersPath, 'utf8')); } catch {}
   try { platformerTimeline = JSON.parse(fs.readFileSync(platformerTimelinePath, 'utf8')); } catch {}
   try { pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8')); } catch {}
-  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {} // added
+  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {}
 
   const combinedData = [...achievements, ...timeline, ...platformers, ...platformerTimeline, ...pending, ...legacy];
   const paths = combinedData
@@ -39,7 +39,7 @@ export async function getStaticProps({ params }) {
   const platformersPath = path.join(process.cwd(), 'public', 'platformers.json');
   const platformerTimelinePath = path.join(process.cwd(), 'public', 'platformertimeline.json');
   const pendingPath = path.join(process.cwd(), 'public', 'pending.json');
-  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json'); // added
+  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json');
 
   let achievements = [], timeline = [], platformers = [], platformerTimeline = [], pending = [], legacy = [];
 
@@ -48,7 +48,7 @@ export async function getStaticProps({ params }) {
   try { platformers = JSON.parse(fs.readFileSync(platformersPath, 'utf8')); } catch {}
   try { platformerTimeline = JSON.parse(fs.readFileSync(platformerTimelinePath, 'utf8')); } catch {}
   try { pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8')); } catch {}
-  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {} // added
+  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {}
 
   const combinedData = [...achievements, ...timeline, ...platformers, ...platformerTimeline, ...pending, ...legacy]
     .filter(a => a && a.id && a.name);
@@ -65,7 +65,7 @@ export async function getStaticProps({ params }) {
     }
   }
 
-  return { props: { achievement, placement } };
+  return { props: { achievement, placement }, revalidate: 600 };
 }
 
 export default function AchievementPage({ achievement, placement }) {
@@ -113,7 +113,7 @@ export default function AchievementPage({ achievement, placement }) {
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   }
   function formatLength(length) {
-    // Only treat null / undefined / empty string as "no length"
+
     if (length === null || length === undefined || length === '') return 'N/A';
     const num = Number(length);
     if (isNaN(num)) return 'N/A';
