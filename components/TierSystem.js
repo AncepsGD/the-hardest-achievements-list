@@ -161,35 +161,29 @@ export function getTierByRank(rank, totalAchievements, achievements = [], enable
 export function getBaselineForTier(tierObj, totalAchievements, achievements = [], extraLists = {}) {
   if (!tierObj) return null;
 
-  const tryFindInList = (list, baseline) => {
-    if (!Array.isArray(list) || !baseline) return null;
-    const bl = String(baseline).trim().toLowerCase();
-    for (let i = 0; i < list.length; i++) {
-      const item = list[i];
-      if (!item) continue;
-      const id = item.id != null ? String(item.id).trim().toLowerCase() : '';
-      const name = item.name != null ? String(item.name).trim().toLowerCase() : '';
-      if (id === bl || name === bl) return list[i]?.name || list[i]?.id || null;
+  const resolveBaselineName = (baselineId) => {
+    if (!baselineId || typeof baselineId !== 'string') return null;
+
+    const a = (achievements || []).find(x => x && (x.id === baselineId || x.name === baselineId));
+    if (a) return a.name || baselineId;
+
+    if (extraLists && typeof extraLists === 'object') {
+      for (const k in extraLists) {
+        if (!Object.prototype.hasOwnProperty.call(extraLists, k)) continue;
+        const list = extraLists[k];
+        if (!Array.isArray(list)) continue;
+        const f = list.find(x => x && (x.id === baselineId || x.name === baselineId));
+        if (f) return f.name || baselineId;
+      }
     }
-    return null;
+    return baselineId;
   };
   if (tierObj && typeof tierObj.baseline === 'string' && tierObj.baseline.trim() !== '') {
-    const baseline = tierObj.baseline.trim();
-
-    let found = tryFindInList(achievements, baseline);
-    if (found) return found;
-
-    for (const key of Object.keys(extraLists || {})) {
-      const list = extraLists[key];
-      found = tryFindInList(list, baseline);
-      if (found) return found;
-    }
-
-    return baseline;
+    const resolved = resolveBaselineName(tierObj.baseline.trim());
+    return resolved || tierObj.baseline;
   }
 
   if (!achievements.length) return null;
-
   let cached = tierCache.get(achievements);
   if (!cached || cached.totalAchievements !== totalAchievements) {
     computeTierBoundaries(totalAchievements, achievements);
