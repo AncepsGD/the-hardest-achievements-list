@@ -43,8 +43,9 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
   if (cached && cached.totalAchievements === totalAchievements && Array.isArray(cached.boundaries)) {
     return cached.boundaries;
   }
-
   const sizes = computeSizes(totalAchievements);
+  const revSizes = sizes.slice().reverse();
+  const revTiers = TIERS.slice().reverse();
 
   const flags = new Array(totalAchievements).fill(false);
   const achLen = Array.isArray(achievements) ? achievements.length : 0;
@@ -52,13 +53,13 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
   for (let i = 0; i < limit; i++) {
     flags[i] = hasRatedAndVerified(achievements[i]);
   }
-
   let start = 1;
   const boundaries = [];
-  for (let i = 0; i < TIERS.length; i++) {
-    const size = sizes[i];
+  for (let ri = 0; ri < revTiers.length; ri++) {
+    const size = revSizes[ri];
+    const originalIndex = TIERS.length - 1 - ri;
     if (size <= 0) {
-      boundaries.push({ start, end: Math.min(totalAchievements, start - 1), tierIndex: i });
+      boundaries.push({ start, end: Math.min(totalAchievements, start - 1), tierIndex: originalIndex });
       continue;
     }
     const tierStartIdx = start - 1;
@@ -79,12 +80,12 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
       endRank = Math.min(totalAchievements, start + size - 1);
     }
 
-    boundaries.push({ start, end: endRank, tierIndex: i });
+    boundaries.push({ start, end: endRank, tierIndex: originalIndex });
     start = endRank + 1;
     if (start > totalAchievements) {
-
-      for (let k = i + 1; k < TIERS.length; k++) {
-        boundaries.push({ start: totalAchievements + 1, end: totalAchievements, tierIndex: k });
+      for (let k = ri + 1; k < revTiers.length; k++) {
+        const origIdx = TIERS.length - 1 - k;
+        boundaries.push({ start: totalAchievements + 1, end: totalAchievements, tierIndex: origIdx });
       }
       break;
     }
