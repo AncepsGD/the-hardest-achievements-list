@@ -773,6 +773,16 @@ export default function SharedList({
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
+
+  useEffect(() => {
+    if (extraLists['achievements.json'] !== undefined) return;
+    fetch('/achievements.json').then(res => res.json()).then(data => {
+      const list = Array.isArray(data) ? data : (data.achievements || []);
+      setExtraLists(prev => ({ ...prev, ['achievements.json']: list }));
+    }).catch(() => {
+      setExtraLists(prev => ({ ...prev, ['achievements.json']: [] }));
+    });
+  }, []);
   const [insertIdx, setInsertIdx] = useState(null);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState(null);
