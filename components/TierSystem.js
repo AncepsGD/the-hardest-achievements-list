@@ -158,10 +158,38 @@ export function getTierByRank(rank, totalAchievements, achievements = [], enable
   return null;
 }
 
-export function getBaselineForTier(tierObj, totalAchievements, achievements = []) {
+export function getBaselineForTier(tierObj, totalAchievements, achievements = [], extraLists = {}) {
   if (!tierObj) return null;
-  if (tierObj && typeof tierObj.baseline === 'string' && tierObj.baseline.trim() !== '') return tierObj.baseline;
+
+  const tryFindInList = (list, baseline) => {
+    if (!Array.isArray(list) || !baseline) return null;
+    const bl = String(baseline).trim().toLowerCase();
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      if (!item) continue;
+      const id = item.id != null ? String(item.id).trim().toLowerCase() : '';
+      const name = item.name != null ? String(item.name).trim().toLowerCase() : '';
+      if (id === bl || name === bl) return list[i]?.name || list[i]?.id || null;
+    }
+    return null;
+  };
+  if (tierObj && typeof tierObj.baseline === 'string' && tierObj.baseline.trim() !== '') {
+    const baseline = tierObj.baseline.trim();
+
+    let found = tryFindInList(achievements, baseline);
+    if (found) return found;
+
+    for (const key of Object.keys(extraLists || {})) {
+      const list = extraLists[key];
+      found = tryFindInList(list, baseline);
+      if (found) return found;
+    }
+
+    return baseline;
+  }
+
   if (!achievements.length) return null;
+
   let cached = tierCache.get(achievements);
   if (!cached || cached.totalAchievements !== totalAchievements) {
     computeTierBoundaries(totalAchievements, achievements);
@@ -187,9 +215,9 @@ export function getBaselineForTier(tierObj, totalAchievements, achievements = []
   return null;
 }
 
-export default function TierTag({ tier, totalAchievements, achievements = [] }) {
+export default function TierTag({ tier, totalAchievements, achievements = [], extraLists = {} }) {
   if (!tier) return null;
-  const baseline = getBaselineForTier(tier, totalAchievements, achievements) || 'Unknown';
+  const baseline = getBaselineForTier(tier, totalAchievements, achievements, extraLists) || 'Unknown';
   const title = `${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${baseline}`;
   const style = {
     '--tier-gradient-start': tier.gradientStart,
