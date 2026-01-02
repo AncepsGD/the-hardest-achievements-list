@@ -183,6 +183,10 @@ const AVAILABLE_TAGS = [
   "2P", "CBF", "Rated", "Formerly Rated", "Outdated Version", "Tentative"
 ];
 
+function shouldShowTier(tier, mode, usePlatformers, showTiers) {
+  return !!tier && (mode !== 'timeline') && !usePlatformers && showTiers === true;
+}
+
 
 function normalizeYoutubeUrl(input) {
   if (!input || typeof input !== 'string') return input;
@@ -425,7 +429,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
-            {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
+            {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
               <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
             )}
           </div>
@@ -509,7 +513,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
-            {tier && mode !== 'timeline' && !usePlatformers && showTiers === true && (
+            {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
               <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
             )}
           </div>
