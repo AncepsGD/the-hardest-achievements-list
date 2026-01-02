@@ -371,7 +371,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, showTiers === true);
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
@@ -459,7 +459,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
   );
 }
 
-const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.showTiers === next.showTiers && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements);
+const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.showTiers === next.showTiers && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements && prev.mode === next.mode && prev.usePlatformers === next.usePlatformers);
 
 const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false }) {
   const { dateFormat } = useDateFormat();
@@ -2522,7 +2522,7 @@ export default function SharedList({
                   zIndex: 1
                 }} className={highlightedIdx === i ? 'search-highlight' : ''}>
                   {mode === 'timeline' ?
-                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={devAchievements.length} achievements={devAchievements} showTiers={showTiers === true} />
+                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={devAchievements.length} achievements={devAchievements} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} />
                     :
                     (() => {
                       const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
@@ -2567,7 +2567,7 @@ export default function SharedList({
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
                       {mode === 'timeline' ?
-                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers === true} />
+                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} />
                         :
                         (() => {
                           const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
