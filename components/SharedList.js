@@ -8,7 +8,7 @@ import Sidebar from '../components/Sidebar';
 import Background from '../components/Background';
 import { useDateFormat } from '../components/DateFormatContext';
 import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
-import TierTag, { getTierByRank } from '../components/TierSystem';
+import TierTag, { getTierByRank, TIERS } from '../components/TierSystem';
 import DevModePanel from '../components/DevModePanel';
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
@@ -371,10 +371,17 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main', quickEstimateSave }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, achievements, { enable: showTiers === true, listType, extraLists });
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
+  const [estEditing, setEstEditing] = React.useState(false);
+  const [estValue, setEstValue] = React.useState(achievement && achievement.estimatedDifficulty ? achievement.estimatedDifficulty : '');
+  React.useEffect(() => {
+    try {
+      setEstValue(achievement && achievement.estimatedDifficulty ? achievement.estimatedDifficulty : '');
+    } catch (e) {}
+  }, [achievement && achievement.estimatedDifficulty, achievement && achievement.id]);
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -417,6 +424,32 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           onMouseLeave={onHoverLeave}
         >
           <div className="rank-date-container">
+            {devMode && (
+              <div style={{marginBottom:6, display:'flex', gap:8, alignItems:'center'}} onClick={e => e.stopPropagation()}>
+                {!estEditing ? (
+                  <>
+                    {achievement && achievement.estimatedDifficulty ? <span style={{fontSize:12,color:'#666'}}>Est: {achievement.estimatedDifficulty}</span> : <span style={{fontSize:12,color:'#aaa'}}>No estimate</span>}
+                    <button type="button" onClick={e => { e.stopPropagation(); setEstEditing(true); }} style={{marginLeft:6,cursor:'pointer'}}>✏️</button>
+                  </>
+                ) : (
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <input
+                      list="tier-suggestions"
+                      value={estValue}
+                      onChange={e => setEstValue(e.target.value)}
+                      onClick={e => e.stopPropagation()}
+                      placeholder="tier / range / numeric"
+                      style={{padding:'4px 6px',fontSize:12}}
+                    />
+                    <datalist id="tier-suggestions">
+                      {TIERS.map(t => (<option key={t.name} value={t.name} />))}
+                    </datalist>
+                    <button type="button" onClick={e => { e.stopPropagation(); if (typeof quickEstimateSave === 'function') quickEstimateSave(estValue.trim()); setEstEditing(false); }} style={{cursor:'pointer'}}>Save</button>
+                    <button type="button" onClick={e => { e.stopPropagation(); setEstValue(achievement && achievement.estimatedDifficulty ? achievement.estimatedDifficulty : ''); setEstEditing(false); }} style={{cursor:'pointer'}}>Cancel</button>
+                  </div>
+                )}
+              </div>
+            )}
             {!isPlatformer && (
               <div className="achievement-length">
                 {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
@@ -461,10 +494,17 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
 
 const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.showTiers === next.showTiers && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements && prev.mode === next.mode && prev.usePlatformers === next.usePlatformers && prev.extraLists === next.extraLists && prev.listType === next.listType);
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main' }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', quickEstimateSave }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const tier = getTierByRank(achievement.rank, achievements, { enable: showTiers === true, listType, extraLists });
+  const [estEditing, setEstEditing] = React.useState(false);
+  const [estValue, setEstValue] = React.useState(achievement && achievement.estimatedDifficulty ? achievement.estimatedDifficulty : '');
+  React.useEffect(() => {
+    try {
+      setEstValue(achievement && achievement.estimatedDifficulty ? achievement.estimatedDifficulty : '');
+    } catch (e) {}
+  }, [achievement && achievement.estimatedDifficulty, achievement && achievement.id]);
 
 
   const handleClick = e => {
@@ -496,6 +536,32 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           style={{ cursor: devMode ? 'not-allowed' : 'pointer', pointerEvents: devMode ? 'none' : 'auto', opacity: devMode ? 0.5 : 1, transition: 'opacity 0.1s' }}
         >
           <div className="rank-date-container">
+            {devMode && (
+              <div style={{marginBottom:6, display:'flex', gap:8, alignItems:'center'}} onClick={e => e.stopPropagation()}>
+                {!estEditing ? (
+                  <>
+                    {achievement && achievement.estimatedDifficulty ? <span style={{fontSize:12,color:'#666'}}>Est: {achievement.estimatedDifficulty}</span> : <span style={{fontSize:12,color:'#aaa'}}>No estimate</span>}
+                    <button type="button" onClick={e => { e.stopPropagation(); setEstEditing(true); }} style={{marginLeft:6,cursor:'pointer'}}>✏️</button>
+                  </>
+                ) : (
+                  <div style={{display:'flex', gap:8, alignItems:'center'}}>
+                    <input
+                      list="tier-suggestions"
+                      value={estValue}
+                      onChange={e => setEstValue(e.target.value)}
+                      onClick={e => e.stopPropagation()}
+                      placeholder="tier / range / numeric"
+                      style={{padding:'4px 6px',fontSize:12}}
+                    />
+                    <datalist id="tier-suggestions">
+                      {TIERS.map(t => (<option key={t.name} value={t.name} />))}
+                    </datalist>
+                    <button type="button" onClick={e => { e.stopPropagation(); if (typeof quickEstimateSave === 'function') quickEstimateSave(estValue.trim()); setEstEditing(false); }} style={{cursor:'pointer'}}>Save</button>
+                    <button type="button" onClick={e => { e.stopPropagation(); setEstValue(achievement && achievement.estimatedDifficulty ? achievement.estimatedDifficulty : ''); setEstEditing(false); }} style={{cursor:'pointer'}}>Cancel</button>
+                  </div>
+                )}
+              </div>
+            )}
             {!isPlatformer && (
               <div className="achievement-length">
                 {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
@@ -877,6 +943,18 @@ export default function SharedList({
     setEditFormCustomTags('');
     setShowNewForm(false);
   }, [reordered, resolveRealIdx]);
+
+  const handleQuickEstimateSave = useCallback((idx, value) => {
+    const realIdx = resolveRealIdx(idx);
+    setReordered(prev => {
+      if (!prev) return prev;
+      const arr = [...prev];
+      const original = arr[realIdx];
+      if (!original) return prev;
+      arr[realIdx] = { ...original, estimatedDifficulty: value };
+      return arr;
+    });
+  }, [resolveRealIdx]);
 
   const handleEditFormChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -2534,12 +2612,12 @@ export default function SharedList({
                   zIndex: 1
                 }} className={highlightedIdx === i ? 'search-highlight' : ''}>
                   {mode === 'timeline' ?
-                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={devAchievements.length} achievements={devAchievements} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
+                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={devAchievements.length} achievements={devAchievements} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} quickEstimateSave={v => handleQuickEstimateSave(i, v)} />
                     :
                     (() => {
                       const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
                       const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} achievements={devAchievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers === true} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
+                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} achievements={devAchievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers === true} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} quickEstimateSave={v => handleQuickEstimateSave(i, v)} />;
                     })()
                   }
                 </div>
@@ -2579,12 +2657,12 @@ export default function SharedList({
                   return (
                     <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
                       {mode === 'timeline' ?
-                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
+                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} quickEstimateSave={v => handleQuickEstimateSave(index, v)} />
                         :
                         (() => {
                           const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
                           const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers === true} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
+                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers === true} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} quickEstimateSave={v => handleQuickEstimateSave(index, v)} />;
                         })()
                       }
                     </div>
