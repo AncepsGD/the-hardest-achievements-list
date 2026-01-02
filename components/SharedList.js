@@ -373,7 +373,7 @@ function calculateDaysLasted(currentDate, previousDate) {
 
 function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType, extraLists });
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
     if (devMode) {
@@ -464,7 +464,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
 const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType, extraLists });
 
 
   const handleClick = e => {
