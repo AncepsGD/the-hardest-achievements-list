@@ -2506,8 +2506,11 @@ main,
   white-space: nowrap;
   position: relative;
   clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 8px 100%, 0 50%);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  border: 2px solid var(--tier-border, transparent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 30px var(--tier-glow, transparent);
   z-index: 10;
+  transition: box-shadow 0.35s ease, transform 0.18s ease, border-color 0.18s ease;
 }
 
 .tier-tag-text {
@@ -2531,6 +2534,16 @@ main,
     padding: 0.15rem 0.35rem;
     font-size: 0.65rem;
   }
+}
+
+@keyframes tierGlowPulse {
+  0% { box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 6px 18px rgba(0,0,0,0); }
+  50% { box-shadow: 0 2px 10px rgba(0,0,0,0.45), 0 14px 36px var(--tier-glow, transparent); }
+  100% { box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 6px 18px rgba(0,0,0,0); }
+}
+
+.tier-tag[data-glow="true"] {
+  animation: tierGlowPulse 3s ease-in-out infinite;
 }
 
 @media (max-width: 400px) {
