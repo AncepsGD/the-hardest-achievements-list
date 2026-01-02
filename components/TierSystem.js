@@ -343,14 +343,24 @@ export default function TierTag({ tier, achievements = [], extraLists = {} }) {
       if (v != null) setUseRoman(v === 'true')
       const onStorage = (ev) => {
         if (!ev) return
-        if (ev.key === 'tiersUseRoman') {
-          try {
-            setUseRoman(ev.newValue !== 'false')
-          } catch (e) {}
-        }
+        try {
+          if (ev.type === 'storage' && ev.key === 'tiersUseRoman') {
+            setUseRoman(ev.newValue === 'true')
+            return
+          }
+          if (ev.type === 'tiersUseRomanChanged') {
+            const val = ev.detail && ev.detail.value
+            if (val != null) setUseRoman(val === 'true')
+            return
+          }
+        } catch (e) {}
       }
       window.addEventListener('storage', onStorage)
-      return () => window.removeEventListener('storage', onStorage)
+      window.addEventListener('tiersUseRomanChanged', onStorage)
+      return () => {
+        window.removeEventListener('storage', onStorage)
+        window.removeEventListener('tiersUseRomanChanged', onStorage)
+      }
     } catch (e) {}
   }, [])
 
