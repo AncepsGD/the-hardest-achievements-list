@@ -9323,23 +9323,6 @@
     "rank": 524
   },
   {
-    "name": "Dramatic",
-    "id": "dramatic",
-    "player": "linayru",
-    "length": 68,
-    "version": 2.2,
-    "video": "https://youtu.be/Usxo-EXGdIk",
-    "showcaseVideo": "https://youtu.be/Usxo-EXGdIk",
-    "date": "December 18, 2025",
-    "submitter": "kyle1saurus",
-    "levelID": 129640849,
-    "tags": [
-      "Level",
-      "Verified"
-    ],
-    "rank": 525
-  },
-  {
     "name": "Vomit Rose",
     "id": "vomit-rose",
     "player": "Dark Bear",
@@ -9353,6 +9336,24 @@
     "tags": [
       "Challenge",
       "Verified"
+    ],
+    "rank": 525
+  },
+  {
+    "name": "Infinite Chaos",
+    "id": "infinite-chaos",
+    "player": "Victurkey",
+    "length": 140,
+    "version": 2.2,
+    "video": "https://youtu.be/wOMVERxU5IA",
+    "showcaseVideo": "https://youtu.be/MQE8pRKzW0Q",
+    "date": "2025-05-26",
+    "submitter": "Exiled_Shade",
+    "levelID": 119689515,
+    "tags": [
+      "Level",
+      "Verified",
+      "Rated"
     ],
     "rank": 526
   },
