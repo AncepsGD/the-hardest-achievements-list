@@ -184,7 +184,7 @@ const AVAILABLE_TAGS = [
 ];
 
 function shouldShowTier(tier, mode, usePlatformers, showTiers) {
-  return !!tier && (mode !== 'timeline') && !usePlatformers && showTiers === true;
+  return !!tier && !usePlatformers && showTiers === true;
 }
 
 
