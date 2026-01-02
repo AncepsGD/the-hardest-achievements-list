@@ -10,6 +10,7 @@ export default function TimelinePage() {
       dataFileName="timeline.json"
       storageKeySuffix="timeline"
       mode="timeline"
+      showTiers={true}
     />
   );
 }
