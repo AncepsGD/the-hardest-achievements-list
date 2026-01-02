@@ -7,11 +7,11 @@ export const TIERS = [
   { name: 'Moderate', subtitle: 'Tier IV', percent: 5, baseline: 'ice-carbon-diablo-x', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
   { name: 'Challenging', subtitle: 'Tier V', percent: 5, baseline: 'the-ultimate-phase-old', gradientStart: '#c026d3', gradientEnd: '#7b1fa2' },
   { name: 'Demanding', subtitle: 'Tier VI', percent: 5, baseline: 'sonic-wave-72', gradientStart: '#f97316', gradientEnd: '#b45309' },
-  { name: 'Hard', subtitle: 'Tier VII', percent: 5, baseline: 'bloodlust-76', gradientStart: '#ef4444', gradientEnd: '#7f1d1d' },
+  { name: 'Hard', subtitle: 'Tier VII', percent: 5, baseline: 'bloodlust', gradientStart: '#ef4444', gradientEnd: '#7f1d1d' },
   { name: 'Intense', subtitle: 'Tier VIII', percent: 5, baseline: 'crimson-planet', gradientStart: '#b91c1c', gradientEnd: '#520000' },
   { name: 'Formidable', subtitle: 'Tier IX', percent: 5, baseline: 'zodiac', gradientStart: '#0f172a', gradientEnd: '#071233' },
   { name: 'Legendary', subtitle: 'Tier X', percent: 5, baseline: 'the-golden', gradientStart: '#f59e0b', gradientEnd: '#b45309' },
-  { name: 'Expert', subtitle: 'Tier XI', percent: 5, baseline: 'tartarus-91', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
+  { name: 'Expert', subtitle: 'Tier XI', percent: 5, baseline: 'tartarus', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
   { name: 'Master', subtitle: 'Tier XII', percent: 5, baseline: 'arcturus', gradientStart: '#2563eb', gradientEnd: '#1e40af' },
   { name: 'Mythic', subtitle: 'Tier XIII', percent: 5, baseline: 'edge of destiny', gradientStart: '#7c3aed', gradientEnd: '#4c1d95' },
   { name: 'Epic', subtitle: 'Tier XIV', percent: 5, baseline: 'firework', gradientStart: '#ff3b3b', gradientEnd: '#b91c1c' },
@@ -23,12 +23,13 @@ export const TIERS = [
 
 const tierCache = new WeakMap();
 
-function computeSizes(totalAchievements) {
-  const sizes = TIERS.map(t => Math.floor(totalAchievements * (t.percent / 100)));
+function computeSizes(totalAchievements, tierObjs) {
+  const tiers = Array.isArray(tierObjs) && tierObjs.length > 0 ? tierObjs : TIERS;
+  const sizes = tiers.map(t => Math.floor(totalAchievements * (t.percent / 100)));
   let allocated = sizes.reduce((a, b) => a + b, 0);
   let remainingToAllocate = totalAchievements - allocated;
   let idx = 0;
-  const len = TIERS.length;
+  const len = tiers.length;
   while (remainingToAllocate > 0 && len > 0) {
     sizes[idx % len] += 1;
     remainingToAllocate -= 1;
@@ -37,15 +38,35 @@ function computeSizes(totalAchievements) {
   return sizes;
 }
 
-export function computeTierBoundaries(totalAchievements, achievements = []) {
+export function computeTierBoundaries(totalAchievements, achievements = [], options = {}) {
   if (!achievements || typeof achievements !== 'object') return null;
   const cached = tierCache.get(achievements);
-  if (cached && cached.totalAchievements === totalAchievements && Array.isArray(cached.boundaries)) {
+  let tiersToUse = null;
+  let originalIndexMap = null;
+  if (Array.isArray(options.tierIndices) && options.tierIndices.length > 0) {
+    tiersToUse = options.tierIndices.map(i => TIERS[i]).filter(Boolean);
+    originalIndexMap = options.tierIndices.slice();
+  } else if (Array.isArray(options.tiers) && options.tiers.length > 0) {
+    tiersToUse = options.tiers.slice();
+
+    originalIndexMap = tiersToUse.map(t => TIERS.findIndex(x => x.name === t.name && x.subtitle === t.subtitle));
+  } else {
+    tiersToUse = TIERS;
+    originalIndexMap = TIERS.map((_, i) => i);
+  }
+
+  const optionsKey = Array.isArray(options.tierIndices)
+    ? options.tierIndices.join(',')
+    : (Array.isArray(options.tiers) ? options.tiers.map(t => `${t.name}|${t.subtitle}`).join(',') : '');
+
+  if (cached && cached.totalAchievements === totalAchievements && Array.isArray(cached.boundaries) && cached.optionsKey === optionsKey) {
     return cached.boundaries;
   }
-  const sizes = computeSizes(totalAchievements);
+
+  const sizes = computeSizes(totalAchievements, tiersToUse);
   const revSizes = sizes.slice().reverse();
-  const revTiers = TIERS.slice().reverse();
+  const revTiers = tiersToUse.slice().reverse();
+  const originalIndexMapRev = originalIndexMap.slice().reverse();
 
   const flags = new Array(totalAchievements).fill(false);
   const achLen = Array.isArray(achievements) ? achievements.length : 0;
@@ -57,7 +78,7 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
   const boundaries = [];
   for (let ri = 0; ri < revTiers.length; ri++) {
     const size = revSizes[ri];
-    const originalIndex = TIERS.length - 1 - ri;
+    const originalIndex = originalIndexMapRev[ri] !== undefined ? originalIndexMapRev[ri] : (TIERS.length - 1 - ri);
     if (size <= 0) {
       boundaries.push({ start, end: Math.min(totalAchievements, start - 1), tierIndex: originalIndex });
       continue;
@@ -91,7 +112,7 @@ export function computeTierBoundaries(totalAchievements, achievements = []) {
     }
   }
 
-  tierCache.set(achievements, { totalAchievements, boundaries, sizes, flags });
+  tierCache.set(achievements, { totalAchievements, boundaries, sizes, flags, optionsKey });
   return boundaries;
 }
 
@@ -146,11 +167,46 @@ function hasRatedAndVerified(item) {
   return false;
 }
 
-export function getTierByRank(rank, totalAchievements, achievements = [], enableTiers = true) {
+export function getTierByRank(rank, totalAchievements, achievements = [], enableTiers = true, opts = {}) {
+
+  if (typeof enableTiers === 'object' && enableTiers !== null) {
+    opts = enableTiers;
+    enableTiers = true;
+  }
   if (!enableTiers) return null;
   if (!rank || !totalAchievements || rank <= 0) return null;
+  let boundaries = null;
+  const listType = opts.listType || null;
+  if (listType === 'main') {
 
-  const boundaries = computeTierBoundaries(totalAchievements, achievements) || [];
+    const start = TIERS.findIndex(t => t.name.toLowerCase() === 'expert');
+    const end = TIERS.findIndex(t => t.name.toLowerCase() === 'godlike');
+    if (start >= 0 && end >= 0 && end >= start) {
+      const indices = [];
+      for (let i = start; i <= end; i++) indices.push(i);
+      boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: indices });
+    }
+  } else if (listType === 'timeline') {
+
+    const godIdx = TIERS.findIndex(t => t.name.toLowerCase() === 'godlike');
+    if (godIdx >= 0) {
+      const indices = [];
+      for (let i = 0; i <= godIdx; i++) indices.push(i);
+      boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: indices });
+    }
+  } else if (listType === 'legacy') {
+
+    const hardIdx = TIERS.findIndex(t => t.name.toLowerCase() === 'hard');
+    const legIdx = TIERS.findIndex(t => t.name.toLowerCase() === 'legendary');
+    if (hardIdx >= 0 && legIdx >= 0 && legIdx >= hardIdx) {
+      const indices = [];
+      for (let i = hardIdx; i <= legIdx; i++) indices.push(i);
+      boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: indices });
+    }
+  }
+
+  if (!boundaries) boundaries = computeTierBoundaries(totalAchievements, achievements) || [];
+
   for (let i = 0; i < boundaries.length; i++) {
     const b = boundaries[i];
     if (rank >= b.start && rank <= b.end) return TIERS[b.tierIndex];
