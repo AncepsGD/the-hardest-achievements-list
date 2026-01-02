@@ -9,6 +9,15 @@ function SidebarInner() {
   const { dateFormat, setDateFormat } = useDateFormat();
   const [showSettings, setShowSettings] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [tiersUseRoman, setTiersUseRoman] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return true
+      const v = localStorage.getItem('tiersUseRoman')
+      return v != null ? v === 'true' : true
+    } catch (e) {
+      return true
+    }
+  })
 
   const [itemsPerPage, setItemsPerPage] = useState(() => {
     try {
@@ -448,13 +457,15 @@ useEffect(() => {
                   <label style={{ color: '#DFE3F5', fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
                     <input
                       type="checkbox"
-                      checked={typeof window !== 'undefined' ? (localStorage.getItem('tiersUseRoman') !== 'false') : true}
+                      checked={tiersUseRoman}
                       onChange={(e) => {
+                        const v = !!e.target.checked
+                        setTiersUseRoman(v)
                         try {
-                          localStorage.setItem('tiersUseRoman', e.target.checked ? 'true' : 'false');
+                          localStorage.setItem('tiersUseRoman', v ? 'true' : 'false')
                         } catch (err) {}
                         try {
-                          window.dispatchEvent(new StorageEvent('storage', { key: 'tiersUseRoman', newValue: e.target.checked ? 'true' : 'false' }));
+                          window.dispatchEvent(new StorageEvent('storage', { key: 'tiersUseRoman', newValue: v ? 'true' : 'false' }))
                         } catch (err) {}
                       }}
                       style={{ marginRight: 8 }}
