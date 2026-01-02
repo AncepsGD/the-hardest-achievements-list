@@ -30,261 +30,149 @@ export const TIERS = [
 ]
 
 function normalize(x) {
-
   if (x == null) return ''
-  const s = String(x).trim().toLowerCase().normalize('NFKD')
-
-  const noDiacritics = s.replace(/[\u0300-\u036f]/g, '')
-  return noDiacritics.replace(/[^a-z0-9]/g, '')
+  return String(x)
+    .trim()
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '')
 }
 
-function _matchesKey(normalizedValue, key) {
-  if (!normalizedValue || !key) return false
-  if (normalizedValue === key) return true
-  if (normalizedValue.startsWith(key)) return true
-  if (key.startsWith(normalizedValue)) return true
-  return false
-}
-
-function buildAchievementIndex(achievements = [], extraLists = {}) {
+function preprocessTimeline(achievements = [], extraLists = {}) {
   const index = new Map()
-
-  if (!Array.isArray(achievements)) return index
+  const normalizedTimeline = new Array(achievements.length)
 
   for (let i = 0; i < achievements.length; i++) {
     const a = achievements[i]
     if (!a) continue
-    if (a.id) {
-      const k = normalize(a.id)
-      if (k && !index.has(k)) index.set(k, i)
-    }
-    if (a.name) {
-      const k = normalize(a.name)
-      if (k && !index.has(k)) index.set(k, i)
-    }
+
+    const id = a.id ? normalize(a.id) : null
+    const name = a.name ? normalize(a.name) : null
+
+    normalizedTimeline[i] = { id, name }
+
+    if (id && !index.has(id)) index.set(id, i)
+    if (name && !index.has(name)) index.set(name, i)
   }
+
   if (extraLists && typeof extraLists === 'object') {
     for (const list of Object.values(extraLists)) {
       if (!Array.isArray(list)) continue
       for (const item of list) {
         if (!item) continue
-        const keys = []
-        if (item.id) keys.push(normalize(item.id))
-        if (item.name) keys.push(normalize(item.name))
-        for (const k of keys) {
-          if (!k || index.has(k)) continue
-
-          const found = achievements.findIndex(a => {
-            if (!a) return false
-            const aId = a.id ? normalize(a.id) : ''
-            const aName = a.name ? normalize(a.name) : ''
-            return _matchesKey(aId, k) || _matchesKey(aName, k)
-          })
-          if (found >= 0) index.set(k, found)
-        }
+        const id = item.id ? normalize(item.id) : null
+        const name = item.name ? normalize(item.name) : null
+        if (id && index.has(id)) continue
+        if (name && index.has(name)) continue
+        const k = id || name
+        if (k && index.has(k)) continue
       }
     }
   }
 
-  return index
+  return { index, normalizedTimeline }
 }
 
-function buildTierCutoffs(tiers = [], achievementIndex = new Map()) {
+function buildTierCutoffsFast(tiers, timelineIndex) {
   const cutoffs = []
 
   for (const tier of tiers) {
-    if (!tier || !tier.baseline) continue
     const key = normalize(tier.baseline)
-    let idx = achievementIndex.get(key)
-    if (idx == null) {
-      for (const [k, v] of achievementIndex) {
-        if (_matchesKey(k, key)) {
-          idx = v
-          break
-        }
-      }
-    }
-    if (idx == null) continue
-    cutoffs.push({ tier, index: idx })
+    const idx = timelineIndex.get(key)
+    if (idx != null) cutoffs.push({ index: idx, tier })
   }
 
   cutoffs.sort((a, b) => a.index - b.index)
   return cutoffs
 }
 
-function buildMasterOrder(extraLists = {}, achievements = []) {
+function binaryTierLookup(rankIdx, cutoffs) {
+  let lo = 0
+  let hi = cutoffs.length - 1
+  let res = cutoffs[hi].tier
 
-  let master = null
-  if (extraLists && typeof extraLists === 'object') {
-    for (const list of Object.values(extraLists)) {
-      if (Array.isArray(list) && (!master || list.length > master.length)) master = list
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1
+    if (rankIdx <= cutoffs[mid].index) {
+      res = cutoffs[mid].tier
+      hi = mid - 1
+    } else {
+      lo = mid + 1
     }
   }
-
-  if (!Array.isArray(master)) master = Array.isArray(achievements) ? achievements : []
-
-  const map = new Map()
-  for (let i = 0; i < master.length; i++) {
-    const item = master[i]
-    if (!item) continue
-    if (item.id) map.set(normalize(item.id), i)
-    if (item.name) map.set(normalize(item.name), i)
-  }
-  return { map, master }
+  return res
 }
 
-function mapMasterCutoffsToTimeline(tiers = [], timeline = [], extraLists = {}) {
-  const { map: masterMap } = buildMasterOrder(extraLists, timeline)
-  const timelineMasterIdx = timeline.map(item => {
-    if (!item) return null
-    const k1 = item.id ? normalize(item.id) : null
-    const k2 = item.name ? normalize(item.name) : null
-    const lookup = (k) => {
-      if (!k) return null
-      if (masterMap.has(k)) return masterMap.get(k)
-      for (const mk of masterMap.keys()) {
-        if (k.startsWith(mk)) return masterMap.get(mk)
-      }
-      return null
-    }
-    return lookup(k1) ?? lookup(k2)
-  })
+const timelineCache = new WeakMap()
 
-  const cutoffs = []
-
-  for (const tier of tiers) {
-    if (!tier || !tier.baseline) continue
-    const key = normalize(tier.baseline)
-    const directIdx = timeline.findIndex(a => {
-      if (!a) return false
-      const aId = a.id ? normalize(a.id) : ''
-      const aName = a.name ? normalize(a.name) : ''
-      return _matchesKey(aId, key) || _matchesKey(aName, key)
-    })
-    if (directIdx >= 0) {
-      cutoffs.push({ tier, index: directIdx })
-      continue
-    }
-    const baselineMasterIdx = masterMap.has(key) ? masterMap.get(key) : (function() {
-      for (const mk of masterMap.keys()) {
-        if (_matchesKey(mk, key)) return masterMap.get(mk)
-      }
-      return null
-    })()
-    if (baselineMasterIdx == null) continue
-
-    let mappedIdx = null
-    for (let i = 0; i < timelineMasterIdx.length; i++) {
-      const m = timelineMasterIdx[i]
-      if (m != null && m >= baselineMasterIdx) {
-        mappedIdx = i
-        break
-      }
-    }
-    if (mappedIdx == null && timeline.length > 0) mappedIdx = timeline.length - 1
-
-    if (mappedIdx != null) cutoffs.push({ tier, index: mappedIdx })
+function getCachedTimelineData(achievements, extraLists, tiers) {
+  if (timelineCache.has(achievements)) {
+    return timelineCache.get(achievements)
   }
 
-  cutoffs.sort((a, b) => a.index - b.index)
-  return cutoffs
+  const { index } = preprocessTimeline(achievements, extraLists)
+  const cutoffs = buildTierCutoffsFast(tiers, index)
+
+  const data = { index, cutoffs }
+  timelineCache.set(achievements, data)
+  return data
 }
 
-export function getTierByRank(rank, a, b) {
-
-  if (!rank || typeof rank !== 'number' || rank <= 0) return null
-
-  let achievements = Array.isArray(a) ? a : Array.isArray(b) ? b : []
-  let opts = (b && !Array.isArray(b)) ? b : (a && !Array.isArray(a) ? a : {})
-
+export function getTierByRank(rank, achievements, options = {}) {
+  if (!Number.isInteger(rank) || rank <= 0) return null
   if (!Array.isArray(achievements)) return null
 
-  const idx = rank - 1
-  if (idx < 0) return null
-  const tiers = (opts && opts.tiers) || TIERS
-  const achievementIndex = buildAchievementIndex(achievements, opts.extraLists)
-  const cutoffs = mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists).length > 0
-    ? mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists)
-    : buildTierCutoffs(tiers, achievementIndex)
+  const tiers = options.tiers || TIERS
+  const { cutoffs } = getCachedTimelineData(
+    achievements,
+    options.extraLists,
+    tiers
+  )
 
-  if (cutoffs.length === 0) return null
-  for (const c of cutoffs) {
-    if (idx <= c.index) return c.tier
-  }
-  return cutoffs[cutoffs.length - 1].tier
+  if (!cutoffs.length) return null
+  return binaryTierLookup(rank - 1, cutoffs)
+}
+
+export function getTierForAchievement(achievementLike, achievements, options = {}) {
+  if (!Array.isArray(achievements) || !achievements.length) return null
+
+  const key =
+    typeof achievementLike === 'string'
+      ? normalize(achievementLike)
+      : achievementLike && normalize(achievementLike.id || achievementLike.name)
+
+  if (!key) return null
+
+  const tiers = options.tiers || TIERS
+  const { index } = getCachedTimelineData(
+    achievements,
+    options.extraLists,
+    tiers
+  )
+
+  const idx = index.get(key)
+  if (idx == null) return null
+  return getTierByRank(idx + 1, achievements, options)
 }
 
 export function getBaselineForTier(tier, achievements = [], extraLists = {}) {
   if (!tier || !tier.baseline) return null
 
   const key = normalize(tier.baseline)
-  const index = buildAchievementIndex(achievements, extraLists)
+  const { index } = preprocessTimeline(achievements, extraLists)
   const idx = index.get(key)
-  if (idx != null) return (achievements[idx]?.name || achievements[idx]?.id || tier.baseline)
-  if (extraLists && typeof extraLists === 'object') {
-    for (const list of Object.values(extraLists)) {
-      if (!Array.isArray(list)) continue
-      const found = list.find(item => {
-        if (!item) return false
-        const id = item.id ? normalize(item.id) : ''
-        const name = item.name ? normalize(item.name) : ''
-        return _matchesKey(id, key) || _matchesKey(name, key)
-      })
-      if (found) return found.name || found.id || tier.baseline
-    }
-  }
 
-  return tier.baseline
-}
-
-export function getTierForAchievement(achievementLike, achievements = [], options = {}) {
-
-  if (!achievements || !Array.isArray(achievements) || achievements.length === 0) return null
-
-  if (typeof achievementLike === 'number') {
-    return getTierByRank(achievementLike + 1, achievements, options)
-  }
-
-  const key = typeof achievementLike === 'string' ? normalize(achievementLike) : achievementLike && (normalize(achievementLike.id) || normalize(achievementLike.name))
-  if (!key) return null
-
-  const achievementIndex = buildAchievementIndex(achievements, options.extraLists)
-  const idx = achievementIndex.get(key)
-  if (idx != null) return getTierByRank(idx + 1, achievements, options)
-  const { map: masterMap } = buildMasterOrder(options.extraLists, achievements)
-  const masterIdx = masterMap.has(key) ? masterMap.get(key) : null
-  if (masterIdx == null) return null
-  const timelineMasterIdx = achievements.map(item => {
-    if (!item) return null
-    const k1 = item.id ? normalize(item.id) : null
-    const k2 = item.name ? normalize(item.name) : null
-    const lookup = (k) => {
-      if (!k) return null
-      if (masterMap.has(k)) return masterMap.get(k)
-      for (const mk of masterMap.keys()) {
-        if (k.startsWith(mk)) return masterMap.get(mk)
-      }
-      return null
-    }
-    return lookup(k1) ?? lookup(k2)
-  })
-  let mappedIdx = null
-  for (let i = 0; i < timelineMasterIdx.length; i++) {
-    const m = timelineMasterIdx[i]
-    if (m != null && m >= masterIdx) {
-      mappedIdx = i
-      break
-    }
-  }
-  if (mappedIdx == null && achievements.length > 0) mappedIdx = achievements.length - 1
-  if (mappedIdx == null) return null
-  return getTierByRank(mappedIdx + 1, achievements, options)
+  return idx != null
+    ? achievements[idx]?.name || achievements[idx]?.id
+    : tier.baseline
 }
 
 export default function TierTag({ tier, achievements = [], extraLists = {} }) {
   if (!tier) return null
 
-  const baseline = getBaselineForTier(tier, achievements, extraLists) ?? 'Unknown'
+  const baseline =
+    getBaselineForTier(tier, achievements, extraLists) ?? 'Unknown'
 
   return (
     <div
