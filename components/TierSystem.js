@@ -1,4 +1,5 @@
 import React from 'react';
+
 export const TIERS = [
   { name: 'Trivial', subtitle: 'Tier I', baseline: 'ultiate-destruction', gradientStart: '#343a40', gradientEnd: '#0f1724' },
   { name: 'Simple', subtitle: 'Tier II', baseline: 'to-the-grave', gradientStart: '#1f2937', gradientEnd: '#0b1220' },
@@ -20,17 +21,19 @@ export const TIERS = [
   { name: 'Transcendent', subtitle: 'Tier XVIII', baseline: 'kocmoc-unleashed', gradientStart: '#0ea5a4', gradientEnd: '#0369a1' },
 ];
 
+function normalize(str) {
+  return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
 const NORMALIZED_TIERS = TIERS.map((t, i) => ({
   ...t,
   _index: i,
   _baselineKey: normalize(t.baseline)
 }));
-function normalize(str) {
-  return String(str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-}
+
 const contextCache = new WeakMap();
 
-function buildBaselineIndex(achievements, extraLists) {
+function buildBaselineIndex(achievements = [], extraLists = {}) {
   const map = new Map();
 
   for (let i = 0; i < achievements.length; i++) {
@@ -46,8 +49,37 @@ function buildBaselineIndex(achievements, extraLists) {
       for (let i = 0; i < list.length; i++) {
         const a = list[i];
         if (!a) continue;
-        if (a.id) map.set(normalize(a.id), i);
-        if (a.name) map.set(normalize(a.name), i);
+        const keyId = a.id ? normalize(a.id) : null;
+        const keyName = a.name ? normalize(a.name) : null;
+        let resolvedIndex = null;
+        if (keyId && map.has(keyId)) resolvedIndex = map.get(keyId);
+        else if (keyName && map.has(keyName)) resolvedIndex = map.get(keyName);
+        else {
+          if (keyId) {
+            for (let j = 0; j < achievements.length; j++) {
+              const aa = achievements[j];
+              if (!aa) continue;
+              if (normalize(aa.id) === keyId || normalize(aa.name) === keyId) {
+                resolvedIndex = j;
+                break;
+              }
+            }
+          }
+          if (resolvedIndex == null && keyName) {
+            for (let j = 0; j < achievements.length; j++) {
+              const aa = achievements[j];
+              if (!aa) continue;
+              if (normalize(aa.id) === keyName || normalize(aa.name) === keyName) {
+                resolvedIndex = j;
+                break;
+              }
+            }
+          }
+        }
+        if (resolvedIndex != null) {
+          if (keyId) map.set(keyId, resolvedIndex);
+          if (keyName) map.set(keyName, resolvedIndex);
+        }
       }
     }
   }
@@ -57,23 +89,23 @@ function buildBaselineIndex(achievements, extraLists) {
 
 function computeBoundaries(total, tiers, baselineIndex) {
   const boundaries = new Array(tiers.length);
-  let prevEnd = total;
+  let prevEnd = Math.max(0, total);
 
   for (let i = tiers.length - 1; i >= 0; i--) {
     const b = baselineIndex.get(tiers[i]._baselineKey);
-    const end = b != null ? Math.min(prevEnd, b + 1) : prevEnd;
-
+    const candidateEnd = b != null ? b + 1 : prevEnd;
+    const end = Math.min(prevEnd, Math.max(0, candidateEnd));
     boundaries[i] = {
-      tierIndex: tiers[i]._index,
+      tierIndex: i,
       start: 0,
       end
     };
-
     prevEnd = end - 1;
   }
 
   for (let i = 0; i < boundaries.length; i++) {
     boundaries[i].start = i === 0 ? 1 : boundaries[i - 1].end + 1;
+    if (boundaries[i].start > boundaries[i].end) boundaries[i].end = Math.max(boundaries[i].start - 1, boundaries[i].start);
   }
 
   return boundaries;
@@ -81,17 +113,19 @@ function computeBoundaries(total, tiers, baselineIndex) {
 
 function compileContext(achievements, total, tiers, extraLists) {
   const cached = contextCache.get(achievements);
-  if (cached && cached.total === total && cached.tiers === tiers) {
+  const tiersKey = (tiers || []).map(t => `${t._baselineKey}:${t.name}`).join('|');
+  if (cached && cached.total === total && cached.tiersKey === tiersKey) {
     return cached;
   }
 
   const baselineIndex = buildBaselineIndex(achievements, extraLists);
   const boundaries = computeBoundaries(total, tiers, baselineIndex);
 
-  const ctx = { baselineIndex, boundaries, total, tiers };
+  const ctx = { baselineIndex, boundaries, total, tiers, tiersKey };
   contextCache.set(achievements, ctx);
   return ctx;
 }
+
 export function getTierByRank(
   rank,
   total,
@@ -118,7 +152,7 @@ export function getTierByRank(
 
     if (rank < b.start) hi = mid - 1;
     else if (rank > b.end) lo = mid + 1;
-    else return TIERS[b.tierIndex];
+    else return tiers[b.tierIndex];
   }
 
   return null;
@@ -141,6 +175,7 @@ export function getBaselineForTier(
   const idx = ctx.baselineIndex.get(normalize(tier.baseline));
   return idx != null ? achievements[idx]?.name : tier.baseline;
 }
+
 export default function TierTag({
   tier,
   achievements = [],
