@@ -80,20 +80,35 @@ export function computeTierBoundaries(total, achievements = [], options = {}) {
   const boundaries = [];
   let start = 1;
   const resolveBaselineIndex = (baselineId) => {
-    if (!baselineId || !baselineId.trim()) return -1;
+    if (!baselineId || !String(baselineId).trim()) return -1;
     const allAchievements = [...achievements];
     if (options && options.extraLists && typeof options.extraLists === 'object') {
       Object.values(options.extraLists).forEach(list => {
         if (Array.isArray(list)) allAchievements.push(...list);
       });
     }
-    const idLower = String(baselineId).toLowerCase();
+
+    const normalize = s => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const baselineNorm = normalize(baselineId);
+    if (!baselineNorm) return -1;
     for (let j = 0; j < allAchievements.length; j++) {
       const a = allAchievements[j];
       if (!a) continue;
       if (String(a.id) === baselineId || String(a.name) === baselineId) return j;
-      if (String(a.id).toLowerCase() === idLower || String(a.name || '').toLowerCase() === idLower) return j;
     }
+    for (let j = 0; j < allAchievements.length; j++) {
+      const a = allAchievements[j];
+      if (!a) continue;
+      if (normalize(a.id) === baselineNorm || normalize(a.name) === baselineNorm) return j;
+    }
+    for (let j = 0; j < allAchievements.length; j++) {
+      const a = allAchievements[j];
+      if (!a) continue;
+      const idNorm = normalize(a.id);
+      const nameNorm = normalize(a.name);
+      if ((idNorm && idNorm.includes(baselineNorm)) || (nameNorm && nameNorm.includes(baselineNorm))) return j;
+    }
+
     return -1;
   };
   for (let i = tiers.length - 1; i >= 0; i--) {
