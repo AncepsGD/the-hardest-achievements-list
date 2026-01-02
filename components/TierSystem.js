@@ -22,195 +22,103 @@ export const TIERS = [
 ];
 
 const tierCache = new WeakMap();
+const TIERS_MAP = new Map(TIERS.map((t, i) => [`${t.name}|${t.subtitle}`, i]));
 
-function computeSizes(totalAchievements, tierObjs) {
-  const tiers = Array.isArray(tierObjs) && tierObjs.length > 0 ? tierObjs : TIERS;
-  const n = tiers.length;
-  if (n === 0) return [];
-  const base = Math.floor(totalAchievements / n);
-  const sizes = new Array(n).fill(base);
-  let remainder = totalAchievements - base * n;
-
-  for (let j = 0; j < remainder; j++) {
-    sizes[n - 1 - (j % n)] += 1;
-  }
-  return sizes;
-}
-
-export function computeTierBoundaries(totalAchievements, achievements = [], options = {}) {
-  if (!achievements || typeof achievements !== 'object') return null;
-  const cached = tierCache.get(achievements);
-  let tiersToUse = null;
-  let originalIndexMap = null;
-  if (Array.isArray(options.tierIndices) && options.tierIndices.length > 0) {
-    tiersToUse = options.tierIndices.map(i => TIERS[i]).filter(Boolean);
-    originalIndexMap = options.tierIndices.slice();
-  } else if (Array.isArray(options.tiers) && options.tiers.length > 0) {
-    tiersToUse = options.tiers.slice();
-
-    originalIndexMap = tiersToUse.map(t => TIERS.findIndex(x => x.name === t.name && x.subtitle === t.subtitle));
-  } else {
-    tiersToUse = TIERS;
-    originalIndexMap = TIERS.map((_, i) => i);
-  }
-
-  const optionsKey = Array.isArray(options.tierIndices)
-    ? options.tierIndices.join(',')
-    : (Array.isArray(options.tiers) ? options.tiers.map(t => `${t.name}|${t.subtitle}`).join(',') : '');
-
-  if (cached && cached.totalAchievements === totalAchievements && Array.isArray(cached.boundaries) && cached.optionsKey === optionsKey) {
-    return cached.boundaries;
-  }
-
-  const sizes = computeSizes(totalAchievements, tiersToUse);
-  const revSizes = sizes.slice().reverse();
-  const revTiers = tiersToUse.slice().reverse();
-  const originalIndexMapRev = originalIndexMap.slice().reverse();
-
-  const flags = new Array(totalAchievements).fill(false);
-  const achLen = Array.isArray(achievements) ? achievements.length : 0;
-  const limit = Math.min(totalAchievements, achLen);
-  for (let i = 0; i < limit; i++) {
-    flags[i] = hasRatedAndVerified(achievements[i]);
-  }
-  let start = 1;
-  const boundaries = [];
-  for (let ri = 0; ri < revTiers.length; ri++) {
-    const size = revSizes[ri];
-    const originalIndex = originalIndexMapRev[ri] !== undefined ? originalIndexMapRev[ri] : (TIERS.length - 1 - ri);
-    if (size <= 0) {
-      boundaries.push({ start, end: Math.min(totalAchievements, start - 1), tierIndex: originalIndex });
-      continue;
-    }
-    const tierStartIdx = start - 1;
-    const tierEndIdx = Math.min(totalAchievements - 1, start + size - 1);
-
-    let foundIndex = -1;
-    for (let j = tierEndIdx; j >= tierStartIdx; j--) {
-      if (j >= 0 && j < totalAchievements && flags[j]) {
-        foundIndex = j;
-        break;
-      }
-    }
-
-    let endRank;
-    if (foundIndex >= 0) {
-      endRank = foundIndex + 1;
-    } else {
-      endRank = Math.min(totalAchievements, start + size - 1);
-    }
-
-    boundaries.push({ start, end: endRank, tierIndex: originalIndex });
-    start = endRank + 1;
-    if (start > totalAchievements) {
-      for (let k = ri + 1; k < revTiers.length; k++) {
-        const origIdx = (originalIndexMapRev && originalIndexMapRev[k] !== undefined) ? originalIndexMapRev[k] : (TIERS.length - 1 - k);
-        boundaries.push({ start: totalAchievements + 1, end: totalAchievements, tierIndex: origIdx });
-      }
-      break;
-    }
-  }
-
-  tierCache.set(achievements, { totalAchievements, boundaries, sizes, flags, optionsKey });
-  return boundaries;
-}
-
-function hasRatedAndVerified(item) {
+function hasRatedAndVerified(item, cache = new WeakMap()) {
   if (!item) return false;
-  if (item.rated === true && item.verified === true) return true;
+  if (cache.has(item)) return cache.get(item);
 
-  const toLower = (v) => (v == null ? '' : String(v).toLowerCase());
-
-  const checkStringOrArray = (val) => {
+  const toLower = v => (v == null ? '' : String(v).toLowerCase());
+  const check = val => {
     if (!val) return false;
-    if (typeof val === 'string') {
-      const s = val.toLowerCase();
-      return s.includes('rated') && s.includes('verified');
-    }
-    if (Array.isArray(val)) {
-      let hasRated = false;
-      let hasVerified = false;
-      for (let i = 0; i < val.length; i++) {
-        const v = toLower(val[i]);
-        if (!hasRated && v.includes('rated')) hasRated = true;
-        if (!hasVerified && v.includes('verified')) hasVerified = true;
-        if (hasRated && hasVerified) return true;
-      }
-      return false;
-    }
-    if (typeof val === 'object') {
-      for (const k in val) {
-        if (!Object.prototype.hasOwnProperty.call(val, k)) continue;
-        const v = toLower(val[k]);
-        if (v.includes('rated') && v.includes('verified')) return true;
-      }
-      return false;
-    }
+    if (typeof val === 'string') return val.toLowerCase().includes('rated') && val.toLowerCase().includes('verified');
+    if (Array.isArray(val)) return val.some(v => check(v));
+    if (typeof val === 'object') return Object.values(val).some(v => check(v));
     return false;
   };
 
-  if (checkStringOrArray(item.tags)) return true;
-  if (checkStringOrArray(item.tag)) return true;
-  if (checkStringOrArray(item.labels)) return true;
-  if (checkStringOrArray(item.label)) return true;
-  if (checkStringOrArray(item.status)) return true;
-  if (checkStringOrArray(item.meta)) return true;
+  const result = item.rated === true && item.verified === true
+    || check(item.tags) || check(item.tag) || check(item.labels) || check(item.label) || check(item.status) || check(item.meta)
+    || (item.achievement && (check(item.achievement.tags) || check(item.achievement.label) || check(item.achievement.status)));
 
-  const ach = item.achievement;
-  if (ach && typeof ach === 'object') {
-    if (checkStringOrArray(ach.tags)) return true;
-    if (checkStringOrArray(ach.label)) return true;
-    if (checkStringOrArray(ach.status)) return true;
+  cache.set(item, result);
+  return result;
+}
+
+function computeSizes(total, tiers) {
+  const n = tiers.length;
+  if (n === 0) return [];
+  const base = Math.floor(total / n);
+  const remainder = total - base * n;
+  const sizes = new Array(n).fill(base);
+  for (let i = 0; i < remainder; i++) sizes[n - 1 - (i % n)] += 1;
+  return sizes;
+}
+
+export function computeTierBoundaries(total, achievements = [], options = {}) {
+  if (!Array.isArray(achievements)) return null;
+
+  const cached = tierCache.get(achievements);
+
+  const tiers = options.tierIndices?.length ? options.tierIndices.map(i => TIERS[i]).filter(Boolean)
+    : options.tiers?.length ? options.tiers
+      : TIERS;
+
+  const optionsKey = options.tierIndices?.join(',') ?? options.tiers?.map(t => `${t.name}|${t.subtitle}`).join(',') ?? '';
+
+  if (cached?.totalAchievements === total && cached?.optionsKey === optionsKey) return cached.boundaries;
+
+  const sizes = computeSizes(total, tiers);
+  const flags = new Array(total).fill(false);
+  const achLen = achievements.length;
+  const hrCache = new WeakMap();
+  for (let i = 0; i < Math.min(total, achLen); i++) flags[i] = hasRatedAndVerified(achievements[i], hrCache);
+
+  const prevFlagIdx = new Array(total);
+  let prev = -1;
+  for (let i = 0; i < total; i++) prevFlagIdx[i] = (i < achLen && flags[i]) ? (prev = i) : prev;
+
+  const boundaries = [];
+  let start = 1;
+  for (let i = tiers.length - 1; i >= 0; i--) {
+    const size = sizes[i];
+    const tierIndex = TIERS_MAP.get(`${tiers[i].name}|${tiers[i].subtitle}`) ?? (TIERS.length - 1 - i);
+    const tierStartIdx = start - 1;
+    const tierEndIdx = Math.min(total - 1, start + size - 1);
+    const candidate = tierEndIdx >= 0 && tierEndIdx < total ? prevFlagIdx[tierEndIdx] : -1;
+    const endRank = candidate >= tierStartIdx ? candidate + 1 : tierEndIdx + 1;
+    boundaries.push({ start, end: endRank, tierIndex });
+    start = endRank + 1;
   }
 
-  return false;
+  tierCache.set(achievements, { totalAchievements: total, boundaries, sizes, flags, prevFlagIdx, optionsKey });
+  return boundaries;
 }
 
 export function getTierByRank(rank, totalAchievements, achievements = [], enableTiers = true, opts = {}) {
-
   if (typeof enableTiers === 'object' && enableTiers !== null) {
     opts = enableTiers;
     enableTiers = true;
   }
-  if (!enableTiers) return null;
-  if (!rank || !totalAchievements || rank <= 0) return null;
-  let boundaries = null;
+  if (!enableTiers || !rank || rank <= 0 || !totalAchievements) return null;
+
   const listType = opts.listType || null;
-  if (listType === 'main') {
+  let boundaries = null;
 
-    const start = TIERS.findIndex(t => t.name.toLowerCase() === 'expert');
-    const end = TIERS.findIndex(t => t.name.toLowerCase() === 'godlike');
-    if (start >= 0 && end >= 0 && end >= start) {
-      const indices = [];
-      for (let i = start; i <= end; i++) indices.push(i);
-      boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: indices });
-    }
-  } else if (listType === 'timeline') {
+  const getIndices = (startName, endName) => {
+    const start = TIERS.findIndex(t => t.name.toLowerCase() === startName.toLowerCase());
+    const end = TIERS.findIndex(t => t.name.toLowerCase() === endName.toLowerCase());
+    if (start >= 0 && end >= 0 && end >= start) return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+    return [];
+  };
 
-    const godIdx = TIERS.findIndex(t => t.name.toLowerCase() === 'godlike');
-    if (godIdx >= 0) {
-      const indices = [];
-      for (let i = 0; i <= godIdx; i++) indices.push(i);
-      boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: indices });
-    }
-  } else if (listType === 'legacy') {
-
-    const hardIdx = TIERS.findIndex(t => t.name.toLowerCase() === 'hard');
-    const legIdx = TIERS.findIndex(t => t.name.toLowerCase() === 'legendary');
-    if (hardIdx >= 0 && legIdx >= 0 && legIdx >= hardIdx) {
-      const indices = [];
-      for (let i = hardIdx; i <= legIdx; i++) indices.push(i);
-      boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: indices });
-    }
-  }
+  if (listType === 'main') boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: getIndices('Expert', 'Godlike') });
+  else if (listType === 'timeline') boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: getIndices('Trivial', 'Godlike') });
+  else if (listType === 'legacy') boundaries = computeTierBoundaries(totalAchievements, achievements, { tierIndices: getIndices('Hard', 'Legendary') });
 
   if (!boundaries) boundaries = computeTierBoundaries(totalAchievements, achievements) || [];
 
-  for (let i = 0; i < boundaries.length; i++) {
-    const b = boundaries[i];
-    if (rank >= b.start && rank <= b.end) return TIERS[b.tierIndex];
-  }
-
+  for (const b of boundaries) if (rank >= b.start && rank <= b.end) return TIERS[b.tierIndex];
   return null;
 }
 
@@ -219,45 +127,27 @@ export function getBaselineForTier(tierObj, totalAchievements, achievements = []
 
   const resolveBaselineName = (baselineId) => {
     if (!baselineId || typeof baselineId !== 'string') return null;
-
-    const a = (achievements || []).find(x => x && (x.id === baselineId || x.name === baselineId));
-    if (a) return a.name || baselineId;
-
-    if (extraLists && typeof extraLists === 'object') {
-      for (const k in extraLists) {
-        if (!Object.prototype.hasOwnProperty.call(extraLists, k)) continue;
-        const list = extraLists[k];
-        if (!Array.isArray(list)) continue;
-        const f = list.find(x => x && (x.id === baselineId || x.name === baselineId));
-        if (f) return f.name || baselineId;
-      }
-    }
-    return baselineId;
+    const allAchievements = [...achievements, ...Object.values(extraLists).flat().filter(Array.isArray).flat()];
+    const map = new Map(allAchievements.map(x => x && (x.id || x.name) ? [x.id || x.name, x.name || x.id] : []));
+    return map.get(baselineId) ?? baselineId;
   };
-  if (tierObj && typeof tierObj.baseline === 'string' && tierObj.baseline.trim() !== '') {
-    const resolved = resolveBaselineName(tierObj.baseline.trim());
-    return resolved || tierObj.baseline;
-  }
+
+  if (tierObj.baseline?.trim()) return resolveBaselineName(tierObj.baseline.trim());
 
   if (!achievements.length) return null;
   let cached = tierCache.get(achievements);
-  if (!cached || cached.totalAchievements !== totalAchievements) {
-    computeTierBoundaries(totalAchievements, achievements);
-    cached = tierCache.get(achievements);
-  }
+  if (!cached || cached.totalAchievements !== totalAchievements) computeTierBoundaries(totalAchievements, achievements);
+  cached = tierCache.get(achievements);
   if (!cached) return null;
 
   const { boundaries = [], flags = [] } = cached;
 
-  for (let i = 0; i < boundaries.length; i++) {
-    const b = boundaries[i];
+  for (const b of boundaries) {
     const t = TIERS[b.tierIndex];
     if (t.name === tierObj.name && t.subtitle === tierObj.subtitle) {
       const startIdx = Math.max(0, b.start - 1);
       const endIdx = Math.min(totalAchievements - 1, b.end - 1);
-      for (let j = endIdx; j >= startIdx; j--) {
-        if (flags[j] && j < achievements.length) return achievements[j]?.name || 'Unknown';
-      }
+      for (let j = endIdx; j >= startIdx; j--) if (flags[j] && j < achievements.length) return achievements[j]?.name || 'Unknown';
       if (endIdx >= 0 && endIdx < achievements.length) return achievements[endIdx]?.name || 'Unknown';
       return null;
     }
@@ -269,10 +159,7 @@ export default function TierTag({ tier, totalAchievements, achievements = [], ex
   if (!tier) return null;
   const baseline = getBaselineForTier(tier, totalAchievements, achievements, extraLists) || 'Unknown';
   const title = `${tier.name} – ${tier.subtitle}\nBaseline is ${baseline}`;
-  const style = {
-    '--tier-gradient-start': tier.gradientStart,
-    '--tier-gradient-end': tier.gradientEnd,
-  };
+  const style = { '--tier-gradient-start': tier.gradientStart, '--tier-gradient-end': tier.gradientEnd };
   return (
     <div className="tier-tag" style={style} title={title}>
       <span className="tier-tag-text">{tier.name} – {tier.subtitle}</span>
