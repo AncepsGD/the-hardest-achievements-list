@@ -1,24 +1,32 @@
 import React from 'react'
 
 export const TIERS = [
-  { name: 'Trivial', subtitle: 'Tier I', baseline: 'ultiate-destruction', gradientStart: '#343a40', gradientEnd: '#0f1724', borderColor: '#2f343a', glowColor: 'rgba(63,76,86,0.10)' },
-  { name: 'Simple', subtitle: 'Tier II', baseline: 'to-the-grave', gradientStart: '#374151', gradientEnd: '#0b1220', borderColor: '#4b5563', glowColor: 'rgba(75,85,99,0.08)' },
-  { name: 'Novice', subtitle: 'Tier III', baseline: 'xyz-step-infinity-old', gradientStart: '#8b5cf6', gradientEnd: '#6d28d9', borderColor: '#6d28d9', glowColor: 'rgba(124,58,237,0.18)' },
-  { name: 'Moderate', subtitle: 'Tier IV', baseline: 'cataclysm-old', gradientStart: '#34d399', gradientEnd: '#065f46', borderColor: '#059669', glowColor: 'rgba(6,182,212,0.14)' },
-  { name: 'Challenging', subtitle: 'Tier V', baseline: 'the-ultimate-phase-old', gradientStart: '#d946ef', gradientEnd: '#7e22ce', borderColor: '#c026d3', glowColor: 'rgba(192,38,211,0.18)' },
-  { name: 'Demanding', subtitle: 'Tier VI', baseline: 'sonic-wave-72', gradientStart: '#fb923c', gradientEnd: '#b45309', borderColor: '#fb923c', glowColor: 'rgba(251,146,60,0.14)' },
-  { name: 'Hard', subtitle: 'Tier VII', baseline: 'bloodlust-98', gradientStart: '#f87171', gradientEnd: '#7f1d1d', borderColor: '#ef4444', glowColor: 'rgba(239,68,68,0.18)' },
-  { name: 'Intense', subtitle: 'Tier VIII', baseline: 'crimson-planet', gradientStart: '#b91c1c', gradientEnd: '#520000', borderColor: '#b91c1c', glowColor: 'rgba(185,28,28,0.20)' },
-  { name: 'Formidable', subtitle: 'Tier IX', baseline: 'zodiac', gradientStart: '#0f172a', gradientEnd: '#071233', borderColor: '#0b1224', glowColor: 'rgba(15,23,42,0.12)' },
-  { name: 'Legendary', subtitle: 'Tier X', baseline: 'the-golden', gradientStart: '#fbbf24', gradientEnd: '#b45309', borderColor: '#f59e0b', glowColor: 'rgba(245,158,11,0.26)' },
-  { name: 'Expert', subtitle: 'Tier XI', baseline: 'tartarus-91', gradientStart: '#2dd4bf', gradientEnd: '#115e59', borderColor: '#06b6d4', glowColor: 'rgba(6,182,212,0.16)' },
-  { name: 'Master', subtitle: 'Tier XII', baseline: 'arcturus', gradientStart: '#60a5fa', gradientEnd: '#1e40af', borderColor: '#2563eb', glowColor: 'rgba(37,99,235,0.18)' },
-  { name: 'Mythic', subtitle: 'Tier XIII', baseline: 'edge-of-destiny', gradientStart: '#a78bfa', gradientEnd: '#5b21b6', borderColor: '#7c3aed', glowColor: 'rgba(124,58,237,0.18)' },
-  { name: 'Epic', subtitle: 'Tier XIV', baseline: 'firework', gradientStart: '#ff6b6b', gradientEnd: '#b91c1c', borderColor: '#ff3b3b', glowColor: 'rgba(255,59,59,0.22)' },
-  { name: 'Endgame', subtitle: 'Tier XV', baseline: 'slaughterhouse', gradientStart: '#0f172a', gradientEnd: '#000000', borderColor: '#111827', glowColor: 'rgba(0,0,0,0.22)' },
-  { name: 'Ultimate', subtitle: 'Tier XVI', baseline: 'acheron', gradientStart: '#374151', gradientEnd: '#0b1220', borderColor: '#111827', glowColor: 'rgba(17,24,39,0.18)' },
-  { name: 'Godlike', subtitle: 'Tier XVII', baseline: 'boobawamba', gradientStart: '#ff4d88', gradientEnd: '#7f0033', borderColor: '#ff0044', glowColor: 'rgba(255,0,68,0.30)' },
-  { name: 'Transcendent', subtitle: 'Tier XVIII', baseline: 'kocmoc-unleashed', gradientStart: '#2dd4bf', gradientEnd: '#0369a1', borderColor: '#06b6d4', glowColor: 'rgba(16,185,129,0.20)' },
+  { name: 'Trivial', subtitle: 'Tier I', baseline: 'ultiate-destruction', gradientStart: '#1f2933', gradientEnd: '#020617', borderColor: '#334155', glowColor: 'rgba(51,65,85,0.06)' },
+  { name: 'Simple', subtitle: 'Tier II', baseline: 'to-the-grave', gradientStart: '#374151', gradientEnd: '#030712', borderColor: '#4b5563', glowColor: 'rgba(75,85,99,0.08)' },
+
+  { name: 'Novice', subtitle: 'Tier III', baseline: 'xyz-step-infinity-old', gradientStart: '#7c3aed', gradientEnd: '#4c1d95', borderColor: '#8b5cf6', glowColor: 'rgba(139,92,246,0.14)' },
+  { name: 'Moderate', subtitle: 'Tier IV', baseline: 'cataclysm-old', gradientStart: '#22c55e', gradientEnd: '#064e3b', borderColor: '#16a34a', glowColor: 'rgba(34,197,94,0.14)' },
+
+  { name: 'Challenging', subtitle: 'Tier V', baseline: 'the-ultimate-phase-old', gradientStart: '#06b6d4', gradientEnd: '#083344', borderColor: '#22d3ee', glowColor: 'rgba(34,211,238,0.16)' },
+  { name: 'Demanding', subtitle: 'Tier VI', baseline: 'sonic-wave-72', gradientStart: '#38bdf8', gradientEnd: '#0c4a6e', borderColor: '#0ea5e9', glowColor: 'rgba(14,165,233,0.18)' },
+
+  { name: 'Hard', subtitle: 'Tier VII', baseline: 'bloodlust-98', gradientStart: '#f97316', gradientEnd: '#7c2d12', borderColor: '#fb923c', glowColor: 'rgba(251,146,60,0.20)' },
+  { name: 'Intense', subtitle: 'Tier VIII', baseline: 'crimson-planet', gradientStart: '#ef4444', gradientEnd: '#450a0a', borderColor: '#dc2626', glowColor: 'rgba(239,68,68,0.22)' },
+
+  { name: 'Formidable', subtitle: 'Tier IX', baseline: 'zodiac', gradientStart: '#a855f7', gradientEnd: '#3b0764', borderColor: '#c084fc', glowColor: 'rgba(192,132,252,0.22)' },
+  { name: 'Legendary', subtitle: 'Tier X', baseline: 'the-golden', gradientStart: '#fde047', gradientEnd: '#92400e', borderColor: '#facc15', glowColor: 'rgba(250,204,21,0.28)' },
+
+  { name: 'Expert', subtitle: 'Tier XI', baseline: 'tartarus-91', gradientStart: '#2dd4bf', gradientEnd: '#022c22', borderColor: '#5eead4', glowColor: 'rgba(94,234,212,0.22)' },
+  { name: 'Master', subtitle: 'Tier XII', baseline: 'arcturus', gradientStart: '#60a5fa', gradientEnd: '#1e3a8a', borderColor: '#93c5fd', glowColor: 'rgba(147,197,253,0.24)' },
+
+  { name: 'Mythic', subtitle: 'Tier XIII', baseline: 'edge-of-destiny', gradientStart: '#c084fc', gradientEnd: '#4c1d95', borderColor: '#e9d5ff', glowColor: 'rgba(233,213,255,0.28)' },
+  { name: 'Epic', subtitle: 'Tier XIV', baseline: 'firework', gradientStart: '#ff4d6d', gradientEnd: '#7f1d1d', borderColor: '#ff758f', glowColor: 'rgba(255,117,143,0.32)' },
+
+  { name: 'Endgame', subtitle: 'Tier XV', baseline: 'slaughterhouse', gradientStart: '#991b1b', gradientEnd: '#000000', borderColor: '#ef4444', glowColor: 'rgba(239,68,68,0.34)' },
+  { name: 'Ultimate', subtitle: 'Tier XVI', baseline: 'acheron', gradientStart: '#0f172a', gradientEnd: '#020617', borderColor: '#38bdf8', glowColor: 'rgba(56,189,248,0.30)' },
+
+  { name: 'Godlike', subtitle: 'Tier XVII', baseline: 'boobawamba', gradientStart: '#ff00aa', gradientEnd: '#2a0015', borderColor: '#ff4dd2', glowColor: 'rgba(255,77,210,0.40)' },
+  { name: 'Transcendent', subtitle: 'Tier XVIII', baseline: 'kocmoc-unleashed', gradientStart: '#e5f0ff', gradientEnd: '#38bdf8', borderColor: '#ffffff', glowColor: 'rgba(255,255,255,0.55)' },
 ]
 
 function normalize(x) {
