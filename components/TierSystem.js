@@ -164,11 +164,9 @@ export function getTierByRank(rank, a, b) {
   if (idx < 0) return null
   const tiers = (opts && opts.tiers) || TIERS
   const achievementIndex = buildAchievementIndex(achievements, opts.extraLists)
-  const timelineCutoffs = buildTimelineCutoffs(tiers, achievements)
-  const masterCutoffs = mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists)
-  const cutoffs = (timelineCutoffs && timelineCutoffs.length > 0)
-    ? timelineCutoffs
-    : (masterCutoffs && masterCutoffs.length > 0) ? masterCutoffs : buildTierCutoffs(tiers, achievementIndex)
+  const cutoffs = mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists).length > 0
+    ? mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists)
+    : buildTierCutoffs(tiers, achievementIndex)
 
   if (cutoffs.length === 0) return null
   for (const c of cutoffs) {
@@ -253,33 +251,4 @@ export default function TierTag({ tier, achievements = [], extraLists = {} }) {
       </span>
     </div>
   )
-}
-
-function buildTimelineCutoffs(tiers = [], timeline = []) {
-  const cutoffs = []
-  if (!Array.isArray(tiers) || !Array.isArray(timeline)) return cutoffs
-  const positions = new Array(tiers.length).fill(null)
-  for (let i = 0; i < tiers.length; i++) {
-    const tier = tiers[i]
-    if (!tier || !tier.baseline) continue
-    const key = normalize(tier.baseline)
-    const directIdx = timeline.findIndex(a => !!a && (normalize(a.id) === key || normalize(a.name) === key))
-    if (directIdx >= 0) positions[i] = directIdx
-  }
-  let nextKnown = null
-  for (let i = positions.length - 1; i >= 0; i--) {
-    if (positions[i] != null) {
-      nextKnown = positions[i]
-      continue
-    }
-    if (nextKnown != null) positions[i] = nextKnown
-  }
-  const lastIdx = timeline.length > 0 ? timeline.length - 1 : null
-  for (let i = 0; i < positions.length; i++) {
-    if (positions[i] == null && lastIdx != null) positions[i] = lastIdx
-    if (positions[i] != null) cutoffs.push({ tier: tiers[i], index: positions[i] })
-  }
-
-  cutoffs.sort((a, b) => a.index - b.index)
-  return cutoffs
 }
