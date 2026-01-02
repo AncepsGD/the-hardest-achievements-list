@@ -465,7 +465,7 @@ useEffect(() => {
                           localStorage.setItem('tiersUseRoman', v ? 'true' : 'false')
                         } catch (err) {}
                         try {
-                          window.dispatchEvent(new StorageEvent('storage', { key: 'tiersUseRoman', newValue: v ? 'true' : 'false' }))
+                          window.dispatchEvent(new CustomEvent('tiersUseRomanChanged', { detail: { value: v ? 'true' : 'false' } }))
                         } catch (err) {}
                       }}
                       style={{ marginRight: 8 }}
