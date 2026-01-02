@@ -38,6 +38,14 @@ function normalize(x) {
   return noDiacritics.replace(/[^a-z0-9]/g, '')
 }
 
+function _matchesKey(normalizedValue, key) {
+  if (!normalizedValue || !key) return false
+  if (normalizedValue === key) return true
+  if (normalizedValue.startsWith(key)) return true
+  if (key.startsWith(normalizedValue)) return true
+  return false
+}
+
 function buildAchievementIndex(achievements = [], extraLists = {}) {
   const index = new Map()
 
@@ -66,7 +74,12 @@ function buildAchievementIndex(achievements = [], extraLists = {}) {
         for (const k of keys) {
           if (!k || index.has(k)) continue
 
-          const found = achievements.findIndex(a => !!a && (normalize(a.id) === k || normalize(a.name) === k))
+          const found = achievements.findIndex(a => {
+            if (!a) return false
+            const aId = a.id ? normalize(a.id) : ''
+            const aName = a.name ? normalize(a.name) : ''
+            return _matchesKey(aId, k) || _matchesKey(aName, k)
+          })
           if (found >= 0) index.set(k, found)
         }
       }
@@ -82,7 +95,15 @@ function buildTierCutoffs(tiers = [], achievementIndex = new Map()) {
   for (const tier of tiers) {
     if (!tier || !tier.baseline) continue
     const key = normalize(tier.baseline)
-    const idx = achievementIndex.get(key)
+    let idx = achievementIndex.get(key)
+    if (idx == null) {
+      for (const [k, v] of achievementIndex) {
+        if (_matchesKey(k, key)) {
+          idx = v
+          break
+        }
+      }
+    }
     if (idx == null) continue
     cutoffs.push({ tier, index: idx })
   }
@@ -118,7 +139,15 @@ function mapMasterCutoffsToTimeline(tiers = [], timeline = [], extraLists = {}) 
     if (!item) return null
     const k1 = item.id ? normalize(item.id) : null
     const k2 = item.name ? normalize(item.name) : null
-    return (k1 && masterMap.has(k1)) ? masterMap.get(k1) : (k2 && masterMap.has(k2) ? masterMap.get(k2) : null)
+    const lookup = (k) => {
+      if (!k) return null
+      if (masterMap.has(k)) return masterMap.get(k)
+      for (const mk of masterMap.keys()) {
+        if (k.startsWith(mk)) return masterMap.get(mk)
+      }
+      return null
+    }
+    return lookup(k1) ?? lookup(k2)
   })
 
   const cutoffs = []
@@ -126,12 +155,22 @@ function mapMasterCutoffsToTimeline(tiers = [], timeline = [], extraLists = {}) 
   for (const tier of tiers) {
     if (!tier || !tier.baseline) continue
     const key = normalize(tier.baseline)
-    const directIdx = timeline.findIndex(a => !!a && (normalize(a.id) === key || normalize(a.name) === key))
+    const directIdx = timeline.findIndex(a => {
+      if (!a) return false
+      const aId = a.id ? normalize(a.id) : ''
+      const aName = a.name ? normalize(a.name) : ''
+      return _matchesKey(aId, key) || _matchesKey(aName, key)
+    })
     if (directIdx >= 0) {
       cutoffs.push({ tier, index: directIdx })
       continue
     }
-    const baselineMasterIdx = masterMap.has(key) ? masterMap.get(key) : null
+    const baselineMasterIdx = masterMap.has(key) ? masterMap.get(key) : (function() {
+      for (const mk of masterMap.keys()) {
+        if (_matchesKey(mk, key)) return masterMap.get(mk)
+      }
+      return null
+    })()
     if (baselineMasterIdx == null) continue
 
     let mappedIdx = null
@@ -185,7 +224,12 @@ export function getBaselineForTier(tier, achievements = [], extraLists = {}) {
   if (extraLists && typeof extraLists === 'object') {
     for (const list of Object.values(extraLists)) {
       if (!Array.isArray(list)) continue
-      const found = list.find(item => item && (normalize(item.id) === key || normalize(item.name) === key))
+      const found = list.find(item => {
+        if (!item) return false
+        const id = item.id ? normalize(item.id) : ''
+        const name = item.name ? normalize(item.name) : ''
+        return _matchesKey(id, key) || _matchesKey(name, key)
+      })
       if (found) return found.name || found.id || tier.baseline
     }
   }
@@ -214,7 +258,15 @@ export function getTierForAchievement(achievementLike, achievements = [], option
     if (!item) return null
     const k1 = item.id ? normalize(item.id) : null
     const k2 = item.name ? normalize(item.name) : null
-    return (k1 && masterMap.has(k1)) ? masterMap.get(k1) : (k2 && masterMap.has(k2) ? masterMap.get(k2) : null)
+    const lookup = (k) => {
+      if (!k) return null
+      if (masterMap.has(k)) return masterMap.get(k)
+      for (const mk of masterMap.keys()) {
+        if (k.startsWith(mk)) return masterMap.get(mk)
+      }
+      return null
+    }
+    return lookup(k1) ?? lookup(k2)
   })
   let mappedIdx = null
   for (let i = 0; i < timelineMasterIdx.length; i++) {
