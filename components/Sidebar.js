@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createPortal } from 'react-dom';
@@ -41,7 +41,7 @@ const safeFetchJson = async (src) => {
     try {
       return JSON.parse(text);
     } catch (err) {
-      
+
       try {
         const clean = text.replace(/[\u0000-\u001F]+/g, '');
         return JSON.parse(clean);
@@ -135,7 +135,7 @@ useEffect(() => {
           return;
         }
       } catch (parseErr) {
-        
+
         try {
           sessionStorage.removeItem('randomPoolIds');
         } catch (e) {}
@@ -143,7 +143,7 @@ useEffect(() => {
       }
     }
   } catch (e) {
-    
+
   }
 
   let cancelled = false;
@@ -429,6 +429,38 @@ useEffect(() => {
                   <div style={{ color: '#DFE3F5', fontSize: 13 }}>
                     Enter a number (default 100) or check All to render everything
                   </div>
+                </div>
+              </div>
+
+              <div style={{ width: '100%', marginTop: 18 }}>
+                <label
+                  style={{
+                    color: '#DFE3F5',
+                    fontWeight: 600,
+                    fontSize: 16,
+                    marginBottom: 8,
+                    display: 'block',
+                  }}
+                >
+                  Tier Display
+                </label>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <label style={{ color: '#DFE3F5', fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <input
+                      type="checkbox"
+                      checked={typeof window !== 'undefined' ? (localStorage.getItem('tiersUseRoman') !== 'false') : true}
+                      onChange={(e) => {
+                        try {
+                          localStorage.setItem('tiersUseRoman', e.target.checked ? 'true' : 'false');
+                        } catch (err) {}
+                        try {
+                          window.dispatchEvent(new StorageEvent('storage', { key: 'tiersUseRoman', newValue: e.target.checked ? 'true' : 'false' }));
+                        } catch (err) {}
+                      }}
+                      style={{ marginRight: 8 }}
+                    />
+                    Show Roman numerals for tiers
+                  </label>
                 </div>
               </div>
             </div>
