@@ -43,6 +43,7 @@ export default function LegacyPage() {
       dataFileName="legacy.json"
       storageKeySuffix="legacy"
       showPlatformToggle={false}
+      mode="legacy"
       rankOffset={rankOffset}
       showTiers={true}
     />
