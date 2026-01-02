@@ -373,7 +373,7 @@ function calculateDaysLasted(currentDate, previousDate) {
 
 function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(achievement.rank, achievements, { enable: showTiers === true, listType, extraLists });
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
   const handleClick = e => {
     if (devMode) {
@@ -464,7 +464,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
 const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(achievement.rank, achievements, { enable: showTiers === true, listType, extraLists });
 
 
   const handleClick = e => {
@@ -773,6 +773,16 @@ export default function SharedList({
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
+
+  useEffect(() => {
+    if (extraLists['achievements.json'] !== undefined) return;
+    fetch('/achievements.json').then(res => res.json()).then(data => {
+      const list = Array.isArray(data) ? data : (data.achievements || []);
+      setExtraLists(prev => ({ ...prev, ['achievements.json']: list }));
+    }).catch(() => {
+      setExtraLists(prev => ({ ...prev, ['achievements.json']: [] }));
+    });
+  }, []);
   const [insertIdx, setInsertIdx] = useState(null);
   const [editIdx, setEditIdx] = useState(null);
   const [editForm, setEditForm] = useState(null);
