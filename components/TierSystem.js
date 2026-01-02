@@ -1,13 +1,24 @@
 import React from 'react';
 
 export const TIERS = [
-  { name: 'Tier I', subtitle: 'Endgame', percent: 4, gradientStart: '#FFD700', gradientEnd: '#FF8C00' },
-  { name: 'Tier II', subtitle: 'Master', percent: 6, gradientStart: '#E8E8E8', gradientEnd: '#999999' },
-  { name: 'Tier III', subtitle: 'Expert', percent: 8, gradientStart: '#D4AF37', gradientEnd: '#8B6914' },
-  { name: 'Tier IV', subtitle: 'Advanced', percent: 12, gradientStart: '#FF5555', gradientEnd: '#BB0000' },
-  { name: 'Tier V', subtitle: 'Intermediate', percent: 16, gradientStart: '#5B9BF5', gradientEnd: '#1E40AF' },
-  { name: 'Tier VI', subtitle: 'Developing', percent: 24, gradientStart: '#65C641', gradientEnd: '#0D7F2F' },
-  { name: 'Tier VII', subtitle: 'Entry', percent: 30, gradientStart: '#B955F7', gradientEnd: '#6B21A8' },
+  { name: 'Trivial', subtitle: 'Tier I', percent: 5, baseline: 'ultiate-destruction', gradientStart: '#343a40', gradientEnd: '#0f1724' },
+  { name: 'Simple', subtitle: 'Tier II', percent: 5, baseline: 'to-the-grave', gradientStart: '#1f2937', gradientEnd: '#0b1220' },
+  { name: 'Novice', subtitle: 'Tier III', percent: 5, baseline: 'pg-clubstep-old', gradientStart: '#7c3aed', gradientEnd: '#5b21b6' },
+  { name: 'Moderate', subtitle: 'Tier IV', percent: 5, baseline: 'ice-carbon-diablo-x', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
+  { name: 'Challenging', subtitle: 'Tier V', percent: 5, baseline: 'the-ultimate-phase-old', gradientStart: '#c026d3', gradientEnd: '#7b1fa2' },
+  { name: 'Demanding', subtitle: 'Tier VI', percent: 5, baseline: 'sonic-wave-72', gradientStart: '#f97316', gradientEnd: '#b45309' },
+  { name: 'Hard', subtitle: 'Tier VII', percent: 5, baseline: 'bloodlust-76', gradientStart: '#ef4444', gradientEnd: '#7f1d1d' },
+  { name: 'Intense', subtitle: 'Tier VIII', percent: 5, baseline: 'crimson-planet', gradientStart: '#b91c1c', gradientEnd: '#520000' },
+  { name: 'Formidable', subtitle: 'Tier IX', percent: 5, baseline: 'zodiac', gradientStart: '#0f172a', gradientEnd: '#071233' },
+  { name: 'Legendary', subtitle: 'Tier X', percent: 5, baseline: 'the-golden', gradientStart: '#f59e0b', gradientEnd: '#b45309' },
+  { name: 'Expert', subtitle: 'Tier XI', percent: 5, baseline: 'tartarus-91', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
+  { name: 'Master', subtitle: 'Tier XII', percent: 5, baseline: 'arcturus', gradientStart: '#2563eb', gradientEnd: '#1e40af' },
+  { name: 'Mythic', subtitle: 'Tier XIII', percent: 5, baseline: 'edge of destiny', gradientStart: '#7c3aed', gradientEnd: '#4c1d95' },
+  { name: 'Epic', subtitle: 'Tier XIV', percent: 5, baseline: 'firework', gradientStart: '#ff3b3b', gradientEnd: '#b91c1c' },
+  { name: 'Endgame', subtitle: 'Tier XV', percent: 5, baseline: 'slaughterhouse', gradientStart: '#0f172a', gradientEnd: '#000000' },
+  { name: 'Ultimate', subtitle: 'Tier XVI', percent: 5, baseline: 'acheron', gradientStart: '#111827', gradientEnd: '#0b1220' },
+  { name: 'Godlike', subtitle: 'Tier XVII', percent: 5, baseline: 'boobawamba', gradientStart: '#ff0044', gradientEnd: '#7f0033' },
+  { name: 'Transcendent', subtitle: 'Tier XVIII', percent: 5, baseline: 'kocmoc-unleashed', gradientStart: '#0ea5a4', gradientEnd: '#0369a1' },
 ];
 
 const tierCache = new WeakMap();
@@ -148,7 +159,9 @@ export function getTierByRank(rank, totalAchievements, achievements = [], enable
 }
 
 export function getBaselineForTier(tierObj, totalAchievements, achievements = []) {
-  if (!tierObj || !achievements.length) return null;
+  if (!tierObj) return null;
+  if (tierObj && typeof tierObj.baseline === 'string' && tierObj.baseline.trim() !== '') return tierObj.baseline;
+  if (!achievements.length) return null;
   let cached = tierCache.get(achievements);
   if (!cached || cached.totalAchievements !== totalAchievements) {
     computeTierBoundaries(totalAchievements, achievements);
