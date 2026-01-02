@@ -63,7 +63,8 @@ export function computeTierBoundaries(total, achievements = [], options = {}) {
     : options.tiers?.length ? options.tiers
       : TIERS;
 
-  const optionsKey = options.tierIndices?.join(',') ?? options.tiers?.map(t => `${t.name}|${t.subtitle}`).join(',') ?? '';
+  const extraListsKey = options && options.extraLists && typeof options.extraLists === 'object' ? Object.keys(options.extraLists).sort().join(',') : '';
+  const optionsKey = (options.tierIndices?.join(',') ?? options.tiers?.map(t => `${t.name}|${t.subtitle}`).join(',') ?? '') + (extraListsKey ? `|extra:${extraListsKey}` : '');
 
   if (cached?.totalAchievements === total && cached?.optionsKey === optionsKey) return cached.boundaries;
 
