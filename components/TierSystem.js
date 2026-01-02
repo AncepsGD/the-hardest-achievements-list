@@ -91,6 +91,66 @@ function buildTierCutoffs(tiers = [], achievementIndex = new Map()) {
   return cutoffs
 }
 
+function buildMasterOrder(extraLists = {}, achievements = []) {
+
+  let master = null
+  if (extraLists && typeof extraLists === 'object') {
+    for (const list of Object.values(extraLists)) {
+      if (Array.isArray(list) && (!master || list.length > master.length)) master = list
+    }
+  }
+
+  if (!Array.isArray(master)) master = Array.isArray(achievements) ? achievements : []
+
+  const map = new Map()
+  for (let i = 0; i < master.length; i++) {
+    const item = master[i]
+    if (!item) continue
+    if (item.id) map.set(normalize(item.id), i)
+    if (item.name) map.set(normalize(item.name), i)
+  }
+  return { map, master }
+}
+
+function mapMasterCutoffsToTimeline(tiers = [], timeline = [], extraLists = {}) {
+  const { map: masterMap } = buildMasterOrder(extraLists, timeline)
+  const timelineMasterIdx = timeline.map(item => {
+    if (!item) return null
+    const k1 = item.id ? normalize(item.id) : null
+    const k2 = item.name ? normalize(item.name) : null
+    return (k1 && masterMap.has(k1)) ? masterMap.get(k1) : (k2 && masterMap.has(k2) ? masterMap.get(k2) : null)
+  })
+
+  const cutoffs = []
+
+  for (const tier of tiers) {
+    if (!tier || !tier.baseline) continue
+    const key = normalize(tier.baseline)
+    const directIdx = timeline.findIndex(a => !!a && (normalize(a.id) === key || normalize(a.name) === key))
+    if (directIdx >= 0) {
+      cutoffs.push({ tier, index: directIdx })
+      continue
+    }
+    const baselineMasterIdx = masterMap.has(key) ? masterMap.get(key) : null
+    if (baselineMasterIdx == null) continue
+
+    let mappedIdx = null
+    for (let i = 0; i < timelineMasterIdx.length; i++) {
+      const m = timelineMasterIdx[i]
+      if (m != null && m >= baselineMasterIdx) {
+        mappedIdx = i
+        break
+      }
+    }
+    if (mappedIdx == null && timeline.length > 0) mappedIdx = timeline.length - 1
+
+    if (mappedIdx != null) cutoffs.push({ tier, index: mappedIdx })
+  }
+
+  cutoffs.sort((a, b) => a.index - b.index)
+  return cutoffs
+}
+
 export function getTierByRank(rank, a, b) {
 
   if (!rank || typeof rank !== 'number' || rank <= 0) return null
@@ -104,7 +164,9 @@ export function getTierByRank(rank, a, b) {
   if (idx < 0) return null
   const tiers = (opts && opts.tiers) || TIERS
   const achievementIndex = buildAchievementIndex(achievements, opts.extraLists)
-  const cutoffs = buildTierCutoffs(tiers, achievementIndex)
+  const cutoffs = mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists).length > 0
+    ? mapMasterCutoffsToTimeline(tiers, achievements, opts.extraLists)
+    : buildTierCutoffs(tiers, achievementIndex)
 
   if (cutoffs.length === 0) return null
   for (const c of cutoffs) {
@@ -142,9 +204,29 @@ export function getTierForAchievement(achievementLike, achievements = [], option
   const key = typeof achievementLike === 'string' ? normalize(achievementLike) : achievementLike && (normalize(achievementLike.id) || normalize(achievementLike.name))
   if (!key) return null
 
-  const idx = buildAchievementIndex(achievements, options.extraLists).get(key)
-  if (idx == null) return null
-  return getTierByRank(idx + 1, achievements, options)
+  const achievementIndex = buildAchievementIndex(achievements, options.extraLists)
+  const idx = achievementIndex.get(key)
+  if (idx != null) return getTierByRank(idx + 1, achievements, options)
+  const { map: masterMap } = buildMasterOrder(options.extraLists, achievements)
+  const masterIdx = masterMap.has(key) ? masterMap.get(key) : null
+  if (masterIdx == null) return null
+  const timelineMasterIdx = achievements.map(item => {
+    if (!item) return null
+    const k1 = item.id ? normalize(item.id) : null
+    const k2 = item.name ? normalize(item.name) : null
+    return (k1 && masterMap.has(k1)) ? masterMap.get(k1) : (k2 && masterMap.has(k2) ? masterMap.get(k2) : null)
+  })
+  let mappedIdx = null
+  for (let i = 0; i < timelineMasterIdx.length; i++) {
+    const m = timelineMasterIdx[i]
+    if (m != null && m >= masterIdx) {
+      mappedIdx = i
+      break
+    }
+  }
+  if (mappedIdx == null && achievements.length > 0) mappedIdx = achievements.length - 1
+  if (mappedIdx == null) return null
+  return getTierByRank(mappedIdx + 1, achievements, options)
 }
 
 export default function TierTag({ tier, achievements = [], extraLists = {} }) {
