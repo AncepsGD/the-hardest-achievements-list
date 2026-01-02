@@ -44,7 +44,7 @@ export const TIERS = [
   },
 
   {
-    name: 'Hard', subtitle: 'Tier VII', baseline: 'bloodlust-98',
+    name: 'Hard', subtitle: 'Tier VII', baseline: 'bloodlust',
     gradientStart: '#042f2e', gradientEnd: '#001313',
     borderColor: '#22d3ee',
     glowColor: 'rgba(34,211,238,0.22)'
@@ -72,7 +72,7 @@ export const TIERS = [
   },
 
   {
-    name: 'Expert', subtitle: 'Tier XI', baseline: 'tartarus-91',
+    name: 'Expert', subtitle: 'Tier XI', baseline: 'tartarus',
     gradientStart: '#9a3412', gradientEnd: '#2a0a02',
     borderColor: '#fb923c',
     glowColor: 'rgba(251,146,60,0.40)'
