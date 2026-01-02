@@ -28,7 +28,6 @@ function hasRatedAndVerified(item, cache = new WeakMap()) {
   if (!item) return false;
   if (cache.has(item)) return cache.get(item);
 
-  const toLower = v => (v == null ? '' : String(v).toLowerCase());
   const check = val => {
     if (!val) return false;
     if (typeof val === 'string') return val.toLowerCase().includes('rated') && val.toLowerCase().includes('verified');
@@ -80,13 +79,39 @@ export function computeTierBoundaries(total, achievements = [], options = {}) {
 
   const boundaries = [];
   let start = 1;
+  const resolveBaselineIndex = (baselineId) => {
+    if (!baselineId || !baselineId.trim()) return -1;
+    const allAchievements = [...achievements];
+    if (options && options.extraLists && typeof options.extraLists === 'object') {
+      Object.values(options.extraLists).forEach(list => {
+        if (Array.isArray(list)) allAchievements.push(...list);
+      });
+    }
+    const idLower = String(baselineId).toLowerCase();
+    for (let j = 0; j < allAchievements.length; j++) {
+      const a = allAchievements[j];
+      if (!a) continue;
+      if (String(a.id) === baselineId || String(a.name) === baselineId) return j;
+      if (String(a.id).toLowerCase() === idLower || String(a.name || '').toLowerCase() === idLower) return j;
+    }
+    return -1;
+  };
   for (let i = tiers.length - 1; i >= 0; i--) {
     const size = sizes[i];
     const tierIndex = TIERS_MAP.get(`${tiers[i].name}|${tiers[i].subtitle}`) ?? (TIERS.length - 1 - i);
     const tierStartIdx = start - 1;
     const tierEndIdx = Math.min(total - 1, start + size - 1);
-    const candidate = tierEndIdx >= 0 && tierEndIdx < total ? prevFlagIdx[tierEndIdx] : -1;
-    const endRank = candidate >= tierStartIdx ? candidate + 1 : tierEndIdx + 1;
+
+    let endRank = null;
+    const baselineId = tiers[i]?.baseline;
+    const baselineIdx = resolveBaselineIndex(baselineId);
+    if (baselineIdx >= 0) {
+      const candidateRank = Math.min(total, Math.max(1, baselineIdx + 1));
+      endRank = candidateRank >= (tierStartIdx + 1) ? candidateRank : (tierEndIdx + 1);
+    } else {
+      const candidate = tierEndIdx >= 0 && tierEndIdx < total ? prevFlagIdx[tierEndIdx] : -1;
+      endRank = candidate >= tierStartIdx ? candidate + 1 : tierEndIdx + 1;
+    }
     boundaries.push({ start, end: endRank, tierIndex });
     start = endRank + 1;
   }
