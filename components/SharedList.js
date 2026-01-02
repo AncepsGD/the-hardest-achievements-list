@@ -848,7 +848,7 @@ export default function SharedList({
     });
   }
 
-  const handleCheckDuplicateThumbnails = useCallback(() => {
+  function handleCheckDuplicateThumbnails() {
     const items = devMode && reordered ? reordered : achievements;
     const map = new Map();
     items.forEach((a, i) => {
@@ -860,9 +860,9 @@ export default function SharedList({
     const dupKeys = new Set();
     map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
     setDuplicateThumbKeys(dupKeys);
-  }, [devMode, reordered, achievements]);
+  }
   const [scrollToIdx, setScrollToIdx] = useState(null);
-  const handleEditAchievement = useCallback((idx) => {
+  function handleEditAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     if (!reordered || !reordered[realIdx]) return;
     const a = reordered[realIdx];
@@ -876,9 +876,9 @@ export default function SharedList({
     setEditFormTags(Array.isArray(a.tags) ? [...a.tags] : []);
     setEditFormCustomTags('');
     setShowNewForm(false);
-  }, [reordered, resolveRealIdx]);
+  }
 
-  const handleEditFormChange = useCallback((e) => {
+  function handleEditFormChange(e) {
     const { name, value } = e.target;
     let newVal;
     if (name === 'id') {
@@ -897,17 +897,17 @@ export default function SharedList({
       ...f,
       [name]: newVal
     }));
-  }, [devMode]);
+  }
 
-  const handleEditFormTagClick = useCallback((tag) => {
+  function handleEditFormTagClick(tag) {
     setEditFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
-  }, []);
+  }
 
-  const handleEditFormCustomTagsChange = useCallback((e) => {
+  function handleEditFormCustomTagsChange(e) {
     setEditFormCustomTags(e.target.value);
-  }, []);
+  }
 
-  const handleEditFormSave = useCallback(() => {
+  function handleEditFormSave() {
     const entry = {};
     Object.entries(editForm).forEach(([k, v]) => {
       if (k === 'version') {
@@ -974,16 +974,16 @@ export default function SharedList({
     setEditForm(null);
     setEditFormTags([]);
     setEditFormCustomTags('');
-  }, [editForm, editFormTags, editFormCustomTags, editIdx, devMode]);
+  }
 
-  const handleEditFormCancel = useCallback(() => {
+  function handleEditFormCancel() {
     setEditIdx(null);
     setEditForm(null);
     setEditFormTags([]);
     setEditFormCustomTags('');
-  }, []);
+  }
 
-  const generateAndCopyChangelog = useCallback(() => {
+  function generateAndCopyChangelog() {
     const original = originalAchievements || [];
     const current = (reordered && reordered.length) ? reordered : achievements || [];
 
@@ -1448,9 +1448,9 @@ export default function SharedList({
         alert('Clipboard API not available');
       }
     }
-  }, [originalAchievements, reordered, achievements, dataFileName]);
+  }
 
-  const resetChanges = useCallback(() => {
+  function resetChanges() {
     if (!originalAchievements || !originalAchievements.length) {
       alert('No original JSON loaded to reset to.');
       return;
@@ -1473,7 +1473,7 @@ export default function SharedList({
       console.error('Failed to reset changes', e);
       alert('Failed to reset changes');
     }
-  }, [originalAchievements]);
+  }
 
   useEffect(() => {
     let file = dataUrl;
@@ -1730,10 +1730,11 @@ export default function SharedList({
     setShowMobileFilters(v => !v);
   }
 
-  const handleNewFormChange = useCallback((e) => {
+  function handleNewFormChange(e) {
     const { name, value } = e.target;
     let newVal;
     if (name === 'id') {
+
       newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
     } else {
       if (name === 'video' || name === 'showcaseVideo') {
@@ -1747,17 +1748,14 @@ export default function SharedList({
       ...f,
       [name]: newVal
     }));
-  }, [devMode]);
-
-  const handleNewFormTagClick = useCallback((tag) => {
+  }
+  function handleNewFormTagClick(tag) {
     setNewFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
-  }, []);
-
-  const handleNewFormCustomTagsChange = useCallback((e) => {
+  }
+  function handleNewFormCustomTagsChange(e) {
     setNewFormCustomTags(e.target.value);
-  }, []);
-
-  const handleNewFormAdd = useCallback(() => {
+  }
+  function handleNewFormAdd() {
     let tags = [...newFormTags];
     if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
       newFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
@@ -1849,15 +1847,15 @@ export default function SharedList({
     setNewFormTags([]);
     setNewFormCustomTags('');
     setInsertIdx(null);
-  }, [newForm, newFormTags, newFormCustomTags, devMode]);
-  const handleNewFormCancel = useCallback(() => {
+  }
+  function handleNewFormCancel() {
     setShowNewForm(false);
     setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
     setNewFormTags([]);
     setNewFormCustomTags('');
-  }, []);
+  }
 
-  const getPasteCandidates = useCallback(() => {
+  function getPasteCandidates() {
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
 
@@ -1884,7 +1882,7 @@ export default function SharedList({
       if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
     }
     return out;
-  }, [debouncedPasteSearch, pasteIndex, devMode, reordered, achievements, extraLists]);
+  }
 
   useEffect(() => {
     if (!pasteShowResults || !pasteSearch) return;
@@ -1916,7 +1914,7 @@ export default function SharedList({
     setPasteIndex(idx);
   }, [achievements, extraLists, devMode, reordered]);
 
-  const handlePasteSelect = useCallback((item) => {
+  function handlePasteSelect(item) {
     if (!item) return;
     const entry = { ...item };
     entry.version = Number(entry.version) || 2;
@@ -1936,7 +1934,7 @@ export default function SharedList({
     }
     setPasteSearch('');
     setPasteShowResults(false);
-  }, [editIdx, editForm, getMostVisibleIdx]);
+  }
 
   const newFormPreview = useMemo(() => {
     let tags = [...newFormTags];
@@ -1972,7 +1970,7 @@ export default function SharedList({
     return entry;
   }, [newForm, newFormTags, newFormCustomTags]);
 
-  const handleCopyJson = useCallback(() => {
+  function handleCopyJson() {
     const source = devMode
       ? ((reordered && reordered.length) ? reordered : (devAchievements && devAchievements.length ? devAchievements : achievements))
       : ((reordered && reordered.length) ? reordered : achievements);
@@ -1993,7 +1991,7 @@ export default function SharedList({
       document.body.removeChild(textarea);
       alert(`Copied new ${filename} to clipboard!`);
     }
-  }, [devMode, reordered, devAchievements, achievements, usePlatformers, dataFileName]);
+  }
 
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
@@ -2004,7 +2002,7 @@ export default function SharedList({
     setScrollToIdx,
     setHighlightedIdx,
   });
-  const handleShowNewForm = useCallback(() => {
+  function handleShowNewForm() {
     if (showNewForm) {
       setShowNewForm(false);
       setInsertIdx(null);
@@ -2015,7 +2013,7 @@ export default function SharedList({
     }
     setInsertIdx(getMostVisibleIdx());
     setShowNewForm(true);
-  }, [showNewForm, getMostVisibleIdx]);
+  }
 
   useEffect(() => {
     if (scrollToIdx !== null && achievementRefs.current[scrollToIdx]) {
