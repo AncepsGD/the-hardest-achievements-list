@@ -2505,12 +2505,30 @@ main,
   background: linear-gradient(135deg, var(--tier-gradient-start, #FFD700), var(--tier-gradient-end, #FF8C00));
   white-space: nowrap;
   position: relative;
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 8px 100%, 0 50%);
+  padding-right: 26px;
+  overflow: visible;
   border-radius: 10px;
   border: 2px solid var(--tier-border, transparent);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 8px 30px var(--tier-glow, transparent);
   z-index: 10;
   transition: box-shadow 0.35s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.tier-tag::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 34px;
+  pointer-events: none;
+  background: linear-gradient(135deg, var(--tier-gradient-start, #FFD700), var(--tier-gradient-end, #FF8C00));
+  clip-path: polygon(0 0, 100% 50%, 0 100%);
+  border: 2px solid var(--tier-border, transparent);
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  z-index: 9;
 }
 
 .tier-tag-text {
