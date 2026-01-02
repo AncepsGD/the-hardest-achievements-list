@@ -15,4 +15,13 @@
   <url>
     <loc>https://thal.netlify.app/about-us</loc>
   </url>
+  <url>
+    <loc>https://thal.netlify.app/discord</loc>
+  </url>
+  <url>
+    <loc>https://thal.netlify.app/legacy</loc>
+  </url>
+  <url>
+    <loc>https://thal.netlify.app/pending</loc>
+  </url>
 </urlset>
