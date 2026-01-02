@@ -430,7 +430,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               <Tag tag={tag} key={tag} />
             ))}
             {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
             )}
           </div>
           <div className="achievement-details">
@@ -514,7 +514,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               <Tag tag={tag} key={tag} />
             ))}
             {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} />
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
             )}
           </div>
           <div className="achievement-details">
