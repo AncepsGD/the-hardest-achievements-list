@@ -94,10 +94,11 @@ export function getTierByRank(rank, a, b, c) {
   const tiers = opts.tiers ?? TIERS
   const achievementIndex = buildAchievementIndex(achievements, opts.extraLists)
   const cutoffs = buildTierCutoffs(tiers, achievementIndex)
-
-  for (const c of cutoffs) {
-    if (idx <= c.index) {
-      return c.tier
+  cutoffs.sort((a, b) => a.index - b.index)
+  for (let i = cutoffs.length - 1; i >= 0; i--) {
+    const cutoff = cutoffs[i]
+    if (idx >= cutoff.index) {
+      return cutoff.tier
     }
   }
 
