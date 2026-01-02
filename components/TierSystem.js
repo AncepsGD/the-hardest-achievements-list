@@ -22,101 +22,116 @@ export const TIERS = [
 ]
 
 function normalize(x) {
-  return String(x || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+
+  if (x == null) return ''
+  const s = String(x).trim().toLowerCase().normalize('NFKD').replace(/\u0300-\u036f/g, '')
+
+  const noDiacritics = s.replace(/[\u0300-\u036f]/g, '')
+  return noDiacritics.replace(/[^a-z0-9]/g, '')
 }
 
-function buildAchievementIndex(achievements, extraLists) {
+function buildAchievementIndex(achievements = [], extraLists = {}) {
   const index = new Map()
 
-  const ingest = (arr) => {
-    if (!Array.isArray(arr)) return
-    for (let i = 0; i < arr.length; i++) {
-      const a = arr[i]
-      if (!a) continue
-      if (a.id) index.set(normalize(a.id), i)
-      if (a.name) index.set(normalize(a.name), i)
+  if (!Array.isArray(achievements)) return index
+
+  for (let i = 0; i < achievements.length; i++) {
+    const a = achievements[i]
+    if (!a) continue
+    if (a.id) {
+      const k = normalize(a.id)
+      if (k && !index.has(k)) index.set(k, i)
+    }
+    if (a.name) {
+      const k = normalize(a.name)
+      if (k && !index.has(k)) index.set(k, i)
     }
   }
-
-  ingest(achievements)
-
-  if (extraLists) {
+  if (extraLists && typeof extraLists === 'object') {
     for (const list of Object.values(extraLists)) {
-      ingest(list)
+      if (!Array.isArray(list)) continue
+      for (const item of list) {
+        if (!item) continue
+        const keys = []
+        if (item.id) keys.push(normalize(item.id))
+        if (item.name) keys.push(normalize(item.name))
+        for (const k of keys) {
+          if (!k || index.has(k)) continue
+
+          const found = achievements.findIndex(a => !!a && (normalize(a.id) === k || normalize(a.name) === k))
+          if (found >= 0) index.set(k, found)
+        }
+      }
     }
   }
 
   return index
 }
 
-function buildTierCutoffs(tiers, achievementIndex) {
+function buildTierCutoffs(tiers = [], achievementIndex = new Map()) {
   const cutoffs = []
 
   for (const tier of tiers) {
+    if (!tier || !tier.baseline) continue
     const key = normalize(tier.baseline)
     const idx = achievementIndex.get(key)
     if (idx == null) continue
-    cutoffs.push({
-      tier,
-      index: idx
-    })
+    cutoffs.push({ tier, index: idx })
   }
 
-  cutoffs.sort((a, b) => b.index - a.index)
+  cutoffs.sort((a, b) => a.index - b.index)
   return cutoffs
 }
 
-export function getTierByRank(rank, a, b, c) {
-  if (!rank || rank <= 0) return null
+export function getTierByRank(rank, a, b) {
 
-  let achievements = []
-  let opts = {}
+  if (!rank || typeof rank !== 'number' || rank <= 0) return null
 
-  if (Array.isArray(a)) {
-
-    achievements = a
-    opts = b || {}
-  } else if (Array.isArray(b)) {
-
-    achievements = b
-    opts = c || {}
-  } else {
-
-    achievements = Array.isArray(b) ? b : []
-    opts = c || b || {}
-  }
+  let achievements = Array.isArray(a) ? a : Array.isArray(b) ? b : []
+  let opts = (b && !Array.isArray(b)) ? b : (a && !Array.isArray(a) ? a : {})
 
   if (!Array.isArray(achievements)) return null
 
   const idx = rank - 1
-  if (idx < 0 || idx >= achievements.length) return null
-
-  const tiers = opts.tiers ?? TIERS
+  if (idx < 0) return null
+  const tiers = (opts && opts.tiers) || TIERS
   const achievementIndex = buildAchievementIndex(achievements, opts.extraLists)
   const cutoffs = buildTierCutoffs(tiers, achievementIndex)
-  cutoffs.sort((a, b) => a.index - b.index)
-  for (let i = cutoffs.length - 1; i >= 0; i--) {
-    const cutoff = cutoffs[i]
-    if (idx >= cutoff.index) {
-      return cutoff.tier
-    }
-  }
 
-  return null
+  if (cutoffs.length === 0) return null
+  for (const c of cutoffs) {
+    if (idx <= c.index) return c.tier
+  }
+  return cutoffs[cutoffs.length - 1].tier
 }
 
-export function getBaselineForTier(tier, achievements, extraLists) {
-  if (!tier?.baseline) return null
+export function getBaselineForTier(tier, achievements = [], extraLists = {}) {
+  if (!tier || !tier.baseline) return null
   const index = buildAchievementIndex(achievements, extraLists)
   const idx = index.get(normalize(tier.baseline))
-  return idx != null ? achievements[idx]?.name : tier.baseline
+  return idx != null ? (achievements[idx]?.name || achievements[idx]?.id || tier.baseline) : tier.baseline
+}
+
+export function getTierForAchievement(achievementLike, achievements = [], options = {}) {
+
+  if (!achievements || !Array.isArray(achievements) || achievements.length === 0) return null
+
+  if (typeof achievementLike === 'number') {
+    return getTierByRank(achievementLike + 1, achievements, options)
+  }
+
+  const key = typeof achievementLike === 'string' ? normalize(achievementLike) : achievementLike && (normalize(achievementLike.id) || normalize(achievementLike.name))
+  if (!key) return null
+
+  const idx = buildAchievementIndex(achievements, options.extraLists).get(key)
+  if (idx == null) return null
+  return getTierByRank(idx + 1, achievements, options)
 }
 
 export default function TierTag({ tier, achievements = [], extraLists = {} }) {
   if (!tier) return null
 
-  const baseline =
-    getBaselineForTier(tier, achievements, extraLists) ?? 'Unknown'
+  const baseline = getBaselineForTier(tier, achievements, extraLists) ?? 'Unknown'
 
   return (
     <div
