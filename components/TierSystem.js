@@ -112,13 +112,31 @@ function buildMasterOrder(extraLists = {}, achievements = []) {
   return { map, master }
 }
 
+function findMasterIndexForKey(masterMap, key) {
+  if (!key) return null
+  if (masterMap.has(key)) return masterMap.get(key)
+  let best = null
+  for (const [mk, idx] of masterMap.entries()) {
+    if (!mk) continue
+    if (mk === key) return idx
+    if (mk.startsWith(key) || mk.includes(key) || key.startsWith(mk) || key.includes(mk)) {
+      if (best == null || idx < best) best = idx
+    }
+  }
+  return best
+}
+
 function mapMasterCutoffsToTimeline(tiers = [], timeline = [], extraLists = {}) {
   const { map: masterMap } = buildMasterOrder(extraLists, timeline)
   const timelineMasterIdx = timeline.map(item => {
     if (!item) return null
     const k1 = item.id ? normalize(item.id) : null
     const k2 = item.name ? normalize(item.name) : null
-    return (k1 && masterMap.has(k1)) ? masterMap.get(k1) : (k2 && masterMap.has(k2) ? masterMap.get(k2) : null)
+    const m1 = k1 ? findMasterIndexForKey(masterMap, k1) : null
+    const m2 = k2 ? findMasterIndexForKey(masterMap, k2) : null
+    if (m1 != null) return m1
+    if (m2 != null) return m2
+    return null
   })
 
   const cutoffs = []
@@ -131,7 +149,7 @@ function mapMasterCutoffsToTimeline(tiers = [], timeline = [], extraLists = {}) 
       cutoffs.push({ tier, index: directIdx })
       continue
     }
-    const baselineMasterIdx = masterMap.has(key) ? masterMap.get(key) : null
+    const baselineMasterIdx = findMasterIndexForKey(masterMap, key)
     if (baselineMasterIdx == null) continue
 
     let mappedIdx = null
@@ -208,13 +226,17 @@ export function getTierForAchievement(achievementLike, achievements = [], option
   const idx = achievementIndex.get(key)
   if (idx != null) return getTierByRank(idx + 1, achievements, options)
   const { map: masterMap } = buildMasterOrder(options.extraLists, achievements)
-  const masterIdx = masterMap.has(key) ? masterMap.get(key) : null
+  const masterIdx = findMasterIndexForKey(masterMap, key)
   if (masterIdx == null) return null
   const timelineMasterIdx = achievements.map(item => {
     if (!item) return null
     const k1 = item.id ? normalize(item.id) : null
     const k2 = item.name ? normalize(item.name) : null
-    return (k1 && masterMap.has(k1)) ? masterMap.get(k1) : (k2 && masterMap.has(k2) ? masterMap.get(k2) : null)
+    const m1 = k1 ? findMasterIndexForKey(masterMap, k1) : null
+    const m2 = k2 ? findMasterIndexForKey(masterMap, k2) : null
+    if (m1 != null) return m1
+    if (m2 != null) return m2
+    return null
   })
   let mappedIdx = null
   for (let i = 0; i < timelineMasterIdx.length; i++) {
