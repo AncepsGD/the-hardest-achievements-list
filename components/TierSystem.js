@@ -32,7 +32,7 @@ export const TIERS = [
 function normalize(x) {
 
   if (x == null) return ''
-  const s = String(x).trim().toLowerCase().normalize('NFKD').replace(/\u0300-\u036f/g, '')
+  const s = String(x).trim().toLowerCase().normalize('NFKD')
 
   const noDiacritics = s.replace(/[\u0300-\u036f]/g, '')
   return noDiacritics.replace(/[^a-z0-9]/g, '')
@@ -115,9 +115,20 @@ export function getTierByRank(rank, a, b) {
 
 export function getBaselineForTier(tier, achievements = [], extraLists = {}) {
   if (!tier || !tier.baseline) return null
+
+  const key = normalize(tier.baseline)
   const index = buildAchievementIndex(achievements, extraLists)
-  const idx = index.get(normalize(tier.baseline))
-  return idx != null ? (achievements[idx]?.name || achievements[idx]?.id || tier.baseline) : tier.baseline
+  const idx = index.get(key)
+  if (idx != null) return (achievements[idx]?.name || achievements[idx]?.id || tier.baseline)
+  if (extraLists && typeof extraLists === 'object') {
+    for (const list of Object.values(extraLists)) {
+      if (!Array.isArray(list)) continue
+      const found = list.find(item => item && (normalize(item.id) === key || normalize(item.name) === key))
+      if (found) return found.name || found.id || tier.baseline
+    }
+  }
+
+  return tier.baseline
 }
 
 export function getTierForAchievement(achievementLike, achievements = [], options = {}) {
