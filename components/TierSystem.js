@@ -1,39 +1,38 @@
 import React from 'react';
 
 export const TIERS = [
-  { name: 'Trivial', subtitle: 'Tier I', percent: 5, baseline: 'ultiate-destruction', gradientStart: '#343a40', gradientEnd: '#0f1724' },
-  { name: 'Simple', subtitle: 'Tier II', percent: 5, baseline: 'to-the-grave', gradientStart: '#1f2937', gradientEnd: '#0b1220' },
-  { name: 'Novice', subtitle: 'Tier III', percent: 5, baseline: 'pg-clubstep-old', gradientStart: '#7c3aed', gradientEnd: '#5b21b6' },
-  { name: 'Moderate', subtitle: 'Tier IV', percent: 5, baseline: 'ice-carbon-diablo-x', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
-  { name: 'Challenging', subtitle: 'Tier V', percent: 5, baseline: 'the-ultimate-phase-old', gradientStart: '#c026d3', gradientEnd: '#7b1fa2' },
-  { name: 'Demanding', subtitle: 'Tier VI', percent: 5, baseline: 'sonic-wave-72', gradientStart: '#f97316', gradientEnd: '#b45309' },
-  { name: 'Hard', subtitle: 'Tier VII', percent: 5, baseline: 'bloodlust', gradientStart: '#ef4444', gradientEnd: '#7f1d1d' },
-  { name: 'Intense', subtitle: 'Tier VIII', percent: 5, baseline: 'crimson-planet', gradientStart: '#b91c1c', gradientEnd: '#520000' },
-  { name: 'Formidable', subtitle: 'Tier IX', percent: 5, baseline: 'zodiac', gradientStart: '#0f172a', gradientEnd: '#071233' },
-  { name: 'Legendary', subtitle: 'Tier X', percent: 5, baseline: 'the-golden', gradientStart: '#f59e0b', gradientEnd: '#b45309' },
-  { name: 'Expert', subtitle: 'Tier XI', percent: 5, baseline: 'tartarus', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
-  { name: 'Master', subtitle: 'Tier XII', percent: 5, baseline: 'arcturus', gradientStart: '#2563eb', gradientEnd: '#1e40af' },
-  { name: 'Mythic', subtitle: 'Tier XIII', percent: 5, baseline: 'edge of destiny', gradientStart: '#7c3aed', gradientEnd: '#4c1d95' },
-  { name: 'Epic', subtitle: 'Tier XIV', percent: 5, baseline: 'firework', gradientStart: '#ff3b3b', gradientEnd: '#b91c1c' },
-  { name: 'Endgame', subtitle: 'Tier XV', percent: 5, baseline: 'slaughterhouse', gradientStart: '#0f172a', gradientEnd: '#000000' },
-  { name: 'Ultimate', subtitle: 'Tier XVI', percent: 5, baseline: 'acheron', gradientStart: '#111827', gradientEnd: '#0b1220' },
-  { name: 'Godlike', subtitle: 'Tier XVII', percent: 5, baseline: 'boobawamba', gradientStart: '#ff0044', gradientEnd: '#7f0033' },
-  { name: 'Transcendent', subtitle: 'Tier XVIII', percent: 5, baseline: 'kocmoc-unleashed', gradientStart: '#0ea5a4', gradientEnd: '#0369a1' },
+  { name: 'Trivial', subtitle: 'Tier I', baseline: 'ultiate-destruction', gradientStart: '#343a40', gradientEnd: '#0f1724' },
+  { name: 'Simple', subtitle: 'Tier II', baseline: 'to-the-grave', gradientStart: '#1f2937', gradientEnd: '#0b1220' },
+  { name: 'Novice', subtitle: 'Tier III', baseline: 'pg-clubstep-old', gradientStart: '#7c3aed', gradientEnd: '#5b21b6' },
+  { name: 'Moderate', subtitle: 'Tier IV', baseline: 'ice-carbon-diablo-x', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
+  { name: 'Challenging', subtitle: 'Tier V', baseline: 'the-ultimate-phase-old', gradientStart: '#c026d3', gradientEnd: '#7b1fa2' },
+  { name: 'Demanding', subtitle: 'Tier VI', baseline: 'sonic-wave-72', gradientStart: '#f97316', gradientEnd: '#b45309' },
+  { name: 'Hard', subtitle: 'Tier VII', baseline: 'bloodlust', gradientStart: '#ef4444', gradientEnd: '#7f1d1d' },
+  { name: 'Intense', subtitle: 'Tier VIII', baseline: 'crimson-planet', gradientStart: '#b91c1c', gradientEnd: '#520000' },
+  { name: 'Formidable', subtitle: 'Tier IX', baseline: 'zodiac', gradientStart: '#0f172a', gradientEnd: '#071233' },
+  { name: 'Legendary', subtitle: 'Tier X', baseline: 'the-golden', gradientStart: '#f59e0b', gradientEnd: '#b45309' },
+  { name: 'Expert', subtitle: 'Tier XI', baseline: 'tartarus', gradientStart: '#0ea5a4', gradientEnd: '#036666' },
+  { name: 'Master', subtitle: 'Tier XII', baseline: 'arcturus', gradientStart: '#2563eb', gradientEnd: '#1e40af' },
+  { name: 'Mythic', subtitle: 'Tier XIII', baseline: 'edge of destiny', gradientStart: '#7c3aed', gradientEnd: '#4c1d95' },
+  { name: 'Epic', subtitle: 'Tier XIV', baseline: 'firework', gradientStart: '#ff3b3b', gradientEnd: '#b91c1c' },
+  { name: 'Endgame', subtitle: 'Tier XV', baseline: 'slaughterhouse', gradientStart: '#0f172a', gradientEnd: '#000000' },
+  { name: 'Ultimate', subtitle: 'Tier XVI', baseline: 'acheron', gradientStart: '#111827', gradientEnd: '#0b1220' },
+  { name: 'Godlike', subtitle: 'Tier XVII', baseline: 'boobawamba', gradientStart: '#ff0044', gradientEnd: '#7f0033' },
+  { name: 'Transcendent', subtitle: 'Tier XVIII', baseline: 'kocmoc-unleashed', gradientStart: '#0ea5a4', gradientEnd: '#0369a1' },
 ];
 
 const tierCache = new WeakMap();
 
 function computeSizes(totalAchievements, tierObjs) {
   const tiers = Array.isArray(tierObjs) && tierObjs.length > 0 ? tierObjs : TIERS;
-  const sizes = tiers.map(t => Math.floor(totalAchievements * (t.percent / 100)));
-  let allocated = sizes.reduce((a, b) => a + b, 0);
-  let remainingToAllocate = totalAchievements - allocated;
-  let idx = 0;
-  const len = tiers.length;
-  while (remainingToAllocate > 0 && len > 0) {
-    sizes[idx % len] += 1;
-    remainingToAllocate -= 1;
-    idx += 1;
+  const n = tiers.length;
+  if (n === 0) return [];
+  const base = Math.floor(totalAchievements / n);
+  const sizes = new Array(n).fill(base);
+  let remainder = totalAchievements - base * n;
+
+  for (let j = 0; j < remainder; j++) {
+    sizes[n - 1 - (j % n)] += 1;
   }
   return sizes;
 }
@@ -105,7 +104,7 @@ export function computeTierBoundaries(totalAchievements, achievements = [], opti
     start = endRank + 1;
     if (start > totalAchievements) {
       for (let k = ri + 1; k < revTiers.length; k++) {
-        const origIdx = TIERS.length - 1 - k;
+        const origIdx = (originalIndexMapRev && originalIndexMapRev[k] !== undefined) ? originalIndexMapRev[k] : (TIERS.length - 1 - k);
         boundaries.push({ start: totalAchievements + 1, end: totalAchievements, tierIndex: origIdx });
       }
       break;
@@ -269,7 +268,7 @@ export function getBaselineForTier(tierObj, totalAchievements, achievements = []
 export default function TierTag({ tier, totalAchievements, achievements = [], extraLists = {} }) {
   if (!tier) return null;
   const baseline = getBaselineForTier(tier, totalAchievements, achievements, extraLists) || 'Unknown';
-  const title = `${tier.name} – ${tier.subtitle}\n${tier.percent}% of achievements\nBaseline is ${baseline}`;
+  const title = `${tier.name} – ${tier.subtitle}\nBaseline is ${baseline}`;
   const style = {
     '--tier-gradient-start': tier.gradientStart,
     '--tier-gradient-end': tier.gradientEnd,
