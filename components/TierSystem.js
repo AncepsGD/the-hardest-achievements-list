@@ -66,12 +66,26 @@ function buildTierCutoffs(tiers, achievementIndex) {
   return cutoffs
 }
 
-export function getTierByRank(
-  rank,
-  achievements,
-  opts = {}
-) {
+export function getTierByRank(rank, a, b, c) {
   if (!rank || rank <= 0) return null
+
+  let achievements = []
+  let opts = {}
+
+  if (Array.isArray(a)) {
+
+    achievements = a
+    opts = b || {}
+  } else if (Array.isArray(b)) {
+
+    achievements = b
+    opts = c || {}
+  } else {
+
+    achievements = Array.isArray(b) ? b : []
+    opts = c || b || {}
+  }
+
   if (!Array.isArray(achievements)) return null
 
   const idx = rank - 1
