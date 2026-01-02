@@ -332,8 +332,37 @@ export function getTierForAchievement(achievementLike, achievements = [], option
 
 export default function TierTag({ tier, achievements = [], extraLists = {} }) {
   if (!tier) return null
-
   const baseline = getBaselineForTier(tier, achievements, extraLists) ?? 'Unknown'
+
+  const [useRoman, setUseRoman] = React.useState(true)
+
+  React.useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return
+      const v = localStorage.getItem('tiersUseRoman')
+      if (v != null) setUseRoman(v === 'true')
+      const onStorage = (ev) => {
+        if (!ev) return
+        if (ev.key === 'tiersUseRoman') {
+          try {
+            setUseRoman(ev.newValue !== 'false')
+          } catch (e) {}
+        }
+      }
+      window.addEventListener('storage', onStorage)
+      return () => window.removeEventListener('storage', onStorage)
+    } catch (e) {}
+  }, [])
+
+  function convertSubtitle(sub) {
+    if (!sub) return sub
+    if (useRoman) return sub
+    const map = {
+      'I': '1','II': '2','III': '3','IV': '4','V': '5','VI': '6','VII': '7','VIII': '8','IX': '9','X': '10',
+      'XI': '11','XII': '12','XIII': '13','XIV': '14','XV': '15','XVI': '16','XVII': '17','XVIII': '18'
+    }
+    return sub.replace(/\b(I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII)\b/g, (m) => map[m] || m)
+  }
 
   return (
     <div
@@ -348,7 +377,7 @@ export default function TierTag({ tier, achievements = [], extraLists = {} }) {
       title={`Baseline: ${baseline}`}
     >
       <span className="tier-tag-text">
-        {tier.name} – {tier.subtitle}
+        {tier.name} – {convertSubtitle(tier.subtitle)}
       </span>
     </div>
   )
