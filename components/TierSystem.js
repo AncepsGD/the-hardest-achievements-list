@@ -58,11 +58,11 @@ function computeBaselineBoundaries(total, tiers, baselineIndices) {
   for (let i = tiers.length - 1; i >= 0; i--) {
     const bIdx = baselineIndices[i];
     const end = bIdx >= 0 ? Math.min(prevEnd, bIdx + 1) : prevEnd;
-
+    const globalTierIndex = TIERS.findIndex(t => t.name === tiers[i]?.name && t.subtitle === tiers[i]?.subtitle);
     boundaries[i] = {
       start: 0,
       end,
-      tierIndex: i
+      tierIndex: globalTierIndex >= 0 ? globalTierIndex : i
     };
 
     prevEnd = end - 1;
@@ -132,9 +132,17 @@ export function getTierByRank(
   opts = {}
 ) {
   if (!enableTiers || !rank || rank <= 0) return null;
-
-  const boundaries =
-    computeTierBoundaries(totalAchievements, achievements, opts) || [];
+  let boundaries = [];
+  try {
+    const master = opts && opts.extraLists && Array.isArray(opts.extraLists['achievements.json']) ? opts.extraLists['achievements.json'] : null;
+    if (master) {
+      boundaries = computeTierBoundaries(master.length, master, opts) || [];
+    } else {
+      boundaries = computeTierBoundaries(totalAchievements, achievements, opts) || [];
+    }
+  } catch (e) {
+    boundaries = computeTierBoundaries(totalAchievements, achievements, opts) || [];
+  }
 
   for (const b of boundaries) {
     if (rank >= b.start && rank <= b.end) {
