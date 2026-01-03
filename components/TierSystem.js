@@ -127,6 +127,53 @@ export const TIERS = [
     glowColor: 'rgba(255,255,255,1)'
   }
 ]
+let _tiersUseRoman = true
+try {
+  if (typeof window !== 'undefined') {
+    const v = localStorage.getItem('tiersUseRoman')
+    _tiersUseRoman = v != null ? v === 'true' : true
+  }
+} catch (e) { }
+
+const _tiersSubscribers = new Set()
+function _notifyTiers() {
+  for (const s of Array.from(_tiersSubscribers)) {
+    try { s() } catch (e) { }
+  }
+}
+
+if (typeof window !== 'undefined') {
+  const _onGlobalTiersChange = (ev) => {
+    try {
+      if (!ev) return
+      if (ev.type === 'storage' && ev.key === 'tiersUseRoman') {
+        _tiersUseRoman = ev.newValue === 'true'
+        _notifyTiers()
+        return
+      }
+      if (ev.type === 'tiersUseRomanChanged') {
+        const val = ev.detail && ev.detail.value
+        if (val != null) {
+          _tiersUseRoman = val === 'true'
+          _notifyTiers()
+        }
+      }
+    } catch (e) { }
+  }
+  try {
+    window.addEventListener('storage', _onGlobalTiersChange)
+    window.addEventListener('tiersUseRomanChanged', _onGlobalTiersChange)
+  } catch (e) { }
+}
+
+export function subscribeTiersUseRoman(callback) {
+  _tiersSubscribers.add(callback)
+  return () => { _tiersSubscribers.delete(callback) }
+}
+
+export function getTiersUseRoman() {
+  return _tiersUseRoman
+}
 
 function normalize(x) {
 
@@ -333,43 +380,24 @@ export function getTierForAchievement(achievementLike, achievements = [], option
 export default function TierTag({ tier, achievements = [], extraLists = {} }) {
   if (!tier) return null
   const baseline = getBaselineForTier(tier, achievements, extraLists) ?? 'Unknown'
-
-  const [useRoman, setUseRoman] = React.useState(true)
-
-  React.useEffect(() => {
-    try {
-      if (typeof window === 'undefined') return
-      const v = localStorage.getItem('tiersUseRoman')
-      if (v != null) setUseRoman(v === 'true')
-      const onStorage = (ev) => {
-        if (!ev) return
-        try {
-          if (ev.type === 'storage' && ev.key === 'tiersUseRoman') {
-            setUseRoman(ev.newValue === 'true')
-            return
-          }
-          if (ev.type === 'tiersUseRomanChanged') {
-            const val = ev.detail && ev.detail.value
-            if (val != null) setUseRoman(val === 'true')
-            return
-          }
-        } catch (e) {}
-      }
-      window.addEventListener('storage', onStorage)
-      window.addEventListener('tiersUseRomanChanged', onStorage)
-      return () => {
-        window.removeEventListener('storage', onStorage)
-        window.removeEventListener('tiersUseRomanChanged', onStorage)
-      }
-    } catch (e) {}
-  }, [])
+  let effectiveUseRoman = true
+  if (typeof React.useSyncExternalStore === 'function') {
+    effectiveUseRoman = React.useSyncExternalStore(subscribeTiersUseRoman, getTiersUseRoman, getTiersUseRoman)
+  } else {
+    const [fallbackUseRoman, setFallbackUseRoman] = React.useState(getTiersUseRoman())
+    React.useEffect(() => {
+      const unsub = subscribeTiersUseRoman(() => setFallbackUseRoman(getTiersUseRoman()))
+      return unsub
+    }, [])
+    effectiveUseRoman = fallbackUseRoman
+  }
 
   function convertSubtitle(sub) {
     if (!sub) return sub
-    if (useRoman) return sub
+    if (effectiveUseRoman) return sub
     const map = {
-      'I': '1','II': '2','III': '3','IV': '4','V': '5','VI': '6','VII': '7','VIII': '8','IX': '9','X': '10',
-      'XI': '11','XII': '12','XIII': '13','XIV': '14','XV': '15','XVI': '16','XVII': '17','XVIII': '18'
+      'I': '1', 'II': '2', 'III': '3', 'IV': '4', 'V': '5', 'VI': '6', 'VII': '7', 'VIII': '8', 'IX': '9', 'X': '10',
+      'XI': '11', 'XII': '12', 'XIII': '13', 'XIV': '14', 'XV': '15', 'XVI': '16', 'XVII': '17', 'XVIII': '18'
     }
     return sub.replace(/\b(I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII)\b/g, (m) => map[m] || m)
   }
