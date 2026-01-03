@@ -417,6 +417,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           onMouseLeave={onHoverLeave}
         >
           <div className="rank-date-container">
+            {achievement && achievement.note ? (
+              <div className="achievement-note" style={{marginBottom:6, color:'#ccc', fontSize:12}}>{achievement.note}</div>
+            ) : null}
             {!isPlatformer && (
               <div className="achievement-length">
                 {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
@@ -496,6 +499,9 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           style={{ cursor: devMode ? 'not-allowed' : 'pointer', pointerEvents: devMode ? 'none' : 'auto', opacity: devMode ? 0.5 : 1, transition: 'opacity 0.1s' }}
         >
           <div className="rank-date-container">
+            {achievement && achievement.note ? (
+              <div className="achievement-note" style={{marginBottom:6, color:'#ccc', fontSize:12}}>{achievement.note}</div>
+            ) : null}
             {!isPlatformer && (
               <div className="achievement-length">
                 {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
@@ -848,7 +854,7 @@ export default function SharedList({
     });
   }
 
-  function handleCheckDuplicateThumbnails() {
+  const handleCheckDuplicateThumbnails = useCallback(() => {
     const items = devMode && reordered ? reordered : achievements;
     const map = new Map();
     items.forEach((a, i) => {
@@ -860,9 +866,9 @@ export default function SharedList({
     const dupKeys = new Set();
     map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
     setDuplicateThumbKeys(dupKeys);
-  }
+  }, [devMode, reordered, achievements]);
   const [scrollToIdx, setScrollToIdx] = useState(null);
-  function handleEditAchievement(idx) {
+  const handleEditAchievement = useCallback((idx) => {
     const realIdx = resolveRealIdx(idx);
     if (!reordered || !reordered[realIdx]) return;
     const a = reordered[realIdx];
@@ -876,9 +882,9 @@ export default function SharedList({
     setEditFormTags(Array.isArray(a.tags) ? [...a.tags] : []);
     setEditFormCustomTags('');
     setShowNewForm(false);
-  }
+  }, [reordered, resolveRealIdx]);
 
-  function handleEditFormChange(e) {
+  const handleEditFormChange = useCallback((e) => {
     const { name, value } = e.target;
     let newVal;
     if (name === 'id') {
@@ -897,17 +903,17 @@ export default function SharedList({
       ...f,
       [name]: newVal
     }));
-  }
+  }, [devMode]);
 
-  function handleEditFormTagClick(tag) {
+  const handleEditFormTagClick = useCallback((tag) => {
     setEditFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
-  }
+  }, []);
 
-  function handleEditFormCustomTagsChange(e) {
+  const handleEditFormCustomTagsChange = useCallback((e) => {
     setEditFormCustomTags(e.target.value);
-  }
+  }, []);
 
-  function handleEditFormSave() {
+  const handleEditFormSave = useCallback(() => {
     const entry = {};
     Object.entries(editForm).forEach(([k, v]) => {
       if (k === 'version') {
@@ -974,16 +980,16 @@ export default function SharedList({
     setEditForm(null);
     setEditFormTags([]);
     setEditFormCustomTags('');
-  }
+  }, [editForm, editFormTags, editFormCustomTags, editIdx, devMode]);
 
-  function handleEditFormCancel() {
+  const handleEditFormCancel = useCallback(() => {
     setEditIdx(null);
     setEditForm(null);
     setEditFormTags([]);
     setEditFormCustomTags('');
-  }
+  }, []);
 
-  function generateAndCopyChangelog() {
+  const generateAndCopyChangelog = useCallback(() => {
     const original = originalAchievements || [];
     const current = (reordered && reordered.length) ? reordered : achievements || [];
 
@@ -1448,9 +1454,9 @@ export default function SharedList({
         alert('Clipboard API not available');
       }
     }
-  }
+  }, [originalAchievements, reordered, achievements, dataFileName]);
 
-  function resetChanges() {
+  const resetChanges = useCallback(() => {
     if (!originalAchievements || !originalAchievements.length) {
       alert('No original JSON loaded to reset to.');
       return;
@@ -1473,7 +1479,7 @@ export default function SharedList({
       console.error('Failed to reset changes', e);
       alert('Failed to reset changes');
     }
-  }
+  }, [originalAchievements]);
 
   useEffect(() => {
     let file = dataUrl;
@@ -1730,11 +1736,10 @@ export default function SharedList({
     setShowMobileFilters(v => !v);
   }
 
-  function handleNewFormChange(e) {
+  const handleNewFormChange = useCallback((e) => {
     const { name, value } = e.target;
     let newVal;
     if (name === 'id') {
-
       newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
     } else {
       if (name === 'video' || name === 'showcaseVideo') {
@@ -1748,14 +1753,17 @@ export default function SharedList({
       ...f,
       [name]: newVal
     }));
-  }
-  function handleNewFormTagClick(tag) {
+  }, [devMode]);
+
+  const handleNewFormTagClick = useCallback((tag) => {
     setNewFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
-  }
-  function handleNewFormCustomTagsChange(e) {
+  }, []);
+
+  const handleNewFormCustomTagsChange = useCallback((e) => {
     setNewFormCustomTags(e.target.value);
-  }
-  function handleNewFormAdd() {
+  }, []);
+
+  const handleNewFormAdd = useCallback(() => {
     let tags = [...newFormTags];
     if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
       newFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
@@ -1847,15 +1855,15 @@ export default function SharedList({
     setNewFormTags([]);
     setNewFormCustomTags('');
     setInsertIdx(null);
-  }
-  function handleNewFormCancel() {
+  }, [newForm, newFormTags, newFormCustomTags, devMode]);
+  const handleNewFormCancel = useCallback(() => {
     setShowNewForm(false);
     setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
     setNewFormTags([]);
     setNewFormCustomTags('');
-  }
+  }, []);
 
-  function getPasteCandidates() {
+  const getPasteCandidates = useCallback(() => {
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
 
@@ -1882,7 +1890,7 @@ export default function SharedList({
       if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
     }
     return out;
-  }
+  }, [debouncedPasteSearch, pasteIndex, devMode, reordered, achievements, extraLists]);
 
   useEffect(() => {
     if (!pasteShowResults || !pasteSearch) return;
@@ -1914,7 +1922,7 @@ export default function SharedList({
     setPasteIndex(idx);
   }, [achievements, extraLists, devMode, reordered]);
 
-  function handlePasteSelect(item) {
+  const handlePasteSelect = useCallback((item) => {
     if (!item) return;
     const entry = { ...item };
     entry.version = Number(entry.version) || 2;
@@ -1934,7 +1942,7 @@ export default function SharedList({
     }
     setPasteSearch('');
     setPasteShowResults(false);
-  }
+  }, [editIdx, editForm, getMostVisibleIdx]);
 
   const newFormPreview = useMemo(() => {
     let tags = [...newFormTags];
@@ -1970,7 +1978,7 @@ export default function SharedList({
     return entry;
   }, [newForm, newFormTags, newFormCustomTags]);
 
-  function handleCopyJson() {
+  const handleCopyJson = useCallback(() => {
     const source = devMode
       ? ((reordered && reordered.length) ? reordered : (devAchievements && devAchievements.length ? devAchievements : achievements))
       : ((reordered && reordered.length) ? reordered : achievements);
@@ -1991,7 +1999,7 @@ export default function SharedList({
       document.body.removeChild(textarea);
       alert(`Copied new ${filename} to clipboard!`);
     }
-  }
+  }, [devMode, reordered, devAchievements, achievements, usePlatformers, dataFileName]);
 
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
@@ -2002,7 +2010,7 @@ export default function SharedList({
     setScrollToIdx,
     setHighlightedIdx,
   });
-  function handleShowNewForm() {
+  const handleShowNewForm = useCallback(() => {
     if (showNewForm) {
       setShowNewForm(false);
       setInsertIdx(null);
@@ -2013,7 +2021,7 @@ export default function SharedList({
     }
     setInsertIdx(getMostVisibleIdx());
     setShowNewForm(true);
-  }
+  }, [showNewForm, getMostVisibleIdx]);
 
   useEffect(() => {
     if (scrollToIdx !== null && achievementRefs.current[scrollToIdx]) {
