@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 function DevModePanelInner({
   devMode,
@@ -36,45 +36,6 @@ function DevModePanelInner({
   resetChanges,
   
 }) {
-  const editTagButtons = useMemo(() => AVAILABLE_TAGS.map(tag => (
-    <button type="button" key={tag} onClick={() => handleEditFormTagClick(tag)} style={{fontSize:11,padding:'3px 6px',backgroundColor:editFormTags.includes(tag)?'#007bff':'#eee',color:editFormTags.includes(tag)?'#fff':'#222',border:'1px solid #ccc',borderRadius:3,cursor:'pointer'}}>{tag}</button>
-  )), [AVAILABLE_TAGS, editFormTags, handleEditFormTagClick]);
-
-  const newTagButtons = useMemo(() => AVAILABLE_TAGS.map(tag => (
-    <button type="button" key={tag} onClick={() => handleNewFormTagClick(tag)} style={{fontSize:11,padding:'3px 6px',backgroundColor:newFormTags.includes(tag)?'#007bff':'#eee',color:newFormTags.includes(tag)?'#fff':'#222',border:'1px solid #ccc',borderRadius:3,cursor:'pointer'}}>{tag}</button>
-  )), [AVAILABLE_TAGS, newFormTags, handleNewFormTagClick]);
-
-  const pasteCandidates = useMemo(() => {
-    try {
-      return typeof getPasteCandidates === 'function' ? getPasteCandidates() || [] : [];
-    } catch (e) {
-      return [];
-    }
-  }, [getPasteCandidates, pasteShowResults, pasteSearch]);
-
-  const editPreviewText = useMemo(() => {
-    try {
-      return JSON.stringify({
-        ...editForm,
-        tags: (() => {
-          let tags = [...editFormTags];
-          if (typeof editFormCustomTags === 'string' && editFormCustomTags.trim()) {
-            editFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
-              if (!tags.includes(t)) tags.push(t);
-            });
-          }
-          return tags;
-        })()
-      }, null, 2);
-    } catch (e) {
-      return '{}';
-    }
-  }, [editForm, editFormTags, editFormCustomTags]);
-
-  const newPreviewText = useMemo(() => {
-    try { return JSON.stringify(newFormPreview, null, 2); } catch (e) { return '{}'; }
-  }, [newFormPreview]);
-
   return (
     <>
       {devMode && (
@@ -127,7 +88,9 @@ function DevModePanelInner({
             <label style={{display:'block',fontSize:13,marginTop:6}}>Player<input type="text" name="player" value={editForm.player || ''} onChange={handleEditFormChange} placeholder="Zoink" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Tags
               <div style={{display:'flex',flexWrap:'wrap',gap:5,marginTop:4}}>
-                {editTagButtons}
+                {AVAILABLE_TAGS.map(tag => (
+                  <button type="button" key={tag} onClick={() => handleEditFormTagClick(tag)} style={{fontSize:11,padding:'3px 6px',backgroundColor:editFormTags.includes(tag)?'#007bff':'#eee',color:editFormTags.includes(tag)?'#fff':'#222',border:'1px solid #ccc',borderRadius:3,cursor:'pointer'}}>{tag}</button>
+                ))}
               </div>
               <input type="text" value={editFormCustomTags} onChange={handleEditFormCustomTagsChange} placeholder="Or type custom tags separated by commas" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} />
               <div style={{marginTop:4,fontSize:13}}>
@@ -143,7 +106,6 @@ function DevModePanelInner({
             <label style={{display:'block',fontSize:13,marginTop:6}}>Showcase Video<input type="text" name="showcaseVideo" value={editForm.showcaseVideo || ''} onChange={handleEditFormChange} placeholder="https://youtu.be/..." style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Date (YYYY-MM-DD)<input type="text" name="date" value={editForm.date || ''} onChange={handleEditFormChange} placeholder="2023-12-19" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Submitter<input type="text" name="submitter" value={editForm.submitter || ''} onChange={handleEditFormChange} placeholder="kyle1saurus" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
-            <label style={{display:'block',fontSize:13,marginTop:6}}>Note<textarea name="note" value={editForm.note || ''} onChange={handleEditFormChange} placeholder="Internal note or comment" style={{width:'100%',fontSize:14,padding:6,marginTop:2,boxSizing:'border-box',minHeight:64}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Level ID<input type="text" name="levelID" value={editForm.levelID || ''} onChange={handleEditFormChange} placeholder="86407629" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Thumbnail<input type="text" name="thumbnail" value={editForm.thumbnail || ''} onChange={handleEditFormChange} placeholder="Image URL" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <div className="devmode-form-btn-row">
@@ -151,10 +113,21 @@ function DevModePanelInner({
               <button className="devmode-btn" type="button" onClick={handleEditFormCancel}>Cancel</button>
             </div>
           </form>
-            <div className="devmode-preview-box">
+          <div className="devmode-preview-box">
             <strong>Preview:</strong>
             <br />
-            {editPreviewText}
+            {JSON.stringify({
+              ...editForm,
+              tags: (() => {
+                let tags = [...editFormTags];
+                if (typeof editFormCustomTags === 'string' && editFormCustomTags.trim()) {
+                  editFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
+                    if (!tags.includes(t)) tags.push(t);
+                  });
+                }
+                return tags;
+              })()
+            }, null, 2)}
           </div>
         </div>
       )}
@@ -167,7 +140,9 @@ function DevModePanelInner({
             <label style={{display:'block',fontSize:13,marginTop:6}}>Player<input type="text" name="player" value={newForm.player} onChange={handleNewFormChange} placeholder="Zoink" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Tags
               <div style={{display:'flex',flexWrap:'wrap',gap:5,marginTop:4}}>
-                {newTagButtons}
+                {AVAILABLE_TAGS.map(tag => (
+                  <button type="button" key={tag} onClick={() => handleNewFormTagClick(tag)} style={{fontSize:11,padding:'3px 6px',backgroundColor:newFormTags.includes(tag)?'#007bff':'#eee',color:newFormTags.includes(tag)?'#fff':'#222',border:'1px solid #ccc',borderRadius:3,cursor:'pointer'}}>{tag}</button>
+                ))}
               </div>
               <input type="text" value={newFormCustomTags} onChange={handleNewFormCustomTagsChange} placeholder="Or type custom tags separated by commas" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} />
               <div style={{marginTop:4,fontSize:13}}>
@@ -183,7 +158,6 @@ function DevModePanelInner({
             <label style={{display:'block',fontSize:13,marginTop:6}}>Showcase Video<input type="text" name="showcaseVideo" value={newForm.showcaseVideo} onChange={handleNewFormChange} placeholder="https://youtu.be/..." style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Date (YYYY-MM-DD)<input type="text" name="date" value={newForm.date} onChange={handleNewFormChange} placeholder="2023-12-19" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Submitter<input type="text" name="submitter" value={newForm.submitter} onChange={handleNewFormChange} placeholder="kyle1saurus" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
-            <label style={{display:'block',fontSize:13,marginTop:6}}>Note<textarea name="note" value={newForm.note || ''} onChange={handleNewFormChange} placeholder="Internal note or comment" style={{width:'100%',fontSize:14,padding:6,marginTop:2,boxSizing:'border-box',minHeight:64}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Level ID<input type="text" name="levelID" value={newForm.levelID} onChange={handleNewFormChange} placeholder="86407629" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             <label style={{display:'block',fontSize:13,marginTop:6}}>Thumbnail<input type="text" name="thumbnail" value={newForm.thumbnail} onChange={handleNewFormChange} placeholder="Image URL" style={{width:'100%',fontSize:14,padding:4,marginTop:2,boxSizing:'border-box'}} /></label>
             {}
@@ -200,10 +174,10 @@ function DevModePanelInner({
               />
               {pasteShowResults && pasteSearch && (
                 <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
-                  {pasteCandidates.length === 0 ? (
+                  {getPasteCandidates && getPasteCandidates().length === 0 ? (
                     <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
                   ) : (
-                    pasteCandidates.map((p, i) => (
+                    getPasteCandidates && getPasteCandidates().map((p, i) => (
                       <button
                         key={p && p.id ? p.id : `p-${i}`}
                         type="button"
@@ -241,7 +215,7 @@ function DevModePanelInner({
           <div className="devmode-preview-box">
             <strong>Preview:</strong>
             <br />
-            {newPreviewText}
+            {JSON.stringify(newFormPreview, null, 2)}
           </div>
         </div>
       )}
