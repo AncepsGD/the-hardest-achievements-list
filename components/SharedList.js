@@ -574,6 +574,8 @@ export default function SharedList({
   } catch (e) {
   }
   const [achievements, setAchievements] = useState([]);
+  const achievementsRef = useRef(achievements);
+  useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
       const v = typeof window !== 'undefined' ? window.localStorage.getItem('usePlatformers') : null;
@@ -591,16 +593,23 @@ export default function SharedList({
   const [noMatchMessage, setNoMatchMessage] = useState('');
   const debouncedSearch = useDebouncedValue(search, 200);
 
-  function handleSearchKeyDown(e) {
+  const handleSearchKeyDown = useCallback((e) => {
     if (e.key !== 'Enter') return;
     e.preventDefault();
-    const rawQuery = (search || '').trim();
+    const rawQuery = (e.target && typeof e.target.value === 'string') ? (e.target.value || '').trim() : (search || '').trim();
     const query = rawQuery.toLowerCase();
     if (!query) return;
 
     if (query === 'edit') {
-      setDevMode(true);
-      if (!reordered) setReordered(achievements.map(a => ({ ...a })));
+      if (!devModeRef.current) {
+        devModeRef.current = true;
+        setDevMode(true);
+      }
+      if (!reorderedRef.current) {
+        const copy = (achievementsRef.current || []).map(a => ({ ...a }));
+        reorderedRef.current = copy;
+        setReordered(copy);
+      }
       setSearch('');
       if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
         document.activeElement.blur();
@@ -616,12 +625,13 @@ export default function SharedList({
 
     const respectsTagFilters = a => {
       const tags = (a.tags || []).map(t => t.toUpperCase());
-      if (filterTags.include.length && !filterTags.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-      if (filterTags.exclude.length && filterTags.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+      const ft = filterTagsRef.current || { include: [], exclude: [] };
+      if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+      if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
       return true;
     };
 
-    const baseList = devMode && reordered ? reordered : achievements;
+    const baseList = (devModeRef.current && reorderedRef.current) ? reorderedRef.current : achievementsRef.current || [];
 
     const preFiltered = baseList.filter(a => respectsTagFilters(a));
 
@@ -640,22 +650,19 @@ export default function SharedList({
       const countToShow = Math.max(20, matchingItems.length);
       setVisibleCount(prev => Math.max(prev, countToShow));
 
-      if (devMode) {
+      if (devModeRef.current) {
         setScrollToIdx(targetIdxInPreFiltered);
         setHighlightedIdx(targetIdxInPreFiltered);
       } else {
-
-        const visibleFiltered = achievements.filter(a => {
-          if (manualSearch || debouncedSearch) {
-            const s = manualSearch ? manualSearch : debouncedSearch;
-            const sLower = (s || '').trim().toLowerCase();
-            if (sLower) {
-              if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
-            }
+        const sLower = (rawQuery || '').toLowerCase();
+        const visibleFiltered = (achievementsRef.current || []).filter(a => {
+          if (sLower) {
+            if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
           }
           const tags = (a.tags || []).map(t => t.toUpperCase());
-          if (filterTags.include.length && !filterTags.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-          if (filterTags.exclude.length && filterTags.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+          const ft = filterTagsRef.current || { include: [], exclude: [] };
+          if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+          if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
           return true;
         });
 
@@ -674,8 +681,10 @@ export default function SharedList({
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
     }
-  }
+  }, []);
   const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
+  const filterTagsRef = useRef(filterTags);
+  useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
   const [allTags, setAllTags] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -685,6 +694,8 @@ export default function SharedList({
   const { dateFormat, setDateFormat } = useDateFormat();
   const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
+  const devModeRef = useRef(devMode);
+  useEffect(() => { devModeRef.current = devMode; }, [devMode]);
 
   const hideRank = storageKeySuffix === 'pending' || dataFileName === 'pending.json';
 
@@ -757,6 +768,8 @@ export default function SharedList({
   const [randomOrderMap, setRandomOrderMap] = useState({});
 
   const [reordered, setReordered] = useState(null);
+  const reorderedRef = useRef(reordered);
+  useEffect(() => { reorderedRef.current = reordered; }, [reordered]);
   const [bgImage, setBgImage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState(null);
@@ -1515,20 +1528,26 @@ export default function SharedList({
 
   const router = useRouter();
 
-  useEffect(() => {
-    function handleKeyDown(e) {
-      if (e.shiftKey && (e.key === 'M' || e.key === 'm')) {
-        setDevMode(v => {
-          const next = !v;
-          if (!next) setReordered(null);
-          else setReordered(achievements);
-          return next;
-        });
-      }
+  const handleKeyDown = useCallback((e) => {
+    if (e.shiftKey && (e.key === 'M' || e.key === 'm')) {
+      setDevMode(v => {
+        const next = !v;
+        if (!next) {
+          setReordered(null);
+          reorderedRef.current = null;
+        } else {
+          setReordered(achievementsRef.current);
+          reorderedRef.current = achievementsRef.current;
+        }
+        return next;
+      });
     }
+  }, []);
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [achievements]);
+  }, [handleKeyDown]);
 
   useEffect(() => {
     if (!isMobile) return;
@@ -2071,6 +2090,35 @@ export default function SharedList({
       return arr;
     });
   }
+  
+  const onImportAchievementsJson = useCallback((json) => {
+    let imported = Array.isArray(json) ? json : (json && json.achievements) || [];
+    if (!Array.isArray(imported)) {
+      alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
+      return;
+    }
+    imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
+    try {
+      const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
+      setReordered(imported);
+      reorderedRef.current = imported;
+      if (!devModeRef.current) {
+        devModeRef.current = true;
+        setDevMode(true);
+      }
+      if (idx !== null && typeof setScrollToIdx === 'function') {
+        requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
+      }
+    } catch (e) {
+      setReordered(imported);
+      reorderedRef.current = imported;
+      if (!devModeRef.current) {
+        devModeRef.current = true;
+        setDevMode(true);
+      }
+    }
+    alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
+  }, [getMostVisibleIdx, setScrollToIdx, usePlatformers, dataFileName]);
 
   return (
     <>
@@ -2299,6 +2347,8 @@ export default function SharedList({
             </div>
           </div>
 
+ 
+
           <DevModePanel
             devMode={devMode}
             handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
@@ -2332,26 +2382,7 @@ export default function SharedList({
             newFormPreview={newFormPreview}
             generateAndCopyChangelog={generateAndCopyChangelog}
             resetChanges={resetChanges}
-            onImportAchievementsJson={json => {
-              let imported = Array.isArray(json) ? json : (json.achievements || []);
-              if (!Array.isArray(imported)) {
-                alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
-                return;
-              }
-              imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
-              try {
-                const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
-                setReordered(imported);
-                setDevMode(true);
-                if (idx !== null && typeof setScrollToIdx === 'function') {
-                  requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
-                }
-              } catch (e) {
-                setReordered(imported);
-                setDevMode(true);
-              }
-              alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
-            }}
+            onImportAchievementsJson={onImportAchievementsJson}
             dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
           />
           {isPending ? (
