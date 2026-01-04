@@ -231,16 +231,8 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.newForm === next.newForm
     && prev.newFormTags === next.newFormTags
     && prev.newFormPreview === next.newFormPreview
-    && prev.handleCopyJson === next.handleCopyJson
-    && prev.handleShowNewForm === next.handleShowNewForm
-    && prev.handleCheckDuplicateThumbnails === next.handleCheckDuplicateThumbnails
-    && prev.onImportAchievementsJson === next.onImportAchievementsJson
     && prev.pasteSearch === next.pasteSearch
-    && prev.pasteShowResults === next.pasteShowResults
-    && prev.getPasteCandidates === next.getPasteCandidates
-    && prev.handlePasteSelect === next.handlePasteSelect
-    && prev.generateAndCopyChangelog === next.generateAndCopyChangelog
-    && prev.resetChanges === next.resetChanges;
+    && prev.pasteShowResults === next.pasteShowResults;
 });
 
 export default DevModePanel;
