@@ -790,6 +790,25 @@ export default function SharedList({
   const [editFormCustomTags, setEditFormCustomTags] = useState('');
   const achievementRefs = useRef([]);
 
+  function batchUpdateReordered(mutator) {
+    if (typeof mutator !== 'function') return;
+    startTransition(() => {
+      setReordered(prev => {
+        const copy = Array.isArray(prev) ? prev.map(a => ({ ...(a || {}) })) : [];
+        try {
+          const result = mutator(copy) || copy;
+          if (Array.isArray(result)) {
+            result.forEach((a, i) => { if (a) a.rank = i + 1; });
+            return result;
+          }
+        } catch (e) {
+          return prev;
+        }
+        return prev;
+      });
+    });
+  }
+
   function resolveRealIdx(displayIdx) {
     try {
       if (!reordered || !Array.isArray(reordered) || reordered.length === 0) return displayIdx;
@@ -814,36 +833,22 @@ export default function SharedList({
 
   function handleMoveAchievementUp(idx) {
     const realIdx = resolveRealIdx(idx);
-    setReordered(prev => {
-      if (!prev || realIdx <= 0) return prev;
-      const arr = [...prev];
+    batchUpdateReordered(arr => {
+      if (!arr || realIdx <= 0) return arr;
       const temp = arr[realIdx - 1];
       arr[realIdx - 1] = arr[realIdx];
       arr[realIdx] = temp;
-      arr.forEach((a, i) => { a.rank = i + 1; });
-
-      if (devMode && arr[realIdx - 1]) {
-
-      }
-
       return arr;
     });
   }
 
   function handleMoveAchievementDown(idx) {
     const realIdx = resolveRealIdx(idx);
-    setReordered(prev => {
-      if (!prev || realIdx >= prev.length - 1) return prev;
-      const arr = [...prev];
+    batchUpdateReordered(arr => {
+      if (!arr || realIdx >= arr.length - 1) return arr;
       const temp = arr[realIdx + 1];
       arr[realIdx + 1] = arr[realIdx];
       arr[realIdx] = temp;
-      arr.forEach((a, i) => { a.rank = i + 1; });
-
-      if (devMode && arr[realIdx + 1]) {
-
-      }
-
       return arr;
     });
   }
@@ -949,9 +954,8 @@ export default function SharedList({
       else if (!devMode) delete entry.showcaseVideo;
     }
 
-    setReordered(prev => {
-      if (!prev) return prev;
-      const arr = [...prev];
+    batchUpdateReordered(arr => {
+      if (!arr) return arr;
       const original = arr[editIdx];
 
       const newRank = entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' ? Number(entry.rank) : null;
@@ -967,7 +971,6 @@ export default function SharedList({
         arr[editIdx] = { ...original, ...entry };
       }
 
-      arr.forEach((a, i) => { if (a) a.rank = i + 1; });
       return arr;
     });
     setEditIdx(null);
@@ -1820,34 +1823,29 @@ export default function SharedList({
       predictedInsertedIdx = insertIdx + 1;
     }
 
-    setReordered(prev => {
-      let newArr;
-      let insertedIdx = 0;
-      if (!prev) {
-        setScrollToIdx(0);
-        newArr = [entry];
-        insertedIdx = 0;
-      } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
-        const idx = Math.max(0, Math.min(prev.length, Number(entry.rank) - 1));
-        newArr = [...prev];
-        newArr.splice(idx, 0, entry);
-        setScrollToIdx(idx);
-        insertedIdx = idx;
-      } else if (insertIdx === null || insertIdx < 0 || insertIdx > prev.length - 1) {
-        setScrollToIdx(prev.length);
-        newArr = [...prev, entry];
-        insertedIdx = prev.length;
-      } else {
-        newArr = [...prev];
-        newArr.splice(insertIdx + 1, 0, entry);
-        setScrollToIdx(insertIdx + 1);
-        insertedIdx = insertIdx + 1;
-      }
+    const before = (reorderedRef.current && Array.isArray(reorderedRef.current)) ? reorderedRef.current : (achievementsRef.current || []);
+    let newArr;
+    let insertedIdx = 0;
+    if (!before || before.length === 0) {
+      newArr = [entry];
+      insertedIdx = 0;
+    } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
+      const idx = Math.max(0, Math.min(before.length, Number(entry.rank) - 1));
+      newArr = [...before];
+      newArr.splice(idx, 0, entry);
+      insertedIdx = idx;
+    } else if (insertIdx === null || insertIdx < 0 || insertIdx > before.length - 1) {
+      newArr = [...before, entry];
+      insertedIdx = before.length;
+    } else {
+      newArr = [...before];
+      newArr.splice(insertIdx + 1, 0, entry);
+      insertedIdx = insertIdx + 1;
+    }
 
-      newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
-
-      return newArr;
-    });
+    newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
+    batchUpdateReordered(() => newArr);
+    setScrollToIdx(insertedIdx);
     setShowNewForm(false);
     setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
     setNewFormTags([]);
@@ -2063,29 +2061,22 @@ export default function SharedList({
 
   function handleRemoveAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
-    setReordered(prev => {
-      if (!prev) return prev;
-      const arr = [...prev];
-      const removed = arr[realIdx];
+    batchUpdateReordered(arr => {
+      if (!arr) return arr;
       arr.splice(realIdx, 1);
-      arr.forEach((a, i) => { if (a) a.rank = i + 1; });
-
       return arr;
     });
   }
 
   function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
-    setReordered(prev => {
-      if (!prev) return prev;
-      const arr = [...prev];
-      const copy = { ...arr[realIdx], id: (arr[realIdx] && arr[realIdx].id ? arr[realIdx].id : `item-${realIdx}`) + '-copy' };
+    const copy = { ...((reorderedRef.current && reorderedRef.current[realIdx]) || {}), id: (((reorderedRef.current && reorderedRef.current[realIdx] && reorderedRef.current[realIdx].id) ? reorderedRef.current[realIdx].id : `item-${realIdx}`) + '-copy') };
+    batchUpdateReordered(arr => {
+      if (!arr) return arr;
       arr.splice(realIdx + 1, 0, copy);
-
-      arr.forEach((a, i) => { if (a) a.rank = i + 1; });
-      setScrollToIdx(realIdx + 1);
       return arr;
     });
+    setScrollToIdx(realIdx + 1);
   }
   
   const onImportAchievementsJson = useCallback((json) => {
@@ -2097,8 +2088,8 @@ export default function SharedList({
     imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
     try {
       const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
-      setReordered(imported);
       reorderedRef.current = imported;
+      batchUpdateReordered(() => imported);
       if (!devModeRef.current) {
         devModeRef.current = true;
         setDevMode(true);
@@ -2107,8 +2098,8 @@ export default function SharedList({
         requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
       }
     } catch (e) {
-      setReordered(imported);
       reorderedRef.current = imported;
+      batchUpdateReordered(() => imported);
       if (!devModeRef.current) {
         devModeRef.current = true;
         setDevMode(true);
