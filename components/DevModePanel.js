@@ -30,19 +30,20 @@ function DevModePanelInner({
   setPasteSearch,
   pasteShowResults,
   setPasteShowResults,
-  pasteCandidates,
+  getPasteCandidates,
   handlePasteSelect,
   generateAndCopyChangelog,
   resetChanges,
   
 }) {
-  const pasteCandidatesList = useMemo(() => {
+  const pasteCandidates = useMemo(() => {
+    if (typeof getPasteCandidates !== 'function') return [];
     try {
-      return Array.isArray(pasteCandidates) ? pasteCandidates : [];
+      return getPasteCandidates() || [];
     } catch (e) {
       return [];
     }
-  }, [pasteCandidates, pasteShowResults, pasteSearch]);
+  }, [getPasteCandidates, pasteShowResults, pasteSearch]);
 
   const editFormPreviewObj = useMemo(() => {
     if (!editForm) return null;
@@ -183,10 +184,10 @@ function DevModePanelInner({
               />
               {pasteShowResults && pasteSearch && (
                 <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
-                  {pasteCandidatesList.length === 0 ? (
+                  {pasteCandidates.length === 0 ? (
                     <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
                   ) : (
-                    pasteCandidatesList.map((p, i) => (
+                    pasteCandidates.map((p, i) => (
                       <button
                         key={p && p.id ? p.id : `p-${i}`}
                         type="button"
@@ -241,9 +242,7 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.newFormTags === next.newFormTags
     && prev.newFormPreview === next.newFormPreview
     && prev.pasteSearch === next.pasteSearch
-    && prev.pasteShowResults === next.pasteShowResults
-    && prev.pasteCandidates === next.pasteCandidates;
+    && prev.pasteShowResults === next.pasteShowResults;
 });
-
 
 export default DevModePanel;
