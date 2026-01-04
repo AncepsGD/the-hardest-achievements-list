@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo, lazy, Suspense } from 'react';
 import { VariableSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,7 +9,7 @@ import Background from '../components/Background';
 import { useDateFormat } from '../components/DateFormatContext';
 import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
 import TierTag, { getTierByRank } from '../components/TierSystem';
-import DevModePanel from '../components/DevModePanel';
+const DevModePanel = lazy(() => import('../components/DevModePanel'));
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
 
@@ -771,6 +771,25 @@ export default function SharedList({
   const [pasteShowResults, setPasteShowResults] = useState(false);
   const [pasteIndex, setPasteIndex] = useState([]);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
+  const pasteCandidates = useMemo(() => {
+    const q = (debouncedPasteSearch || '').trim().toLowerCase();
+    if (!q) return [];
+    const base = (devMode && reordered) ? reordered || [] : achievements || [];
+    const extras = Object.values(extraLists).flat().filter(Boolean);
+    const items = [...base, ...extras];
+    const idx = items.map(a => ({
+      achievement: a,
+      searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+        .filter(Boolean).join(' ').toLowerCase()
+    }));
+    const out = [];
+    for (let i = 0; i < idx.length && out.length < 50; i++) {
+      const entry = idx[i];
+      if (!entry || !entry.searchable) continue;
+      if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
+    }
+    return out;
+  }, [debouncedPasteSearch, achievements, extraLists, devMode, reordered]);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
@@ -2299,61 +2318,65 @@ export default function SharedList({
             </div>
           </div>
 
-          <DevModePanel
-            devMode={devMode}
-            handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
-            editIdx={editIdx}
-            editForm={editForm}
-            editFormTags={editFormTags}
-            editFormCustomTags={editFormCustomTags}
-            pasteSearch={pasteSearch}
-            setPasteSearch={setPasteSearch}
-            pasteShowResults={pasteShowResults}
-            setPasteShowResults={setPasteShowResults}
-            getPasteCandidates={getPasteCandidates}
-            handlePasteSelect={handlePasteSelect}
-            AVAILABLE_TAGS={AVAILABLE_TAGS}
-            handleEditFormChange={handleEditFormChange}
-            handleEditFormTagClick={handleEditFormTagClick}
-            handleEditFormCustomTagsChange={handleEditFormCustomTagsChange}
-            handleEditFormSave={handleEditFormSave}
-            handleEditFormCancel={handleEditFormCancel}
-            showNewForm={showNewForm}
-            newForm={newForm}
-            newFormTags={newFormTags}
-            newFormCustomTags={newFormCustomTags}
-            handleNewFormChange={handleNewFormChange}
-            handleNewFormTagClick={handleNewFormTagClick}
-            handleNewFormCustomTagsChange={handleNewFormCustomTagsChange}
-            handleNewFormAdd={handleNewFormAdd}
-            handleNewFormCancel={handleNewFormCancel}
-            handleCopyJson={handleCopyJson}
-            handleShowNewForm={handleShowNewForm}
-            newFormPreview={newFormPreview}
-            generateAndCopyChangelog={generateAndCopyChangelog}
-            resetChanges={resetChanges}
-            onImportAchievementsJson={json => {
-              let imported = Array.isArray(json) ? json : (json.achievements || []);
-              if (!Array.isArray(imported)) {
-                alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
-                return;
-              }
-              imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
-              try {
-                const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
-                setReordered(imported);
-                setDevMode(true);
-                if (idx !== null && typeof setScrollToIdx === 'function') {
-                  requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
-                }
-              } catch (e) {
-                setReordered(imported);
-                setDevMode(true);
-              }
-              alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
-            }}
-            dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
-          />
+          {devMode && (
+            <Suspense fallback={null}>
+              <DevModePanel
+                devMode={devMode}
+                handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
+                editIdx={editIdx}
+                editForm={editForm}
+                editFormTags={editFormTags}
+                editFormCustomTags={editFormCustomTags}
+                pasteSearch={pasteSearch}
+                setPasteSearch={setPasteSearch}
+                pasteShowResults={pasteShowResults}
+                setPasteShowResults={setPasteShowResults}
+                pasteCandidates={pasteCandidates}
+                handlePasteSelect={handlePasteSelect}
+                AVAILABLE_TAGS={AVAILABLE_TAGS}
+                handleEditFormChange={handleEditFormChange}
+                handleEditFormTagClick={handleEditFormTagClick}
+                handleEditFormCustomTagsChange={handleEditFormCustomTagsChange}
+                handleEditFormSave={handleEditFormSave}
+                handleEditFormCancel={handleEditFormCancel}
+                showNewForm={showNewForm}
+                newForm={newForm}
+                newFormTags={newFormTags}
+                newFormCustomTags={newFormCustomTags}
+                handleNewFormChange={handleNewFormChange}
+                handleNewFormTagClick={handleNewFormTagClick}
+                handleNewFormCustomTagsChange={handleNewFormCustomTagsChange}
+                handleNewFormAdd={handleNewFormAdd}
+                handleNewFormCancel={handleNewFormCancel}
+                handleCopyJson={handleCopyJson}
+                handleShowNewForm={handleShowNewForm}
+                newFormPreview={newFormPreview}
+                generateAndCopyChangelog={generateAndCopyChangelog}
+                resetChanges={resetChanges}
+                onImportAchievementsJson={json => {
+                  let imported = Array.isArray(json) ? json : (json.achievements || []);
+                  if (!Array.isArray(imported)) {
+                    alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
+                    return;
+                  }
+                  imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
+                  try {
+                    const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
+                    setReordered(imported);
+                    setDevMode(true);
+                    if (idx !== null && typeof setScrollToIdx === 'function') {
+                      requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
+                    }
+                  } catch (e) {
+                    setReordered(imported);
+                    setDevMode(true);
+                  }
+                  alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
+                }}
+                dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
+              />
+            </Suspense>
+          )}
           {isPending ? (
             <div className="no-achievements">Loading...</div>
           ) : (devMode ? (
