@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useRef, useEffect } from 'react';
 const shallowEqual = (a, b) => {
   if (a === b) return true;
   if (a == null || b == null) return false;
@@ -292,17 +292,22 @@ function DevModePanelInner({
   resetChanges,
 
 }) {
+  const getPasteCandidatesRef = useRef(getPasteCandidates);
+  useEffect(() => { getPasteCandidatesRef.current = getPasteCandidates; }, [getPasteCandidates]);
+
   const pasteCandidates = useMemo(() => {
-    if (typeof getPasteCandidates !== 'function') return [];
+    if (!pasteShowResults) return [];
+    const fn = getPasteCandidatesRef.current;
+    if (typeof fn !== 'function') return [];
     try {
-      if (typeof getPasteCandidates.length === 'number' && getPasteCandidates.length >= 1) {
-        return getPasteCandidates(pasteSearch) || [];
+      if (typeof fn.length === 'number' && fn.length >= 1) {
+        return fn(pasteSearch) || [];
       }
-      return getPasteCandidates() || [];
+      return fn() || [];
     } catch (e) {
       return [];
     }
-  }, [getPasteCandidates, pasteShowResults, pasteSearch]);
+  }, [pasteShowResults, pasteSearch]);
 
   const editFormPreviewObj = useMemo(() => {
     if (!editForm) return null;
