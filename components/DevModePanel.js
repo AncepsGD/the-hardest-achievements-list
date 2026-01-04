@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 function DevModePanelInner({
   devMode,
@@ -30,12 +30,32 @@ function DevModePanelInner({
   setPasteSearch,
   pasteShowResults,
   setPasteShowResults,
-  getPasteCandidates,
+  pasteCandidates,
   handlePasteSelect,
   generateAndCopyChangelog,
   resetChanges,
   
 }) {
+  const pasteCandidatesList = useMemo(() => {
+    try {
+      return Array.isArray(pasteCandidates) ? pasteCandidates : [];
+    } catch (e) {
+      return [];
+    }
+  }, [pasteCandidates, pasteShowResults, pasteSearch]);
+
+  const editFormPreviewObj = useMemo(() => {
+    if (!editForm) return null;
+    let tags = Array.isArray(editFormTags) ? [...editFormTags] : [];
+    if (typeof editFormCustomTags === 'string' && editFormCustomTags.trim()) {
+      editFormCustomTags
+        .split(',')
+        .map(t => (typeof t === 'string' ? t.trim() : t))
+        .filter(Boolean)
+        .forEach(t => { if (!tags.includes(t)) tags.push(t); });
+    }
+    return { ...editForm, tags };
+  }, [editForm, editFormTags, editFormCustomTags]);
   return (
     <>
       {devMode && (
@@ -116,18 +136,7 @@ function DevModePanelInner({
           <div className="devmode-preview-box">
             <strong>Preview:</strong>
             <br />
-            {JSON.stringify({
-              ...editForm,
-              tags: (() => {
-                let tags = [...editFormTags];
-                if (typeof editFormCustomTags === 'string' && editFormCustomTags.trim()) {
-                  editFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
-                    if (!tags.includes(t)) tags.push(t);
-                  });
-                }
-                return tags;
-              })()
-            }, null, 2)}
+            {JSON.stringify(editFormPreviewObj, null, 2)}
           </div>
         </div>
       )}
@@ -174,10 +183,10 @@ function DevModePanelInner({
               />
               {pasteShowResults && pasteSearch && (
                 <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
-                  {getPasteCandidates && getPasteCandidates().length === 0 ? (
+                  {pasteCandidatesList.length === 0 ? (
                     <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
                   ) : (
-                    getPasteCandidates && getPasteCandidates().map((p, i) => (
+                    pasteCandidatesList.map((p, i) => (
                       <button
                         key={p && p.id ? p.id : `p-${i}`}
                         type="button"
@@ -232,7 +241,9 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && prev.newFormTags === next.newFormTags
     && prev.newFormPreview === next.newFormPreview
     && prev.pasteSearch === next.pasteSearch
-    && prev.pasteShowResults === next.pasteShowResults;
+    && prev.pasteShowResults === next.pasteShowResults
+    && prev.pasteCandidates === next.pasteCandidates;
 });
+
 
 export default DevModePanel;
