@@ -481,9 +481,6 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           textDecoration: 'none',
           color: 'inherit',
           cursor: devMode ? 'not-allowed' : 'pointer',
-          pointerEvents: devMode ? 'none' : 'auto',
-          opacity: devMode ? 0.5 : 1,
-          transition: 'opacity 0.1s',
         }}
         onClick={handleClick}
         onMouseDown={handleClick}
@@ -493,7 +490,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
         <div
           className="achievement-item"
           tabIndex={0}
-          style={{ cursor: devMode ? 'not-allowed' : 'pointer', pointerEvents: devMode ? 'none' : 'auto', opacity: devMode ? 0.5 : 1, transition: 'opacity 0.1s' }}
+          style={{ cursor: devMode ? 'not-allowed' : 'pointer', transition: 'opacity 0.1s' }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
