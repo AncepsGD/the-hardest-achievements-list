@@ -5774,22 +5774,6 @@
     "rank": 331
   },
   {
-    "name": "Aeternus 15%",
-    "id": "aeternus-15",
-    "player": "Chill Guy",
-    "length": "11",
-    "version": "2.2",
-    "video": "https://www.youtube.com/watch?v=oWaLfIH1hwk",
-    "date": "2024-10-21",
-    "showcaseVideo": "https://www.youtube.com/watch?v=p4QgFtKL5kE",
-    "levelID": "102647436",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 332
-  },
-  {
     "name": "WarCora Challenge",
     "id": "warcora-challenge",
     "player": "GD!Frisk",
@@ -5804,22 +5788,6 @@
       "Verified"
     ],
     "rank": 333
-  },
-  {
-    "name": "Glaz Diavola",
-    "id": "glaz-diavola",
-    "player": "cring",
-    "length": 9,
-    "version": 2.1,
-    "video": "https://youtu.be/jOZRbHU5ldA",
-    "date": "2023-10-16",
-    "showcaseVideo": "https://youtu.be/5UtPYnXjy_Q",
-    "levelID": 77593145,
-    "tags": [
-      "Challenge",
-      "Verified"
-    ],
-    "rank": 334
   },
   {
     "name": "Axinie",
