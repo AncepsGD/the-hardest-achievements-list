@@ -150,6 +150,7 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
 
 const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
+const INDEX_MIN_COUNT = 1000;
 
 function formatDate(date, dateFormat) {
   if (!date) return 'N/A';
@@ -196,6 +197,16 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
 }
 
 const _enhanceCache = new Map();
+let _enhanceCacheHits = 0;
+let _enhanceCacheMisses = 0;
+
+function getEnhanceCacheStats() {
+  try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
+}
+
+function resetEnhanceCache() {
+  try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; } catch (e) { }
+}
 
 function _makeEnhanceSignature(a) {
   try {
@@ -217,6 +228,7 @@ function enhanceAchievement(a) {
   if (id) {
     const cached = _enhanceCache.get(id);
     if (cached && cached.signature === sig) {
+      _enhanceCacheHits++;
       return cached.value;
     }
   }
@@ -242,7 +254,12 @@ function enhanceAchievement(a) {
     _searchable: searchable,
   };
   if (id) {
-    try { _enhanceCache.set(id, { signature: sig, value: enhanced }); } catch (e) { }
+    try { _enhanceCache.set(id, { signature: sig, value: enhanced }); _enhanceCacheMisses++; } catch (e) { }
+  } else {
+    _enhanceCacheMisses++;
+    if (process && process.env && process.env.NODE_ENV === 'development') {
+      console.warn('enhanceAchievement: achievement has no `id` — caching disabled for this item', a && a.name);
+    }
   }
   return enhanced;
 }
@@ -349,14 +366,31 @@ function sanitizeImageUrl(input) {
 }
 
 function getThumbnailUrl(achievement, isMobile) {
-  if (achievement && achievement.thumbnail) {
-    return achievement.thumbnail;
+  try {
+    const idPart = (achievement && (achievement.id !== undefined && achievement.id !== null)) ? `id:${String(achievement.id)}`
+      : (achievement && (achievement.levelID !== undefined && achievement.levelID !== null)) ? `level:${String(achievement.levelID)}`
+      : (achievement && achievement.thumbnail) ? `thumb:${String(achievement.thumbnail)}`
+      : 'default';
+    const key = `${idPart}::${isMobile ? 'm' : 'd'}`;
+    if (getThumbnailUrl._cache && getThumbnailUrl._cache.has(key)) return getThumbnailUrl._cache.get(key);
+
+    let url = '/assets/default-thumbnail.png';
+    if (achievement && achievement.thumbnail) {
+      url = achievement.thumbnail;
+    } else if (achievement && achievement.levelID) {
+      const baseUrl = `https://levelthumbs.prevter.me/thumbnail/${achievement.levelID}`;
+      url = isMobile ? `${baseUrl}/small` : baseUrl;
+    }
+
+    try {
+      if (!getThumbnailUrl._cache) getThumbnailUrl._cache = new Map();
+      getThumbnailUrl._cache.set(key, url);
+    } catch (e) { }
+
+    return url;
+  } catch (e) {
+    return '/assets/default-thumbnail.png';
   }
-  if (achievement && achievement.levelID) {
-    const baseUrl = `https://levelthumbs.prevter.me/thumbnail/${achievement.levelID}`;
-    return isMobile ? `${baseUrl}/small` : baseUrl;
-  }
-  return '/assets/default-thumbnail.png';
 }
 
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
@@ -847,7 +881,43 @@ export default function SharedList({
   const [newFormCustomTags, setNewFormCustomTags] = useState('');
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
-  const [pasteIndex, setPasteIndex] = useState([]);
+  const pasteIndex = useMemo(() => {
+    try {
+      const base = (devMode && reordered) ? reordered || [] : achievements || [];
+      const extras = Object.values(extraLists || {}).flat().filter(Boolean);
+      const items = [...base, ...extras];
+      return (items || []).map(a => ({
+        achievement: a,
+        searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+          .filter(Boolean).join(' ').toLowerCase()
+      }));
+    } catch (e) {
+      return [];
+    }
+  }, [achievements, extraLists, devMode, reordered]);
+  const invertedIndex = useMemo(() => {
+    try {
+      const items = pasteIndex || [];
+      if (!items || items.length < INDEX_MIN_COUNT) return null;
+      const map = new Map();
+      const idToItem = new Map();
+      for (let i = 0; i < items.length; i++) {
+        const entry = items[i];
+        const a = entry && entry.achievement;
+        const id = a && a.id ? String(a.id) : `__idx_${i}`;
+        idToItem.set(id, a);
+        const s = entry && entry.searchable ? entry.searchable : '';
+        const toks = (s || '').split(/\W+/).filter(Boolean);
+        for (const t of toks) {
+          if (!map.has(t)) map.set(t, new Set());
+          map.get(t).add(id);
+        }
+      }
+      return { map, idToItem };
+    } catch (e) {
+      return null;
+    }
+  }, [pasteIndex]);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
@@ -1699,27 +1769,55 @@ export default function SharedList({
     return (s || '').trim().toLowerCase();
   }, [debouncedSearch]);
 
-  const filterFn = useCallback(
-    a => {
-      if (searchLower) {
+  const filterFn = useMemo(() => {
+    const s = debouncedSearch || '';
+    const searchLowerLocal = (s || '').trim().toLowerCase();
+    const include = Array.isArray(filterTags.include) ? filterTags.include.slice().map(t => String(t || '').toUpperCase()) : [];
+    const exclude = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(t => String(t || '').toUpperCase()) : [];
+    return a => {
+      if (searchLowerLocal) {
         const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
-        if (!hay || !hay.includes(searchLower)) return false;
+        if (!hay || !hay.includes(searchLowerLocal)) return false;
       }
       const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
-
-      const [incStr, excStr] = (filterTagsKey || '').split('::');
-      const include = incStr ? incStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
-      const exclude = excStr ? excStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
-
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       return true;
-    },
-    [searchLower, filterTagsKey]
-  );
+    };
+  }, [debouncedSearch, filterTags.include, filterTags.exclude]);
 
   const filtered = useMemo(() => {
-    let base = achievements.filter(filterFn);
+    let base = [];
+    try {
+      if (invertedIndex && searchLower) {
+        const qToks = (searchLower || '').split(/\W+/).filter(Boolean);
+        if (qToks.length) {
+          const sets = qToks.map(t => invertedIndex.map.get(t) || new Set());
+          if (sets.some(s => !s || s.size === 0)) {
+            base = [];
+          } else {
+            let inter = new Set(sets[0]);
+            for (let i = 1; i < sets.length; i++) {
+              const s = sets[i];
+              inter = new Set([...inter].filter(x => s.has(x)));
+              if (inter.size === 0) break;
+            }
+            const candidates = [];
+            for (const id of inter) {
+              const it = invertedIndex.idToItem.get(id);
+              if (it) candidates.push(it);
+            }
+            base = candidates.filter(filterFn);
+          }
+        } else {
+          base = achievements.filter(filterFn);
+        }
+      } else {
+        base = achievements.filter(filterFn);
+      }
+    } catch (e) {
+      base = achievements.filter(filterFn);
+    }
     if (!sortKey) return base;
     if (sortKey === 'levelID') {
       base = base.filter(a => {
@@ -1911,7 +2009,7 @@ export default function SharedList({
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
-    const thumb = getThumbnailUrl(a, isMobile);
+    const thumb = useMemo(() => getThumbnailUrl(a, isMobile), [a && a.id, a && a.thumbnail, a && a.levelID, isMobile]);
     const isDup = duplicateThumbKeys.has((thumb || '').trim());
     return (
       <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
@@ -2124,22 +2222,6 @@ export default function SharedList({
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
 
-    if (!pasteIndex || pasteIndex.length === 0) {
-      const base = (devMode && reordered) ? reordered || [] : achievements || [];
-      const extras = Object.values(extraLists).flat().filter(Boolean);
-      const items = [...base, ...extras];
-      const idx = new Array(items.length);
-      for (let i = 0; i < items.length; i++) {
-        const a = items[i];
-        idx[i] = {
-          achievement: a,
-          searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-            .filter(Boolean).join(' ').toLowerCase()
-        };
-      }
-      setPasteIndex(idx);
-    }
-
     const out = [];
     for (let i = 0; i < pasteIndex.length && out.length < 50; i++) {
       const entry = pasteIndex[i];
@@ -2162,22 +2244,6 @@ export default function SharedList({
       });
     });
   }, [pasteShowResults, pasteSearch]);
-
-  useEffect(() => {
-    const base = (devMode && reordered) ? reordered || [] : achievements || [];
-    const extras = Object.values(extraLists).flat().filter(Boolean);
-    const items = [...base, ...extras];
-    const idx = new Array(items.length);
-    for (let i = 0; i < items.length; i++) {
-      const a = items[i];
-      idx[i] = {
-        achievement: a,
-        searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-          .filter(Boolean).join(' ').toLowerCase()
-      };
-    }
-    setPasteIndex(idx);
-  }, [achievements, extraLists, devMode, reordered]);
 
   function handlePasteSelect(item) {
     if (!item) return;
