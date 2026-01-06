@@ -1,76 +1,98 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import './Background.module.css';
+async function fetchJsonFallback(paths, signal) {
+  for (const p of paths) {
+    try {
+      const res = await fetch(p, { signal });
+      if (res && res.ok) return res.json();
+    } catch (e) {
+
+    }
+  }
+  throw new Error('all fetches failed');
+}
 
 export default function Background({ bgImage }) {
-  useEffect(() => {
-    if (!document.getElementById('background-style')) {
-      const style = document.createElement('style');
-      style.id = 'background-style';
-      style.textContent = `
-        #background-root {
-          position: fixed;
-          inset: 0;
-          width: 100vw;
-          height: 100vh;
-          z-index: -1000;
-          pointer-events: none;
-        }
-        #dynamic-background {
-          position: absolute;
-          inset: 0;
-          width: 100vw;
-          height: 100vh;
-          z-index: -2;
-          background-size: cover;
-          background-position: center;
-          filter: grayscale(75%) blur(5px) brightness(.7);
-          transition: background-image 0.3s ease-in-out;
-          pointer-events: none;
-        }
-        #blue-tint-overlay {
-          position: absolute;
-          inset: 0;
-          width: 100vw;
-          height: 100vh;
-          z-index: -1;
-          background: rgba(19, 23, 41, 0.8);
-          pointer-events: none;
-        }
-      `;
-      document.head.appendChild(style);
-    }
+  const lastBgRef = useRef(null);
+  const activeIndex = useRef(0);
 
-    if (bgImage) {
-      const bgDiv = document.getElementById('dynamic-background');
-      if (bgDiv) bgDiv.style.backgroundImage = `url('${bgImage}')`;
-      return;
-    }
+  useEffect(() => {
+    if (!bgImage) return;
+    if (lastBgRef.current === bgImage) return;
+
+    const layer0 = document.getElementById('bg-layer-0');
+    const layer1 = document.getElementById('bg-layer-1');
+    const layers = [layer0, layer1];
+    const next = 1 - (activeIndex.current || 0);
+    const target = layers[next];
+    if (!target) return;
+
+    const img = new Image();
+    img.src = bgImage;
+    img.onload = () => {
+      target.style.backgroundImage = `url('${bgImage}')`;
+
+      target.classList.add('show');
+      const prev = layers[1 - next];
+      if (prev) prev.classList.remove('show');
+      activeIndex.current = next;
+      lastBgRef.current = bgImage;
+    };
+
+    return () => { img.onload = null; };
+  }, [bgImage]);
+  useEffect(() => {
+    if (bgImage) return;
+
+    const layer0 = document.getElementById('bg-layer-0');
+    const layer1 = document.getElementById('bg-layer-1');
+    const layers = [layer0, layer1];
 
     function setBackgroundFromAchievements(achievements) {
       if (!achievements || !achievements.length) return;
       let topAchievement = achievements.find(a => a && (a.thumbnail || a.levelID));
       if (!topAchievement) return;
       let bgUrl = topAchievement.thumbnail || (topAchievement.levelID ? `https://levelthumbs.prevter.me/thumbnail/${topAchievement.levelID}/small` : null);
-      if (bgUrl) {
-        const bgDiv = document.getElementById('dynamic-background');
-        if (bgDiv) bgDiv.style.backgroundImage = `url('${bgUrl}')`;
-      }
+      if (!bgUrl || lastBgRef.current === bgUrl) return;
+      const next = 1 - (activeIndex.current || 0);
+      const target = layers[next];
+      if (!target) return;
+      const img = new Image();
+      img.src = bgUrl;
+      images.push(img);
+      img.onload = () => {
+        target.style.backgroundImage = `url('${bgUrl}')`;
+        target.classList.add('show');
+        const prev = layers[1 - next];
+        if (prev) prev.classList.remove('show');
+        activeIndex.current = next;
+        lastBgRef.current = bgUrl;
+      };
     }
+    const controller = new AbortController();
+    const images = [];
 
-    fetch('/achievements.json')
-      .then(res => res.ok ? res.json() : Promise.reject())
-      .then(setBackgroundFromAchievements)
-      .catch(() => {
-        fetch('achievements.json')
-          .then(res => res.ok ? res.json() : Promise.reject())
-          .then(setBackgroundFromAchievements)
-          .catch(() => {});
-      });
-  }, [bgImage]);
+    fetchJsonFallback(['/achievements.json', 'achievements.json'], controller.signal)
+      .then(data => {
+        if (controller.signal.aborted) return;
+        setBackgroundFromAchievements(data);
+      })
+      .catch(() => { });
+
+    return () => {
+      controller.abort();
+
+      images.forEach(i => { try { i.onload = null; } catch (e) { } });
+    };
+  }, []);
 
   return (
     <div id="background-root">
       <div id="blue-tint-overlay"></div>
-      <div id="dynamic-background"></div>
+      <div id="dynamic-background">
+        <div id="bg-layer-0" className="bg-layer"></div>
+        <div id="bg-layer-1" className="bg-layer"></div>
+      </div>
     </div>
   );
 }
