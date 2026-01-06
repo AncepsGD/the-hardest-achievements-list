@@ -2868,6 +2868,7 @@ export default function SharedList({
                 height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
                 itemCount={Math.min(visibleCount, (visibleList || []).length)}
                 itemSize={150}
+                overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
                 width={'100%'}
                 style={{ overflowX: 'hidden' }}
                 itemData={listItemData}
