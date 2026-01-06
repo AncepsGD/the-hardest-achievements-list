@@ -20,6 +20,8 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  background-color: #23283E;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
   pointer-events: none;
@@ -34,6 +36,10 @@
   position: absolute;
   inset: 0;
   background: inherit;
+
+  background-size: inherit;
+  background-position: inherit;
+  background-image: inherit;
   background-repeat: no-repeat;
   filter: blur(5px) grayscale(75%) brightness(.7);
   pointer-events: none;
