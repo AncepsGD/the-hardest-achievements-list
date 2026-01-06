@@ -721,6 +721,7 @@ export default function SharedList({
   const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
+
   const filterTagsKey = useMemo(() => {
     try {
       const inc = Array.isArray(filterTags.include) ? filterTags.include.slice().map(t => String(t || '')) : [];
@@ -858,7 +859,7 @@ export default function SharedList({
   const [editFormCustomTags, setEditFormCustomTags] = useState('');
   const achievementRefs = useRef([]);
 
-  const batchUpdateReordered = useCallback((mutator) => {
+  function batchUpdateReordered(mutator) {
     if (typeof mutator !== 'function') return;
     startTransition(() => {
       setReordered(prev => {
@@ -875,32 +876,31 @@ export default function SharedList({
         return prev;
       });
     });
-  }, [startTransition, setReordered]);
+  }
 
-  const resolveRealIdx = useCallback((displayIdx) => {
+  function resolveRealIdx(displayIdx) {
     try {
-      const r = reordered || [];
-      if (!r || !Array.isArray(r) || r.length === 0) return displayIdx;
-      if (r[displayIdx] && devAchievements && devAchievements[displayIdx] && r[displayIdx].id && devAchievements[displayIdx].id && r[displayIdx].id === devAchievements[displayIdx].id) {
+      if (!reordered || !Array.isArray(reordered) || reordered.length === 0) return displayIdx;
+      if (reordered[displayIdx] && devAchievements && devAchievements[displayIdx] && reordered[displayIdx].id && devAchievements[displayIdx].id && reordered[displayIdx].id === devAchievements[displayIdx].id) {
         return displayIdx;
       }
-      if (r[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === r[displayIdx].id : false) === -1)) {
+      if (reordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === reordered[displayIdx].id : false) === -1)) {
         return displayIdx;
       }
       const displayed = (devAchievements && devAchievements.length) ? devAchievements[displayIdx] : null;
       if (!displayed) return displayIdx;
       if (displayed.id) {
-        const real = r.findIndex(x => x && x.id ? x.id === displayed.id : false);
+        const real = reordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
         return real === -1 ? displayIdx : real;
       }
-      const realByObj = r.findIndex(x => x === displayed);
+      const realByObj = reordered.findIndex(x => x === displayed);
       return realByObj === -1 ? displayIdx : realByObj;
     } catch (e) {
       return displayIdx;
     }
-  }, [reordered, devAchievements]);
+  }
 
-  const handleMoveAchievementUp = useCallback((idx) => {
+  function handleMoveAchievementUp(idx) {
     const realIdx = resolveRealIdx(idx);
     batchUpdateReordered(arr => {
       if (!arr || realIdx <= 0) return arr;
@@ -909,9 +909,9 @@ export default function SharedList({
       arr[realIdx] = temp;
       return arr;
     });
-  }, [resolveRealIdx, batchUpdateReordered]);
+  }
 
-  const handleMoveAchievementDown = useCallback((idx) => {
+  function handleMoveAchievementDown(idx) {
     const realIdx = resolveRealIdx(idx);
     batchUpdateReordered(arr => {
       if (!arr || realIdx >= arr.length - 1) return arr;
@@ -920,9 +920,9 @@ export default function SharedList({
       arr[realIdx] = temp;
       return arr;
     });
-  }, [resolveRealIdx, batchUpdateReordered]);
+  }
 
-  const handleCheckDuplicateThumbnails = useCallback(() => {
+  function handleCheckDuplicateThumbnails() {
     const items = devMode && reordered ? reordered : achievements;
     const map = new Map();
     items.forEach((a, i) => {
@@ -934,9 +934,9 @@ export default function SharedList({
     const dupKeys = new Set();
     map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
     setDuplicateThumbKeys(dupKeys);
-  }, [devMode, reordered, achievements, setDuplicateThumbKeys]);
+  }
   const [scrollToIdx, setScrollToIdx] = useState(null);
-  const handleEditAchievement = useCallback((idx) => {
+  function handleEditAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     if (!reordered || !reordered[realIdx]) return;
     const a = reordered[realIdx];
@@ -950,7 +950,7 @@ export default function SharedList({
     setEditFormTags(Array.isArray(a.tags) ? [...a.tags] : []);
     setEditFormCustomTags('');
     setShowNewForm(false);
-  }, [resolveRealIdx, reordered, setEditIdx, setEditForm, setEditFormTags, setEditFormCustomTags, setShowNewForm]);
+  }
 
   function handleEditFormChange(e) {
     const { name, value } = e.target;
@@ -2320,16 +2320,16 @@ export default function SharedList({
     setScrollToIdx(null);
   }, [scrollToIdx, filtered, devMode]);
 
-  const handleRemoveAchievement = useCallback((idx) => {
+  function handleRemoveAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     batchUpdateReordered(arr => {
       if (!arr) return arr;
       arr.splice(realIdx, 1);
       return arr;
     });
-  }, [resolveRealIdx, batchUpdateReordered]);
+  }
 
-  const handleDuplicateAchievement = useCallback((idx) => {
+  function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     const orig = (reorderedRef.current && reorderedRef.current[realIdx]) || {};
     const copy = { ...orig, id: (((orig && orig.id) ? orig.id : `item-${realIdx}`) + '-copy') };
@@ -2340,7 +2340,7 @@ export default function SharedList({
       return arr;
     });
     setScrollToIdx(realIdx + 1);
-  }, [resolveRealIdx, batchUpdateReordered, reorderedRef, enhanceAchievement, setScrollToIdx]);
+  }
   
   const onImportAchievementsJson = useCallback((json) => {
     let imported = Array.isArray(json) ? json : (json && json.achievements) || [];
