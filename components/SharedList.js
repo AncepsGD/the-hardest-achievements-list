@@ -1912,7 +1912,7 @@ export default function SharedList({
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
     } = data;
     const a = filtered[index];
-    const itemStyle = { ...style, padding: 8, boxSizing: 'border-box', position: 'relative' };
+    const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
     const thumb = getThumbnailUrl(a, isMobile);
     const isDup = duplicateThumbKeys.has((thumb || '').trim());
     return (
