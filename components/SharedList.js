@@ -880,20 +880,7 @@ export default function SharedList({
   const [newFormCustomTags, setNewFormCustomTags] = useState('');
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
-  const pasteIndex = useMemo(() => {
-    try {
-      const base = (devMode && reordered) ? reordered || [] : achievements || [];
-      const extras = Object.values(extraLists || {}).flat().filter(Boolean);
-      const items = [...base, ...extras];
-      return (items || []).map(a => ({
-        achievement: a,
-        searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-          .filter(Boolean).join(' ').toLowerCase()
-      }));
-    } catch (e) {
-      return [];
-    }
-  }, [achievements, extraLists, devMode, reordered]);
+  const [pasteIndex, setPasteIndex] = useState([]);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
@@ -2170,6 +2157,22 @@ export default function SharedList({
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
 
+    if (!pasteIndex || pasteIndex.length === 0) {
+      const base = (devMode && reordered) ? reordered || [] : achievements || [];
+      const extras = Object.values(extraLists).flat().filter(Boolean);
+      const items = [...base, ...extras];
+      const idx = new Array(items.length);
+      for (let i = 0; i < items.length; i++) {
+        const a = items[i];
+        idx[i] = {
+          achievement: a,
+          searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+            .filter(Boolean).join(' ').toLowerCase()
+        };
+      }
+      setPasteIndex(idx);
+    }
+
     const out = [];
     for (let i = 0; i < pasteIndex.length && out.length < 50; i++) {
       const entry = pasteIndex[i];
@@ -2193,6 +2196,21 @@ export default function SharedList({
     });
   }, [pasteShowResults, pasteSearch]);
 
+  useEffect(() => {
+    const base = (devMode && reordered) ? reordered || [] : achievements || [];
+    const extras = Object.values(extraLists).flat().filter(Boolean);
+    const items = [...base, ...extras];
+    const idx = new Array(items.length);
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i];
+      idx[i] = {
+        achievement: a,
+        searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+          .filter(Boolean).join(' ').toLowerCase()
+      };
+    }
+    setPasteIndex(idx);
+  }, [achievements, extraLists, devMode, reordered]);
 
   function handlePasteSelect(item) {
     if (!item) return;
