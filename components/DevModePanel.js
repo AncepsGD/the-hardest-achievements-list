@@ -110,7 +110,12 @@ const CandidateButton = React.memo(function CandidateButton({ p, onSelect }) {
       <div style={{ fontSize: 12, color: '#999' }}>{p.levelID ? `L:${p.levelID}` : ''}</div>
     </button>
   );
-}, (p, n) => p.p && n.p && p.p.id === n.p.id && p.onSelect === n.onSelect);
+}, (prevProps, nextProps) => {
+  const prevP = prevProps.p;
+  const nextP = nextProps.p;
+  const sameP = prevP && nextP ? prevP.id === nextP.id : prevP === nextP;
+  return sameP && prevProps.onSelect === nextProps.onSelect;
+});
 const PreviewBox = React.memo(function PreviewBox({ content }) {
   return (
     <div className="devmode-preview-box">
@@ -300,10 +305,7 @@ function DevModePanelInner({
     const fn = getPasteCandidatesRef.current;
     if (typeof fn !== 'function') return [];
     try {
-      if (typeof fn.length === 'number' && fn.length >= 1) {
-        return fn(pasteSearch) || [];
-      }
-      return fn() || [];
+      return fn(pasteSearch) || [];
     } catch (e) {
       return [];
     }
@@ -373,23 +375,6 @@ function DevModePanelInner({
 }
 
 const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
-
-  const shallowEqual = (a, b) => {
-    if (a === b) return true;
-    if (a == null || b == null) return false;
-    if (typeof a !== 'object' || typeof b !== 'object') return a === b;
-    if (Array.isArray(a) && Array.isArray(b)) {
-      if (a.length !== b.length) return false;
-      for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
-      return true;
-    }
-    const aKeys = Object.keys(a);
-    const bKeys = Object.keys(b);
-    if (aKeys.length !== bKeys.length) return false;
-    for (let k of aKeys) if (a[k] !== b[k]) return false;
-    return true;
-  };
-
   return prev.devMode === next.devMode
     && prev.editIdx === next.editIdx
     && prev.showNewForm === next.showNewForm
