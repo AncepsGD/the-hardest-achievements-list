@@ -2252,6 +2252,7 @@ export default function SharedList({
   }, [pasteShowResults, pasteSearch]);
 
   useEffect(() => {
+    if (!debouncedPasteSearch) return;
     const base = (devMode && reordered) ? reordered || [] : achievements || [];
     const extras = Object.values(extraLists).flat().filter(Boolean);
     const items = [...base, ...extras];
@@ -2272,7 +2273,7 @@ export default function SharedList({
       try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
     }
     setPasteIndex(idx);
-  }, [achievements, extraLists, devMode, reordered]);
+  }, [achievements, extraLists, devMode, reordered, debouncedPasteSearch]);
 
   function handlePasteSelect(item) {
     if (!item) return;
