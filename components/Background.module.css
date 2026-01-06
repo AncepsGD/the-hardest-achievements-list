@@ -1,0 +1,49 @@
+:global(#background-root) {
+  position: fixed;
+  inset: 0;
+  z-index: -1000;
+  pointer-events: none;
+}
+
+:global(#dynamic-background) {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+}
+
+:global(#dynamic-background .bg-layer) {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  pointer-events: none;
+}
+
+:global(#dynamic-background .bg-layer.show) {
+  opacity: 1;
+}
+
+:global(#dynamic-background .bg-layer::after) {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  background-repeat: no-repeat;
+  filter: blur(5px) grayscale(75%) brightness(.7);
+  pointer-events: none;
+  will-change: filter, transform;
+}
+
+:global(#blue-tint-overlay) {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgba(19, 23, 41, 0.8);
+  pointer-events: none;
+}
