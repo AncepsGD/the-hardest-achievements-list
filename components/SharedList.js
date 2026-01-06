@@ -207,6 +207,25 @@ function resetEnhanceCache() {
   try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; } catch (e) { }
 }
 
+const _pasteIndexCache = new Map();
+
+function _makePasteSignature(items) {
+  try {
+    if (!Array.isArray(items)) return '';
+    const parts = new Array(items.length);
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i] || {};
+      if (a.id !== undefined && a.id !== null) parts[i] = `id:${String(a.id)}`;
+      else if (a.levelID !== undefined && a.levelID !== null) parts[i] = `lvl:${String(a.levelID)}`;
+      else if (a.name) parts[i] = `n:${String(a.name).slice(0,60)}`;
+      else parts[i] = `idx:${i}`;
+    }
+    return parts.join('|');
+  } catch (e) {
+    return '';
+  }
+}
+
 function _makeEnhanceSignature(a) {
   try {
     const tags = Array.isArray(a.tags) ? a.tags.slice().sort().join('|') : '';
@@ -755,16 +774,6 @@ export default function SharedList({
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
 
-  const filterTagsKey = useMemo(() => {
-    try {
-      const inc = Array.isArray(filterTags.include) ? filterTags.include.slice().map(t => String(t || '')) : [];
-      const exc = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(t => String(t || '')) : [];
-      inc.sort(); exc.sort();
-      return `${inc.join('|')}::${exc.join('|')}`;
-    } catch (e) {
-      return '';
-    }
-  }, [filterTags.include, filterTags.exclude]);
   const [allTags, setAllTags] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -1740,15 +1749,14 @@ export default function SharedList({
       }
       const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
 
-      const [incStr, excStr] = (filterTagsKey || '').split('::');
-      const include = incStr ? incStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
-      const exclude = excStr ? excStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
+      const include = Array.isArray(filterTags.include) ? filterTags.include.map(s => String(s || '').toUpperCase()) : [];
+      const exclude = Array.isArray(filterTags.exclude) ? filterTags.exclude.map(s => String(s || '').toUpperCase()) : [];
 
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       return true;
     },
-    [searchLower, filterTagsKey]
+    [searchLower, filterTags.include, filterTags.exclude]
   );
 
   const filtered = useMemo(() => {
@@ -2161,16 +2169,23 @@ export default function SharedList({
       const base = (devMode && reordered) ? reordered || [] : achievements || [];
       const extras = Object.values(extraLists).flat().filter(Boolean);
       const items = [...base, ...extras];
-      const idx = new Array(items.length);
-      for (let i = 0; i < items.length; i++) {
-        const a = items[i];
-        idx[i] = {
-          achievement: a,
-          searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-            .filter(Boolean).join(' ').toLowerCase()
-        };
-      }
-      setPasteIndex(idx);
+        const sig = _makePasteSignature(items);
+        let idx = null;
+        if (sig && _pasteIndexCache.has(sig)) {
+          idx = _pasteIndexCache.get(sig);
+        } else {
+          idx = new Array(items.length);
+          for (let i = 0; i < items.length; i++) {
+            const a = items[i];
+            idx[i] = {
+              achievement: a,
+              searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+                .filter(Boolean).join(' ').toLowerCase()
+            };
+          }
+          try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
+        }
+        setPasteIndex(idx);
     }
 
     const out = [];
@@ -2200,14 +2215,21 @@ export default function SharedList({
     const base = (devMode && reordered) ? reordered || [] : achievements || [];
     const extras = Object.values(extraLists).flat().filter(Boolean);
     const items = [...base, ...extras];
-    const idx = new Array(items.length);
-    for (let i = 0; i < items.length; i++) {
-      const a = items[i];
-      idx[i] = {
-        achievement: a,
-        searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-          .filter(Boolean).join(' ').toLowerCase()
-      };
+    const sig = _makePasteSignature(items);
+    let idx = null;
+    if (sig && _pasteIndexCache.has(sig)) {
+      idx = _pasteIndexCache.get(sig);
+    } else {
+      idx = new Array(items.length);
+      for (let i = 0; i < items.length; i++) {
+        const a = items[i];
+        idx[i] = {
+          achievement: a,
+          searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+            .filter(Boolean).join(' ').toLowerCase()
+        };
+      }
+      try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
     }
     setPasteIndex(idx);
   }, [achievements, extraLists, devMode, reordered]);
