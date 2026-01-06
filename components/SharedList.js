@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
-import { VariableSizeList as ListWindow } from 'react-window';
+import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -19,7 +19,7 @@ function getAchievementContext(achievement, allAchievements, index) {
   return { below, above };
 }
 
-function formatChangelogEntry(change, achievements, mode) {
+function formatChangelogEntry(change, achievements, mode, idIndexMap) {
   const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
 
   if (!achievement) return '';
@@ -27,7 +27,12 @@ function formatChangelogEntry(change, achievements, mode) {
   const name = achievement.name || 'Unknown';
   const rank = achievement.rank || '?';
   const allAchievements = achievements || [];
-  const newIdx = allAchievements.findIndex(a => a.id === achievement.id);
+  let newIdx = -1;
+  if (idIndexMap && achievement && achievement.id && idIndexMap.has(achievement.id)) {
+    newIdx = idIndexMap.get(achievement.id);
+  } else {
+    newIdx = allAchievements.findIndex(a => a.id === achievement.id);
+  }
   const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
 
   const showOnlyOneContext = mode === 'dev';
@@ -143,6 +148,10 @@ function formatChangelogEntry(change, achievements, mode) {
   return entry;
 }
 
+// Cache for id->index maps used during changelog generation
+const ID_INDEX_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const _idIndexCache = new Map();
+
 function formatDate(date, dateFormat) {
   if (!date) return 'N/A';
   function parseAsLocal(input) {
@@ -185,6 +194,62 @@ const AVAILABLE_TAGS = [
 
 function shouldShowTier(tier, mode, usePlatformers, showTiers) {
   return !!tier && !usePlatformers && showTiers === true;
+}
+
+// Simple cache to avoid recomputing derived fields for the same achievement id
+const _enhanceCache = new Map();
+
+function _makeEnhanceSignature(a) {
+  try {
+    const tags = Array.isArray(a.tags) ? a.tags.slice().sort().join('|') : '';
+    const thumb = sanitizeImageUrl(a && a.thumbnail) || '';
+    const lengthNum = Number(a.length) || 0;
+    const version = a && a.version ? String(a.version) : '';
+    const name = a && a.name ? String(a.name) : '';
+    return `${tags}::${thumb}::${lengthNum}::${version}::${name}`;
+  } catch (e) {
+    return '';
+  }
+}
+
+function enhanceAchievement(a) {
+  if (!a || typeof a !== 'object') return a;
+  const id = a && a.id ? String(a.id) : null;
+  const sig = _makeEnhanceSignature(a);
+  if (id) {
+    const cached = _enhanceCache.get(id);
+    if (cached && cached.signature === sig) {
+      return cached.value;
+    }
+  }
+  const tags = Array.isArray(a.tags) ? [...a.tags] : [];
+  const sortedTags = tags.slice().sort((x, y) => (TAG_PRIORITY_ORDER.indexOf(String(x).toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(String(y).toUpperCase())));
+  const isPlatformer = tags.some(t => String(t).toLowerCase() === 'platformer');
+  const lengthNum = Number(a.length) || 0;
+  const lengthStr = (a.length || a.length === 0) ? `${Math.floor(lengthNum / 60)}:${String(lengthNum % 60).padStart(2, '0')}` : null;
+  const thumb = sanitizeImageUrl(a && a.thumbnail) || null;
+  const enhanced = {
+    ...a,
+    _sortedTags: sortedTags,
+    _isPlatformer: isPlatformer,
+    _lengthStr: lengthStr,
+    _thumbnail: thumb,
+  };
+  if (id) {
+    try { _enhanceCache.set(id, { signature: sig, value: enhanced }); } catch (e) { }
+  }
+  return enhanced;
+}
+
+// Seeded PRNG (mulberry32) for deterministic shuffles
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function() {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), t | 1);
+    r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
 }
 
 
@@ -374,7 +439,7 @@ function calculateDaysLasted(currentDate, previousDate) {
 function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
-  const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
+  const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -419,14 +484,14 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           <div className="rank-date-container">
             {!isPlatformer && (
               <div className="achievement-length">
-                {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
+                {achievement && (achievement._lengthStr || achievement.length === 0) ? (achievement._lengthStr || (achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A')) : 'N/A'}
               </div>
             )}
             <div className="lasted-days">{lastedLabel}</div>
             <div className="achievement-date"><strong>{achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}</strong></div>
           </div>
           <div className="tag-container">
-            {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
+            {(achievement._sortedTags || []).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
             {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
@@ -439,7 +504,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               <p>{achievement.player}</p>
             </div>
             <div className="thumbnail-container">
-              <img src={sanitizeImageUrl(achievement.thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
               {autoThumbAvailable && (
                 <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
               )}
@@ -459,11 +524,23 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
   );
 }
 
-const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.showTiers === next.showTiers && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements && prev.mode === next.mode && prev.usePlatformers === next.usePlatformers && prev.extraLists === next.extraLists && prev.listType === next.listType);
+const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
+  const pa = prev.achievement || {};
+  const na = next.achievement || {};
+  const sameId = (pa.id && na.id) ? String(pa.id) === String(na.id) : pa === na;
+  return sameId
+    && prev.devMode === next.devMode
+    && prev.autoThumbAvailable === next.autoThumbAvailable
+    && prev.showTiers === next.showTiers
+    && prev.totalAchievements === next.totalAchievements
+    && prev.mode === next.mode
+    && prev.usePlatformers === next.usePlatformers
+    && prev.listType === next.listType;
+});
 
 const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
-  const isPlatformer = (achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false;
+  const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
 
 
@@ -495,7 +572,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           <div className="rank-date-container">
             {!isPlatformer && (
               <div className="achievement-length">
-                {achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A'}
+                {achievement && (achievement._lengthStr || achievement.length === 0) ? (achievement._lengthStr || (achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A')) : 'N/A'}
               </div>
             )}
             <div className="achievement-date">
@@ -507,7 +584,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             
           </div>
           <div className="tag-container">
-            {(achievement.tags || []).sort((a, b) => TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase())).map(tag => (
+            {(achievement._sortedTags || []).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
             {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
@@ -520,7 +597,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               <p>{achievement.player}</p>
             </div>
             <div className="thumbnail-container">
-              <img src={sanitizeImageUrl(achievement.thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
               {autoThumbAvailable && (
                 <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
               )}
@@ -530,7 +607,21 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       </a>
     </Link>
   );
-}, (prev, next) => prev.achievement === next.achievement && prev.devMode === next.devMode && prev.autoThumbAvailable === next.autoThumbAvailable && prev.displayRank === next.displayRank && prev.showRank === next.showRank && prev.totalAchievements === next.totalAchievements && prev.achievements === next.achievements && prev.mode === next.mode && prev.usePlatformers === next.usePlatformers && prev.showTiers === next.showTiers && prev.extraLists === next.extraLists && prev.listType === next.listType);
+}, (prev, next) => {
+  const pa = prev.achievement || {};
+  const na = next.achievement || {};
+  const sameId = (pa.id && na.id) ? String(pa.id) === String(na.id) : pa === na;
+  return sameId
+    && prev.devMode === next.devMode
+    && prev.autoThumbAvailable === next.autoThumbAvailable
+    && prev.displayRank === next.displayRank
+    && prev.showRank === next.showRank
+    && prev.totalAchievements === next.totalAchievements
+    && prev.mode === next.mode
+    && prev.usePlatformers === next.usePlatformers
+    && prev.showTiers === next.showTiers
+    && prev.listType === next.listType;
+});
 
 function useDebouncedValue(value, delay) {
   const [debounced, setDebounced] = useState(value);
@@ -588,7 +679,34 @@ export default function SharedList({
   const [manualSearch, setManualSearch] = useState('');
   const [highlightedIdx, setHighlightedIdx] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState('');
-  const debouncedSearch = useDebouncedValue(search, 200);
+  const debouncedSearch = useDebouncedValue(search, 400);
+  const debouncedManualSearch = useDebouncedValue(manualSearch, 400);
+  const THROTTLE_MS = 300;
+  const [throttledSearch, setThrottledSearch] = useState(search);
+  const throttleTimerRef = useRef(null);
+  const lastThrottleRef = useRef(0);
+
+  useEffect(() => {
+    const now = Date.now();
+    const since = now - (lastThrottleRef.current || 0);
+    if (!lastThrottleRef.current || since >= THROTTLE_MS) {
+      lastThrottleRef.current = now;
+      setThrottledSearch(search);
+    } else {
+      if (throttleTimerRef.current) clearTimeout(throttleTimerRef.current);
+      throttleTimerRef.current = setTimeout(() => {
+        lastThrottleRef.current = Date.now();
+        setThrottledSearch(search);
+        throttleTimerRef.current = null;
+      }, THROTTLE_MS - since);
+    }
+    return () => {
+      if (throttleTimerRef.current) {
+        clearTimeout(throttleTimerRef.current);
+        throttleTimerRef.current = null;
+      }
+    };
+  }, [search]);
 
   const handleSearchKeyDown = useCallback((e) => {
     if (e.key !== 'Enter') return;
@@ -596,7 +714,6 @@ export default function SharedList({
     const rawQuery = (e.target && typeof e.target.value === 'string') ? (e.target.value || '').trim() : (search || '').trim();
     const query = rawQuery.toLowerCase();
     if (!query) return;
-
     if (query === 'edit') {
       if (!devModeRef.current) {
         devModeRef.current = true;
@@ -614,67 +731,10 @@ export default function SharedList({
       return;
     }
 
-    const matchesQuery = a => {
-      if (!a) return false;
-      const candidates = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean);
-      return candidates.some(c => String(c).toLowerCase().includes(query));
-    };
-
-    const respectsTagFilters = a => {
-      const tags = (a.tags || []).map(t => t.toUpperCase());
-      const ft = filterTagsRef.current || { include: [], exclude: [] };
-      if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-      if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-      return true;
-    };
-
-    const baseList = (devModeRef.current && reorderedRef.current) ? reorderedRef.current : achievementsRef.current || [];
-
-    const preFiltered = baseList.filter(a => respectsTagFilters(a));
-
-    const matchingItems = preFiltered.filter(a => matchesQuery(a));
-    if (!matchingItems || matchingItems.length === 0) return;
-
-    const firstMatch = matchingItems[0];
-
-    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
-
     setManualSearch(rawQuery);
+    setPendingSearchJump(rawQuery);
     setSearchJumpPending(true);
     setVisibleCount(0);
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      const countToShow = Math.max(20, matchingItems.length);
-      setVisibleCount(prev => Math.max(prev, countToShow));
-
-      if (devModeRef.current) {
-        setScrollToIdx(targetIdxInPreFiltered);
-        setHighlightedIdx(targetIdxInPreFiltered);
-      } else {
-        const sLower = (rawQuery || '').toLowerCase();
-        const visibleFiltered = (achievementsRef.current || []).filter(a => {
-          if (sLower) {
-            if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
-          }
-          const tags = (a.tags || []).map(t => t.toUpperCase());
-          const ft = filterTagsRef.current || { include: [], exclude: [] };
-          if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-          if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-          return true;
-        });
-
-        const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
-        const idxToUse = finalIdx === -1 ? 0 : finalIdx;
-        setScrollToIdx(idxToUse);
-        if (finalIdx === -1) {
-          setNoMatchMessage('No matching achievement is currently visible with the active filters.');
-          window.setTimeout(() => setNoMatchMessage(''), 3000);
-        } else {
-          setHighlightedIdx(idxToUse);
-        }
-      }
-    }));
-
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
     }
@@ -762,16 +822,34 @@ export default function SharedList({
     return 0;
   }, []);
 
-  const [randomOrderMap, setRandomOrderMap] = useState({});
-
   const [reordered, setReordered] = useState(null);
   const reorderedRef = useRef(reordered);
   useEffect(() => { reorderedRef.current = reordered; }, [reordered]);
+  const [randomSeed, setRandomSeed] = useState(null);
+  const prevSortKeyRef = useRef(null);
+
+  useEffect(() => {
+    if (sortKey === 'random' && prevSortKeyRef.current !== 'random') {
+      setRandomSeed(Math.floor(Math.random() * 0x7fffffff));
+    }
+    prevSortKeyRef.current = sortKey;
+  }, [sortKey]);
   const [bgImage, setBgImage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const [hoveredIdx, setHoveredIdx] = useState(null);
   const [duplicateThumbKeys, setDuplicateThumbKeys] = useState(new Set());
-  const [autoThumbMap, setAutoThumbMap] = useState({});
+  const [autoThumbMap, setAutoThumbMap] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return {};
+      const key = `thal_autoThumbMap_${storageKeySuffix}`;
+      const raw = window.localStorage.getItem(key);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (e) {
+      return {};
+    }
+  });
   const [newForm, setNewForm] = useState({
     name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: []
   });
@@ -781,6 +859,7 @@ export default function SharedList({
   const [pasteShowResults, setPasteShowResults] = useState(false);
   const [pasteIndex, setPasteIndex] = useState([]);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
+  const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
@@ -964,11 +1043,11 @@ export default function SharedList({
 
       if (rankIsChanging) {
         const [removed] = arr.splice(editIdx, 1);
-        const updated = { ...removed, ...entry };
+        const updated = enhanceAchievement({ ...removed, ...entry });
         const idx = Math.max(0, Math.min(arr.length, newRank - 1));
         arr.splice(idx, 0, updated);
       } else {
-        arr[editIdx] = { ...original, ...entry };
+        arr[editIdx] = enhanceAchievement({ ...original, ...entry });
       }
 
       return arr;
@@ -1405,7 +1484,22 @@ export default function SharedList({
       }
     }
 
-    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode)).filter(s => s && s.trim()).join('\n\n');
+    const now = Date.now();
+    const firstId = (baseList && baseList[0] && baseList[0].id) ? String(baseList[0].id) : '';
+    const lastId = (baseList && baseList[baseList.length - 1] && baseList[baseList.length - 1].id) ? String(baseList[baseList.length - 1].id) : '';
+    const cacheKey = `${storageKeySuffix}::${(baseList || []).length}::${firstId}::${lastId}`;
+    let idIndexMap;
+    const cached = _idIndexCache.get(cacheKey);
+    if (cached && (now - cached.ts) < ID_INDEX_TTL_MS) {
+      idIndexMap = cached.map;
+    } else {
+      const map = new Map();
+      (baseList || []).forEach((a, i) => { if (a && a.id) map.set(a.id, i); });
+      _idIndexCache.set(cacheKey, { map, ts: now });
+      idIndexMap = map;
+    }
+
+    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
 
     if (!formatted || formatted.trim() === '') {
       const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
@@ -1426,7 +1520,7 @@ export default function SharedList({
             else chosen.push(arr[0]);
           }
         }
-        const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode)).filter(s => s && s.trim()).join('\n\n');
+        const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
         if (alt && alt.trim()) formatted = alt;
       }
     }
@@ -1490,11 +1584,13 @@ export default function SharedList({
         const list = Array.isArray(data) ? data : (data.achievements || []);
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
         if (dataFileName === 'pending.json') {
-          setAchievements(valid);
+          const enhanced = valid.map(enhanceAchievement);
+          setAchievements(enhanced);
           setOriginalAchievements(valid.map((a, i) => ({ ...a, rank: i + 1 })));
         } else {
           const withRank = valid.map((a, i) => ({ ...a, rank: i + 1 }));
-          setAchievements(withRank);
+          const enhanced = withRank.map(enhanceAchievement);
+          setAchievements(enhanced);
           setOriginalAchievements(withRank.map(a => ({ ...a })));
         }
         const tags = new Set();
@@ -1609,9 +1705,9 @@ export default function SharedList({
   }, []);
 
   const searchLower = useMemo(() => {
-    const s = manualSearch ? manualSearch : debouncedSearch;
+    const s = debouncedManualSearch ? debouncedManualSearch : (throttledSearch != null ? throttledSearch : debouncedSearch);
     return (s || '').trim().toLowerCase();
-  }, [manualSearch, debouncedSearch]);
+  }, [debouncedManualSearch, throttledSearch, debouncedSearch]);
 
   const filterFn = useCallback(
     a => {
@@ -1620,11 +1716,12 @@ export default function SharedList({
         if (!a.name.toLowerCase().includes(searchLower)) return false;
       }
       const tags = (a.tags || []).map(t => t.toUpperCase());
-      if (filterTags.include.length && !filterTags.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-      if (filterTags.exclude.length && filterTags.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+      const ft = filterTagsRef.current || { include: [], exclude: [] };
+      if (ft.include && ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+      if (ft.exclude && ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
       return true;
     },
-    [searchLower, filterTags]
+    [searchLower]
   );
 
   const filtered = useMemo(() => {
@@ -1642,15 +1739,26 @@ export default function SharedList({
     }
     if (sortKey === 'random') {
       const copy = [...base];
+      const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+      const seed = randomSeed != null ? randomSeed : 1;
+      const rng = mulberry32(seed);
+      for (let i = keys.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        const t = keys[i];
+        keys[i] = keys[j];
+        keys[j] = t;
+      }
+      const map = {};
+      keys.forEach((k, i) => { map[k] = i; });
       const getKey = item => (item && item.id) ? String(item.id) : `__idx_${base.indexOf(item)}`;
-      copy.sort((x, y) => ((randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0)));
+      copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
       return copy;
     }
     const copy = [...base];
     copy.sort((x, y) => compareByKey(x, y, sortKey));
     if (sortDir === 'desc') copy.reverse();
     return copy;
-  }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomOrderMap]);
+  }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomSeed]);
 
   useEffect(() => {
     let pref = 100;
@@ -1665,6 +1773,75 @@ export default function SharedList({
     if (pref === 'all') setVisibleCount(filtered.length);
     else setVisibleCount(Math.min(pref, filtered.length));
   }, [filtered]);
+
+  useEffect(() => {
+    if (!pendingSearchJump) return;
+    if (debouncedManualSearch !== pendingSearchJump) return; // wait for debounce
+
+    const rawQuery = pendingSearchJump;
+    const query = (rawQuery || '').toLowerCase();
+
+    const matchesQuery = a => {
+      if (!a) return false;
+      const candidates = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean);
+      return candidates.some(c => String(c).toLowerCase().includes(query));
+    };
+
+    const respectsTagFilters = a => {
+      const tags = (a.tags || []).map(t => t.toUpperCase());
+      const ft = filterTagsRef.current || { include: [], exclude: [] };
+      if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+      if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+      return true;
+    };
+
+    const baseList = (devModeRef.current && reorderedRef.current) ? reorderedRef.current : achievementsRef.current || [];
+    const preFiltered = baseList.filter(a => respectsTagFilters(a));
+    const matchingItems = preFiltered.filter(a => matchesQuery(a));
+    if (!matchingItems || matchingItems.length === 0) {
+      setPendingSearchJump(null);
+      setSearchJumpPending(false);
+      return;
+    }
+
+    const firstMatch = matchingItems[0];
+    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const countToShow = Math.max(20, matchingItems.length);
+      setVisibleCount(prev => Math.max(prev, countToShow));
+
+      if (devModeRef.current) {
+        setScrollToIdx(targetIdxInPreFiltered);
+        setHighlightedIdx(targetIdxInPreFiltered);
+      } else {
+        const sLower = (rawQuery || '').toLowerCase();
+        const visibleFiltered = (achievementsRef.current || []).filter(a => {
+          if (sLower) {
+            if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
+          }
+          const tags = (a.tags || []).map(t => t.toUpperCase());
+          const ft = filterTagsRef.current || { include: [], exclude: [] };
+          if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+          if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+          return true;
+        });
+
+        const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
+        const idxToUse = finalIdx === -1 ? 0 : finalIdx;
+        setScrollToIdx(idxToUse);
+        if (finalIdx === -1) {
+          setNoMatchMessage('No matching achievement is currently visible with the active filters.');
+          window.setTimeout(() => setNoMatchMessage(''), 3000);
+        } else {
+          setHighlightedIdx(idxToUse);
+        }
+      }
+    }));
+
+    setPendingSearchJump(null);
+    setSearchJumpPending(false);
+  }, [debouncedManualSearch, pendingSearchJump]);
 
   const baseDev = devMode && reordered ? reordered : achievements;
 
@@ -1683,8 +1860,19 @@ export default function SharedList({
     }
     if (sortKey === 'random') {
       const copy = [...baseDev];
+      const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+      const seed = randomSeed != null ? randomSeed : 1;
+      const rng = mulberry32(seed);
+      for (let i = keys.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1));
+        const t = keys[i];
+        keys[i] = keys[j];
+        keys[j] = t;
+      }
+      const map = {};
+      keys.forEach((k, i) => { map[k] = i; });
       const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
-      copy.sort((x, y) => ((randomOrderMap[getKey(x)] || 0) - (randomOrderMap[getKey(y)] || 0)));
+      copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
       if (sortDir === 'desc') copy.reverse();
       return copy;
     }
@@ -1692,22 +1880,89 @@ export default function SharedList({
     copy.sort((x, y) => compareByKey(x, y, sortKey));
     if (sortDir === 'desc') copy.reverse();
     return copy;
-  }, [baseDev, sortKey, sortDir, compareByKey, randomOrderMap]);
+  }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
 
-  useEffect(() => {
-    const items = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : achievements;
-    const keys = (items || []).map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+  const visibleList = devMode ? devAchievements : filtered;
 
-    for (let i = keys.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      const t = keys[i];
-      keys[i] = keys[j];
-      keys[j] = t;
-    }
-    const map = {};
-    keys.forEach((k, i) => { map[k] = i; });
-    setRandomOrderMap(map);
-  }, [achievements, reordered]);
+  const listItemData = useMemo(() => ({
+    filtered: visibleList,
+    isMobile,
+    duplicateThumbKeys,
+    highlightedIdx,
+    hoveredIdx,
+    setHoveredIdx,
+    mode,
+    devMode,
+    autoThumbMap,
+    showTiers: showTiers === true,
+    usePlatformers,
+    extraLists,
+    rankOffset,
+    hideRank,
+    achievements,
+    storageKeySuffix,
+    dataFileName,
+    handleMoveAchievementUp,
+    handleMoveAchievementDown,
+    handleEditAchievement,
+    handleDuplicateAchievement,
+    handleRemoveAchievement,
+  }), [visibleList, isMobile, duplicateThumbKeys, highlightedIdx, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
+
+  const ListRow = React.memo(function ListRow({ index, style, data }) {
+    const {
+      filtered, isMobile, duplicateThumbKeys, highlightedIdx, mode, devMode, autoThumbMap, showTiers,
+      usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
+    } = data;
+    const a = filtered[index];
+    const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
+    const thumb = getThumbnailUrl(a, isMobile);
+    const isDup = duplicateThumbKeys.has((thumb || '').trim());
+    return (
+      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
+        {mode === 'timeline' ?
+          <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
+          :
+          (() => {
+            const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
+            const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
+          })()
+        }
+      </div>
+    );
+  }, (prev, next) => {
+    if (prev.index !== next.index) return false;
+    const p = prev.data;
+    const n = next.data;
+    const pi = prev.index;
+    const ni = next.index;
+    const pItem = (p.filtered || [])[pi] || null;
+    const nItem = (n.filtered || [])[ni] || null;
+    const pId = pItem && pItem.id;
+    const nId = nItem && nItem.id;
+    if (String(pId) !== String(nId)) return false;
+    if (p.highlightedIdx !== n.highlightedIdx) return false;
+    if (p.devMode !== n.devMode) return false;
+    if (p.showTiers !== n.showTiers) return false;
+    if (p.usePlatformers !== n.usePlatformers) return false;
+    if (p.mode !== n.mode) return false;
+    if (p.hideRank !== n.hideRank) return false;
+    const pThumb = getThumbnailUrl(pItem, p.isMobile);
+    const nThumb = getThumbnailUrl(nItem, n.isMobile);
+    const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
+    const nDup = n.duplicateThumbKeys && n.duplicateThumbKeys.has((nThumb || '').trim());
+    if (pDup !== nDup) return false;
+    const pAuto = pItem && pItem.levelID ? !!p.autoThumbMap[String(pItem.levelID)] : false;
+    const nAuto = nItem && nItem.levelID ? !!n.autoThumbMap[String(nItem.levelID)] : false;
+    if (pAuto !== nAuto) return false;
+    const pr = pItem && (Number(pItem.rank) || pItem.rank) ? Number(pItem.rank) : (pi + 1);
+    const nr = nItem && (Number(nItem.rank) || nItem.rank) ? Number(nItem.rank) : (ni + 1);
+    const pDisp = Number.isFinite(Number(pr)) ? Number(pr) + (Number(p.rankOffset) || 0) : pr;
+    const nDisp = Number.isFinite(Number(nr)) ? Number(nr) + (Number(n.rankOffset) || 0) : nr;
+    if (pDisp !== nDisp) return false;
+    return true;
+  });
 
   useEffect(() => {
     const items = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : achievements;
@@ -1734,6 +1989,15 @@ export default function SharedList({
       });
     });
   }, [achievements, reordered, autoThumbMap]);
+
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined') return;
+      const key = `thal_autoThumbMap_${storageKeySuffix}`;
+      window.localStorage.setItem(key, JSON.stringify(autoThumbMap || {}));
+    } catch (e) {
+    }
+  }, [autoThumbMap, storageKeySuffix]);
 
   function handleMobileToggle() {
     setShowMobileFilters(v => !v);
@@ -1844,6 +2108,8 @@ export default function SharedList({
     }
 
     newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
+
+    newArr = newArr.map(enhanceAchievement);
     batchUpdateReordered(() => newArr);
     setScrollToIdx(insertedIdx);
     setShowNewForm(false);
@@ -2070,10 +2336,12 @@ export default function SharedList({
 
   function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
-    const copy = { ...((reorderedRef.current && reorderedRef.current[realIdx]) || {}), id: (((reorderedRef.current && reorderedRef.current[realIdx] && reorderedRef.current[realIdx].id) ? reorderedRef.current[realIdx].id : `item-${realIdx}`) + '-copy') };
+    const orig = (reorderedRef.current && reorderedRef.current[realIdx]) || {};
+    const copy = { ...orig, id: (((orig && orig.id) ? orig.id : `item-${realIdx}`) + '-copy') };
+    const enhancedCopy = enhanceAchievement(copy);
     batchUpdateReordered(arr => {
       if (!arr) return arr;
-      arr.splice(realIdx + 1, 0, copy);
+      arr.splice(realIdx + 1, 0, enhancedCopy);
       return arr;
     });
     setScrollToIdx(realIdx + 1);
@@ -2085,7 +2353,7 @@ export default function SharedList({
       alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
       return;
     }
-    imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
+    imported = imported.map((a, i) => enhanceAchievement({ ...a, rank: i + 1 }));
     try {
       const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
       reorderedRef.current = imported;
@@ -2132,26 +2400,51 @@ export default function SharedList({
     };
   });
 
+  const handleCheckDuplicateThumbnailsCb = useCallback((...args) => devPanelHandlersRef.current.handleCheckDuplicateThumbnails && devPanelHandlersRef.current.handleCheckDuplicateThumbnails(...args), []);
+  const getPasteCandidatesCb = useCallback((...args) => devPanelHandlersRef.current.getPasteCandidates && devPanelHandlersRef.current.getPasteCandidates(...args), []);
+  const handlePasteSelectCb = useCallback((...args) => devPanelHandlersRef.current.handlePasteSelect && devPanelHandlersRef.current.handlePasteSelect(...args), []);
+  const handleEditFormChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormChange && devPanelHandlersRef.current.handleEditFormChange(...args), []);
+  const handleEditFormTagClickCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormTagClick && devPanelHandlersRef.current.handleEditFormTagClick(...args), []);
+  const handleEditFormCustomTagsChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormCustomTagsChange && devPanelHandlersRef.current.handleEditFormCustomTagsChange(...args), []);
+  const handleEditFormSaveCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormSave && devPanelHandlersRef.current.handleEditFormSave(...args), []);
+  const handleEditFormCancelCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormCancel && devPanelHandlersRef.current.handleEditFormCancel(...args), []);
+  const handleNewFormChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormChange && devPanelHandlersRef.current.handleNewFormChange(...args), []);
+  const handleNewFormTagClickCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormTagClick && devPanelHandlersRef.current.handleNewFormTagClick(...args), []);
+  const handleNewFormCustomTagsChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormCustomTagsChange && devPanelHandlersRef.current.handleNewFormCustomTagsChange(...args), []);
+  const handleNewFormAddCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormAdd && devPanelHandlersRef.current.handleNewFormAdd(...args), []);
+  const handleNewFormCancelCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormCancel && devPanelHandlersRef.current.handleNewFormCancel(...args), []);
+  const handleCopyJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleCopyJson && devPanelHandlersRef.current.handleCopyJson(...args), []);
+  const handleShowNewFormCb = useCallback((...args) => devPanelHandlersRef.current.handleShowNewForm && devPanelHandlersRef.current.handleShowNewForm(...args), []);
+  const generateAndCopyChangelogCb = useCallback((...args) => devPanelHandlersRef.current.generateAndCopyChangelog && devPanelHandlersRef.current.generateAndCopyChangelog(...args), []);
+  const resetChangesCb = useCallback((...args) => devPanelHandlersRef.current.resetChanges && devPanelHandlersRef.current.resetChanges(...args), []);
+  const onImportAchievementsJsonCb = useCallback((...args) => devPanelHandlersRef.current.onImportAchievementsJson && devPanelHandlersRef.current.onImportAchievementsJson(...args), []);
+
   const stableDevPanelProps = useMemo(() => ({
-    handleCheckDuplicateThumbnails: (...args) => devPanelHandlersRef.current.handleCheckDuplicateThumbnails && devPanelHandlersRef.current.handleCheckDuplicateThumbnails(...args),
-    getPasteCandidates: (...args) => devPanelHandlersRef.current.getPasteCandidates && devPanelHandlersRef.current.getPasteCandidates(...args),
-    handlePasteSelect: (...args) => devPanelHandlersRef.current.handlePasteSelect && devPanelHandlersRef.current.handlePasteSelect(...args),
-    handleEditFormChange: (...args) => devPanelHandlersRef.current.handleEditFormChange && devPanelHandlersRef.current.handleEditFormChange(...args),
-    handleEditFormTagClick: (...args) => devPanelHandlersRef.current.handleEditFormTagClick && devPanelHandlersRef.current.handleEditFormTagClick(...args),
-    handleEditFormCustomTagsChange: (...args) => devPanelHandlersRef.current.handleEditFormCustomTagsChange && devPanelHandlersRef.current.handleEditFormCustomTagsChange(...args),
-    handleEditFormSave: (...args) => devPanelHandlersRef.current.handleEditFormSave && devPanelHandlersRef.current.handleEditFormSave(...args),
-    handleEditFormCancel: (...args) => devPanelHandlersRef.current.handleEditFormCancel && devPanelHandlersRef.current.handleEditFormCancel(...args),
-    handleNewFormChange: (...args) => devPanelHandlersRef.current.handleNewFormChange && devPanelHandlersRef.current.handleNewFormChange(...args),
-    handleNewFormTagClick: (...args) => devPanelHandlersRef.current.handleNewFormTagClick && devPanelHandlersRef.current.handleNewFormTagClick(...args),
-    handleNewFormCustomTagsChange: (...args) => devPanelHandlersRef.current.handleNewFormCustomTagsChange && devPanelHandlersRef.current.handleNewFormCustomTagsChange(...args),
-    handleNewFormAdd: (...args) => devPanelHandlersRef.current.handleNewFormAdd && devPanelHandlersRef.current.handleNewFormAdd(...args),
-    handleNewFormCancel: (...args) => devPanelHandlersRef.current.handleNewFormCancel && devPanelHandlersRef.current.handleNewFormCancel(...args),
-    handleCopyJson: (...args) => devPanelHandlersRef.current.handleCopyJson && devPanelHandlersRef.current.handleCopyJson(...args),
-    handleShowNewForm: (...args) => devPanelHandlersRef.current.handleShowNewForm && devPanelHandlersRef.current.handleShowNewForm(...args),
-    generateAndCopyChangelog: (...args) => devPanelHandlersRef.current.generateAndCopyChangelog && devPanelHandlersRef.current.generateAndCopyChangelog(...args),
-    resetChanges: (...args) => devPanelHandlersRef.current.resetChanges && devPanelHandlersRef.current.resetChanges(...args),
-    onImportAchievementsJson: (...args) => devPanelHandlersRef.current.onImportAchievementsJson && devPanelHandlersRef.current.onImportAchievementsJson(...args),
-  }), []);
+    handleCheckDuplicateThumbnails: handleCheckDuplicateThumbnailsCb,
+    getPasteCandidates: getPasteCandidatesCb,
+    handlePasteSelect: handlePasteSelectCb,
+    handleEditFormChange: handleEditFormChangeCb,
+    handleEditFormTagClick: handleEditFormTagClickCb,
+    handleEditFormCustomTagsChange: handleEditFormCustomTagsChangeCb,
+    handleEditFormSave: handleEditFormSaveCb,
+    handleEditFormCancel: handleEditFormCancelCb,
+    handleNewFormChange: handleNewFormChangeCb,
+    handleNewFormTagClick: handleNewFormTagClickCb,
+    handleNewFormCustomTagsChange: handleNewFormCustomTagsChangeCb,
+    handleNewFormAdd: handleNewFormAddCb,
+    handleNewFormCancel: handleNewFormCancelCb,
+    handleCopyJson: handleCopyJsonCb,
+    handleShowNewForm: handleShowNewFormCb,
+    generateAndCopyChangelog: generateAndCopyChangelogCb,
+    resetChanges: resetChangesCb,
+    onImportAchievementsJson: onImportAchievementsJsonCb,
+  }), [
+    handleCheckDuplicateThumbnailsCb, getPasteCandidatesCb, handlePasteSelectCb, handleEditFormChangeCb,
+    handleEditFormTagClickCb, handleEditFormCustomTagsChangeCb, handleEditFormSaveCb, handleEditFormCancelCb,
+    handleNewFormChangeCb, handleNewFormTagClickCb, handleNewFormCustomTagsChangeCb, handleNewFormAddCb,
+    handleNewFormCancelCb, handleCopyJsonCb, handleShowNewFormCb, generateAndCopyChangelogCb,
+    resetChangesCb, onImportAchievementsJsonCb,
+  ]);
 
   return (
     <>
@@ -2403,231 +2696,37 @@ export default function SharedList({
           />
           {isPending ? (
             <div className="no-achievements">Loading...</div>
-          ) : (devMode ? (
-            devAchievements.map((a, i) => (
-              <div
-                key={a.id || i}
-                data-index={i}
-                ref={el => {
-                  achievementRefs.current[i] = el;
-                }}
-                className={(() => {
-                  const thumb = getThumbnailUrl(a, isMobile);
-                  return duplicateThumbKeys.has((thumb || '').trim()) ? 'duplicate-thumb-item' : '';
-                })()}
-                style={{
-                  border: '1px solid #333',
-                  marginBottom: 8,
-                  background: '#181818',
-                  borderRadius: 8,
-                  position: 'relative'
-                }}
-                onClick={() => {
-                  if (showNewForm && scrollToIdx === i) setShowNewForm(false);
-                }}
-                onMouseEnter={() => setHoveredIdx(i)}
-                onMouseLeave={() => setHoveredIdx(v => v === i ? null : v)}
-              >
-                {(hoveredIdx === i) && (
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    display: 'flex',
-                    gap: 32,
-                    zIndex: 3,
-                    background: 'var(--secondary-bg, #232323)',
-                    borderRadius: '1.5rem',
-                    padding: '22px 40px',
-                    boxShadow: '0 4px 24px #000b',
-                    alignItems: 'center',
-                    border: '2px solid var(--primary-accent, #e67e22)',
-                    transition: 'background 0.2s, border 0.2s',
-                  }}>
-                    <button
-                      title="Move Up"
-                      style={{
-                        background: 'var(--primary-accent, #e67e22)',
-                        border: 'none',
-                        color: '#fff',
-                        fontSize: 36,
-                        cursor: 'pointer',
-                        opacity: 1,
-                        borderRadius: '50%',
-                        width: 48,
-                        height: 48,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px #0006',
-                        transition: 'background 0.15s, transform 0.1s',
-                        outline: 'none',
-                        marginRight: 8,
-                      }}
-                      disabled={i === 0}
-                      onClick={e => { e.stopPropagation(); handleMoveAchievementUp(i); }}
-                    >▲</button>
-                    <button
-                      title="Move Down"
-                      style={{
-                        background: 'var(--primary-accent, #e67e22)',
-                        border: 'none',
-                        color: '#fff',
-                        fontSize: 36,
-                        cursor: 'pointer',
-                        opacity: 1,
-                        borderRadius: '50%',
-                        width: 48,
-                        height: 48,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px #0006',
-                        transition: 'background 0.15s, transform 0.1s',
-                        outline: 'none',
-                        marginRight: 8,
-                      }}
-                      disabled={i === devAchievements.length - 1}
-                      onClick={e => { e.stopPropagation(); handleMoveAchievementDown(i); }}
-                    >▼</button>
-                    <button
-                      title="Edit"
-                      style={{
-                        background: 'var(--info, #2980b9)',
-                        border: 'none',
-                        color: '#fff',
-                        fontSize: 44,
-                        cursor: 'pointer',
-                        opacity: 1,
-                        borderRadius: '50%',
-                        width: 64,
-                        height: 64,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px #0006',
-                        transition: 'background 0.15s, transform 0.1s',
-                        outline: 'none',
-                      }}
-                      onMouseOver={e => e.currentTarget.style.background = 'var(--info-hover, #3498db)'}
-                      onMouseOut={e => e.currentTarget.style.background = 'var(--info, #2980b9)'}
-                      onClick={e => { e.stopPropagation(); handleEditAchievement(i); }}
-                    >✏️</button>
-                    <button
-                      title="Duplicate"
-                      style={{
-                        background: 'var(--primary-accent, #e67e22)',
-                        border: 'none',
-                        color: '#fff',
-                        fontSize: 44,
-                        cursor: 'pointer',
-                        opacity: 1,
-                        borderRadius: '50%',
-                        width: 64,
-                        height: 64,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px #0006',
-                        transition: 'background 0.15s, transform 0.1s',
-                        outline: 'none',
-                      }}
-                      onMouseOver={e => e.currentTarget.style.background = 'var(--primary-accent-hover, #ff9800)'}
-                      onMouseOut={e => e.currentTarget.style.background = 'var(--primary-accent, #e67e22)'}
-                      onClick={e => { e.stopPropagation(); handleDuplicateAchievement(i); }}
-                    >📄</button>
-                    <button
-                      title="Remove"
-                      style={{
-                        background: 'var(--danger, #c0392b)',
-                        border: 'none',
-                        color: '#fff',
-                        fontSize: 44,
-                        cursor: 'pointer',
-                        opacity: 1,
-                        borderRadius: '50%',
-                        width: 64,
-                        height: 64,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '0 2px 8px #0006',
-                        transition: 'background 0.15s, transform 0.1s',
-                        outline: 'none',
-                      }}
-                      onMouseOver={e => e.currentTarget.style.background = 'var(--danger-hover, #e74c3c)'}
-                      onMouseOut={e => e.currentTarget.style.background = 'var(--danger, #c0392b)'}
-                      onClick={e => { e.stopPropagation(); handleRemoveAchievement(i); }}
-                    >🗑️</button>
-                  </div>
-                )}
-                <div style={{
-                  opacity: hoveredIdx === i ? 0.3 : 1,
-                  transition: 'opacity 0.2s',
-                  position: 'relative',
-                  zIndex: 1
-                }} className={highlightedIdx === i ? 'search-highlight' : ''}>
-                  {mode === 'timeline' ?
-                    <TimelineAchievementCard achievement={a} previousAchievement={devAchievements[i - 1]} onEdit={() => handleEditAchievement(i)} isHovered={hoveredIdx === i} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={devAchievements.length} achievements={devAchievements} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
-                    :
-                    (() => {
-                      const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
-                      const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                      return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={devAchievements.length} achievements={devAchievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers === true} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
-                    })()
-                  }
-                </div>
-              </div>
-            ))
           ) : (
-            filtered.length === 0 ? (
+            (visibleList && visibleList.length === 0) ? (
               <div className="no-achievements">No achievements found.</div>
             ) : (
               <ListWindow
                 ref={listRef}
                 height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
-                itemCount={Math.min(visibleCount, filtered.length)}
-                itemSize={() => 150}
+                itemCount={Math.min(visibleCount, (visibleList || []).length)}
+                itemSize={150}
                 width={'100%'}
                 style={{ overflowX: 'hidden' }}
+                itemData={listItemData}
                 onItemsRendered={({ visibleStopIndex }) => {
                   try {
                     const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
                     const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
                     if (pageSize === 'all') return;
-                    if (visibleStopIndex >= Math.min(visibleCount, filtered.length) - 5 && visibleCount < filtered.length) {
-                      setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), filtered.length));
+                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                      setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
                     }
                   } catch (err) {
-                    if (visibleStopIndex >= Math.min(visibleCount, filtered.length) - 5 && visibleCount < filtered.length) {
-                      setVisibleCount(prev => Math.min(prev + 100, filtered.length));
+                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                      setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
                     }
                   }
                 }}
               >
-                {({ index, style }) => {
-                  const a = filtered[index];
-                  const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
-                  const thumb = getThumbnailUrl(a, isMobile);
-                  const isDup = duplicateThumbKeys.has((thumb || '').trim());
-                  return (
-                    <div data-index={index} style={itemStyle} key={a.id || index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
-                      {mode === 'timeline' ?
-                        <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers === true} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
-                        :
-                        (() => {
-                          const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
-                          const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-                          return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers === true} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
-                        })()
-                      }
-                    </div>
-                  );
-                }}
+                {ListRow}
               </ListWindow>
             )
-          ))}
+          )}
         </section>
       </main>
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
