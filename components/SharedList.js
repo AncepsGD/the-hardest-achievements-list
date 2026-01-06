@@ -198,13 +198,35 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
 const _enhanceCache = new Map();
 let _enhanceCacheHits = 0;
 let _enhanceCacheMisses = 0;
+const _enhanceCacheWrites = new Map();
+const _enhanceCacheHitCounts = new Map();
 
 function getEnhanceCacheStats() {
   try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
 }
 
+function getEnhanceCachePerIdStats() {
+  try {
+    const writes = Array.from(_enhanceCacheWrites.entries()).map(([id, count]) => ({ id, writes: count }));
+    const hits = Array.from(_enhanceCacheHitCounts.entries()).map(([id, count]) => ({ id, hits: count }));
+    return { writes, hits };
+  } catch (e) { return { writes: [], hits: [] }; }
+}
+
+function validateEnhanceCache(opts = {}) {
+  try {
+    const { minHitRate = 0.5, maxWritesPerId = 1 } = opts || {};
+    const s = getEnhanceCacheStats();
+    const total = (s.hits || 0) + (s.misses || 0);
+    const hitRate = total ? (s.hits / total) : 0;
+    const unstable = [];
+    _enhanceCacheWrites.forEach((count, id) => { if (count > maxWritesPerId) unstable.push({ id, writes: count }); });
+    return { hitRate, hits: s.hits, misses: s.misses, unstable, healthy: hitRate >= minHitRate && unstable.length === 0 };
+  } catch (e) { return { hitRate: 0, hits: 0, misses: 0, unstable: [], healthy: false }; }
+}
+
 function resetEnhanceCache() {
-  try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; } catch (e) { }
+  try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
 }
 
 const _pasteIndexCache = new Map();
@@ -225,6 +247,8 @@ function _makePasteSignature(items) {
     return '';
   }
 }
+
+export { getEnhanceCacheStats, resetEnhanceCache, getEnhanceCachePerIdStats, validateEnhanceCache };
 
 function _makeEnhanceSignature(a) {
   try {
@@ -247,6 +271,7 @@ function enhanceAchievement(a) {
     const cached = _enhanceCache.get(id);
     if (cached && cached.signature === sig) {
       _enhanceCacheHits++;
+      try { _enhanceCacheHitCounts.set(id, (_enhanceCacheHitCounts.get(id) || 0) + 1); } catch (e) { }
       return cached.value;
     }
   }
@@ -272,7 +297,11 @@ function enhanceAchievement(a) {
     _searchable: searchable,
   };
   if (id) {
-    try { _enhanceCache.set(id, { signature: sig, value: enhanced }); _enhanceCacheMisses++; } catch (e) { }
+    try {
+      _enhanceCache.set(id, { signature: sig, value: enhanced });
+      _enhanceCacheMisses++;
+      _enhanceCacheWrites.set(id, (_enhanceCacheWrites.get(id) || 0) + 1);
+    } catch (e) { }
   } else {
     _enhanceCacheMisses++;
     if (process && process.env && process.env.NODE_ENV === 'development') {
@@ -1741,6 +1770,12 @@ export default function SharedList({
     return (s || '').trim().toLowerCase();
   }, [debouncedSearch]);
 
+  const _normalizedFilterTags = useMemo(() => {
+    const inc = Array.isArray(filterTags.include) ? filterTags.include.slice().map(s => String(s || '').toUpperCase()) : [];
+    const exc = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(s => String(s || '').toUpperCase()) : [];
+    return { include: inc, exclude: exc };
+  }, [filterTags.include, filterTags.exclude]);
+
   const filterFn = useCallback(
     a => {
       if (searchLower) {
@@ -1749,14 +1784,14 @@ export default function SharedList({
       }
       const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
 
-      const include = Array.isArray(filterTags.include) ? filterTags.include.map(s => String(s || '').toUpperCase()) : [];
-      const exclude = Array.isArray(filterTags.exclude) ? filterTags.exclude.map(s => String(s || '').toUpperCase()) : [];
+      const include = _normalizedFilterTags.include;
+      const exclude = _normalizedFilterTags.exclude;
 
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       return true;
     },
-    [searchLower, filterTags.include, filterTags.exclude]
+    [searchLower, _normalizedFilterTags]
   );
 
   const filtered = useMemo(() => {
@@ -1851,17 +1886,22 @@ export default function SharedList({
         setHighlightedIdx(targetIdxInPreFiltered);
       } else {
         const sLower = (rawQuery || '').toLowerCase();
-        const visibleFiltered = (achievementsRef.current || []).filter(a => {
-          if (sLower) {
-            const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
-            if (!hay || !hay.includes(sLower)) return false;
-          }
-          const tags = (a.tags || []).map(t => t.toUpperCase());
-          const ft = filterTagsRef.current || { include: [], exclude: [] };
-          if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-          if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-          return true;
-        });
+        let visibleFiltered;
+        if (searchLower === query && Array.isArray(filtered)) {
+          visibleFiltered = filtered;
+        } else {
+          visibleFiltered = (achievementsRef.current || []).filter(a => {
+            if (sLower) {
+              const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
+              if (!hay || !hay.includes(sLower)) return false;
+            }
+            const tags = (a.tags || []).map(t => t.toUpperCase());
+            const ft = filterTagsRef.current || { include: [], exclude: [] };
+            if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+            if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+            return true;
+          });
+        }
 
         const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
         const idxToUse = finalIdx === -1 ? 0 : finalIdx;
@@ -1877,7 +1917,7 @@ export default function SharedList({
 
     setPendingSearchJump(null);
     setSearchJumpPending(false);
-  }, [debouncedManualSearch, pendingSearchJump]);
+  }, [debouncedManualSearch, pendingSearchJump, filtered, searchLower]);
 
   const baseDev = devMode && reordered ? reordered : achievements;
 
