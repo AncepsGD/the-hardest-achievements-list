@@ -148,8 +148,7 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
   return entry;
 }
 
-// Cache for id->index maps used during changelog generation
-const ID_INDEX_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
 
 function formatDate(date, dateFormat) {
@@ -196,7 +195,6 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
   return !!tier && !usePlatformers && showTiers === true;
 }
 
-// Simple cache to avoid recomputing derived fields for the same achievement id
 const _enhanceCache = new Map();
 
 function _makeEnhanceSignature(a) {
@@ -241,7 +239,6 @@ function enhanceAchievement(a) {
   return enhanced;
 }
 
-// Seeded PRNG (mulberry32) for deterministic shuffles
 function mulberry32(seed) {
   let t = seed >>> 0;
   return function() {
@@ -1776,7 +1773,7 @@ export default function SharedList({
 
   useEffect(() => {
     if (!pendingSearchJump) return;
-    if (debouncedManualSearch !== pendingSearchJump) return; // wait for debounce
+    if (debouncedManualSearch !== pendingSearchJump) return;
 
     const rawQuery = pendingSearchJump;
     const query = (rawQuery || '').toLowerCase();
@@ -1915,7 +1912,7 @@ export default function SharedList({
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
     } = data;
     const a = filtered[index];
-    const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
+    const itemStyle = { ...style, padding: 8, boxSizing: 'border-box', position: 'relative' };
     const thumb = getThumbnailUrl(a, isMobile);
     const isDup = duplicateThumbKeys.has((thumb || '').trim());
     return (
