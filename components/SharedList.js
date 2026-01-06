@@ -249,7 +249,7 @@ function enhanceAchievement(a) {
 
 function mulberry32(seed) {
   let t = seed >>> 0;
-  return function() {
+  return function () {
     t += 0x6D2B79F5;
     let r = Math.imul(t ^ (t >>> 15), t | 1);
     r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
@@ -586,7 +586,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {showRank && (
               <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
             )}
-            
+
           </div>
           <div className="tag-container">
             {(achievement._sortedTags || []).map(tag => (
@@ -1350,42 +1350,42 @@ export default function SharedList({
       moveChanges.forEach(m => {
         if (!m || !m.achievement) return;
         const id = m.achievement.id;
-          movesMap.set(id, {
-            oldRank: Number(m.oldRank) || null,
-            newRank: Number(m.newRank) || null,
-            type: m.type,
-            achievement: m.achievement
-          });
+        movesMap.set(id, {
+          oldRank: Number(m.oldRank) || null,
+          newRank: Number(m.newRank) || null,
+          type: m.type,
+          achievement: m.achievement
         });
+      });
 
-        for (const [id, mv] of movesMap.entries()) {
-          if (!mv || mv.oldRank == null || mv.newRank == null) continue;
-          const delta = mv.newRank - mv.oldRank;
-          if (delta === 0) continue;
-          if (delta < 0) {
-            const low = mv.newRank;
-            const high = mv.oldRank - 1;
-            for (const [otherId, other] of movesMap.entries()) {
-              if (otherId === id) continue;
-              if (suppressedIds.has(otherId)) continue;
-              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
-                suppressedIds.add(otherId);
-              }
+      for (const [id, mv] of movesMap.entries()) {
+        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+        const delta = mv.newRank - mv.oldRank;
+        if (delta === 0) continue;
+        if (delta < 0) {
+          const low = mv.newRank;
+          const high = mv.oldRank - 1;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+              suppressedIds.add(otherId);
             }
-          } else {
-            const low = mv.oldRank + 1;
-            const high = mv.newRank;
-            for (const [otherId, other] of movesMap.entries()) {
-              if (otherId === id) continue;
-              if (suppressedIds.has(otherId)) continue;
-              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
-                suppressedIds.add(otherId);
-              }
+          }
+        } else {
+          const low = mv.oldRank + 1;
+          const high = mv.newRank;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+              suppressedIds.add(otherId);
             }
           }
         }
+      }
     }
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
@@ -2341,7 +2341,7 @@ export default function SharedList({
     });
     setScrollToIdx(realIdx + 1);
   }
-  
+
   const onImportAchievementsJson = useCallback((json) => {
     let imported = Array.isArray(json) ? json : (json && json.achievements) || [];
     if (!Array.isArray(imported)) {
@@ -2624,34 +2624,6 @@ export default function SharedList({
       />
       <main className="main-content achievements-main">
         {!isMobile && <Sidebar />}
-        <div
-          id="achievements-search-index"
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            left: -9999,
-            top: 'auto',
-            width: 1,
-            height: 1,
-            overflow: 'hidden',
-            whiteSpace: 'pre-wrap'
-          }}
-        >
-          {(devMode && reordered ? reordered : achievements).map((a, i) => {
-            const parts = [];
-            if (a && a.name) parts.push(a.name);
-            if (a && a.player) parts.push(a.player);
-            if (a && a.id) parts.push(String(a.id));
-            if (a && a.levelID) parts.push(String(a.levelID));
-            if (a && a.submitter) parts.push(a.submitter);
-            if (a && Array.isArray(a.tags) && a.tags.length) parts.push(a.tags.join(', '));
-            return (
-              <span key={a && a.id ? a.id : `s-${i}`}>
-                {parts.join(' \u2014 ')}
-              </span>
-            );
-          })}
-        </div>
         <section className="achievements achievements-section">
           <div style={{ width: '100%' }}>
             <div className="search-bar" style={{ width: '100%', maxWidth: 'min(95vw, 902px)', margin: '0 auto' }}>
@@ -2667,8 +2639,6 @@ export default function SharedList({
               />
             </div>
           </div>
-
- 
 
           <DevModePanel
             devMode={devMode}
