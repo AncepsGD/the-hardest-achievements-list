@@ -150,7 +150,6 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
 
 const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
-const INDEX_MIN_COUNT = 1000;
 
 function formatDate(date, dateFormat) {
   if (!date) return 'N/A';
@@ -895,29 +894,6 @@ export default function SharedList({
       return [];
     }
   }, [achievements, extraLists, devMode, reordered]);
-  const invertedIndex = useMemo(() => {
-    try {
-      const items = pasteIndex || [];
-      if (!items || items.length < INDEX_MIN_COUNT) return null;
-      const map = new Map();
-      const idToItem = new Map();
-      for (let i = 0; i < items.length; i++) {
-        const entry = items[i];
-        const a = entry && entry.achievement;
-        const id = a && a.id ? String(a.id) : `__idx_${i}`;
-        idToItem.set(id, a);
-        const s = entry && entry.searchable ? entry.searchable : '';
-        const toks = (s || '').split(/\W+/).filter(Boolean);
-        for (const t of toks) {
-          if (!map.has(t)) map.set(t, new Set());
-          map.get(t).add(id);
-        }
-      }
-      return { map, idToItem };
-    } catch (e) {
-      return null;
-    }
-  }, [pasteIndex]);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
@@ -1787,37 +1763,7 @@ export default function SharedList({
   }, [debouncedSearch, filterTags.include, filterTags.exclude]);
 
   const filtered = useMemo(() => {
-    let base = [];
-    try {
-      if (invertedIndex && searchLower) {
-        const qToks = (searchLower || '').split(/\W+/).filter(Boolean);
-        if (qToks.length) {
-          const sets = qToks.map(t => invertedIndex.map.get(t) || new Set());
-          if (sets.some(s => !s || s.size === 0)) {
-            base = [];
-          } else {
-            let inter = new Set(sets[0]);
-            for (let i = 1; i < sets.length; i++) {
-              const s = sets[i];
-              inter = new Set([...inter].filter(x => s.has(x)));
-              if (inter.size === 0) break;
-            }
-            const candidates = [];
-            for (const id of inter) {
-              const it = invertedIndex.idToItem.get(id);
-              if (it) candidates.push(it);
-            }
-            base = candidates.filter(filterFn);
-          }
-        } else {
-          base = achievements.filter(filterFn);
-        }
-      } else {
-        base = achievements.filter(filterFn);
-      }
-    } catch (e) {
-      base = achievements.filter(filterFn);
-    }
+    let base = achievements.filter(filterFn);
     if (!sortKey) return base;
     if (sortKey === 'levelID') {
       base = base.filter(a => {
