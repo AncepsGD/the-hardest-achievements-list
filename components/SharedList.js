@@ -2108,6 +2108,51 @@ export default function SharedList({
     alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
   }, [getMostVisibleIdx, setScrollToIdx, usePlatformers, dataFileName]);
 
+  const devPanelHandlersRef = useRef({});
+  useEffect(() => {
+    devPanelHandlersRef.current = {
+      handleCheckDuplicateThumbnails,
+      getPasteCandidates,
+      handlePasteSelect,
+      handleEditFormChange,
+      handleEditFormTagClick,
+      handleEditFormCustomTagsChange,
+      handleEditFormSave,
+      handleEditFormCancel,
+      handleNewFormChange,
+      handleNewFormTagClick,
+      handleNewFormCustomTagsChange,
+      handleNewFormAdd,
+      handleNewFormCancel,
+      handleCopyJson,
+      handleShowNewForm,
+      generateAndCopyChangelog,
+      resetChanges,
+      onImportAchievementsJson,
+    };
+  });
+
+  const stableDevPanelProps = useMemo(() => ({
+    handleCheckDuplicateThumbnails: (...args) => devPanelHandlersRef.current.handleCheckDuplicateThumbnails && devPanelHandlersRef.current.handleCheckDuplicateThumbnails(...args),
+    getPasteCandidates: (...args) => devPanelHandlersRef.current.getPasteCandidates && devPanelHandlersRef.current.getPasteCandidates(...args),
+    handlePasteSelect: (...args) => devPanelHandlersRef.current.handlePasteSelect && devPanelHandlersRef.current.handlePasteSelect(...args),
+    handleEditFormChange: (...args) => devPanelHandlersRef.current.handleEditFormChange && devPanelHandlersRef.current.handleEditFormChange(...args),
+    handleEditFormTagClick: (...args) => devPanelHandlersRef.current.handleEditFormTagClick && devPanelHandlersRef.current.handleEditFormTagClick(...args),
+    handleEditFormCustomTagsChange: (...args) => devPanelHandlersRef.current.handleEditFormCustomTagsChange && devPanelHandlersRef.current.handleEditFormCustomTagsChange(...args),
+    handleEditFormSave: (...args) => devPanelHandlersRef.current.handleEditFormSave && devPanelHandlersRef.current.handleEditFormSave(...args),
+    handleEditFormCancel: (...args) => devPanelHandlersRef.current.handleEditFormCancel && devPanelHandlersRef.current.handleEditFormCancel(...args),
+    handleNewFormChange: (...args) => devPanelHandlersRef.current.handleNewFormChange && devPanelHandlersRef.current.handleNewFormChange(...args),
+    handleNewFormTagClick: (...args) => devPanelHandlersRef.current.handleNewFormTagClick && devPanelHandlersRef.current.handleNewFormTagClick(...args),
+    handleNewFormCustomTagsChange: (...args) => devPanelHandlersRef.current.handleNewFormCustomTagsChange && devPanelHandlersRef.current.handleNewFormCustomTagsChange(...args),
+    handleNewFormAdd: (...args) => devPanelHandlersRef.current.handleNewFormAdd && devPanelHandlersRef.current.handleNewFormAdd(...args),
+    handleNewFormCancel: (...args) => devPanelHandlersRef.current.handleNewFormCancel && devPanelHandlersRef.current.handleNewFormCancel(...args),
+    handleCopyJson: (...args) => devPanelHandlersRef.current.handleCopyJson && devPanelHandlersRef.current.handleCopyJson(...args),
+    handleShowNewForm: (...args) => devPanelHandlersRef.current.handleShowNewForm && devPanelHandlersRef.current.handleShowNewForm(...args),
+    generateAndCopyChangelog: (...args) => devPanelHandlersRef.current.generateAndCopyChangelog && devPanelHandlersRef.current.generateAndCopyChangelog(...args),
+    resetChanges: (...args) => devPanelHandlersRef.current.resetChanges && devPanelHandlersRef.current.resetChanges(...args),
+    onImportAchievementsJson: (...args) => devPanelHandlersRef.current.onImportAchievementsJson && devPanelHandlersRef.current.onImportAchievementsJson(...args),
+  }), []);
+
   return (
     <>
       <Head>
@@ -2339,7 +2384,7 @@ export default function SharedList({
 
           <DevModePanel
             devMode={devMode}
-            handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
+            {...stableDevPanelProps}
             editIdx={editIdx}
             editForm={editForm}
             editFormTags={editFormTags}
@@ -2348,29 +2393,12 @@ export default function SharedList({
             setPasteSearch={setPasteSearch}
             pasteShowResults={pasteShowResults}
             setPasteShowResults={setPasteShowResults}
-            getPasteCandidates={getPasteCandidates}
-            handlePasteSelect={handlePasteSelect}
             AVAILABLE_TAGS={AVAILABLE_TAGS}
-            handleEditFormChange={handleEditFormChange}
-            handleEditFormTagClick={handleEditFormTagClick}
-            handleEditFormCustomTagsChange={handleEditFormCustomTagsChange}
-            handleEditFormSave={handleEditFormSave}
-            handleEditFormCancel={handleEditFormCancel}
             showNewForm={showNewForm}
             newForm={newForm}
             newFormTags={newFormTags}
             newFormCustomTags={newFormCustomTags}
-            handleNewFormChange={handleNewFormChange}
-            handleNewFormTagClick={handleNewFormTagClick}
-            handleNewFormCustomTagsChange={handleNewFormCustomTagsChange}
-            handleNewFormAdd={handleNewFormAdd}
-            handleNewFormCancel={handleNewFormCancel}
-            handleCopyJson={handleCopyJson}
-            handleShowNewForm={handleShowNewForm}
             newFormPreview={newFormPreview}
-            generateAndCopyChangelog={generateAndCopyChangelog}
-            resetChanges={resetChanges}
-            onImportAchievementsJson={onImportAchievementsJson}
             dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
           />
           {isPending ? (
