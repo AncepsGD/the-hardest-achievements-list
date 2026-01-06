@@ -226,12 +226,21 @@ function enhanceAchievement(a) {
   const lengthNum = Number(a.length) || 0;
   const lengthStr = (a.length || a.length === 0) ? `${Math.floor(lengthNum / 60)}:${String(lengthNum % 60).padStart(2, '0')}` : null;
   const thumb = sanitizeImageUrl(a && a.thumbnail) || null;
+
+  const searchableParts = [];
+  if (a && a.name) searchableParts.push(String(a.name));
+  if (a && a.player) searchableParts.push(String(a.player));
+  if (Array.isArray(tags) && tags.length) searchableParts.push(tags.join(' '));
+  if (a && a.id) searchableParts.push(String(a.id));
+  if (a && (a.levelID || a.levelID === 0)) searchableParts.push(String(a.levelID));
+  const searchable = searchableParts.join(' ').toLowerCase();
   const enhanced = {
     ...a,
     _sortedTags: sortedTags,
     _isPlatformer: isPlatformer,
     _lengthStr: lengthStr,
     _thumbnail: thumb,
+    _searchable: searchable,
   };
   if (id) {
     try { _enhanceCache.set(id, { signature: sig, value: enhanced }); } catch (e) { }
@@ -241,7 +250,7 @@ function enhanceAchievement(a) {
 
 function mulberry32(seed) {
   let t = seed >>> 0;
-  return function() {
+  return function () {
     t += 0x6D2B79F5;
     let r = Math.imul(t ^ (t >>> 15), t | 1);
     r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
@@ -578,7 +587,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {showRank && (
               <div className="rank"><strong>#{displayRank != null ? displayRank : achievement.rank}</strong></div>
             )}
-            
+
           </div>
           <div className="tag-container">
             {(achievement._sortedTags || []).map(tag => (
@@ -676,34 +685,8 @@ export default function SharedList({
   const [manualSearch, setManualSearch] = useState('');
   const [highlightedIdx, setHighlightedIdx] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState('');
-  const debouncedSearch = useDebouncedValue(search, 400);
-  const debouncedManualSearch = useDebouncedValue(manualSearch, 400);
-  const THROTTLE_MS = 300;
-  const [throttledSearch, setThrottledSearch] = useState(search);
-  const throttleTimerRef = useRef(null);
-  const lastThrottleRef = useRef(0);
-
-  useEffect(() => {
-    const now = Date.now();
-    const since = now - (lastThrottleRef.current || 0);
-    if (!lastThrottleRef.current || since >= THROTTLE_MS) {
-      lastThrottleRef.current = now;
-      setThrottledSearch(search);
-    } else {
-      if (throttleTimerRef.current) clearTimeout(throttleTimerRef.current);
-      throttleTimerRef.current = setTimeout(() => {
-        lastThrottleRef.current = Date.now();
-        setThrottledSearch(search);
-        throttleTimerRef.current = null;
-      }, THROTTLE_MS - since);
-    }
-    return () => {
-      if (throttleTimerRef.current) {
-        clearTimeout(throttleTimerRef.current);
-        throttleTimerRef.current = null;
-      }
-    };
-  }, [search]);
+  const debouncedSearch = useDebouncedValue(search, 300);
+  const debouncedManualSearch = useDebouncedValue(manualSearch, 300);
 
   const handleSearchKeyDown = useCallback((e) => {
     if (e.key !== 'Enter') return;
@@ -739,6 +722,17 @@ export default function SharedList({
   const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
+
+  const filterTagsKey = useMemo(() => {
+    try {
+      const inc = Array.isArray(filterTags.include) ? filterTags.include.slice().map(t => String(t || '')) : [];
+      const exc = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(t => String(t || '')) : [];
+      inc.sort(); exc.sort();
+      return `${inc.join('|')}::${exc.join('|')}`;
+    } catch (e) {
+      return '';
+    }
+  }, [filterTags.include, filterTags.exclude]);
   const [allTags, setAllTags] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
@@ -866,7 +860,7 @@ export default function SharedList({
   const [editFormCustomTags, setEditFormCustomTags] = useState('');
   const achievementRefs = useRef([]);
 
-  function batchUpdateReordered(mutator) {
+  const batchUpdateReordered = useCallback((mutator) => {
     if (typeof mutator !== 'function') return;
     startTransition(() => {
       setReordered(prev => {
@@ -883,31 +877,32 @@ export default function SharedList({
         return prev;
       });
     });
-  }
+  }, [startTransition, setReordered]);
 
-  function resolveRealIdx(displayIdx) {
+  const resolveRealIdx = useCallback((displayIdx) => {
     try {
-      if (!reordered || !Array.isArray(reordered) || reordered.length === 0) return displayIdx;
-      if (reordered[displayIdx] && devAchievements && devAchievements[displayIdx] && reordered[displayIdx].id && devAchievements[displayIdx].id && reordered[displayIdx].id === devAchievements[displayIdx].id) {
+      const r = reordered || [];
+      if (!r || !Array.isArray(r) || r.length === 0) return displayIdx;
+      if (r[displayIdx] && devAchievements && devAchievements[displayIdx] && r[displayIdx].id && devAchievements[displayIdx].id && r[displayIdx].id === devAchievements[displayIdx].id) {
         return displayIdx;
       }
-      if (reordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === reordered[displayIdx].id : false) === -1)) {
+      if (r[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === r[displayIdx].id : false) === -1)) {
         return displayIdx;
       }
       const displayed = (devAchievements && devAchievements.length) ? devAchievements[displayIdx] : null;
       if (!displayed) return displayIdx;
       if (displayed.id) {
-        const real = reordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
+        const real = r.findIndex(x => x && x.id ? x.id === displayed.id : false);
         return real === -1 ? displayIdx : real;
       }
-      const realByObj = reordered.findIndex(x => x === displayed);
+      const realByObj = r.findIndex(x => x === displayed);
       return realByObj === -1 ? displayIdx : realByObj;
     } catch (e) {
       return displayIdx;
     }
-  }
+  }, [reordered, devAchievements]);
 
-  function handleMoveAchievementUp(idx) {
+  const handleMoveAchievementUp = useCallback((idx) => {
     const realIdx = resolveRealIdx(idx);
     batchUpdateReordered(arr => {
       if (!arr || realIdx <= 0) return arr;
@@ -916,9 +911,9 @@ export default function SharedList({
       arr[realIdx] = temp;
       return arr;
     });
-  }
+  }, [resolveRealIdx, batchUpdateReordered]);
 
-  function handleMoveAchievementDown(idx) {
+  const handleMoveAchievementDown = useCallback((idx) => {
     const realIdx = resolveRealIdx(idx);
     batchUpdateReordered(arr => {
       if (!arr || realIdx >= arr.length - 1) return arr;
@@ -927,9 +922,9 @@ export default function SharedList({
       arr[realIdx] = temp;
       return arr;
     });
-  }
+  }, [resolveRealIdx, batchUpdateReordered]);
 
-  function handleCheckDuplicateThumbnails() {
+  const handleCheckDuplicateThumbnails = useCallback(() => {
     const items = devMode && reordered ? reordered : achievements;
     const map = new Map();
     items.forEach((a, i) => {
@@ -941,9 +936,9 @@ export default function SharedList({
     const dupKeys = new Set();
     map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
     setDuplicateThumbKeys(dupKeys);
-  }
+  }, [devMode, reordered, achievements, setDuplicateThumbKeys]);
   const [scrollToIdx, setScrollToIdx] = useState(null);
-  function handleEditAchievement(idx) {
+  const handleEditAchievement = useCallback((idx) => {
     const realIdx = resolveRealIdx(idx);
     if (!reordered || !reordered[realIdx]) return;
     const a = reordered[realIdx];
@@ -957,7 +952,7 @@ export default function SharedList({
     setEditFormTags(Array.isArray(a.tags) ? [...a.tags] : []);
     setEditFormCustomTags('');
     setShowNewForm(false);
-  }
+  }, [resolveRealIdx, reordered, setEditIdx, setEditForm, setEditFormTags, setEditFormCustomTags, setShowNewForm]);
 
   function handleEditFormChange(e) {
     const { name, value } = e.target;
@@ -1357,42 +1352,42 @@ export default function SharedList({
       moveChanges.forEach(m => {
         if (!m || !m.achievement) return;
         const id = m.achievement.id;
-          movesMap.set(id, {
-            oldRank: Number(m.oldRank) || null,
-            newRank: Number(m.newRank) || null,
-            type: m.type,
-            achievement: m.achievement
-          });
+        movesMap.set(id, {
+          oldRank: Number(m.oldRank) || null,
+          newRank: Number(m.newRank) || null,
+          type: m.type,
+          achievement: m.achievement
         });
+      });
 
-        for (const [id, mv] of movesMap.entries()) {
-          if (!mv || mv.oldRank == null || mv.newRank == null) continue;
-          const delta = mv.newRank - mv.oldRank;
-          if (delta === 0) continue;
-          if (delta < 0) {
-            const low = mv.newRank;
-            const high = mv.oldRank - 1;
-            for (const [otherId, other] of movesMap.entries()) {
-              if (otherId === id) continue;
-              if (suppressedIds.has(otherId)) continue;
-              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
-                suppressedIds.add(otherId);
-              }
+      for (const [id, mv] of movesMap.entries()) {
+        if (!mv || mv.oldRank == null || mv.newRank == null) continue;
+        const delta = mv.newRank - mv.oldRank;
+        if (delta === 0) continue;
+        if (delta < 0) {
+          const low = mv.newRank;
+          const high = mv.oldRank - 1;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank + 1)) {
+              suppressedIds.add(otherId);
             }
-          } else {
-            const low = mv.oldRank + 1;
-            const high = mv.newRank;
-            for (const [otherId, other] of movesMap.entries()) {
-              if (otherId === id) continue;
-              if (suppressedIds.has(otherId)) continue;
-              if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
-              if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
-                suppressedIds.add(otherId);
-              }
+          }
+        } else {
+          const low = mv.oldRank + 1;
+          const high = mv.newRank;
+          for (const [otherId, other] of movesMap.entries()) {
+            if (otherId === id) continue;
+            if (suppressedIds.has(otherId)) continue;
+            if (other.oldRank === mv.newRank && other.newRank === mv.oldRank) continue;
+            if (other.oldRank >= low && other.oldRank <= high && (other.newRank === other.oldRank - 1)) {
+              suppressedIds.add(otherId);
             }
           }
         }
+      }
     }
     for (let i = 0; i < moveChanges.length; i++) {
       const a = moveChanges[i];
@@ -1702,23 +1697,27 @@ export default function SharedList({
   }, []);
 
   const searchLower = useMemo(() => {
-    const s = debouncedManualSearch ? debouncedManualSearch : (throttledSearch != null ? throttledSearch : debouncedSearch);
+    const s = debouncedSearch;
     return (s || '').trim().toLowerCase();
-  }, [debouncedManualSearch, throttledSearch, debouncedSearch]);
+  }, [debouncedSearch]);
 
   const filterFn = useCallback(
     a => {
       if (searchLower) {
-        if (typeof a.name !== 'string') return false;
-        if (!a.name.toLowerCase().includes(searchLower)) return false;
+        const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
+        if (!hay || !hay.includes(searchLower)) return false;
       }
-      const tags = (a.tags || []).map(t => t.toUpperCase());
-      const ft = filterTagsRef.current || { include: [], exclude: [] };
-      if (ft.include && ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-      if (ft.exclude && ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+      const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
+
+      const [incStr, excStr] = (filterTagsKey || '').split('::');
+      const include = incStr ? incStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
+      const exclude = excStr ? excStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
+
+      if (include.length && !include.every(tag => tags.includes(tag))) return false;
+      if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       return true;
     },
-    [searchLower]
+    [searchLower, filterTagsKey]
   );
 
   const filtered = useMemo(() => {
@@ -1780,8 +1779,8 @@ export default function SharedList({
 
     const matchesQuery = a => {
       if (!a) return false;
-      const candidates = [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean);
-      return candidates.some(c => String(c).toLowerCase().includes(query));
+      const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(query);
     };
 
     const respectsTagFilters = a => {
@@ -1815,7 +1814,8 @@ export default function SharedList({
         const sLower = (rawQuery || '').toLowerCase();
         const visibleFiltered = (achievementsRef.current || []).filter(a => {
           if (sLower) {
-            if (typeof a.name !== 'string' || !a.name.toLowerCase().includes(sLower)) return false;
+            const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
+            if (!hay || !hay.includes(sLower)) return false;
           }
           const tags = (a.tags || []).map(t => t.toUpperCase());
           const ft = filterTagsRef.current || { include: [], exclude: [] };
@@ -2322,16 +2322,16 @@ export default function SharedList({
     setScrollToIdx(null);
   }, [scrollToIdx, filtered, devMode]);
 
-  function handleRemoveAchievement(idx) {
+  const handleRemoveAchievement = useCallback((idx) => {
     const realIdx = resolveRealIdx(idx);
     batchUpdateReordered(arr => {
       if (!arr) return arr;
       arr.splice(realIdx, 1);
       return arr;
     });
-  }
+  }, [resolveRealIdx, batchUpdateReordered]);
 
-  function handleDuplicateAchievement(idx) {
+  const handleDuplicateAchievement = useCallback((idx) => {
     const realIdx = resolveRealIdx(idx);
     const orig = (reorderedRef.current && reorderedRef.current[realIdx]) || {};
     const copy = { ...orig, id: (((orig && orig.id) ? orig.id : `item-${realIdx}`) + '-copy') };
@@ -2342,8 +2342,8 @@ export default function SharedList({
       return arr;
     });
     setScrollToIdx(realIdx + 1);
-  }
-  
+  }, [resolveRealIdx, batchUpdateReordered, reorderedRef, enhanceAchievement, setScrollToIdx]);
+
   const onImportAchievementsJson = useCallback((json) => {
     let imported = Array.isArray(json) ? json : (json && json.achievements) || [];
     if (!Array.isArray(imported)) {
@@ -2626,34 +2626,6 @@ export default function SharedList({
       />
       <main className="main-content achievements-main">
         {!isMobile && <Sidebar />}
-        <div
-          id="achievements-search-index"
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            left: -9999,
-            top: 'auto',
-            width: 1,
-            height: 1,
-            overflow: 'hidden',
-            whiteSpace: 'pre-wrap'
-          }}
-        >
-          {(devMode && reordered ? reordered : achievements).map((a, i) => {
-            const parts = [];
-            if (a && a.name) parts.push(a.name);
-            if (a && a.player) parts.push(a.player);
-            if (a && a.id) parts.push(String(a.id));
-            if (a && a.levelID) parts.push(String(a.levelID));
-            if (a && a.submitter) parts.push(a.submitter);
-            if (a && Array.isArray(a.tags) && a.tags.length) parts.push(a.tags.join(', '));
-            return (
-              <span key={a && a.id ? a.id : `s-${i}`}>
-                {parts.join(' \u2014 ')}
-              </span>
-            );
-          })}
-        </div>
         <section className="achievements achievements-section">
           <div style={{ width: '100%' }}>
             <div className="search-bar" style={{ width: '100%', maxWidth: 'min(95vw, 902px)', margin: '0 auto' }}>
@@ -2670,7 +2642,7 @@ export default function SharedList({
             </div>
           </div>
 
- 
+
 
           <DevModePanel
             devMode={devMode}
