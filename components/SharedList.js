@@ -1745,22 +1745,24 @@ export default function SharedList({
     return (s || '').trim().toLowerCase();
   }, [debouncedSearch]);
 
-  const filterFn = useMemo(() => {
-    const s = debouncedSearch || '';
-    const searchLowerLocal = (s || '').trim().toLowerCase();
-    const include = Array.isArray(filterTags.include) ? filterTags.include.slice().map(t => String(t || '').toUpperCase()) : [];
-    const exclude = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(t => String(t || '').toUpperCase()) : [];
-    return a => {
-      if (searchLowerLocal) {
+  const filterFn = useCallback(
+    a => {
+      if (searchLower) {
         const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
-        if (!hay || !hay.includes(searchLowerLocal)) return false;
+        if (!hay || !hay.includes(searchLower)) return false;
       }
       const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
+
+      const [incStr, excStr] = (filterTagsKey || '').split('::');
+      const include = incStr ? incStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
+      const exclude = excStr ? excStr.split('|').filter(Boolean).map(s => s.toUpperCase()) : [];
+
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       return true;
-    };
-  }, [debouncedSearch, filterTags.include, filterTags.exclude]);
+    },
+    [searchLower, filterTagsKey]
+  );
 
   const filtered = useMemo(() => {
     let base = achievements.filter(filterFn);
@@ -2190,6 +2192,7 @@ export default function SharedList({
       });
     });
   }, [pasteShowResults, pasteSearch]);
+
 
   function handlePasteSelect(item) {
     if (!item) return;
