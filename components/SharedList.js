@@ -239,7 +239,7 @@ function _makePasteSignature(items) {
       const a = items[i] || {};
       if (a.id !== undefined && a.id !== null) parts[i] = `id:${String(a.id)}`;
       else if (a.levelID !== undefined && a.levelID !== null) parts[i] = `lvl:${String(a.levelID)}`;
-      else if (a.name) parts[i] = `n:${String(a.name).slice(0,60)}`;
+      else if (a.name) parts[i] = `n:${String(a.name).slice(0, 60)}`;
       else parts[i] = `idx:${i}`;
     }
     return parts.join('|');
@@ -263,6 +263,43 @@ function _makeEnhanceSignature(a) {
   }
 }
 
+function normalizeForSearch(input) {
+  if (!input || typeof input !== 'string') return '';
+  let s = input.trim().toLowerCase();
+  try {
+    s = s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+  } catch (e) { }
+  s = s.replace(/[^a-z0-9]+/g, ' ');
+  const alt = {
+    'colour': 'color',
+    'colours': 'colors',
+    'favourite': 'favorite',
+    'centre': 'center',
+    'behaviour': 'behavior',
+    'organisation': 'organization',
+    'organisation': 'organization',
+    'gaol': 'jail'
+  };
+  Object.keys(alt).forEach(k => {
+    s = s.replace(new RegExp('\\b' + k + '\\b', 'g'), alt[k]);
+  });
+  s = s.replace(/\s+/g, ' ').trim();
+  return s;
+}
+
+function tokenizeForSearch(normalized) {
+  if (!normalized) return [];
+  const words = normalized.split(' ').filter(w => w.length > 0);
+  const tokens = new Set();
+  for (const w of words) {
+    tokens.add(w);
+    for (let i = 2; i <= Math.min(w.length, 20); i++) {
+      tokens.add(w.slice(0, i));
+    }
+  }
+  return Array.from(tokens);
+}
+
 function enhanceAchievement(a) {
   if (!a || typeof a !== 'object') return a;
   const id = a && a.id ? String(a.id) : null;
@@ -284,17 +321,22 @@ function enhanceAchievement(a) {
   const searchableParts = [];
   if (a && a.name) searchableParts.push(String(a.name));
   if (a && a.player) searchableParts.push(String(a.player));
-  if (Array.isArray(tags) && tags.length) searchableParts.push(tags.join(' '));
+  const tagString = (Array.isArray(tags) && tags.length) ? tags.join(' ') : '';
   if (a && a.id) searchableParts.push(String(a.id));
   if (a && (a.levelID || a.levelID === 0)) searchableParts.push(String(a.levelID));
-  const searchable = searchableParts.join(' ').toLowerCase();
+  const searchable = searchableParts.join(' ');
+  const searchableNormalized = normalizeForSearch(searchable);
+  const searchTokens = tokenizeForSearch(searchableNormalized);
   const enhanced = {
     ...a,
     _sortedTags: sortedTags,
     _isPlatformer: isPlatformer,
     _lengthStr: lengthStr,
     _thumbnail: thumb,
-    _searchable: searchable,
+    _searchable: searchable.toLowerCase(),
+    _searchableNormalized: searchableNormalized,
+    _searchTokens: searchTokens,
+    _tagString: tagString,
   };
   if (id) {
     try {
@@ -416,8 +458,8 @@ function getThumbnailUrl(achievement, isMobile) {
   try {
     const idPart = (achievement && (achievement.id !== undefined && achievement.id !== null)) ? `id:${String(achievement.id)}`
       : (achievement && (achievement.levelID !== undefined && achievement.levelID !== null)) ? `level:${String(achievement.levelID)}`
-      : (achievement && achievement.thumbnail) ? `thumb:${String(achievement.thumbnail)}`
-      : 'default';
+        : (achievement && achievement.thumbnail) ? `thumb:${String(achievement.thumbnail)}`
+          : 'default';
     const key = `${idPart}::${isMobile ? 'm' : 'd'}`;
     if (getThumbnailUrl._cache && getThumbnailUrl._cache.has(key)) return getThumbnailUrl._cache.get(key);
 
@@ -886,6 +928,9 @@ export default function SharedList({
   const [reordered, setReordered] = useState(null);
   const reorderedRef = useRef(reordered);
   useEffect(() => { reorderedRef.current = reordered; }, [reordered]);
+  const ongoingFilterControllerRef = useRef(null);
+  const manualSearchControllerRef = useRef(null);
+  useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
   const [randomSeed, setRandomSeed] = useState(null);
   const prevSortKeyRef = useRef(null);
 
@@ -1770,6 +1815,12 @@ export default function SharedList({
     return (s || '').trim().toLowerCase();
   }, [debouncedSearch]);
 
+  const searchNormalized = useMemo(() => {
+    try { return normalizeForSearch(debouncedSearch || ''); } catch (e) { return ''; }
+  }, [debouncedSearch]);
+
+  const queryTokens = useMemo(() => (searchNormalized || '') ? searchNormalized.split(' ').filter(Boolean) : [], [searchNormalized]);
+
   const _normalizedFilterTags = useMemo(() => {
     const inc = Array.isArray(filterTags.include) ? filterTags.include.slice().map(s => String(s || '').toUpperCase()) : [];
     const exc = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(s => String(s || '').toUpperCase()) : [];
@@ -1778,57 +1829,80 @@ export default function SharedList({
 
   const filterFn = useCallback(
     a => {
-      if (searchLower) {
-        const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
-        if (!hay || !hay.includes(searchLower)) return false;
-      }
       const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
-
       const include = _normalizedFilterTags.include;
       const exclude = _normalizedFilterTags.exclude;
-
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
+      if (queryTokens && queryTokens.length) {
+        const itemTokens = Array.isArray(a && a._searchTokens) && a._searchTokens.length ? a._searchTokens : (a && a._searchableNormalized ? tokenizeForSearch(a._searchableNormalized) : tokenizeForSearch(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '))));
+        if (!itemTokens || itemTokens.length === 0) return false;
+        if (!queryTokens.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
+      }
       return true;
     },
-    [searchLower, _normalizedFilterTags]
+    [_normalizedFilterTags, queryTokens]
   );
 
-  const filtered = useMemo(() => {
-    let base = achievements.filter(filterFn);
-    if (!sortKey) return base;
-    if (sortKey === 'levelID') {
-      base = base.filter(a => {
-        const num = Number(a && a.levelID);
-        return !isNaN(num) && num > 0;
-      });
-      const copy = [...base];
-      copy.sort((x, y) => compareByKey(x, y, 'levelID'));
-      if (sortDir === 'desc') copy.reverse();
-      return copy;
-    }
-    if (sortKey === 'random') {
-      const copy = [...base];
-      const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
-      const seed = randomSeed != null ? randomSeed : 1;
-      const rng = mulberry32(seed);
-      for (let i = keys.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        const t = keys[i];
-        keys[i] = keys[j];
-        keys[j] = t;
-      }
-      const map = {};
-      keys.forEach((k, i) => { map[k] = i; });
-      const getKey = item => (item && item.id) ? String(item.id) : `__idx_${base.indexOf(item)}`;
-      copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-      return copy;
-    }
-    const copy = [...base];
-    copy.sort((x, y) => compareByKey(x, y, sortKey));
-    if (sortDir === 'desc') copy.reverse();
-    return copy;
-  }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomSeed]);
+  const [filtered, setFiltered] = useState([]);
+  useEffect(() => {
+    try { if (ongoingFilterControllerRef.current && typeof ongoingFilterControllerRef.current.abort === 'function') ongoingFilterControllerRef.current.abort(); } catch (e) { }
+    const controller = { aborted: false, abort() { this.aborted = true; } };
+    ongoingFilterControllerRef.current = controller;
+
+    startTransition(() => {
+      setTimeout(() => {
+        if (controller.aborted) return;
+        const items = Array.isArray(achievements) ? achievements : [];
+        const base = [];
+        for (let i = 0; i < items.length; i++) {
+          if (controller.aborted) return;
+          try {
+            if (filterFn(items[i])) base.push(items[i]);
+          } catch (e) { }
+        }
+        if (controller.aborted) return;
+
+        let result = base;
+        if (sortKey === 'levelID') {
+          const onlyWithLevel = result.filter(a => {
+            const num = Number(a && a.levelID);
+            return !isNaN(num) && num > 0;
+          });
+          const copy = [...onlyWithLevel];
+          copy.sort((x, y) => compareByKey(x, y, 'levelID'));
+          if (sortDir === 'desc') copy.reverse();
+          result = copy;
+        } else if (sortKey === 'random') {
+          const copy = [...result];
+          const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+          const seed = randomSeed != null ? randomSeed : 1;
+          const rng = mulberry32(seed);
+          for (let i = keys.length - 1; i > 0; i--) {
+            const j = Math.floor(rng() * (i + 1));
+            const t = keys[i];
+            keys[i] = keys[j];
+            keys[j] = t;
+          }
+          const map = {};
+          keys.forEach((k, i) => { map[k] = i; });
+          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${result.indexOf(item)}`;
+          copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
+          result = copy;
+        } else if (sortKey) {
+          const copy = [...result];
+          copy.sort((x, y) => compareByKey(x, y, sortKey));
+          if (sortDir === 'desc') copy.reverse();
+          result = copy;
+        }
+
+        if (controller.aborted) return;
+        try { setFiltered(result); } catch (e) { }
+      }, 0);
+    });
+
+    return () => { try { controller.abort(); } catch (e) { } };
+  }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomSeed, startTransition]);
 
   useEffect(() => {
     let pref = 100;
@@ -1848,16 +1922,25 @@ export default function SharedList({
     if (!pendingSearchJump) return;
     if (debouncedManualSearch !== pendingSearchJump) return;
 
+    try { if (manualSearchControllerRef && manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { }
+    const manualController = { aborted: false, abort() { this.aborted = true; } };
+    manualSearchControllerRef.current = manualController;
+
     const rawQuery = pendingSearchJump;
-    const query = (rawQuery || '').toLowerCase();
+    const normalizedQuery = normalizeForSearch(rawQuery || '');
+    const qTokensManual = (normalizedQuery || '') ? normalizedQuery.split(' ').filter(Boolean) : [];
 
     const matchesQuery = a => {
       if (!a) return false;
-      const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : [a.name, a.player, a.id, a.levelID, a.submitter, (a.tags || []).join(' ')].filter(Boolean).join(' ').toLowerCase();
-      return hay.includes(query);
+      if (manualController.aborted) return false;
+      if (!qTokensManual.length) return false;
+      const itemTokens = Array.isArray(a && a._searchTokens) && a._searchTokens.length ? a._searchTokens : (a && a._searchableNormalized ? tokenizeForSearch(a._searchableNormalized) : tokenizeForSearch(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' '))));
+      if (!itemTokens || itemTokens.length === 0) return false;
+      return qTokensManual.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)));
     };
 
     const respectsTagFilters = a => {
+      if (manualController.aborted) return false;
       const tags = (a.tags || []).map(t => t.toUpperCase());
       const ft = filterTagsRef.current || { include: [], exclude: [] };
       if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
@@ -1866,8 +1949,23 @@ export default function SharedList({
     };
 
     const baseList = (devModeRef.current && reorderedRef.current) ? reorderedRef.current : achievementsRef.current || [];
-    const preFiltered = baseList.filter(a => respectsTagFilters(a));
-    const matchingItems = preFiltered.filter(a => matchesQuery(a));
+    const preFiltered = [];
+    for (let i = 0; i < baseList.length; i++) {
+      if (manualController.aborted) break;
+      const a = baseList[i];
+      try { if (respectsTagFilters(a)) preFiltered.push(a); } catch (e) { }
+    }
+    if (manualController.aborted) {
+      setPendingSearchJump(null);
+      setSearchJumpPending(false);
+      return;
+    }
+    const matchingItems = [];
+    for (let i = 0; i < preFiltered.length; i++) {
+      if (manualController.aborted) break;
+      const a = preFiltered[i];
+      try { if (matchesQuery(a)) matchingItems.push(a); } catch (e) { }
+    }
     if (!matchingItems || matchingItems.length === 0) {
       setPendingSearchJump(null);
       setSearchJumpPending(false);
@@ -1885,20 +1983,22 @@ export default function SharedList({
         setScrollToIdx(targetIdxInPreFiltered);
         setHighlightedIdx(targetIdxInPreFiltered);
       } else {
-        const sLower = (rawQuery || '').toLowerCase();
+        const normalizedQueryLocal = normalizeForSearch(rawQuery || '');
         let visibleFiltered;
-        if (searchLower === query && Array.isArray(filtered)) {
+        if (searchNormalized === normalizedQueryLocal && Array.isArray(filtered)) {
           visibleFiltered = filtered;
         } else {
           visibleFiltered = (achievementsRef.current || []).filter(a => {
-            if (sLower) {
-              const hay = (a && a._searchable && typeof a._searchable === 'string') ? a._searchable : (typeof a.name === 'string' ? a.name.toLowerCase() : '');
-              if (!hay || !hay.includes(sLower)) return false;
-            }
             const tags = (a.tags || []).map(t => t.toUpperCase());
             const ft = filterTagsRef.current || { include: [], exclude: [] };
             if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
             if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+            if (normalizedQueryLocal) {
+              const itemTokens = Array.isArray(a && a._searchTokens) && a._searchTokens.length ? a._searchTokens : (a && a._searchableNormalized ? tokenizeForSearch(a._searchableNormalized) : tokenizeForSearch(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' '))));
+              if (!itemTokens || itemTokens.length === 0) return false;
+              const qts = (normalizedQueryLocal || '').split(' ').filter(Boolean);
+              if (!qts.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
+            }
             return true;
           });
         }
@@ -1918,6 +2018,8 @@ export default function SharedList({
     setPendingSearchJump(null);
     setSearchJumpPending(false);
   }, [debouncedManualSearch, pendingSearchJump, filtered, searchLower]);
+
+
 
   const baseDev = devMode && reordered ? reordered : achievements;
 
@@ -2209,23 +2311,23 @@ export default function SharedList({
       const base = (devMode && reordered) ? reordered || [] : achievements || [];
       const extras = Object.values(extraLists).flat().filter(Boolean);
       const items = [...base, ...extras];
-        const sig = _makePasteSignature(items);
-        let idx = null;
-        if (sig && _pasteIndexCache.has(sig)) {
-          idx = _pasteIndexCache.get(sig);
-        } else {
-          idx = new Array(items.length);
-          for (let i = 0; i < items.length; i++) {
-            const a = items[i];
-            idx[i] = {
-              achievement: a,
-              searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-                .filter(Boolean).join(' ').toLowerCase()
-            };
-          }
-          try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
+      const sig = _makePasteSignature(items);
+      let idx = null;
+      if (sig && _pasteIndexCache.has(sig)) {
+        idx = _pasteIndexCache.get(sig);
+      } else {
+        idx = new Array(items.length);
+        for (let i = 0; i < items.length; i++) {
+          const a = items[i];
+          idx[i] = {
+            achievement: a,
+            searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+              .filter(Boolean).join(' ').toLowerCase()
+          };
         }
-        setPasteIndex(idx);
+        try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
+      }
+      setPasteIndex(idx);
     }
 
     const out = [];
