@@ -15,6 +15,7 @@ const shallowEqual = (a, b) => {
   return true;
 };
 const COMPACT_DEVMODE_BTN = { fontSize: 12, padding: '4px 6px', borderRadius: 4, cursor: 'pointer', margin: 0, pointerEvents: 'auto' };
+
 const DevToolbar = React.memo(function DevToolbar({
   devMode,
   handleCopyJson,
@@ -26,9 +27,7 @@ const DevToolbar = React.memo(function DevToolbar({
 }) {
   if (!devMode) return null;
   const [collapsed, setCollapsed] = useState(false);
-
   const handleToggleCollapsed = useCallback(() => setCollapsed(c => !c), []);
-
   const icons = {
     copy: '📋',
     file: '📂',
@@ -41,19 +40,18 @@ const DevToolbar = React.memo(function DevToolbar({
 
   if (collapsed) {
     return (
-      <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 13, display: 'flex', gap: 6, alignItems: 'center', pointerEvents: 'none' }}>
-        <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={{ ...COMPACT_DEVMODE_BTN }}>{icons.collapse}</button>
+      <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 13, display: 'flex', gap: 6, alignItems: 'center' }}>
+        <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={COMPACT_DEVMODE_BTN}>{icons.collapse}</button>
         <button title="Copy .json" aria-label="Copy .json" onClick={handleCopyJson} style={COMPACT_DEVMODE_BTN}>{icons.copy}</button>
-        
       </div>
     );
   }
 
   return (
-    <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 12, pointerEvents: 'none' }}>
+    <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 12 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span className="devmode-title" style={{ fontSize: 12, marginRight: 8 }}>Developer Mode Enabled (SHIFT+M)</span>
-        <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={{ ...COMPACT_DEVMODE_BTN }}>{icons.collapse}</button>
+        <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={COMPACT_DEVMODE_BTN}>{icons.collapse}</button>
       </div>
       <div className="devmode-btn-row" style={{ gap: 6, display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginTop: 6 }}>
         <button className="devmode-btn" onClick={handleCopyJson} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.copy}</span>Copy .json</button>
@@ -71,9 +69,7 @@ const DevToolbar = React.memo(function DevToolbar({
               reader.onload = evt => {
                 try {
                   const json = JSON.parse(evt.target.result);
-                  if (typeof onImportAchievementsJson === 'function') {
-                    onImportAchievementsJson(json);
-                  }
+                  if (typeof onImportAchievementsJson === 'function') onImportAchievementsJson(json);
                 } catch (err) {
                   alert('Invalid achievements.json file.');
                 }
@@ -95,6 +91,7 @@ const DevToolbar = React.memo(function DevToolbar({
     </div>
   );
 }, (p, n) => p.devMode === n.devMode && p.handleCopyJson === n.handleCopyJson && p.handleShowNewForm === n.handleShowNewForm);
+
 const TAG_BUTTON_BASE = { fontSize: 11, padding: '3px 6px', border: '1px solid #ccc', borderRadius: 3, cursor: 'pointer' };
 const TAG_PILL_STYLE = { display: 'inline-block', background: '#ddd', padding: '2px 6px', margin: '2px', borderRadius: 4, cursor: 'pointer' };
 const TagButton = React.memo(function TagButton({ tag, selected, onToggle }) {
