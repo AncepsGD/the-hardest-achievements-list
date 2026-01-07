@@ -1,11 +1,12 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
-import { createPortal } from 'react-dom';
 import Fuse from 'fuse.js';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+  const hoveredSetterRef = useRef(null);
+  useEffect(() => { hoveredSetterRef.current = setHoveredIdx; }, [setHoveredIdx]);
 import Sidebar from '../components/Sidebar';
 import Background from '../components/Background';
 import { useDateFormat } from '../components/DateFormatContext';
@@ -441,45 +442,6 @@ function normalizeYoutubeUrl(input) {
   return null;
 }
 
-export function SharedListHoverLayer({ children }) {
-  const [hover, setHover] = useState(null);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-
-  function onEnter(a, e) {
-    setHover(a);
-    setPos({ x: e.clientX, y: e.clientY });
-  }
-  function onMove(e) {
-    if (hover) setPos({ x: e.clientX, y: e.clientY });
-  }
-  function onLeave() {
-    setHover(null);
-  }
-
-  return (
-    <>
-      {children({ onEnter, onMove, onLeave })}
-      {hover && typeof document !== 'undefined' && createPortal(
-        <div
-          style={{
-            position: 'fixed',
-            top: pos.y + 12,
-            left: pos.x + 12,
-            zIndex: 9999,
-            padding: '6px 10px',
-            background: '#111',
-            color: '#fff',
-            pointerEvents: 'none'
-          }}
-        >
-          {hover.name}
-        </div>,
-        document.body
-      )}
-    </>
-  );
-}
-
 function sanitizeImageUrl(input) {
   if (!input || typeof input !== 'string') return null;
   const s = input.trim();
@@ -606,7 +568,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
@@ -645,11 +607,11 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
         aria-disabled={devMode ? 'true' : undefined}
       >
         <div
-          className={`achievement-item ${isHovered ? 'hovered' : ''}`}
+          className="achievement-item"
           tabIndex={0}
           style={{ cursor: 'pointer' }}
-          onMouseEnter={onHoverEnter}
-          onMouseLeave={onHoverLeave}
+          onMouseEnter={typeof onHoverEnter === 'function' ? onHoverEnter : undefined}
+          onMouseLeave={typeof onHoverLeave === 'function' ? onHoverLeave : undefined}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -682,7 +644,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           </div>
           { }
           {onEdit && (
-            <div className="hover-menu" style={{ display: isHovered ? 'flex' : 'none' }}>
+            <div className="hover-menu">
               <button className="hover-menu-btn" onClick={onEdit} title="Edit achievement">
                 <span className="bi bi-pencil" aria-hidden="true"></span>
               </button>
@@ -705,7 +667,6 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.totalAchievements === next.totalAchievements
     && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
-    && prev.isHovered === next.isHovered
     && prev.listType === next.listType;
 });
 
@@ -1077,7 +1038,7 @@ export default function SharedList({
   }, [sortKey]);
   const [bgImage, setBgImage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
-  const [hoveredIdx, setHoveredIdx] = useState(null);
+  
   const [duplicateThumbKeys, setDuplicateThumbKeys] = useState(new Set());
   const [autoThumbMap, setAutoThumbMap] = useState(() => {
     try {
@@ -2277,8 +2238,7 @@ export default function SharedList({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
-    hoveredIdx,
-    setHoveredIdx,
+    hoveredSetterRef,
     mode,
     devMode,
     autoThumbMap,
@@ -2295,13 +2255,13 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-  }), [visibleList, isMobile, duplicateThumbKeys, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
+  }), [visibleList, isMobile, duplicateThumbKeys, hoveredSetterRef, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
       filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
-      hoveredIdx, setHoveredIdx, handleEditAchievement,
+      hoveredSetterRef, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
@@ -2325,23 +2285,14 @@ export default function SharedList({
     }, [index]);
 
     return (
-      <div
-        data-index={index}
-        style={itemStyle}
-        key={a && a.id ? a.id : index}
-        className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}
-        onMouseEnter={e => { try { if (typeof setHoveredIdx === 'function') setHoveredIdx(index); if (data && typeof data.onEnter === 'function') data.onEnter(a, e); } catch (err) {} }}
-        onMouseMove={e => { try { if (data && typeof data.onMove === 'function') data.onMove(e); } catch (err) {} }}
-        onMouseLeave={e => { try { if (typeof setHoveredIdx === 'function') setHoveredIdx(null); if (data && typeof data.onLeave === 'function') data.onLeave(e); } catch (err) {} }}
-      >
+      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}>
         {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(index) : undefined}
-            onHoverLeave={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(null) : undefined}
-            isHovered={hoveredIdx === index}
+            onHoverEnter={devMode && hoveredSetterRef && typeof hoveredSetterRef.current === 'function' ? () => hoveredSetterRef.current(index) : undefined}
+            onHoverLeave={devMode && hoveredSetterRef && typeof hoveredSetterRef.current === 'function' ? () => hoveredSetterRef.current(null) : undefined}
             devMode={devMode}
             autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false}
             totalAchievements={filtered.length}
@@ -2378,7 +2329,6 @@ export default function SharedList({
     if (p.usePlatformers !== n.usePlatformers) return false;
     if (p.mode !== n.mode) return false;
     if (p.hideRank !== n.hideRank) return false;
-    if (p.hoveredIdx !== n.hoveredIdx) return false;
     const pThumb = getThumbnailUrl(pItem, p.isMobile);
     const nThumb = getThumbnailUrl(nItem, n.isMobile);
     const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
@@ -3505,36 +3455,32 @@ export default function SharedList({
             (visibleList && visibleList.length === 0) ? (
               <div className="no-achievements">No achievements found.</div>
             ) : (
-              <SharedListHoverLayer>
-                {({ onEnter, onMove, onLeave }) => (
-                  <ListWindow
-                    ref={listRef}
-                    height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
-                    itemCount={Math.min(visibleCount, (visibleList || []).length)}
-                    itemSize={150}
-                    overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
-                    width={'100%'}
-                    style={{ overflowX: 'hidden' }}
-                    itemData={{ ...listItemData, onEnter, onMove, onLeave }}
-                    onItemsRendered={({ visibleStopIndex }) => {
-                      try {
-                        const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
-                        const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
-                        if (pageSize === 'all') return;
-                        if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                          setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
-                        }
-                      } catch (err) {
-                        if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                          setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
-                        }
-                      }
-                    }}
-                  >
-                    {ListRow}
-                  </ListWindow>
-                )}
-              </SharedListHoverLayer>
+              <ListWindow
+                ref={listRef}
+                height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
+                itemCount={Math.min(visibleCount, (visibleList || []).length)}
+                itemSize={150}
+                overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
+                width={'100%'}
+                style={{ overflowX: 'hidden' }}
+                itemData={listItemData}
+                onItemsRendered={({ visibleStopIndex }) => {
+                  try {
+                    const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
+                    const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
+                    if (pageSize === 'all') return;
+                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                      setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
+                    }
+                  } catch (err) {
+                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                      setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
+                    }
+                  }
+                }}
+              >
+                {ListRow}
+              </ListWindow>
             )
           )}
         </section>
