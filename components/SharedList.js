@@ -202,17 +202,6 @@ let _enhanceCacheMisses = 0;
 const _enhanceCacheWrites = new Map();
 const _enhanceCacheHitCounts = new Map();
 
-const _pasteIndexCache = new Map();
-
-function _makePasteSignature(items) {
-  try {
-    if (!items || !items.length) return '';
-    return items.map(a => String((a && (a.id || a.name || a.levelID)) || '')).join('|');
-  } catch (e) {
-    return '';
-  }
-}
-
 function getEnhanceCacheStats() {
   try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
 }
@@ -989,8 +978,6 @@ export default function SharedList({
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
   const [pasteIndex, setPasteIndex] = useState([]);
-  const pastePrefixMapRef = useRef(new Map());
-  const pasteSigRef = useRef(null);
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, { minDelay: 80, maxDelay: 250, useIdle: true });
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
@@ -2429,45 +2416,34 @@ export default function SharedList({
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
 
-    if (!pasteIndex || pasteIndex.length === 0 || !pastePrefixMapRef.current) {
-      const out = [];
-      for (let i = 0; i < (pasteIndex || []).length && out.length < 50; i++) {
-        const entry = pasteIndex[i];
-        if (!entry || !entry.searchable) continue;
-        if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
+    if (!pasteIndex || pasteIndex.length === 0) {
+      const base = (devMode && reordered) ? reordered || [] : achievements || [];
+      const extras = Object.values(extraLists).flat().filter(Boolean);
+      const items = [...base, ...extras];
+      const sig = _makePasteSignature(items);
+      let idx = null;
+      if (sig && _pasteIndexCache.has(sig)) {
+        idx = _pasteIndexCache.get(sig);
+      } else {
+        idx = new Array(items.length);
+        for (let i = 0; i < items.length; i++) {
+          const a = items[i];
+          idx[i] = {
+            achievement: a,
+            searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+              .filter(Boolean).join(' ').toLowerCase()
+          };
+        }
+        try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
       }
-      return out;
-    }
-
-    const parts = q.split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return [];
-
-    const prefixMap = pastePrefixMapRef.current;
-    const first = parts[0];
-    let key = first;
-    while (key.length > 0 && !prefixMap.has(key)) {
-      key = key.slice(0, -1);
-    }
-
-    let candidateIdxs = null;
-    if (key && prefixMap.has(key)) candidateIdxs = prefixMap.get(key) || [];
-    if (!candidateIdxs || candidateIdxs.length === 0) {
-      candidateIdxs = Array.from({ length: pasteIndex.length }, (_, i) => i);
+      setPasteIndex(idx);
     }
 
     const out = [];
-    const limit = 200;
-    let checked = 0;
-    for (let k = 0; k < candidateIdxs.length && out.length < 50 && checked < limit; k++) {
-      const i = candidateIdxs[k];
+    for (let i = 0; i < pasteIndex.length && out.length < 50; i++) {
       const entry = pasteIndex[i];
       if (!entry || !entry.searchable) continue;
-      checked++;
-      let ok = true;
-      for (let p = 0; p < parts.length; p++) {
-        if (entry.searchable.indexOf(parts[p]) === -1) { ok = false; break; }
-      }
-      if (ok) out.push(entry.achievement);
+      if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
     }
     return out;
   }
@@ -2508,32 +2484,6 @@ export default function SharedList({
       try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
     }
     setPasteIndex(idx);
-
-    try {
-      const map = new Map();
-      for (let i = 0; i < idx.length; i++) {
-        const entry = idx[i];
-        if (!entry || !entry.searchable) continue;
-        const toks = String(entry.searchable || '').split(/\s+/).filter(Boolean);
-        toks.forEach(tok => {
-          const maxLen = Math.min(12, tok.length);
-          for (let L = 2; L <= maxLen; L++) {
-            const key = tok.slice(0, L);
-            const arr = map.get(key) || [];
-            if (arr.length === 0 || arr[arr.length - 1] !== i) arr.push(i);
-            map.set(key, arr);
-          }
-          const arrFull = map.get(tok) || [];
-          if (arrFull.length === 0 || arrFull[arrFull.length - 1] !== i) arrFull.push(i);
-          map.set(tok, arrFull);
-        });
-      }
-      pastePrefixMapRef.current = map;
-      pasteSigRef.current = sig || null;
-    } catch (e) {
-      pastePrefixMapRef.current = new Map();
-      pasteSigRef.current = sig || null;
-    }
   }, [achievements, extraLists, devMode, reordered, debouncedPasteSearch]);
 
   function handlePasteSelect(item) {
