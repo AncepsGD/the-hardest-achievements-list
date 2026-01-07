@@ -2629,23 +2629,12 @@ export default function SharedList({
     const filename = usePlatformers
       ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
       : dataFileName;
-    if (navigator.clipboard) {
-      try { await navigator.clipboard.writeText(json); } catch (e) { }
-      alert(`Copied new ${filename} to clipboard!`);
-    } else {
-      const textarea = document.createElement('textarea');
-      textarea.value = json;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      alert(`Copied new ${filename} to clipboard!`);
-    }
+
+    let compressedCopied = false;
 
     if (typeof window !== 'undefined') {
       try {
-        const encoder = new TextEncoder();
-        const input = encoder.encode(json);
+        const inputBlob = new Blob([json], { type: 'application/json' });
 
         const triggerDownload = (blob, outName) => {
           try {
@@ -2660,28 +2649,49 @@ export default function SharedList({
           } catch (e) { }
         };
 
-        if (typeof CompressionStream === 'function') {
-          try {
-            const cs = new CompressionStream('gzip');
-            const compressedStream = new Response(input).body.pipeThrough(cs);
-            const blob = await new Response(compressedStream).blob();
-            triggerDownload(blob, filename + '.gz');
-          } catch (e) { }
-          try {
-            const cs2 = new CompressionStream('brotli');
-            const compressedStream2 = new Response(input).body.pipeThrough(cs2);
-            const blob2 = await new Response(compressedStream2).blob();
-            triggerDownload(blob2, filename + '.br');
-          } catch (e) {
+        if (typeof CompressionStream !== 'undefined') {
+          const algs = ['br', 'gzip'];
+          for (const alg of algs) {
             try {
-              const cs3 = new CompressionStream('br');
-              const compressedStream3 = new Response(input).body.pipeThrough(cs3);
-              const blob3 = await new Response(compressedStream3).blob();
-              triggerDownload(blob3, filename + '.br');
-            } catch (e2) { }
+              const cs = new CompressionStream(alg);
+              const compressedStream = inputBlob.stream().pipeThrough(cs);
+              const blob = await new Response(compressedStream).blob();
+
+              if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                const mime = alg === 'br' ? 'application/octet-stream' : 'application/gzip';
+                try {
+                  await navigator.clipboard.write([new ClipboardItem({ [mime]: blob })]);
+                  alert(`Copied compressed ${filename} (${alg}) to clipboard!`);
+                  compressedCopied = true;
+                  break;
+                } catch (cw) {
+                  console.warn('clipboard write failed for', alg, cw);
+                }
+              }
+
+              triggerDownload(blob, filename + (alg === 'gzip' ? '.gz' : '.br'));
+              break;
+            } catch (e) {
+              console.warn(alg + ' CompressionStream failed', e);
+            }
           }
         }
       } catch (e) {
+      }
+    }
+
+    if (!compressedCopied) {
+      if (navigator.clipboard) {
+        try { await navigator.clipboard.writeText(json); } catch (e) { }
+        alert(`Copied new ${filename} to clipboard!`);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = json;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        alert(`Copied new ${filename} to clipboard!`);
       }
     }
   }
