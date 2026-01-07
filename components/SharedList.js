@@ -566,7 +566,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, isHovered, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
@@ -640,14 +640,11 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               )}
             </div>
           </div>
-          { }
-          (
-            <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8, display: 'flex', opacity: 0, transition: 'opacity 120ms ease', pointerEvents: 'none' }}>
-              <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
-                <span className="bi bi-pencil" aria-hidden="true"></span>
-              </button>
-            </div>
-          )
+          <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
+            <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
+              <span className="bi bi-pencil" aria-hidden="true"></span>
+            </button>
+          </div>
         </div>
       </a>
     </Link>
@@ -668,7 +665,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main' }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -697,7 +694,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
         <div
           className="achievement-item"
           tabIndex={0}
-          style={{ cursor: devMode ? 'not-allowed' : 'pointer', transition: 'opacity 0.1s' }}
+          style={{ cursor: devMode ? 'not-allowed' : 'pointer', transition: 'opacity 0.1s', position: 'relative' }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -733,6 +730,11 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               )}
             </div>
           </div>
+          <div className={"hover-menu" + ((typeof onEditHandler !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
+            <button className="hover-menu-btn" onClick={typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined} title={typeof onEditHandler === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEditHandler === 'function' ? undefined : 'true'}>
+              ✏️
+            </button>
+          </div>
         </div>
       </a>
     </Link>
@@ -750,8 +752,11 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
     && prev.showTiers === next.showTiers
-    && prev.listType === next.listType;
+    && prev.listType === next.listType
+    && prev.onEditHandler === next.onEditHandler
+    && prev.onEditIdx === next.onEditIdx;
 });
+
 
 function useDebouncedValue(value, opt) {
   const [debounced, setDebounced] = useState(value);
@@ -2323,7 +2328,7 @@ export default function SharedList({
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} />;
           })()
         }
       </div>
