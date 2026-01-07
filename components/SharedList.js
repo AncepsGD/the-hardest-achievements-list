@@ -869,6 +869,9 @@ export default function SharedList({
   const [searchJumpPending, setSearchJumpPending] = useState(false);
   const listRef = useRef(null);
   const [search, setSearch] = useState('');
+  const searchInputRef = useRef(null);
+  const inputValueRef = useRef(search);
+  const setSearchDebounceRef = useRef(null);
   const [manualSearch, setManualSearch] = useState('');
   const [highlightedIdx, setHighlightedIdx] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState('');
@@ -906,6 +909,32 @@ export default function SharedList({
       document.activeElement.blur();
     }
   }, []);
+
+  const handleVisibleInputChange = useCallback((e) => {
+    try { inputValueRef.current = e.target.value; } catch (err) { inputValueRef.current = ''; }
+    try { setManualSearch(''); } catch (err) { }
+    if (setSearchDebounceRef.current) clearTimeout(setSearchDebounceRef.current);
+    setSearchDebounceRef.current = setTimeout(() => {
+      try { setSearch(inputValueRef.current || ''); } catch (err) { }
+      setSearchDebounceRef.current = null;
+    }, 120);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      try { if (setSearchDebounceRef.current) clearTimeout(setSearchDebounceRef.current); } catch (e) { }
+    };
+  }, []);
+
+  useEffect(() => {
+    try {
+      const el = searchInputRef.current;
+      if (el && typeof el.value === 'string' && el.value !== (search || '')) {
+        el.value = search || '';
+        inputValueRef.current = el.value;
+      }
+    } catch (e) { }
+  }, [search]);
   const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
@@ -2231,6 +2260,7 @@ export default function SharedList({
     const {
       filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
+      hoveredIdx, setHoveredIdx, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
@@ -2256,7 +2286,23 @@ export default function SharedList({
     return (
       <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}>
         {mode === 'timeline' ?
-          <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
+          <TimelineAchievementCard
+            achievement={a}
+            previousAchievement={index > 0 ? filtered[index - 1] : null}
+            onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
+            onHoverEnter={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(index) : undefined}
+            onHoverLeave={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(null) : undefined}
+            isHovered={hoveredIdx === index}
+            devMode={devMode}
+            autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false}
+            totalAchievements={filtered.length}
+            achievements={filtered}
+            showTiers={showTiers}
+            mode={mode}
+            usePlatformers={usePlatformers}
+            extraLists={extraLists}
+            listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')}
+          />
           :
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
@@ -2283,6 +2329,7 @@ export default function SharedList({
     if (p.usePlatformers !== n.usePlatformers) return false;
     if (p.mode !== n.mode) return false;
     if (p.hideRank !== n.hideRank) return false;
+    if (p.hoveredIdx !== n.hoveredIdx) return false;
     const pThumb = getThumbnailUrl(pItem, p.isMobile);
     const nThumb = getThumbnailUrl(nItem, n.isMobile);
     const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
@@ -3373,8 +3420,9 @@ export default function SharedList({
               <input
                 type="text"
                 placeholder="Search achievements..."
-                value={search}
-                onChange={e => { setManualSearch(''); setSearch(e.target.value); }}
+                ref={searchInputRef}
+                defaultValue={search}
+                onChange={handleVisibleInputChange}
                 onKeyDown={handleSearchKeyDown}
                 aria-label="Search achievements"
                 className="search-input"
