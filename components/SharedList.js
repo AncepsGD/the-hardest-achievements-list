@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
+import Fuse from 'fuse.js';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -201,6 +202,17 @@ let _enhanceCacheMisses = 0;
 const _enhanceCacheWrites = new Map();
 const _enhanceCacheHitCounts = new Map();
 
+const _pasteIndexCache = new Map();
+
+function _makePasteSignature(items) {
+  try {
+    if (!items || !items.length) return '';
+    return items.map(a => String((a && (a.id || a.name || a.levelID)) || '')).join('|');
+  } catch (e) {
+    return '';
+  }
+}
+
 function getEnhanceCacheStats() {
   try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
 }
@@ -225,44 +237,6 @@ function validateEnhanceCache(opts = {}) {
   } catch (e) { return { hitRate: 0, hits: 0, misses: 0, unstable: [], healthy: false }; }
 }
 
-function resetEnhanceCache() {
-  try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
-}
-
-const _pasteIndexCache = new Map();
-
-function _makePasteSignature(items) {
-  try {
-    if (!Array.isArray(items)) return '';
-    const parts = new Array(items.length);
-    for (let i = 0; i < items.length; i++) {
-      const a = items[i] || {};
-      if (a.id !== undefined && a.id !== null) parts[i] = `id:${String(a.id)}`;
-      else if (a.levelID !== undefined && a.levelID !== null) parts[i] = `lvl:${String(a.levelID)}`;
-      else if (a.name) parts[i] = `n:${String(a.name).slice(0, 60)}`;
-      else parts[i] = `idx:${i}`;
-    }
-    return parts.join('|');
-  } catch (e) {
-    return '';
-  }
-}
-
-export { getEnhanceCacheStats, resetEnhanceCache, getEnhanceCachePerIdStats, validateEnhanceCache };
-
-function _makeEnhanceSignature(a) {
-  try {
-    const tags = Array.isArray(a.tags) ? a.tags.slice().sort().join('|') : '';
-    const thumb = sanitizeImageUrl(a && a.thumbnail) || '';
-    const lengthNum = Number(a.length) || 0;
-    const version = a && a.version ? String(a.version) : '';
-    const name = a && a.name ? String(a.name) : '';
-    return `${tags}::${thumb}::${lengthNum}::${version}::${name}`;
-  } catch (e) {
-    return '';
-  }
-}
-
 function normalizeForSearch(input) {
   if (!input || typeof input !== 'string') return '';
   let s = input.trim().toLowerCase();
@@ -276,7 +250,6 @@ function normalizeForSearch(input) {
     'favourite': 'favorite',
     'centre': 'center',
     'behaviour': 'behavior',
-    'organisation': 'organization',
     'organisation': 'organization',
     'gaol': 'jail'
   };
@@ -740,12 +713,58 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     && prev.listType === next.listType;
 });
 
-function useDebouncedValue(value, delay) {
+function useDebouncedValue(value, opt) {
   const [debounced, setDebounced] = useState(value);
+  const lastChangeRef = useRef(Date.now());
+  const timerRef = useRef(null);
+  const idleRef = useRef(null);
+
+  const resolveOptions = (o) => {
+    if (typeof o === 'number') return { minDelay: o, maxDelay: o, useIdle: false };
+    return Object.assign({ minDelay: 120, maxDelay: 400, useIdle: false }, o || {});
+  };
+
+  const { minDelay, maxDelay, useIdle } = resolveOptions(opt);
+
   useEffect(() => {
-    const handler = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(handler);
-  }, [value, delay]);
+    const now = Date.now();
+    const sinceLast = Math.max(0, now - (lastChangeRef.current || 0));
+    lastChangeRef.current = now;
+
+    const delay = sinceLast < 250 ? minDelay : maxDelay;
+
+    if (timerRef.current) clearTimeout(timerRef.current);
+    if (idleRef.current && typeof cancelIdleCallback === 'function') {
+      try { cancelIdleCallback(idleRef.current); } catch (e) { }
+    }
+
+    let finished = false;
+
+    timerRef.current = setTimeout(() => {
+      finished = true;
+      setDebounced(value);
+    }, delay);
+
+    if (useIdle && typeof requestIdleCallback === 'function') {
+      try {
+        idleRef.current = requestIdleCallback(() => {
+          if (finished) return;
+          finished = true;
+          if (timerRef.current) clearTimeout(timerRef.current);
+          setDebounced(value);
+        }, { timeout: maxDelay });
+      } catch (e) {
+      }
+    }
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (idleRef.current && typeof cancelIdleCallback === 'function') {
+        try { cancelIdleCallback(idleRef.current); } catch (e) { }
+      }
+    };
+  }, [value, minDelay, maxDelay, useIdle]);
+
   return debounced;
 }
 
@@ -781,6 +800,23 @@ export default function SharedList({
   const [achievements, setAchievements] = useState([]);
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
+  const highlightedIdxRef = useRef(null);
+  const highlightListenersRef = useRef(new Map());
+  function updateHighlightedIdx(newIdx) {
+    try {
+      const oldIdx = highlightedIdxRef.current;
+      highlightedIdxRef.current = newIdx;
+      try { setHighlightedIdx(newIdx); } catch (e) { }
+      if (oldIdx !== null && oldIdx !== undefined) {
+        const s = highlightListenersRef.current.get(oldIdx);
+        if (s) s.forEach(fn => { try { fn(false); } catch (e) { } });
+      }
+      if (newIdx !== null && newIdx !== undefined) {
+        const s2 = highlightListenersRef.current.get(newIdx);
+        if (s2) s2.forEach(fn => { try { fn(true); } catch (e) { } });
+      }
+    } catch (e) { }
+  }
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
       const v = typeof window !== 'undefined' ? window.localStorage.getItem('usePlatformers') : null;
@@ -796,8 +832,8 @@ export default function SharedList({
   const [manualSearch, setManualSearch] = useState('');
   const [highlightedIdx, setHighlightedIdx] = useState(null);
   const [noMatchMessage, setNoMatchMessage] = useState('');
-  const debouncedSearch = useDebouncedValue(search, 300);
-  const debouncedManualSearch = useDebouncedValue(manualSearch, 300);
+  const debouncedSearch = useDebouncedValue(search, { minDelay: 120, maxDelay: 400, useIdle: true });
+  const debouncedManualSearch = useDebouncedValue(manualSearch, { minDelay: 100, maxDelay: 300, useIdle: false });
 
   const handleSearchKeyDown = useCallback((e) => {
     if (e.key !== 'Enter') return;
@@ -953,7 +989,9 @@ export default function SharedList({
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
   const [pasteIndex, setPasteIndex] = useState([]);
-  const debouncedPasteSearch = useDebouncedValue(pasteSearch, 200);
+  const pastePrefixMapRef = useRef(new Map());
+  const pasteSigRef = useRef(null);
+  const debouncedPasteSearch = useDebouncedValue(pasteSearch, { minDelay: 80, maxDelay: 250, useIdle: true });
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
@@ -1843,50 +1881,129 @@ export default function SharedList({
       setTimeout(() => {
         if (controller.aborted) return;
         const items = Array.isArray(achievements) ? achievements : [];
-        const base = [];
-        for (let i = 0; i < items.length; i++) {
+
+        const batchSize = Math.max(100, Math.floor((items.length || 0) / 50));
+        const include = _normalizedFilterTags.include || [];
+        const exclude = _normalizedFilterTags.exclude || [];
+        const tagFiltered = [];
+
+        let readIndex = 0;
+        function processTagBatch() {
+          if (controller.aborted) return onProcessingComplete(null);
+          const end = Math.min(items.length, readIndex + batchSize);
+          for (let i = readIndex; i < end; i++) {
+            try {
+              const a = items[i];
+              const tags = (a && a.tags) ? (a.tags || []).map(t => String(t || '').toUpperCase()) : [];
+              if (include.length && !include.every(tag => tags.includes(tag))) continue;
+              if (exclude.length && exclude.some(tag => tags.includes(tag))) continue;
+              tagFiltered.push(a);
+            } catch (e) { }
+          }
+          readIndex = end;
+          if (readIndex < items.length) {
+            setTimeout(processTagBatch, 0);
+          } else {
+            if (!queryTokens || !queryTokens.length) return onProcessingComplete(tagFiltered);
+            try {
+              if (controller.aborted) return onProcessingComplete(null);
+              const q = queryTokens.join(' ');
+
+              const exactMatches = [];
+              for (let i = 0; i < tagFiltered.length; i++) {
+                if (controller.aborted) break;
+                try {
+                  const a = tagFiltered[i];
+                  const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' ')));
+                  if (!itemTokens || itemTokens.length === 0) continue;
+                  if (!queryTokens.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) continue;
+                  exactMatches.push(a);
+                } catch (e) { }
+              }
+
+              onProcessingComplete(exactMatches);
+
+              setTimeout(() => {
+                try {
+                  if (controller.aborted) return;
+                  const fuseOpts = {
+                    keys: [
+                      { name: 'name', weight: 0.6 },
+                      { name: 'player', weight: 0.2 },
+                      { name: 'id', weight: 0.1 },
+                      { name: 'levelID', weight: 0.05 },
+                      { name: 'tags', weight: 0.05 }
+                    ],
+                    threshold: 0.35,
+                    ignoreLocation: true,
+                    minMatchCharLength: 2,
+                  };
+                  const fuse = new Fuse(tagFiltered, fuseOpts);
+                  const res = fuse.search(q);
+                  const fuzzy = res.map(r => (r && r.item) ? r.item : r);
+                  if (controller.aborted) return;
+                  const seen = new Set();
+                  const merged = [];
+                  exactMatches.forEach(it => { const id = (it && it.id) ? String(it.id) : null; if (id) seen.add(id); merged.push(it); });
+                  fuzzy.forEach(it => { const id = (it && it.id) ? String(it.id) : null; if (id && seen.has(id)) return; if (!id && merged.includes(it)) return; merged.push(it); });
+                  if (merged.length > exactMatches.length) onProcessingComplete(merged);
+                } catch (e) { }
+              }, 0);
+
+              return;
+            } catch (e) {
+              return onProcessingComplete(tagFiltered);
+            }
+          }
+        }
+
+        function onProcessingComplete(finalResult) {
           if (controller.aborted) return;
+          const result = finalResult || [];
           try {
-            if (filterFn(items[i])) base.push(items[i]);
+            if (controller.aborted) return;
+            if (sortKey === 'levelID') {
+              const onlyWithLevel = result.filter(a => {
+                const num = Number(a && a.levelID);
+                return !isNaN(num) && num > 0;
+              });
+              const copy = [...onlyWithLevel];
+              copy.sort((x, y) => compareByKey(x, y, 'levelID'));
+              if (sortDir === 'desc') copy.reverse();
+              try { setFiltered(copy); } catch (e) { }
+              return;
+            }
+            if (sortKey === 'random') {
+              const copy = [...result];
+              const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+              const seed = randomSeed != null ? randomSeed : 1;
+              const rng = mulberry32(seed);
+              for (let i = keys.length - 1; i > 0; i--) {
+                const j = Math.floor(rng() * (i + 1));
+                const t = keys[i];
+                keys[i] = keys[j];
+                keys[j] = t;
+              }
+              const map = {};
+              keys.forEach((k, i) => { map[k] = i; });
+              const getKey = item => (item && item.id) ? String(item.id) : `__idx_${result.indexOf(item)}`;
+              copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
+              try { setFiltered(copy); } catch (e) { }
+              return;
+            }
+            if (sortKey) {
+              const copy = [...result];
+              copy.sort((x, y) => compareByKey(x, y, sortKey));
+              if (sortDir === 'desc') copy.reverse();
+              try { setFiltered(copy); } catch (e) { }
+              return;
+            }
+            try { setFiltered(result); } catch (e) { }
           } catch (e) { }
         }
-        if (controller.aborted) return;
 
-        let result = base;
-        if (sortKey === 'levelID') {
-          const onlyWithLevel = result.filter(a => {
-            const num = Number(a && a.levelID);
-            return !isNaN(num) && num > 0;
-          });
-          const copy = [...onlyWithLevel];
-          copy.sort((x, y) => compareByKey(x, y, 'levelID'));
-          if (sortDir === 'desc') copy.reverse();
-          result = copy;
-        } else if (sortKey === 'random') {
-          const copy = [...result];
-          const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
-          const seed = randomSeed != null ? randomSeed : 1;
-          const rng = mulberry32(seed);
-          for (let i = keys.length - 1; i > 0; i--) {
-            const j = Math.floor(rng() * (i + 1));
-            const t = keys[i];
-            keys[i] = keys[j];
-            keys[j] = t;
-          }
-          const map = {};
-          keys.forEach((k, i) => { map[k] = i; });
-          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${result.indexOf(item)}`;
-          copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-          result = copy;
-        } else if (sortKey) {
-          const copy = [...result];
-          copy.sort((x, y) => compareByKey(x, y, sortKey));
-          if (sortDir === 'desc') copy.reverse();
-          result = copy;
-        }
-
-        if (controller.aborted) return;
-        try { setFiltered(result); } catch (e) { }
+        processTagBatch();
+        return;
       }, 0);
     });
 
@@ -1970,7 +2087,7 @@ export default function SharedList({
 
       if (devModeRef.current) {
         setScrollToIdx(targetIdxInPreFiltered);
-        setHighlightedIdx(targetIdxInPreFiltered);
+        updateHighlightedIdx(targetIdxInPreFiltered);
       } else {
         const normalizedQueryLocal = normalizeForSearch(rawQuery || '');
         let visibleFiltered;
@@ -1999,7 +2116,7 @@ export default function SharedList({
           setNoMatchMessage('No matching achievement is currently visible with the active filters.');
           window.setTimeout(() => setNoMatchMessage(''), 3000);
         } else {
-          setHighlightedIdx(idxToUse);
+          updateHighlightedIdx(idxToUse);
         }
       }
     }));
@@ -2055,7 +2172,6 @@ export default function SharedList({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
-    highlightedIdx,
     hoveredIdx,
     setHoveredIdx,
     mode,
@@ -2074,19 +2190,36 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-  }), [visibleList, isMobile, duplicateThumbKeys, highlightedIdx, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
+  }), [visibleList, isMobile, duplicateThumbKeys, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
-      filtered, isMobile, duplicateThumbKeys, highlightedIdx, mode, devMode, autoThumbMap, showTiers,
+      filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
     const thumb = useMemo(() => getThumbnailUrl(a, isMobile), [a && a.id, a && a.thumbnail, a && a.levelID, isMobile]);
     const isDup = duplicateThumbKeys.has((thumb || '').trim());
+    const [isHighlightedLocal, setIsHighlightedLocal] = useState(() => highlightedIdxRef.current === index);
+
+    useEffect(() => {
+      const map = highlightListenersRef.current;
+      let set = map.get(index);
+      if (!set) {
+        set = new Set();
+        map.set(index, set);
+      }
+      const cb = (on) => setIsHighlightedLocal(!!on);
+      set.add(cb);
+      try { setIsHighlightedLocal(highlightedIdxRef.current === index); } catch (e) { }
+      return () => {
+        try { set.delete(cb); if (set.size === 0) map.delete(index); } catch (e) { }
+      };
+    }, [index]);
+
     return (
-      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${highlightedIdx === index ? 'search-highlight' : ''}`}>
+      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}>
         {mode === 'timeline' ?
           <TimelineAchievementCard achievement={a} previousAchievement={index > 0 ? filtered[index - 1] : null} onEdit={null} isHovered={false} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} totalAchievements={filtered.length} achievements={filtered} showTiers={showTiers} mode={mode} usePlatformers={usePlatformers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />
           :
@@ -2109,7 +2242,7 @@ export default function SharedList({
     const pId = pItem && pItem.id;
     const nId = nItem && nItem.id;
     if (String(pId) !== String(nId)) return false;
-    if (p.highlightedIdx !== n.highlightedIdx) return false;
+
     if (p.devMode !== n.devMode) return false;
     if (p.showTiers !== n.showTiers) return false;
     if (p.usePlatformers !== n.usePlatformers) return false;
@@ -2296,34 +2429,45 @@ export default function SharedList({
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
 
-    if (!pasteIndex || pasteIndex.length === 0) {
-      const base = (devMode && reordered) ? reordered || [] : achievements || [];
-      const extras = Object.values(extraLists).flat().filter(Boolean);
-      const items = [...base, ...extras];
-      const sig = _makePasteSignature(items);
-      let idx = null;
-      if (sig && _pasteIndexCache.has(sig)) {
-        idx = _pasteIndexCache.get(sig);
-      } else {
-        idx = new Array(items.length);
-        for (let i = 0; i < items.length; i++) {
-          const a = items[i];
-          idx[i] = {
-            achievement: a,
-            searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-              .filter(Boolean).join(' ').toLowerCase()
-          };
-        }
-        try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
+    if (!pasteIndex || pasteIndex.length === 0 || !pastePrefixMapRef.current) {
+      const out = [];
+      for (let i = 0; i < (pasteIndex || []).length && out.length < 50; i++) {
+        const entry = pasteIndex[i];
+        if (!entry || !entry.searchable) continue;
+        if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
       }
-      setPasteIndex(idx);
+      return out;
+    }
+
+    const parts = q.split(/\s+/).filter(Boolean);
+    if (parts.length === 0) return [];
+
+    const prefixMap = pastePrefixMapRef.current;
+    const first = parts[0];
+    let key = first;
+    while (key.length > 0 && !prefixMap.has(key)) {
+      key = key.slice(0, -1);
+    }
+
+    let candidateIdxs = null;
+    if (key && prefixMap.has(key)) candidateIdxs = prefixMap.get(key) || [];
+    if (!candidateIdxs || candidateIdxs.length === 0) {
+      candidateIdxs = Array.from({ length: pasteIndex.length }, (_, i) => i);
     }
 
     const out = [];
-    for (let i = 0; i < pasteIndex.length && out.length < 50; i++) {
+    const limit = 200;
+    let checked = 0;
+    for (let k = 0; k < candidateIdxs.length && out.length < 50 && checked < limit; k++) {
+      const i = candidateIdxs[k];
       const entry = pasteIndex[i];
       if (!entry || !entry.searchable) continue;
-      if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
+      checked++;
+      let ok = true;
+      for (let p = 0; p < parts.length; p++) {
+        if (entry.searchable.indexOf(parts[p]) === -1) { ok = false; break; }
+      }
+      if (ok) out.push(entry.achievement);
     }
     return out;
   }
@@ -2364,6 +2508,32 @@ export default function SharedList({
       try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
     }
     setPasteIndex(idx);
+
+    try {
+      const map = new Map();
+      for (let i = 0; i < idx.length; i++) {
+        const entry = idx[i];
+        if (!entry || !entry.searchable) continue;
+        const toks = String(entry.searchable || '').split(/\s+/).filter(Boolean);
+        toks.forEach(tok => {
+          const maxLen = Math.min(12, tok.length);
+          for (let L = 2; L <= maxLen; L++) {
+            const key = tok.slice(0, L);
+            const arr = map.get(key) || [];
+            if (arr.length === 0 || arr[arr.length - 1] !== i) arr.push(i);
+            map.set(key, arr);
+          }
+          const arrFull = map.get(tok) || [];
+          if (arrFull.length === 0 || arrFull[arrFull.length - 1] !== i) arrFull.push(i);
+          map.set(tok, arrFull);
+        });
+      }
+      pastePrefixMapRef.current = map;
+      pasteSigRef.current = sig || null;
+    } catch (e) {
+      pastePrefixMapRef.current = new Map();
+      pasteSigRef.current = sig || null;
+    }
   }, [achievements, extraLists, devMode, reordered, debouncedPasteSearch]);
 
   function handlePasteSelect(item) {
@@ -2440,7 +2610,31 @@ export default function SharedList({
       'platformertimeline.json', 'removed.json', 'timeline.json'
     ]);
     const shouldMinify = looksLikeAchievementList || ACHIEVEMENT_FILE_SET.has(filenameIndicator);
-    const json = shouldMinify ? JSON.stringify(copy) : JSON.stringify(copy, null, 2);
+
+    function cleanseValue(v) {
+      if (v === null) return undefined;
+      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return undefined;
+      if (Array.isArray(v)) {
+        const out = [];
+        for (let i = 0; i < v.length; i++) {
+          const cv = cleanseValue(v[i]);
+          if (cv !== undefined) out.push(cv);
+        }
+        return out;
+      }
+      if (v && typeof v === 'object') {
+        const o = {};
+        Object.keys(v).forEach(k => {
+          const cv = cleanseValue(v[k]);
+          if (cv !== undefined) o[k] = cv;
+        });
+        return o;
+      }
+      return v;
+    }
+
+    const cleaned = copy.map(item => cleanseValue(item));
+    const json = shouldMinify ? JSON.stringify(cleaned) : JSON.stringify(cleaned, null, 2);
     const filename = usePlatformers
       ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
       : dataFileName;
@@ -2465,7 +2659,7 @@ export default function SharedList({
     listRef,
     itemRefs: achievementRefs,
     setScrollToIdx,
-    setHighlightedIdx,
+    setHighlightedIdx: updateHighlightedIdx,
   });
   function handleShowNewForm() {
     if (showNewForm) {
@@ -2490,7 +2684,7 @@ export default function SharedList({
 
   useEffect(() => {
     if (highlightedIdx === null) return;
-    const id = window.setTimeout(() => setHighlightedIdx(null), 3000);
+    const id = window.setTimeout(() => updateHighlightedIdx(null), 3000);
     return () => window.clearTimeout(id);
   }, [highlightedIdx]);
 
