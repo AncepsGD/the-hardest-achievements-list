@@ -287,17 +287,8 @@ function normalizeForSearch(input) {
   return s;
 }
 
-function tokenizeForSearch(normalized) {
-  if (!normalized) return [];
-  const words = normalized.split(' ').filter(w => w.length > 0);
-  const tokens = new Set();
-  for (const w of words) {
-    tokens.add(w);
-    for (let i = 2; i <= Math.min(w.length, 20); i++) {
-      tokens.add(w.slice(0, i));
-    }
-  }
-  return Array.from(tokens);
+function _tokensFromNormalized(normalized) {
+  return String(normalized || '').split(' ').filter(Boolean);
 }
 
 function enhanceAchievement(a) {
@@ -326,7 +317,6 @@ function enhanceAchievement(a) {
   if (a && (a.levelID || a.levelID === 0)) searchableParts.push(String(a.levelID));
   const searchable = searchableParts.join(' ');
   const searchableNormalized = normalizeForSearch(searchable);
-  const searchTokens = tokenizeForSearch(searchableNormalized);
   const enhanced = {
     ...a,
     _sortedTags: sortedTags,
@@ -335,7 +325,6 @@ function enhanceAchievement(a) {
     _thumbnail: thumb,
     _searchable: searchable.toLowerCase(),
     _searchableNormalized: searchableNormalized,
-    _searchTokens: searchTokens,
     _tagString: tagString,
   };
   if (id) {
@@ -1835,7 +1824,7 @@ export default function SharedList({
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       if (queryTokens && queryTokens.length) {
-        const itemTokens = Array.isArray(a && a._searchTokens) && a._searchTokens.length ? a._searchTokens : (a && a._searchableNormalized ? tokenizeForSearch(a._searchableNormalized) : tokenizeForSearch(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '))));
+        const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' ')));
         if (!itemTokens || itemTokens.length === 0) return false;
         if (!queryTokens.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
       }
@@ -1934,7 +1923,7 @@ export default function SharedList({
       if (!a) return false;
       if (manualController.aborted) return false;
       if (!qTokensManual.length) return false;
-      const itemTokens = Array.isArray(a && a._searchTokens) && a._searchTokens.length ? a._searchTokens : (a && a._searchableNormalized ? tokenizeForSearch(a._searchableNormalized) : tokenizeForSearch(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' '))));
+      const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
       if (!itemTokens || itemTokens.length === 0) return false;
       return qTokensManual.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)));
     };
@@ -1994,7 +1983,7 @@ export default function SharedList({
             if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
             if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
             if (normalizedQueryLocal) {
-              const itemTokens = Array.isArray(a && a._searchTokens) && a._searchTokens.length ? a._searchTokens : (a && a._searchableNormalized ? tokenizeForSearch(a._searchableNormalized) : tokenizeForSearch(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' '))));
+              const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
               if (!itemTokens || itemTokens.length === 0) return false;
               const qts = (normalizedQueryLocal || '').split(' ').filter(Boolean);
               if (!qts.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
