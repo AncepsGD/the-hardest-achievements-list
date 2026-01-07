@@ -17,6 +17,8 @@ const shallowEqual = (a, b) => {
 const DevToolbar = React.memo(function DevToolbar({
   devMode,
   handleCopyJson,
+  handleCopyCompressedJson,
+  handlePasteCompressedJson,
   handleCheckDuplicateThumbnails,
   onImportAchievementsJson,
   handleShowNewForm,
@@ -29,6 +31,8 @@ const DevToolbar = React.memo(function DevToolbar({
       <span className="devmode-title">Developer Mode Enabled (SHIFT+M)</span>
       <div className="devmode-btn-row" style={{ gap: 8 }}>
         <button className="devmode-btn" onClick={handleCopyJson}>Copy .json</button>
+        <button className="devmode-btn" onClick={handleCopyCompressedJson}>Copy compressed</button>
+        <button className="devmode-btn" onClick={handlePasteCompressedJson}>Paste compressed</button>
         <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails}>Check Dupe Images</button>
         <label className="devmode-btn" style={{ display: 'inline-block', cursor: 'pointer', margin: 0 }}>
           Import .json
@@ -283,6 +287,8 @@ function DevModePanelInner({
   handleNewFormAdd,
   handleNewFormCancel,
   handleCopyJson,
+  handleCopyCompressedJson,
+  handlePasteCompressedJson,
   handleShowNewForm,
   newFormPreview,
   handleCheckDuplicateThumbnails,
@@ -328,6 +334,8 @@ function DevModePanelInner({
       <DevToolbar
         devMode={devMode}
         handleCopyJson={handleCopyJson}
+        handleCopyCompressedJson={handleCopyCompressedJson}
+        handlePasteCompressedJson={handlePasteCompressedJson}
         handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
         onImportAchievementsJson={onImportAchievementsJson}
         handleShowNewForm={handleShowNewForm}
