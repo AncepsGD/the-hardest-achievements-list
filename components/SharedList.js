@@ -2583,115 +2583,112 @@ export default function SharedList({
     return entry;
   }, [newForm, newFormTags, newFormCustomTags]);
 
-  async function handleCopyJson() {
-    const base = reordered && reordered.length
-      ? reordered
-      : devMode
-        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
-        : achievements;
+async function handleCopyJson() {
+  const base = reordered && reordered.length
+    ? reordered
+    : devMode
+      ? (devAchievements && devAchievements.length ? devAchievements : achievements)
+      : achievements;
 
-    if (!base || !base.length) return;
+  if (!base || !base.length) return;
 
-    const cleanse = v => {
-      if (v === null) return;
-      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
-      if (Array.isArray(v)) {
-        const a = [];
-        for (let i = 0; i < v.length; i++) {
-          const x = cleanse(v[i]);
-          if (x !== undefined) a.push(x);
-        }
-        return a;
+  const cleanse = v => {
+    if (v === null) return;
+    if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
+    if (Array.isArray(v)) {
+      const a = [];
+      for (let i = 0; i < v.length; i++) {
+        const x = cleanse(v[i]);
+        if (x !== undefined) a.push(x);
       }
-      if (v && typeof v === 'object') {
-        const o = {};
-        for (const k in v) {
-          const x = cleanse(v[k]);
-          if (x !== undefined) o[k] = x;
-        }
-        return o;
-      }
-      return v;
-    };
-
-    const cleaned = base.map(cleanse);
-
-    const fname = usePlatformers
-      ? dataFileName === 'timeline.json'
-        ? 'platformertimeline.json'
-        : dataFileName === 'achievements.json'
-          ? 'platformers.json'
-          : dataFileName
-      : dataFileName;
-
-    const lower = (dataFileName || '').toLowerCase();
-    const shouldMinify =
-      (Array.isArray(cleaned) &&
-        cleaned.length &&
-        typeof cleaned[0] === 'object' &&
-        (cleaned[0].id || cleaned[0].name) &&
-        (cleaned[0].rank || cleaned[0].levelID)) ||
-      (
-        lower === 'achievements.json' ||
-        lower === 'pending.json' ||
-        lower === 'legacy.json' ||
-        lower === 'platformers.json' ||
-        lower === 'platformertimeline.json' ||
-        lower === 'removed.json' ||
-        lower === 'timeline.json'
-      );
-
-    const json = shouldMinify
-      ? JSON.stringify(cleaned)
-      : JSON.stringify(cleaned, null, 2);
-
-    let done = false;
-
-    if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined') {
-      try {
-        const blob = new Blob([json], { type: 'application/json' });
-        const algs = ['br', 'brotli', 'gzip'];
-        let cs;
-        for (let i = 0; i < algs.length; i++) {
-          try {
-            cs = new CompressionStream(algs[i]);
-            if (cs) {
-              const out = await new Response(blob.stream().pipeThrough(cs)).blob();
-              const mime = algs[i] === 'gzip' ? 'application/gzip' : 'application/br';
-              if (navigator.clipboard && ClipboardItem) {
-                await navigator.clipboard.write([new ClipboardItem({ [mime]: out })]);
-                alert(`Copied compressed ${fname} (${algs[i]}) to clipboard!`);
-                done = true;
-              }
-            }
-            break;
-          } catch { }
-        }
-      } catch { }
+      return a;
     }
+    if (v && typeof v === 'object') {
+      const o = {};
+      for (const k in v) {
+        const x = cleanse(v[k]);
+        if (x !== undefined) o[k] = x;
+      }
+      return o;
+    }
+    return v;
+  };
 
-    if (!done) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
+  const cleaned = base.map(cleanse);
+
+  const fname = usePlatformers
+    ? dataFileName === 'timeline.json'
+      ? 'platformertimeline.json'
+      : dataFileName === 'achievements.json'
+        ? 'platformers.json'
+        : dataFileName
+    : dataFileName;
+
+  const lower = (dataFileName || '').toLowerCase();
+  const shouldMinify =
+    (Array.isArray(cleaned) &&
+      cleaned.length &&
+      typeof cleaned[0] === 'object' &&
+      (cleaned[0].id || cleaned[0].name) &&
+      (cleaned[0].rank || cleaned[0].levelID)) ||
+    (
+      lower === 'achievements.json' ||
+      lower === 'pending.json' ||
+      lower === 'legacy.json' ||
+      lower === 'platformers.json' ||
+      lower === 'platformertimeline.json' ||
+      lower === 'removed.json' ||
+      lower === 'timeline.json'
+    );
+
+  const json = shouldMinify
+    ? JSON.stringify(cleaned)
+    : JSON.stringify(cleaned, null, 2);
+
+  let done = false;
+
+  if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined') {
+    try {
+      const blob = new Blob([json], { type: 'application/json' });
+      const algs = ['br', 'brotli', 'gzip'];
+
+      for (let i = 0; i < algs.length && !done; i++) {
         try {
-          await navigator.clipboard.writeText(json);
-          alert(`Copied new ${fname} (uncompressed) to clipboard!`);
-          return;
-        } catch { }
+          const cs = new CompressionStream(algs[i]);
+          const out = await new Response(blob.stream().pipeThrough(cs)).blob();
+          const mime = algs[i] === 'gzip' ? 'application/gzip' : 'application/br';
+
+          if (navigator.clipboard && ClipboardItem) {
+            await navigator.clipboard.write([new ClipboardItem({ [mime]: out })]);
+            alert(`Copied compressed ${fname} (${algs[i]}) to clipboard!`);
+            done = true;
+          }
+        } catch {}
       }
-      try {
-        const t = document.createElement('textarea');
-        t.value = json;
-        document.body.appendChild(t);
-        t.select();
-        document.execCommand('copy');
-        document.body.removeChild(t);
-        alert(`Copied new ${fname} (uncompressed) to clipboard!`);
-      } catch {
-        alert('Clipboard API not available');
-      }
-    }
+    } catch {}
   }
 
+  if (!done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(json);
+        alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+        return;
+      } catch {}
+    }
+    try {
+      const t = document.createElement('textarea');
+      t.value = json;
+      document.body.appendChild(t);
+      t.select();
+      document.execCommand('copy');
+      document.body.removeChild(t);
+      alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+    } catch {
+      alert('Clipboard API not available');
+    }
+  }
+}
 
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
