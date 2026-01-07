@@ -3487,6 +3487,21 @@ export default function SharedList({
           )}
         </section>
       </main>
+      {devMode && hoveredIdx !== null && visibleList && visibleList[hoveredIdx] && (
+        <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <strong style={{ display: 'block', marginBottom: 4 }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].name) || 'Achievement'}</strong>
+              <div style={{ fontSize: 12, color: '#aaa' }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].player) || ''} {(visibleList[hoveredIdx] && visibleList[hoveredIdx].id) ? `— ${visibleList[hoveredIdx].id}` : ''}</div>
+            </div>
+            <div style={{ marginLeft: 8 }}>
+              <button className="devmode-btn" onClick={() => { try { const txt = JSON.stringify(visibleList[hoveredIdx], null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
+            </div>
+          </div>
+          <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{JSON.stringify(visibleList[hoveredIdx], null, 2)}</pre>
+        </div>
+      )}
+
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
         {noMatchMessage}
       </div>
