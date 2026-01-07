@@ -578,8 +578,6 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
     }
   };
 
-  const [localHovered, setLocalHovered] = useState(false);
-
   let lastedLabel;
   if (previousAchievement && previousAchievement.date && achievement && achievement.date) {
     const days = calculateDaysLasted(achievement.date, previousAchievement.date);
@@ -607,11 +605,11 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
         aria-disabled={devMode ? 'true' : undefined}
       >
         <div
-          className={`achievement-item ${localHovered ? 'hovered' : ''}`}
+          className={`achievement-item`}
           tabIndex={0}
           style={{ cursor: 'pointer', position: 'relative' }}
-          onMouseEnter={(e) => { try { setLocalHovered(true); } catch (err) {} ; if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
-          onMouseLeave={(e) => { try { setLocalHovered(false); } catch (err) {} ; if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+          onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -643,13 +641,13 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             </div>
           </div>
           { }
-          {onEdit && (
-            <div className="hover-menu" style={{ position: 'absolute', right: 8, top: 8, display: 'flex', opacity: localHovered ? 1 : 0, transition: 'opacity 120ms ease', pointerEvents: localHovered ? 'auto' : 'none' }}>
-              <button className="hover-menu-btn" onClick={onEdit} title="Edit achievement">
+          (
+            <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8, display: 'flex', opacity: 0, transition: 'opacity 120ms ease', pointerEvents: 'none' }}>
+              <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
                 <span className="bi bi-pencil" aria-hidden="true"></span>
               </button>
             </div>
-          )}
+          )
         </div>
       </a>
     </Link>
@@ -2215,8 +2213,42 @@ export default function SharedList({
   }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
 
   const visibleList = devMode ? devAchievements : filtered;
-  const onRowHoverEnter = useCallback((idx) => { try { hoveredIdxRef.current = idx; } catch (e) {} }, []);
-  const onRowHoverLeave = useCallback(() => { try { hoveredIdxRef.current = null; } catch (e) {} }, []);
+  
+  const visibleListRef = useRef(visibleList);
+  useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
+
+  const devPanelRef = useRef(null);
+
+  const _onRowHoverEnter = useCallback((idx) => {
+    try {
+      hoveredIdxRef.current = idx;
+      const panel = devPanelRef.current;
+      if (!panel) return;
+      if (!devModeRef.current) {
+        panel.style.display = 'none';
+        return;
+      }
+      const list = visibleListRef.current || [];
+      const item = list[idx];
+      if (!item) {
+        panel.style.display = 'none';
+        return;
+      }
+      try {
+        panel.style.display = 'block';
+        const titleEl = panel.querySelector('.devmode-hover-title');
+        const metaEl = panel.querySelector('.devmode-hover-meta');
+        const preEl = panel.querySelector('.devmode-hover-pre');
+        if (titleEl) titleEl.textContent = item.name || 'Achievement';
+        if (metaEl) metaEl.textContent = `${item.player || ''}${item.id ? ' — ' + item.id : ''}`;
+        if (preEl) preEl.textContent = JSON.stringify(item, null, 2);
+      } catch (e) {}
+    } catch (e) {}
+  }, []);
+
+  const _onRowHoverLeave = useCallback(() => {
+    try { hoveredIdxRef.current = null; const panel = devPanelRef.current; if (panel) panel.style.display = 'none'; } catch (e) {}
+  }, []);
 
   const precomputedVisible = useMemo(() => {
     try {
@@ -2252,10 +2284,10 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-    onRowHoverEnter,
-    onRowHoverLeave,
+    onRowHoverEnter: _onRowHoverEnter,
+    onRowHoverLeave: _onRowHoverLeave,
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, onRowHoverEnter, onRowHoverLeave]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, _onRowHoverEnter, _onRowHoverLeave, precomputedVisible]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
@@ -3211,6 +3243,7 @@ export default function SharedList({
 
   return (
     <>
+      <style>{`.achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; } .hover-menu{ will-change: opacity; } .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }`}</style>
       <Head>
         <title>The Hardest Achievements List</title>
         <meta charSet="UTF-8" />
