@@ -32,8 +32,7 @@ const DevToolbar = React.memo(function DevToolbar({
       <div className="devmode-btn-row" style={{ gap: 8 }}>
         <button className="devmode-btn" onClick={handleCopyJson}>Copy .json</button>
         <button className="devmode-btn" onClick={handleCopyCompressedJson}>Copy compressed</button>
-        <button className="devmode-btn" onClick={handlePasteCompressedJson}>Paste compressed</button>
-        <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails}>Check Dupe Images</button>
+        <button className="devmode-btn" onClick={handlePasteCompressedJson}>Import compressed</button>
         <label className="devmode-btn" style={{ display: 'inline-block', cursor: 'pointer', margin: 0 }}>
           Import .json
           <input
@@ -59,6 +58,7 @@ const DevToolbar = React.memo(function DevToolbar({
             }}
           />
         </label>
+        <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails}>Check Dupe Images</button>
         <button className="devmode-btn" onClick={handleShowNewForm}>New Achievement</button>
         <button className="devmode-btn" onClick={generateAndCopyChangelog} style={{ backgroundColor: '#28a745' }}>
           Copy Changelog
