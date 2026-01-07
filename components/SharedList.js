@@ -578,6 +578,8 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
     }
   };
 
+  const [localHovered, setLocalHovered] = useState(false);
+
   let lastedLabel;
   if (previousAchievement && previousAchievement.date && achievement && achievement.date) {
     const days = calculateDaysLasted(achievement.date, previousAchievement.date);
@@ -605,11 +607,11 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
         aria-disabled={devMode ? 'true' : undefined}
       >
         <div
-          className={`achievement-item ${isHovered ? 'hovered' : ''}`}
+          className={`achievement-item ${localHovered ? 'hovered' : ''}`}
           tabIndex={0}
-          style={{ cursor: 'pointer' }}
-          onMouseEnter={onHoverEnter}
-          onMouseLeave={onHoverLeave}
+          style={{ cursor: 'pointer', position: 'relative' }}
+          onMouseEnter={(e) => { try { setLocalHovered(true); } catch (err) {} ; if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onMouseLeave={(e) => { try { setLocalHovered(false); } catch (err) {} ; if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -642,7 +644,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           </div>
           { }
           {onEdit && (
-            <div className="hover-menu" style={{ display: isHovered ? 'flex' : 'none' }}>
+            <div className="hover-menu" style={{ position: 'absolute', right: 8, top: 8, display: 'flex', opacity: localHovered ? 1 : 0, transition: 'opacity 120ms ease', pointerEvents: localHovered ? 'auto' : 'none' }}>
               <button className="hover-menu-btn" onClick={onEdit} title="Edit achievement">
                 <span className="bi bi-pencil" aria-hidden="true"></span>
               </button>
@@ -665,7 +667,6 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.totalAchievements === next.totalAchievements
     && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
-    && prev.isHovered === next.isHovered
     && prev.listType === next.listType;
 });
 
@@ -841,23 +842,7 @@ export default function SharedList({
   const [achievements, setAchievements] = useState([]);
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
-  const highlightedIdxRef = useRef(null);
-  const highlightListenersRef = useRef(new Map());
-  function updateHighlightedIdx(newIdx) {
-    try {
-      const oldIdx = highlightedIdxRef.current;
-      highlightedIdxRef.current = newIdx;
-      try { setHighlightedIdx(newIdx); } catch (e) { }
-      if (oldIdx !== null && oldIdx !== undefined) {
-        const s = highlightListenersRef.current.get(oldIdx);
-        if (s) s.forEach(fn => { try { fn(false); } catch (e) { } });
-      }
-      if (newIdx !== null && newIdx !== undefined) {
-        const s2 = highlightListenersRef.current.get(newIdx);
-        if (s2) s2.forEach(fn => { try { fn(true); } catch (e) { } });
-      }
-    } catch (e) { }
-  }
+  
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
       const v = typeof window !== 'undefined' ? window.localStorage.getItem('usePlatformers') : null;
@@ -874,7 +859,7 @@ export default function SharedList({
   const inputValueRef = useRef(search);
   const setSearchDebounceRef = useRef(null);
   const [manualSearch, setManualSearch] = useState('');
-  const [highlightedIdx, setHighlightedIdx] = useState(null);
+  
   const [noMatchMessage, setNoMatchMessage] = useState('');
   const debouncedSearch = useDebouncedValue(search, { minDelay: 120, maxDelay: 400, useIdle: true });
   const debouncedManualSearch = useDebouncedValue(manualSearch, { minDelay: 100, maxDelay: 300, useIdle: false });
@@ -1037,7 +1022,7 @@ export default function SharedList({
   }, [sortKey]);
   const [bgImage, setBgImage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
-  const [hoveredIdx, setHoveredIdx] = useState(null);
+  const hoveredIdxRef = useRef(null);
   const [duplicateThumbKeys, setDuplicateThumbKeys] = useState(new Set());
   const [autoThumbMap, setAutoThumbMap] = useState(() => {
     try {
@@ -2152,7 +2137,6 @@ export default function SharedList({
 
       if (devModeRef.current) {
         setScrollToIdx(targetIdxInPreFiltered);
-        updateHighlightedIdx(targetIdxInPreFiltered);
       } else {
         const normalizedQueryLocal = normalizeForSearch(rawQuery || '');
         let visibleFiltered;
@@ -2181,7 +2165,6 @@ export default function SharedList({
           setNoMatchMessage('No matching achievement is currently visible with the active filters.');
           window.setTimeout(() => setNoMatchMessage(''), 3000);
         } else {
-          updateHighlightedIdx(idxToUse);
         }
       }
     }));
@@ -2232,13 +2215,27 @@ export default function SharedList({
   }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
 
   const visibleList = devMode ? devAchievements : filtered;
+  const onRowHoverEnter = useCallback((idx) => { try { hoveredIdxRef.current = idx; } catch (e) {} }, []);
+  const onRowHoverLeave = useCallback(() => { try { hoveredIdxRef.current = null; } catch (e) {} }, []);
+
+  const precomputedVisible = useMemo(() => {
+    try {
+      const arr = Array.isArray(visibleList) ? visibleList : [];
+      return arr.map((a, i) => {
+        const thumb = getThumbnailUrl(a, isMobile);
+        const isDup = duplicateThumbKeys.has((thumb || '').trim());
+        const autoThumbAvailable = a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false;
+        const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
+        const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+        return { thumb, isDup, autoThumbAvailable, displayRank };
+      });
+    } catch (e) { return []; }
+  }, [visibleList, isMobile, duplicateThumbKeys, autoThumbMap, rankOffset]);
 
   const listItemData = useMemo(() => ({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
-    hoveredIdx,
-    setHoveredIdx,
     mode,
     devMode,
     autoThumbMap,
@@ -2255,47 +2252,33 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-  }), [visibleList, isMobile, duplicateThumbKeys, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
+    onRowHoverEnter,
+    onRowHoverLeave,
+    precomputedVisible,
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, onRowHoverEnter, onRowHoverLeave]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
       filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
-      usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
-      hoveredIdx, setHoveredIdx, handleEditAchievement,
+        usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
+        onRowHoverEnter, onRowHoverLeave, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
-    const thumb = useMemo(() => getThumbnailUrl(a, isMobile), [a && a.id, a && a.thumbnail, a && a.levelID, isMobile]);
-    const isDup = duplicateThumbKeys.has((thumb || '').trim());
-    const [isHighlightedLocal, setIsHighlightedLocal] = useState(() => highlightedIdxRef.current === index);
-
-    useEffect(() => {
-      const map = highlightListenersRef.current;
-      let set = map.get(index);
-      if (!set) {
-        set = new Set();
-        map.set(index, set);
-      }
-      const cb = (on) => setIsHighlightedLocal(!!on);
-      set.add(cb);
-      try { setIsHighlightedLocal(highlightedIdxRef.current === index); } catch (e) { }
-      return () => {
-        try { set.delete(cb); if (set.size === 0) map.delete(index); } catch (e) { }
-      };
-    }, [index]);
+    const { thumb, isDup, autoThumbAvailable, displayRank } = (data.precomputedVisible && data.precomputedVisible[index]) || {};
+    const isHighlightedLocal = false;
 
     return (
-      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}>
+      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
         {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(index) : undefined}
-            onHoverLeave={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(null) : undefined}
-            isHovered={hoveredIdx === index}
+            onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined}
+            onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined}
             devMode={devMode}
-            autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false}
+            autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
             achievements={filtered}
             showTiers={showTiers}
@@ -2308,7 +2291,7 @@ export default function SharedList({
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} />;
           })()
         }
       </div>
@@ -2330,7 +2313,6 @@ export default function SharedList({
     if (p.usePlatformers !== n.usePlatformers) return false;
     if (p.mode !== n.mode) return false;
     if (p.hideRank !== n.hideRank) return false;
-    if (p.hoveredIdx !== n.hoveredIdx) return false;
     const pThumb = getThumbnailUrl(pItem, p.isMobile);
     const nThumb = getThumbnailUrl(nItem, n.isMobile);
     const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
@@ -3044,7 +3026,6 @@ export default function SharedList({
     listRef,
     itemRefs: achievementRefs,
     setScrollToIdx,
-    setHighlightedIdx: updateHighlightedIdx,
   });
   function handleShowNewForm() {
     if (showNewForm) {
@@ -3067,11 +3048,7 @@ export default function SharedList({
     }
   }, [scrollToIdx, devAchievements]);
 
-  useEffect(() => {
-    if (highlightedIdx === null) return;
-    const id = window.setTimeout(() => updateHighlightedIdx(null), 3000);
-    return () => window.clearTimeout(id);
-  }, [highlightedIdx]);
+  
 
   useEffect(() => {
     if (scrollToIdx === null) return;
@@ -3487,18 +3464,18 @@ export default function SharedList({
           )}
         </section>
       </main>
-      {devMode && hoveredIdx !== null && visibleList && visibleList[hoveredIdx] && (
+      {devMode && hoveredIdxRef.current !== null && visibleList && visibleList[hoveredIdxRef.current] && (
         <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
-              <strong style={{ display: 'block', marginBottom: 4 }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].name) || 'Achievement'}</strong>
-              <div style={{ fontSize: 12, color: '#aaa' }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].player) || ''} {(visibleList[hoveredIdx] && visibleList[hoveredIdx].id) ? `— ${visibleList[hoveredIdx].id}` : ''}</div>
+              <strong style={{ display: 'block', marginBottom: 4 }}>{(visibleList[hoveredIdxRef.current] && visibleList[hoveredIdxRef.current].name) || 'Achievement'}</strong>
+              <div style={{ fontSize: 12, color: '#aaa' }}>{(visibleList[hoveredIdxRef.current] && visibleList[hoveredIdxRef.current].player) || ''} {(visibleList[hoveredIdxRef.current] && visibleList[hoveredIdxRef.current].id) ? `— ${visibleList[hoveredIdxRef.current].id}` : ''}</div>
             </div>
             <div style={{ marginLeft: 8 }}>
-              <button className="devmode-btn" onClick={() => { try { const txt = JSON.stringify(visibleList[hoveredIdx], null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
+              <button className="devmode-btn" onClick={() => { try { const txt = JSON.stringify(visibleList[hoveredIdxRef.current], null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
             </div>
           </div>
-          <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{JSON.stringify(visibleList[hoveredIdx], null, 2)}</pre>
+          <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{JSON.stringify(visibleList[hoveredIdxRef.current], null, 2)}</pre>
         </div>
       )}
 
