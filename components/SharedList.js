@@ -304,29 +304,41 @@ function enhanceAchievement(a) {
       return cached.value;
     }
   }
-  const tags = Array.isArray(a.tags) ? [...a.tags] : [];
+  const base = { ...a };
+  delete base._lengthStr; delete base._thumbnail; delete base._searchable; delete base._searchableNormalized; delete base._tagString;
+  delete base.hasThumb; delete base.autoThumb;
+
+  const tags = Array.isArray(base.tags) ? [...base.tags] : [];
   const sortedTags = tags.slice().sort((x, y) => (TAG_PRIORITY_ORDER.indexOf(String(x).toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(String(y).toUpperCase())));
   const isPlatformer = tags.some(t => String(t).toLowerCase() === 'platformer');
-  const lengthNum = Number(a.length) || 0;
-  const lengthStr = (a.length || a.length === 0) ? `${Math.floor(lengthNum / 60)}:${String(lengthNum % 60).padStart(2, '0')}` : null;
-  const thumb = sanitizeImageUrl(a && a.thumbnail) || null;
+  const lengthNum = Number(base.length) || 0;
+  const lengthStr = (base.length || base.length === 0) ? `${Math.floor(lengthNum / 60)}:${String(lengthNum % 60).padStart(2, '0')}` : null;
+
+  const thumb = sanitizeImageUrl(base && base.thumbnail) || (base && (base.levelID || base.levelID === 0) ? `https://levelthumbs.prevter.me/thumbnail/${base.levelID}` : null);
+  const hasThumb = !!thumb;
+  const autoThumb = !!(!base.thumbnail && (base.levelID || base.levelID === 0));
+
   const searchableParts = [];
-  if (a && a.name) searchableParts.push(String(a.name));
-  if (a && a.player) searchableParts.push(String(a.player));
-  const tagString = (Array.isArray(tags) && tags.length) ? tags.join(' ') : '';
-  if (a && a.id) searchableParts.push(String(a.id));
-  if (a && (a.levelID || a.levelID === 0)) searchableParts.push(String(a.levelID));
+  if (base && base.name) searchableParts.push(String(base.name));
+  if (base && base.player) searchableParts.push(String(base.player));
+  if (base && base.id) searchableParts.push(String(base.id));
+  if (base && (base.levelID || base.levelID === 0)) searchableParts.push(String(base.levelID));
   const searchable = searchableParts.join(' ');
   const searchableNormalized = normalizeForSearch(searchable);
+
+  const tagString = (Array.isArray(sortedTags) && sortedTags.length) ? sortedTags.join(' ') : ((Array.isArray(tags) && tags.length) ? tags.join(' ') : '');
+
   const enhanced = {
-    ...a,
+    ...base,
     _sortedTags: sortedTags,
     _isPlatformer: isPlatformer,
     _lengthStr: lengthStr,
     _thumbnail: thumb,
-    _searchable: searchable.toLowerCase(),
+    _searchable: (searchable || '').toLowerCase(),
     _searchableNormalized: searchableNormalized,
     _tagString: tagString,
+    hasThumb,
+    autoThumb,
   };
   if (id) {
     try {
@@ -1742,7 +1754,28 @@ export default function SharedList({
     fetch(file)
       .then(res => res.json())
       .then(data => {
-        const list = Array.isArray(data) ? data : (data.achievements || []);
+        let list;
+        if (Array.isArray(data)) {
+          list = data;
+        } else if (data && Array.isArray(data.tags) && Array.isArray(data.items)) {
+          const masterTags = data.tags;
+          list = data.items.map(it => {
+            if (Array.isArray(it)) {
+              return { tags: it.map(i => masterTags[i]).filter(Boolean) };
+            }
+            if (it && typeof it === 'object') {
+              const copy = { ...it };
+              if (Array.isArray(copy.tags) && copy.tags.length && typeof copy.tags[0] === 'number') {
+                copy.tags = copy.tags.map(i => masterTags[i]).filter(Boolean);
+              }
+              return copy;
+            }
+            return it;
+          });
+        } else {
+          list = (data.achievements || []);
+        }
+
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
         if (dataFileName === 'pending.json') {
           const enhanced = valid.map(enhanceAchievement);
@@ -1754,9 +1787,10 @@ export default function SharedList({
           setAchievements(enhanced);
           setOriginalAchievements(withRank.map(a => ({ ...a })));
         }
-        const tags = new Set();
-        valid.forEach(a => (a.tags || []).forEach(t => tags.add(t)));
-        setAllTags(Array.from(tags));
+        const tagSet = new Set();
+        if (data && Array.isArray(data.tags)) data.tags.forEach(t => tagSet.add(t));
+        valid.forEach(a => (a.tags || []).forEach(t => tagSet.add(t)));
+        setAllTags(Array.from(tagSet));
       }).catch(e => {
         setAchievements([]);
         setAllTags([]);
