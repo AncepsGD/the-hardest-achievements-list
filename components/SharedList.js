@@ -2636,62 +2636,61 @@ export default function SharedList({
       try {
         const inputBlob = new Blob([json], { type: 'application/json' });
 
-        const triggerDownload = (blob, outName) => {
-          try {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = outName;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            setTimeout(() => URL.revokeObjectURL(url), 5000);
-          } catch (e) { }
-        };
-
         if (typeof CompressionStream !== 'undefined') {
-          const algs = ['br', 'gzip'];
-          for (const alg of algs) {
-            try {
-              const cs = new CompressionStream(alg);
-              const compressedStream = inputBlob.stream().pipeThrough(cs);
-              const blob = await new Response(compressedStream).blob();
+          try {
+            const cs = new CompressionStream('gzip');
+            const compressedStream = inputBlob.stream().pipeThrough(cs);
+            const gzipBlob = await new Response(compressedStream).blob();
 
-              if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
-                const mime = alg === 'br' ? 'application/octet-stream' : 'application/gzip';
-                try {
-                  await navigator.clipboard.write([new ClipboardItem({ [mime]: blob })]);
-                  alert(`Copied compressed ${filename} (${alg}) to clipboard!`);
-                  compressedCopied = true;
-                  break;
-                } catch (cw) {
-                  console.warn('clipboard write failed for', alg, cw);
-                }
+            if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+              try {
+                await navigator.clipboard.write([new ClipboardItem({ 'application/gzip': gzipBlob })]);
+                alert(`Copied compressed ${filename} (gzip) to clipboard!`);
+                compressedCopied = true;
+              } catch (cw) {
+                console.warn('clipboard binary write failed', cw);
               }
-
-              triggerDownload(blob, filename + (alg === 'gzip' ? '.gz' : '.br'));
-              break;
-            } catch (e) {
-              console.warn(alg + ' CompressionStream failed', e);
             }
+
+            if (!compressedCopied && navigator.clipboard && typeof FileReader !== 'undefined') {
+              try {
+                const dataUrl = await new Promise((resolve, reject) => {
+                  const fr = new FileReader();
+                  fr.onload = () => resolve(fr.result);
+                  fr.onerror = () => reject(new Error('FileReader failed'));
+                  fr.readAsDataURL(gzipBlob);
+                });
+                await navigator.clipboard.writeText(dataUrl);
+                alert(`Copied compressed ${filename} (gzip, base64) to clipboard as data URL`);
+                compressedCopied = true;
+              } catch (b64Err) {
+                console.warn('clipboard base64 write failed', b64Err);
+              }
+            }
+          } catch (e) {
+            console.warn('gzip CompressionStream failed', e);
           }
         }
       } catch (e) {
+        console.warn('compression/copy attempt failed', e);
       }
     }
 
     if (!compressedCopied) {
-      if (navigator.clipboard) {
-        try { await navigator.clipboard.writeText(json); } catch (e) { }
-        alert(`Copied new ${filename} to clipboard!`);
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        try { await navigator.clipboard.writeText(json); alert(`Copied new ${filename} (uncompressed) to clipboard!`); } catch (e) { alert('Failed to copy to clipboard'); }
       } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = json;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        alert(`Copied new ${filename} to clipboard!`);
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = json;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          alert(`Copied new ${filename} (uncompressed) to clipboard!`);
+        } catch (e) {
+          alert('Clipboard API not available');
+        }
       }
     }
   }
