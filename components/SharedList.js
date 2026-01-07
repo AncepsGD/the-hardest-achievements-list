@@ -853,8 +853,6 @@ export default function SharedList({
       return false;
     }
   });
-}
-
   const [visibleCount, setVisibleCount] = useState(100);
   const [searchJumpPending, setSearchJumpPending] = useState(false);
   const listRef = useRef(null);
@@ -2626,65 +2624,75 @@ export default function SharedList({
       return v;
     }
 
-const cleaned = copy.map(cleanseValue);
-const json = shouldMinify ? JSON.stringify(cleaned) : JSON.stringify(cleaned, null, 2);
+    const cleaned = copy.map(item => cleanseValue(item));
+    const json = shouldMinify ? JSON.stringify(cleaned) : JSON.stringify(cleaned, null, 2);
+    const filename = usePlatformers
+      ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
+      : dataFileName;
 
-const filename = usePlatformers
-  ? dataFileName === 'timeline.json'
-    ? 'platformertimeline.json'
-    : dataFileName === 'achievements.json'
-      ? 'platformers.json'
-      : dataFileName
-  : dataFileName;
+    let compressedCopied = false;
 
-let didWrite = false;
+    if (typeof window !== 'undefined') {
+      try {
+        const inputBlob = new Blob([json], { type: 'application/json' });
 
-async function writeClipboardBlob(blob, mimeLabel) {
-  if (!navigator.clipboard || !ClipboardItem) return false;
-  try {
-    await navigator.clipboard.write([new ClipboardItem({ [mimeLabel]: blob })]);
-    alert(`Copied compressed ${filename} (${mimeLabel.split('/')[1]}) to clipboard!`);
-    return true;
-  } catch {
-    return false;
+        if (typeof CompressionStream !== 'undefined') {
+          try {
+            const tryAlgs = ['br', 'brotli', 'gzip'];
+            let cs = null;
+            let usedAlg = null;
+            for (const alg of tryAlgs) {
+              try {
+                cs = new CompressionStream(alg);
+                usedAlg = alg;
+                break;
+              } catch (err) {
+                cs = null;
+              }
+            }
+            if (cs) {
+              const compressedStream = inputBlob.stream().pipeThrough(cs);
+              const compressedBlob = await new Response(compressedStream).blob();
+              const mime = (usedAlg === 'br' || usedAlg === 'brotli') ? 'application/br' : 'application/gzip';
+
+              if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                try {
+                  await navigator.clipboard.write([new ClipboardItem({ [mime]: compressedBlob })]);
+                  alert(`Copied compressed ${filename} (${usedAlg}) to clipboard!`);
+                  compressedCopied = true;
+                } catch (cw) {
+                  console.warn('clipboard binary write failed', cw);
+                }
+              }
+
+            }
+          } catch (e) {
+            console.warn('CompressionStream failed', e);
+          }
+        }
+      } catch (e) {
+        console.warn('compression/copy attempt failed', e);
+      }
+    }
+
+    if (!compressedCopied) {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        try { await navigator.clipboard.writeText(json); alert(`Copied new ${filename} (uncompressed) to clipboard!`); } catch (e) { alert('Failed to copy to clipboard'); }
+      } else {
+        try {
+          const textarea = document.createElement('textarea');
+          textarea.value = json;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          alert(`Copied new ${filename} (uncompressed) to clipboard!`);
+        } catch (e) {
+          alert('Clipboard API not available');
+        }
+      }
+    }
   }
-}
-
-async function writeClipboardText(str) {
-  if (navigator.clipboard?.writeText) {
-    try { await navigator.clipboard.writeText(str); return true; } catch {}
-  }
-  try {
-    const el = document.createElement('textarea');
-    document.body.appendChild(el);
-    el.value = str;
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined') {
-  const blob = new Blob([json], { type: 'application/json' });
-  for (const alg of ['br', 'gzip']) {
-    try {
-      const cs = new CompressionStream(alg);
-      const compressedStream = blob.stream().pipeThrough(cs);
-      const compressed = await new Response(compressedStream).blob();
-      const mime = alg === 'br' ? 'application/br' : 'application/gzip';
-      didWrite = await writeClipboardBlob(compressed, mime);
-      if (didWrite) break;
-    } catch {}
-  }
-}
-
-if (!didWrite) {
-  const ok = await writeClipboardText(json);
-  alert(ok ? `Copied new ${filename} (uncompressed) to clipboard!` : 'Clipboard failed');
-}
 
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
