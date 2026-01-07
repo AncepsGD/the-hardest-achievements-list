@@ -226,6 +226,44 @@ function validateEnhanceCache(opts = {}) {
   } catch (e) { return { hitRate: 0, hits: 0, misses: 0, unstable: [], healthy: false }; }
 }
 
+function resetEnhanceCache() {
+  try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
+}
+
+const _pasteIndexCache = new Map();
+
+function _makePasteSignature(items) {
+  try {
+    if (!Array.isArray(items)) return '';
+    const parts = new Array(items.length);
+    for (let i = 0; i < items.length; i++) {
+      const a = items[i] || {};
+      if (a.id !== undefined && a.id !== null) parts[i] = `id:${String(a.id)}`;
+      else if (a.levelID !== undefined && a.levelID !== null) parts[i] = `lvl:${String(a.levelID)}`;
+      else if (a.name) parts[i] = `n:${String(a.name).slice(0, 60)}`;
+      else parts[i] = `idx:${i}`;
+    }
+    return parts.join('|');
+  } catch (e) {
+    return '';
+  }
+}
+
+export { getEnhanceCacheStats, resetEnhanceCache, getEnhanceCachePerIdStats, validateEnhanceCache };
+
+function _makeEnhanceSignature(a) {
+  try {
+    const tags = Array.isArray(a.tags) ? a.tags.slice().sort().join('|') : '';
+    const thumb = sanitizeImageUrl(a && a.thumbnail) || '';
+    const lengthNum = Number(a.length) || 0;
+    const version = a && a.version ? String(a.version) : '';
+    const name = a && a.name ? String(a.name) : '';
+    return `${tags}::${thumb}::${lengthNum}::${version}::${name}`;
+  } catch (e) {
+    return '';
+  }
+}
+
 function normalizeForSearch(input) {
   if (!input || typeof input !== 'string') return '';
   let s = input.trim().toLowerCase();
@@ -239,6 +277,7 @@ function normalizeForSearch(input) {
     'favourite': 'favorite',
     'centre': 'center',
     'behaviour': 'behavior',
+    'organisation': 'organization',
     'organisation': 'organization',
     'gaol': 'jail'
   };
@@ -1895,49 +1934,22 @@ export default function SharedList({
             try {
               if (controller.aborted) return onProcessingComplete(null);
               const q = queryTokens.join(' ');
-
-              const exactMatches = [];
-              for (let i = 0; i < tagFiltered.length; i++) {
-                if (controller.aborted) break;
-                try {
-                  const a = tagFiltered[i];
-                  const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' ')));
-                  if (!itemTokens || itemTokens.length === 0) continue;
-                  if (!queryTokens.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) continue;
-                  exactMatches.push(a);
-                } catch (e) { }
-              }
-
-              onProcessingComplete(exactMatches);
-
-              setTimeout(() => {
-                try {
-                  if (controller.aborted) return;
-                  const fuseOpts = {
-                    keys: [
-                      { name: 'name', weight: 0.6 },
-                      { name: 'player', weight: 0.2 },
-                      { name: 'id', weight: 0.1 },
-                      { name: 'levelID', weight: 0.05 },
-                      { name: 'tags', weight: 0.05 }
-                    ],
-                    threshold: 0.35,
-                    ignoreLocation: true,
-                    minMatchCharLength: 2,
-                  };
-                  const fuse = new Fuse(tagFiltered, fuseOpts);
-                  const res = fuse.search(q);
-                  const fuzzy = res.map(r => (r && r.item) ? r.item : r);
-                  if (controller.aborted) return;
-                  const seen = new Set();
-                  const merged = [];
-                  exactMatches.forEach(it => { const id = (it && it.id) ? String(it.id) : null; if (id) seen.add(id); merged.push(it); });
-                  fuzzy.forEach(it => { const id = (it && it.id) ? String(it.id) : null; if (id && seen.has(id)) return; if (!id && merged.includes(it)) return; merged.push(it); });
-                  if (merged.length > exactMatches.length) onProcessingComplete(merged);
-                } catch (e) { }
-              }, 0);
-
-              return;
+              const fuseOpts = {
+                keys: [
+                  { name: 'name', weight: 0.6 },
+                  { name: 'player', weight: 0.2 },
+                  { name: 'id', weight: 0.1 },
+                  { name: 'levelID', weight: 0.05 },
+                  { name: 'tags', weight: 0.05 }
+                ],
+                threshold: 0.3,
+                ignoreLocation: true,
+                minMatchCharLength: 2,
+              };
+              const fuse = new Fuse(tagFiltered, fuseOpts);
+              const res = fuse.search(q);
+              const searched = res.map(r => (r && r.item) ? r.item : r);
+              return onProcessingComplete(searched);
             } catch (e) {
               return onProcessingComplete(tagFiltered);
             }
@@ -2229,7 +2241,7 @@ export default function SharedList({
     const pId = pItem && pItem.id;
     const nId = nItem && nItem.id;
     if (String(pId) !== String(nId)) return false;
-
+    
     if (p.devMode !== n.devMode) return false;
     if (p.showTiers !== n.showTiers) return false;
     if (p.usePlatformers !== n.usePlatformers) return false;
