@@ -665,6 +665,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.totalAchievements === next.totalAchievements
     && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
+    && prev.isHovered === next.isHovered
     && prev.listType === next.listType;
 });
 
