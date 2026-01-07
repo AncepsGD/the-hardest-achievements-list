@@ -2645,85 +2645,6 @@ export default function SharedList({
       ? JSON.stringify(cleaned)
       : JSON.stringify(cleaned, null, 2);
 
-    function z85Encode(buffer) {
-      const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
-      const bytes = (buffer instanceof Uint8Array) ? buffer : new Uint8Array(buffer);
-      const origLen = bytes.length;
-      let paddedLen = bytes.length;
-      const rem = bytes.length % 4;
-      let padded = bytes;
-      if (rem !== 0) {
-        paddedLen = bytes.length + (4 - rem);
-        padded = new Uint8Array(paddedLen);
-        padded.set(bytes, 0);
-      }
-
-      let out = '';
-      for (let i = 0; i < paddedLen; i += 4) {
-        const value = ((padded[i] * 256 + padded[i + 1]) * 256 + padded[i + 2]) * 256 + padded[i + 3];
-        let div = 85 * 85 * 85 * 85;
-        let v = value;
-        for (let j = 0; j < 5; j++) {
-          const idx = Math.floor(v / div) % 85;
-          out += alphabet.charAt(idx);
-          div = Math.floor(div / 85) || 1;
-        }
-      }
-      return { z85: out, origLen };
-    }
-
-    try {
-      if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined' && navigator && navigator.clipboard && navigator.clipboard.writeText) {
-        const encoder = new TextEncoder();
-        const inputBytes = encoder.encode(json);
-        const algs = ['br', 'brotli', 'gzip'];
-
-        for (let i = 0; i < algs.length; i++) {
-          try {
-            const cs = new CompressionStream(algs[i]);
-
-            const inStream = new ReadableStream({
-              start(controller) {
-                controller.enqueue(inputBytes);
-                controller.close();
-              }
-            });
-
-            const compressedStream = inStream.pipeThrough(cs);
-            const reader = compressedStream.getReader();
-            const chunks = [];
-            let totalLen = 0;
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              if (value) {
-                const chunk = (value instanceof Uint8Array) ? value : new Uint8Array(value);
-                chunks.push(chunk);
-                totalLen += chunk.byteLength;
-              }
-            }
-
-            if (totalLen === 0) continue;
-
-            const out = new Uint8Array(totalLen);
-            let off = 0;
-            for (const c of chunks) {
-              out.set(c, off);
-              off += c.byteLength;
-            }
-
-            const { z85, origLen } = z85Encode(out);
-            const payload = `Z85|${algs[i]}|${origLen}|${z85}`;
-            await navigator.clipboard.writeText(payload);
-            alert(`Copied compressed ${fname} (${algs[i]}, Z85) to clipboard!`);
-            return;
-          } catch (e) {
-          }
-        }
-      }
-    } catch (e) {
-    }
-
     if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       try {
         await navigator.clipboard.writeText(json);
@@ -2732,6 +2653,7 @@ export default function SharedList({
       } catch (e) {
       }
     }
+
     try {
       const t = document.createElement('textarea');
       t.value = json;
@@ -2877,6 +2799,190 @@ export default function SharedList({
     }
   }
 
+  function z85Encode(bytes) {
+    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
+    let out = '';
+    let i = 0;
+    const pad = (4 - (bytes.length % 4)) % 4;
+    const arr = new Uint8Array(bytes.length + pad);
+    arr.set(bytes, 0);
+    while (i < arr.length) {
+      const a = (arr[i++] << 24) >>> 0;
+      const b = (arr[i++] << 16) >>> 0;
+      const c = (arr[i++] << 8) >>> 0;
+      const d = (arr[i++]) >>> 0;
+      const value = (a | b | c | d) >>> 0;
+      let div = value;
+      const block = new Array(5);
+      for (let k = 4; k >= 0; k--) {
+        block[k] = alphabet[div % 85];
+        div = Math.floor(div / 85);
+      }
+      out += block.join('');
+    }
+    return out;
+  }
+
+  function z85Decode(str) {
+    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
+    const map = {};
+    for (let i = 0; i < alphabet.length; i++) map[alphabet[i]] = i;
+    const out = [];
+    let i = 0;
+    while (i < str.length) {
+      let value = 0;
+      for (let k = 0; k < 5; k++) {
+        const ch = str.charAt(i++);
+        const v = map[ch];
+        if (v === undefined) throw new Error('Invalid Z85 char');
+        value = value * 85 + v;
+      }
+      out.push((value >>> 24) & 0xFF);
+      out.push((value >>> 16) & 0xFF);
+      out.push((value >>> 8) & 0xFF);
+      out.push(value & 0xFF);
+    }
+    return new Uint8Array(out);
+  }
+
+  async function handleCopyCompressedJson() {
+    const base = reordered && reordered.length
+      ? reordered
+      : devMode
+        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
+        : achievements;
+
+    if (!base || !base.length) return;
+
+    const cleanse = v => {
+      if (v === null) return;
+      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
+      if (Array.isArray(v)) {
+        const a = [];
+        for (let i = 0; i < v.length; i++) {
+          const x = cleanse(v[i]);
+          if (x !== undefined) a.push(x);
+        }
+        return a;
+      }
+      if (v && typeof v === 'object') {
+        const o = {};
+        for (const k in v) {
+          const x = cleanse(v[k]);
+          if (x !== undefined) o[k] = x;
+        }
+        return o;
+      }
+      return v;
+    };
+
+    const cleaned = base.map(cleanse);
+    const lower = (dataFileName || '').toLowerCase();
+    const shouldMinify =
+      (Array.isArray(cleaned) &&
+        cleaned.length &&
+        typeof cleaned[0] === 'object' &&
+        (cleaned[0].id || cleaned[0].name) &&
+        (cleaned[0].rank || cleaned[0].levelID)) ||
+      (
+        lower === 'achievements.json' ||
+        lower === 'pending.json' ||
+        lower === 'legacy.json' ||
+        lower === 'platformers.json' ||
+        lower === 'platformertimeline.json' ||
+        lower === 'removed.json' ||
+        lower === 'timeline.json'
+      );
+
+    const json = shouldMinify ? JSON.stringify(cleaned) : JSON.stringify(cleaned, null, 2);
+
+    try {
+      if (typeof CompressionStream === 'undefined') throw new Error('CompressionStream not available');
+      const encoder = new TextEncoder();
+      const rs = new ReadableStream({ start(ctrl) { ctrl.enqueue(encoder.encode(json)); ctrl.close(); } });
+      const cs = rs.pipeThrough(new CompressionStream('gzip'));
+      const reader = cs.getReader();
+      const chunks = [];
+      let total = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        total += value.length;
+      }
+      const out = new Uint8Array(total);
+      let offset = 0;
+      for (const c of chunks) { out.set(c, offset); offset += c.length; }
+
+      const encoded = z85Encode(out);
+      const payload = `Z85|gzip|${out.length}|${encoded}`;
+      try {
+        if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+          await navigator.clipboard.writeText(payload);
+          alert('Copied compressed JSON (Z85|gzip) to clipboard');
+          return;
+        }
+      } catch (e) {
+      }
+      try {
+        const t = document.createElement('textarea');
+        t.value = payload;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+        alert('Copied compressed JSON (Z85|gzip) to clipboard');
+        return;
+      } catch (e) {
+        alert('Failed to copy compressed payload to clipboard');
+      }
+    } catch (e) {
+      alert('Compression not supported in this browser');
+    }
+  }
+
+  async function handlePasteCompressedJson() {
+    const payload = prompt('Paste compressed payload (Z85|alg|len|data)');
+    if (!payload) return;
+    const parts = payload.split('|');
+    if (!parts || parts.length < 4 || parts[0] !== 'Z85') {
+      alert('Invalid payload format');
+      return;
+    }
+    const alg = parts[1] || 'gzip';
+    const data = parts.slice(3).join('|');
+    let compressed;
+    try {
+      compressed = z85Decode(data);
+    } catch (err) {
+      alert('Invalid Z85 payload');
+      return;
+    }
+
+    try {
+      if (typeof DecompressionStream === 'undefined') throw new Error('DecompressionStream not available');
+      const ds = new DecompressionStream(alg);
+      const stream = new Response(compressed).body.pipeThrough(ds);
+      const reader = stream.getReader();
+      const chunks = [];
+      let total = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        total += value.length;
+      }
+      const out = new Uint8Array(total);
+      let offset = 0;
+      for (const c of chunks) { out.set(c, offset); offset += c.length; }
+      const text = new TextDecoder().decode(out);
+      const json = JSON.parse(text);
+      onImportAchievementsJson(json);
+    } catch (err) {
+      alert('Failed to decompress/import compressed payload');
+    }
+  }
+
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
     items: achievements,
@@ -3007,6 +3113,8 @@ export default function SharedList({
       handleNewFormAdd,
       handleNewFormCancel,
       handleCopyJson,
+      handleCopyCompressedJson,
+      handlePasteCompressedJson,
       handleDownloadJson,
       handleUploadJson,
       handleShowNewForm,
@@ -3030,6 +3138,8 @@ export default function SharedList({
   const handleNewFormAddCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormAdd && devPanelHandlersRef.current.handleNewFormAdd(...args), []);
   const handleNewFormCancelCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormCancel && devPanelHandlersRef.current.handleNewFormCancel(...args), []);
   const handleCopyJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleCopyJson && devPanelHandlersRef.current.handleCopyJson(...args), []);
+  const handleCopyCompressedCb = useCallback((...args) => devPanelHandlersRef.current.handleCopyCompressedJson && devPanelHandlersRef.current.handleCopyCompressedJson(...args), []);
+  const handlePasteCompressedCb = useCallback((...args) => devPanelHandlersRef.current.handlePasteCompressedJson && devPanelHandlersRef.current.handlePasteCompressedJson(...args), []);
   const handleDownloadJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleDownloadJson && devPanelHandlersRef.current.handleDownloadJson(...args), []);
   const handleUploadJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleUploadJson && devPanelHandlersRef.current.handleUploadJson(...args), []);
   const handleShowNewFormCb = useCallback((...args) => devPanelHandlersRef.current.handleShowNewForm && devPanelHandlersRef.current.handleShowNewForm(...args), []);
@@ -3052,6 +3162,8 @@ export default function SharedList({
     handleNewFormAdd: handleNewFormAddCb,
     handleNewFormCancel: handleNewFormCancelCb,
     handleCopyJson: handleCopyJsonCb,
+    handleCopyCompressedJson: handleCopyCompressedCb,
+    handlePasteCompressedJson: handlePasteCompressedCb,
     handleShowNewForm: handleShowNewFormCb,
     generateAndCopyChangelog: generateAndCopyChangelogCb,
     resetChanges: resetChangesCb,
