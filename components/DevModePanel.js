@@ -14,7 +14,7 @@ const shallowEqual = (a, b) => {
   for (let k of aKeys) if (a[k] !== b[k]) return false;
   return true;
 };
-const COMPACT_DEVMODE_BTN = { fontSize: 12, padding: '4px 6px', borderRadius: 4, cursor: 'pointer', margin: 0 };
+const COMPACT_DEVMODE_BTN = { fontSize: 12, padding: '4px 6px', borderRadius: 4, cursor: 'pointer', margin: 0, pointerEvents: 'auto' };
 const DevToolbar = React.memo(function DevToolbar({
   devMode,
   handleCopyJson,
@@ -41,7 +41,7 @@ const DevToolbar = React.memo(function DevToolbar({
 
   if (collapsed) {
     return (
-      <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 13, display: 'flex', gap: 6, alignItems: 'center' }}>
+      <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 13, display: 'flex', gap: 6, alignItems: 'center', pointerEvents: 'none' }}>
         <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={{ ...COMPACT_DEVMODE_BTN }}>{icons.collapse}</button>
         <button title="Copy .json" aria-label="Copy .json" onClick={handleCopyJson} style={COMPACT_DEVMODE_BTN}>{icons.copy}</button>
         
@@ -50,7 +50,7 @@ const DevToolbar = React.memo(function DevToolbar({
   }
 
   return (
-    <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 12 }}>
+    <div className="devmode-floating-panel" style={{ padding: 6, fontSize: 12, pointerEvents: 'none' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <span className="devmode-title" style={{ fontSize: 12, marginRight: 8 }}>Developer Mode Enabled (SHIFT+M)</span>
         <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={{ ...COMPACT_DEVMODE_BTN }}>{icons.collapse}</button>
