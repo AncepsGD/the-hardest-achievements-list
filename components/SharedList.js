@@ -2645,53 +2645,72 @@ export default function SharedList({
       ? JSON.stringify(cleaned)
       : JSON.stringify(cleaned, null, 2);
 
-    let done = false;
+    function z85Encode(buffer) {
+      const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
+      const bytes = (buffer instanceof Uint8Array) ? buffer : new Uint8Array(buffer);
+      const origLen = bytes.length;
+      let paddedLen = bytes.length;
+      const rem = bytes.length % 4;
+      let padded = bytes;
+      if (rem !== 0) {
+        paddedLen = bytes.length + (4 - rem);
+        padded = new Uint8Array(paddedLen);
+        padded.set(bytes, 0);
+      }
 
-    if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined') {
-      try {
+      let out = '';
+      for (let i = 0; i < paddedLen; i += 4) {
+        const value = ((padded[i] * 256 + padded[i + 1]) * 256 + padded[i + 2]) * 256 + padded[i + 3];
+        let div = 85 * 85 * 85 * 85;
+        let v = value;
+        for (let j = 0; j < 5; j++) {
+          const idx = Math.floor(v / div) % 85;
+          out += alphabet.charAt(idx);
+          div = Math.floor(div / 85) || 1;
+        }
+      }
+      return { z85: out, origLen };
+    }
+
+    try {
+      if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined' && navigator && navigator.clipboard && navigator.clipboard.writeText) {
         const blob = new Blob([json], { type: 'application/json' });
         const algs = ['br', 'brotli', 'gzip'];
-
-        for (let i = 0; i < algs.length && !done; i++) {
+        for (let i = 0; i < algs.length; i++) {
           try {
             const cs = new CompressionStream(algs[i]);
             const compressed = await new Response(blob.stream().pipeThrough(cs)).blob();
-            const mime = algs[i] === 'gzip' ? 'application/gzip' : 'application/br';
-
-            if (navigator.clipboard && ClipboardItem) {
-              const item = new ClipboardItem({
-                [mime]: compressed,
-                'text/plain': json
-              });
-
-              await navigator.clipboard.write([item]);
-              alert(`Copied compressed ${fname} (${algs[i]}) to clipboard!`);
-              done = true;
-            }
-          } catch { }
+            const ab = await compressed.arrayBuffer();
+            const { z85, origLen } = z85Encode(new Uint8Array(ab));
+            const payload = `Z85|${algs[i]}|${origLen}|${z85}`;
+            await navigator.clipboard.writeText(payload);
+            alert(`Copied compressed ${fname} (${algs[i]}, Z85) to clipboard!`);
+            return;
+          } catch (e) {
+          }
         }
-      } catch { }
+      }
+    } catch (e) {
     }
 
-    if (!done) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        try {
-          await navigator.clipboard.writeText(json);
-          alert(`Copied new ${fname} (uncompressed) to clipboard!`);
-          return;
-        } catch { }
-      }
+    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       try {
-        const t = document.createElement('textarea');
-        t.value = json;
-        document.body.appendChild(t);
-        t.select();
-        document.execCommand('copy');
-        document.body.removeChild(t);
+        await navigator.clipboard.writeText(json);
         alert(`Copied new ${fname} (uncompressed) to clipboard!`);
-      } catch {
-        alert('Clipboard API not available');
+        return;
+      } catch (e) {
       }
+    }
+    try {
+      const t = document.createElement('textarea');
+      t.value = json;
+      document.body.appendChild(t);
+      t.select();
+      document.execCommand('copy');
+      document.body.removeChild(t);
+      alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+    } catch (e) {
+      alert('Clipboard API not available');
     }
   }
 
