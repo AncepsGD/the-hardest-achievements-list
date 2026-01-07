@@ -2638,37 +2638,51 @@ export default function SharedList({
 
         if (typeof CompressionStream !== 'undefined') {
           try {
-            const cs = new CompressionStream('gzip');
-            const compressedStream = inputBlob.stream().pipeThrough(cs);
-            const gzipBlob = await new Response(compressedStream).blob();
-
-            if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+            const tryAlgs = ['br', 'brotli', 'gzip'];
+            let cs = null;
+            let usedAlg = null;
+            for (const alg of tryAlgs) {
               try {
-                await navigator.clipboard.write([new ClipboardItem({ 'application/gzip': gzipBlob })]);
-                alert(`Copied compressed ${filename} (gzip) to clipboard!`);
-                compressedCopied = true;
-              } catch (cw) {
-                console.warn('clipboard binary write failed', cw);
+                cs = new CompressionStream(alg);
+                usedAlg = alg;
+                break;
+              } catch (err) {
+                cs = null;
               }
             }
+            if (cs) {
+              const compressedStream = inputBlob.stream().pipeThrough(cs);
+              const compressedBlob = await new Response(compressedStream).blob();
+              const mime = (usedAlg === 'br' || usedAlg === 'brotli') ? 'application/br' : 'application/gzip';
 
-            if (!compressedCopied && navigator.clipboard && typeof FileReader !== 'undefined') {
-              try {
-                const dataUrl = await new Promise((resolve, reject) => {
-                  const fr = new FileReader();
-                  fr.onload = () => resolve(fr.result);
-                  fr.onerror = () => reject(new Error('FileReader failed'));
-                  fr.readAsDataURL(gzipBlob);
-                });
-                await navigator.clipboard.writeText(dataUrl);
-                alert(`Copied compressed ${filename} (gzip, base64) to clipboard as data URL`);
-                compressedCopied = true;
-              } catch (b64Err) {
-                console.warn('clipboard base64 write failed', b64Err);
+              if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
+                try {
+                  await navigator.clipboard.write([new ClipboardItem({ [mime]: compressedBlob })]);
+                  alert(`Copied compressed ${filename} (${usedAlg}) to clipboard!`);
+                  compressedCopied = true;
+                } catch (cw) {
+                  console.warn('clipboard binary write failed', cw);
+                }
+              }
+
+              if (!compressedCopied && navigator.clipboard && typeof FileReader !== 'undefined') {
+                try {
+                  const dataUrl = await new Promise((resolve, reject) => {
+                    const fr = new FileReader();
+                    fr.onload = () => resolve(fr.result);
+                    fr.onerror = () => reject(new Error('FileReader failed'));
+                    fr.readAsDataURL(compressedBlob);
+                  });
+                  await navigator.clipboard.writeText(dataUrl);
+                  alert(`Copied compressed ${filename} (${usedAlg}, base64) to clipboard as data URL`);
+                  compressedCopied = true;
+                } catch (b64Err) {
+                  console.warn('clipboard base64 write failed', b64Err);
+                }
               }
             }
           } catch (e) {
-            console.warn('gzip CompressionStream failed', e);
+            console.warn('CompressionStream failed', e);
           }
         }
       } catch (e) {
