@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
+import { createPortal } from 'react-dom';
 import Fuse from 'fuse.js';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
@@ -117,6 +118,7 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
         });
       }
       break;
+
     case 'removedWithReadds':
       entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
@@ -437,6 +439,45 @@ function normalizeYoutubeUrl(input) {
   }
 
   return null;
+}
+
+export function SharedListHoverLayer({ children }) {
+  const [hover, setHover] = useState(null);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+
+  function onEnter(a, e) {
+    setHover(a);
+    setPos({ x: e.clientX, y: e.clientY });
+  }
+  function onMove(e) {
+    if (hover) setPos({ x: e.clientX, y: e.clientY });
+  }
+  function onLeave() {
+    setHover(null);
+  }
+
+  return (
+    <>
+      {children({ onEnter, onMove, onLeave })}
+      {hover && typeof document !== 'undefined' && createPortal(
+        <div
+          style={{
+            position: 'fixed',
+            top: pos.y + 12,
+            left: pos.x + 12,
+            zIndex: 9999,
+            padding: '6px 10px',
+            background: '#111',
+            color: '#fff',
+            pointerEvents: 'none'
+          }}
+        >
+          {hover.name}
+        </div>,
+        document.body
+      )}
+    </>
+  );
 }
 
 function sanitizeImageUrl(input) {
@@ -2236,6 +2277,7 @@ export default function SharedList({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
+    hoveredIdx,
     setHoveredIdx,
     mode,
     devMode,
@@ -2253,29 +2295,19 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
+  }), [visibleList, isMobile, duplicateThumbKeys, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
       filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
-      setHoveredIdx, handleEditAchievement,
+      hoveredIdx, setHoveredIdx, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
     const thumb = useMemo(() => getThumbnailUrl(a, isMobile), [a && a.id, a && a.thumbnail, a && a.levelID, isMobile]);
     const isDup = duplicateThumbKeys.has((thumb || '').trim());
     const [isHighlightedLocal, setIsHighlightedLocal] = useState(() => highlightedIdxRef.current === index);
-
-    const [localHovered, setLocalHovered] = useState(false);
-    const handleEnter = useCallback(() => {
-      setLocalHovered(true);
-      try { if (devMode && typeof setHoveredIdx === 'function') setHoveredIdx(index); } catch (e) {}
-    }, [devMode, index, setHoveredIdx]);
-    const handleLeave = useCallback(() => {
-      setLocalHovered(false);
-      try { if (devMode && typeof setHoveredIdx === 'function') setHoveredIdx(null); } catch (e) {}
-    }, [devMode, index, setHoveredIdx]);
 
     useEffect(() => {
       const map = highlightListenersRef.current;
@@ -2293,15 +2325,23 @@ export default function SharedList({
     }, [index]);
 
     return (
-      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}>
+      <div
+        data-index={index}
+        style={itemStyle}
+        key={a && a.id ? a.id : index}
+        className={`${isDup ? 'duplicate-thumb-item' : ''} ${isHighlightedLocal ? 'search-highlight' : ''}`}
+        onMouseEnter={e => { try { if (typeof setHoveredIdx === 'function') setHoveredIdx(index); if (data && typeof data.onEnter === 'function') data.onEnter(a, e); } catch (err) {} }}
+        onMouseMove={e => { try { if (data && typeof data.onMove === 'function') data.onMove(e); } catch (err) {} }}
+        onMouseLeave={e => { try { if (typeof setHoveredIdx === 'function') setHoveredIdx(null); if (data && typeof data.onLeave === 'function') data.onLeave(e); } catch (err) {} }}
+      >
         {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={handleEnter}
-            onHoverLeave={handleLeave}
-            isHovered={localHovered}
+            onHoverEnter={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(index) : undefined}
+            onHoverLeave={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(null) : undefined}
+            isHovered={hoveredIdx === index}
             devMode={devMode}
             autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false}
             totalAchievements={filtered.length}
@@ -2338,6 +2378,7 @@ export default function SharedList({
     if (p.usePlatformers !== n.usePlatformers) return false;
     if (p.mode !== n.mode) return false;
     if (p.hideRank !== n.hideRank) return false;
+    if (p.hoveredIdx !== n.hoveredIdx) return false;
     const pThumb = getThumbnailUrl(pItem, p.isMobile);
     const nThumb = getThumbnailUrl(nItem, n.isMobile);
     const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
@@ -3464,49 +3505,53 @@ export default function SharedList({
             (visibleList && visibleList.length === 0) ? (
               <div className="no-achievements">No achievements found.</div>
             ) : (
-              <ListWindow
-                ref={listRef}
-                height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
-                itemCount={Math.min(visibleCount, (visibleList || []).length)}
-                itemSize={150}
-                overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
-                width={'100%'}
-                style={{ overflowX: 'hidden' }}
-                itemData={listItemData}
-                onItemsRendered={({ visibleStopIndex }) => {
-                  try {
-                    const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
-                    const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
-                    if (pageSize === 'all') return;
-                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                      setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
-                    }
-                  } catch (err) {
-                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                      setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
-                    }
-                  }
-                }}
-              >
-                {ListRow}
-              </ListWindow>
+              <SharedListHoverLayer>
+                {({ onEnter, onMove, onLeave }) => (
+                  <ListWindow
+                    ref={listRef}
+                    height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
+                    itemCount={Math.min(visibleCount, (visibleList || []).length)}
+                    itemSize={150}
+                    overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
+                    width={'100%'}
+                    style={{ overflowX: 'hidden' }}
+                    itemData={{ ...listItemData, onEnter, onMove, onLeave }}
+                    onItemsRendered={({ visibleStopIndex }) => {
+                      try {
+                        const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
+                        const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
+                        if (pageSize === 'all') return;
+                        if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                          setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
+                        }
+                      } catch (err) {
+                        if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                          setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
+                        }
+                      }
+                    }}
+                  >
+                    {ListRow}
+                  </ListWindow>
+                )}
+              </SharedListHoverLayer>
             )
           )}
         </section>
       </main>
-      {devMode && hoveredItemForDevPanel && (
-          <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
-              <div style={{ flex: 1 }}>
-                <strong style={{ display: 'block', marginBottom: 4 }}>{(hoveredItemForDevPanel && hoveredItemForDevPanel.name) || 'Achievement'}</strong>
-                <div style={{ fontSize: 12, color: '#aaa' }}>{(hoveredItemForDevPanel && hoveredItemForDevPanel.player) || ''} {(hoveredItemForDevPanel && hoveredItemForDevPanel.id) ? `— ${hoveredItemForDevPanel.id}` : ''}</div>
-              </div>
-              <div style={{ marginLeft: 8 }}>
-                <button className="devmode-btn" onClick={() => { try { const txt = hoveredItemJson; navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
-              </div>
+      {devMode && hoveredIdx !== null && visibleList && visibleList[hoveredIdx] && (
+        <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <strong style={{ display: 'block', marginBottom: 4 }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].name) || 'Achievement'}</strong>
+              <div style={{ fontSize: 12, color: '#aaa' }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].player) || ''} {(visibleList[hoveredIdx] && visibleList[hoveredIdx].id) ? `— ${visibleList[hoveredIdx].id}` : ''}</div>
             </div>
-            <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{hoveredItemJson}</pre>
+            <div style={{ marginLeft: 8 }}>
+              <button className="devmode-btn" onClick={() => { try { const txt = JSON.stringify(visibleList[hoveredIdx], null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
+            </div>
           </div>
+          <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{JSON.stringify(visibleList[hoveredIdx], null, 2)}</pre>
+        </div>
       )}
 
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
