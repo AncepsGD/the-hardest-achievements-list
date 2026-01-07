@@ -2492,7 +2492,7 @@ export default function SharedList({
     const sig = _makePasteSignature(items);
     let idx = null;
     if (sig && _pasteIndexCache.has(sig)) {
-      idx = _pasteIndex_CACHE.get(sig);
+      idx = _pasteIndexCache.get(sig);
     } else {
       idx = new Array(items.length);
       const prefixMap = new Map();
