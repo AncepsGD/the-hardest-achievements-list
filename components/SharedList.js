@@ -1017,6 +1017,8 @@ export default function SharedList({
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
   const [pasteIndex, setPasteIndex] = useState([]);
+  const pasteIndexRef = useRef([]);
+  const pastePrefixMapRef = useRef(new Map());
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, { minDelay: 80, maxDelay: 250, useIdle: true });
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
@@ -2427,33 +2429,42 @@ export default function SharedList({
   function getPasteCandidates() {
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
+    const idxArr = (pasteIndexRef.current && pasteIndexRef.current.length) ? pasteIndexRef.current : pasteIndex || [];
+    const prefixMap = pastePrefixMapRef.current || new Map();
 
-    if (!pasteIndex || pasteIndex.length === 0) {
-      const base = (devMode && reordered) ? reordered || [] : achievements || [];
-      const extras = Object.values(extraLists).flat().filter(Boolean);
-      const items = [...base, ...extras];
-      const sig = _makePasteSignature(items);
-      let idx = null;
-      if (sig && _pasteIndexCache.has(sig)) {
-        idx = _pasteIndexCache.get(sig);
-      } else {
-        idx = new Array(items.length);
-        for (let i = 0; i < items.length; i++) {
-          const a = items[i];
-          idx[i] = {
-            achievement: a,
-            searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-              .filter(Boolean).join(' ').toLowerCase()
-          };
-        }
-        try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
+    const tokens = q.split(' ').filter(Boolean);
+    if (!tokens.length) return [];
+
+    let resultSet = null;
+    for (let t of tokens) {
+      const key = t;
+      const s = prefixMap.get(key);
+      if (!s || s.length === 0) {
+        resultSet = [];
+        break;
       }
-      setPasteIndex(idx);
+      if (resultSet === null) {
+        resultSet = new Set(s);
+      } else {
+        for (const v of Array.from(resultSet)) {
+          if (!s.includes(v)) resultSet.delete(v);
+        }
+      }
+      if (!resultSet || resultSet.size === 0) break;
     }
 
     const out = [];
-    for (let i = 0; i < pasteIndex.length && out.length < 50; i++) {
-      const entry = pasteIndex[i];
+    if (resultSet && resultSet.size) {
+      for (const idx of resultSet) {
+        if (out.length >= 50) break;
+        const e = idxArr[idx];
+        if (e && e.achievement) out.push(e.achievement);
+      }
+      return out;
+    }
+
+    for (let i = 0; i < idxArr.length && out.length < 50; i++) {
+      const entry = idxArr[i];
       if (!entry || !entry.searchable) continue;
       if (entry.searchable.indexOf(q) !== -1) out.push(entry.achievement);
     }
@@ -2475,27 +2486,45 @@ export default function SharedList({
   }, [pasteShowResults, pasteSearch]);
 
   useEffect(() => {
-    if (!debouncedPasteSearch) return;
     const base = (devMode && reordered) ? reordered || [] : achievements || [];
     const extras = Object.values(extraLists).flat().filter(Boolean);
     const items = [...base, ...extras];
     const sig = _makePasteSignature(items);
     let idx = null;
     if (sig && _pasteIndexCache.has(sig)) {
-      idx = _pasteIndexCache.get(sig);
+      idx = _pasteIndex_CACHE.get(sig);
     } else {
       idx = new Array(items.length);
+      const prefixMap = new Map();
+      const maxPrefix = 20;
       for (let i = 0; i < items.length; i++) {
         const a = items[i];
-        idx[i] = {
-          achievement: a,
-          searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-            .filter(Boolean).join(' ').toLowerCase()
-        };
+        const searchable = [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+          .filter(Boolean).join(' ').toLowerCase();
+        idx[i] = { achievement: a, searchable };
+        const toks = (searchable || '').split(/\s+/).filter(Boolean);
+        toks.forEach(tok => {
+          const capped = String(tok).slice(0, maxPrefix);
+          for (let p = 1; p <= capped.length; p++) {
+            const key = capped.slice(0, p);
+            const arr = prefixMap.get(key) || [];
+            arr.push(i);
+            if (!prefixMap.has(key)) prefixMap.set(key, arr);
+          }
+        });
       }
-      try { if (sig) _pasteIndexCache.set(sig, idx); } catch (e) { }
+      try { if (sig) _pasteIndexCache.set(sig, { idx, prefixMap }); } catch (e) { }
+      pasteIndexRef.current = idx;
+      pastePrefixMapRef.current = prefixMap;
     }
-    setPasteIndex(idx);
+    if (!pasteIndexRef.current || !pasteIndexRef.current.length) {
+      const cached = sig && _pasteIndexCache.has(sig) ? _pasteIndexCache.get(sig) : null;
+      if (cached && cached.idx) {
+        pasteIndexRef.current = cached.idx;
+        pastePrefixMapRef.current = cached.prefixMap || new Map();
+      }
+    }
+    setPasteIndex(pasteIndexRef.current || []);
   }, [achievements, extraLists, devMode, reordered, debouncedPasteSearch]);
 
   function handlePasteSelect(item) {
@@ -2554,7 +2583,7 @@ export default function SharedList({
     return entry;
   }, [newForm, newFormTags, newFormCustomTags]);
 
-  function handleCopyJson() {
+  async function handleCopyJson() {
     const source = devMode
       ? ((reordered && reordered.length) ? reordered : (devAchievements && devAchievements.length ? devAchievements : achievements))
       : ((reordered && reordered.length) ? reordered : achievements);
@@ -2601,7 +2630,7 @@ export default function SharedList({
       ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
       : dataFileName;
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(json);
+      try { await navigator.clipboard.writeText(json); } catch (e) { }
       alert(`Copied new ${filename} to clipboard!`);
     } else {
       const textarea = document.createElement('textarea');
@@ -2611,6 +2640,49 @@ export default function SharedList({
       document.execCommand('copy');
       document.body.removeChild(textarea);
       alert(`Copied new ${filename} to clipboard!`);
+    }
+
+    if (typeof window !== 'undefined') {
+      try {
+        const encoder = new TextEncoder();
+        const input = encoder.encode(json);
+
+        const triggerDownload = (blob, outName) => {
+          try {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = outName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 5000);
+          } catch (e) { }
+        };
+
+        if (typeof CompressionStream === 'function') {
+          try {
+            const cs = new CompressionStream('gzip');
+            const compressedStream = new Response(input).body.pipeThrough(cs);
+            const blob = await new Response(compressedStream).blob();
+            triggerDownload(blob, filename + '.gz');
+          } catch (e) { }
+          try {
+            const cs2 = new CompressionStream('brotli');
+            const compressedStream2 = new Response(input).body.pipeThrough(cs2);
+            const blob2 = await new Response(compressedStream2).blob();
+            triggerDownload(blob2, filename + '.br');
+          } catch (e) {
+            try {
+              const cs3 = new CompressionStream('br');
+              const compressedStream3 = new Response(input).body.pipeThrough(cs3);
+              const blob3 = await new Response(compressedStream3).blob();
+              triggerDownload(blob3, filename + '.br');
+            } catch (e2) { }
+          }
+        }
+      } catch (e) {
+      }
     }
   }
 
