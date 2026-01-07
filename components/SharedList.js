@@ -2615,40 +2615,12 @@ export default function SharedList({
     };
 
     const cleaned = base.map(cleanse);
-
-    const fname = usePlatformers
-      ? dataFileName === 'timeline.json'
-        ? 'platformertimeline.json'
-        : dataFileName === 'achievements.json'
-          ? 'platformers.json'
-          : dataFileName
-      : dataFileName;
-
-    const lower = (dataFileName || '').toLowerCase();
-    const shouldMinify =
-      (Array.isArray(cleaned) &&
-        cleaned.length &&
-        typeof cleaned[0] === 'object' &&
-        (cleaned[0].id || cleaned[0].name) &&
-        (cleaned[0].rank || cleaned[0].levelID)) ||
-      (
-        lower === 'achievements.json' ||
-        lower === 'pending.json' ||
-        lower === 'legacy.json' ||
-        lower === 'platformers.json' ||
-        lower === 'platformertimeline.json' ||
-        lower === 'removed.json' ||
-        lower === 'timeline.json'
-      );
-
-    const json = shouldMinify
-      ? JSON.stringify(cleaned)
-      : JSON.stringify(cleaned, null, 2);
+    const json = JSON.stringify(cleaned, null, 2);
 
     if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
       try {
         await navigator.clipboard.writeText(json);
-        alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+        alert('Copied JSON to clipboard');
         return;
       } catch (e) {
       }
@@ -2661,7 +2633,7 @@ export default function SharedList({
       t.select();
       document.execCommand('copy');
       document.body.removeChild(t);
-      alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+      alert('Copied JSON to clipboard');
     } catch (e) {
       alert('Clipboard API not available');
     }
@@ -3175,6 +3147,8 @@ export default function SharedList({
     handleNewFormCancelCb, handleCopyJsonCb, handleShowNewFormCb, generateAndCopyChangelogCb,
     resetChangesCb, onImportAchievementsJsonCb, handleDownloadJsonCb, handleUploadJsonCb,
   ]);
+
+
 
   return (
     <>
