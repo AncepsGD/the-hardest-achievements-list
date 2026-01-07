@@ -42,7 +42,7 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
 
   switch (type) {
     case 'added':
-      entry = `🟢 **${name}** added at #${rank}`;
+      entry = `<:added:1458440716400459837> **${name}** added at #${rank}`;
       if (showOnlyOneContext) {
         if (context.below) entry += `\n> Below ${context.below}`;
       } else {
@@ -52,7 +52,7 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
       break;
 
     case 'removed':
-      entry = `🔴 **${name}** removed from #${oldRank || rank}`;
+      entry = `⛔ **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
         const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
         if (showOnlyOneContext) {
@@ -113,11 +113,10 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
       if (removedDuplicates && removedDuplicates.length > 0) {
         entry += `\n>\n> Achievement(s) removed for redundancy:`;
         removedDuplicates.forEach(dup => {
-          entry += `\n> 🔴 ${dup.name} (#${dup.rank})`;
+          entry += `\n> ⛔ ${dup.name} (#${dup.rank})`;
         });
       }
       break;
-
     case 'removedWithReadds':
       entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
       if (oldAchievement) {
@@ -132,13 +131,13 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
       if (readdedAchievements && readdedAchievements.length > 0) {
         entry += `\n>\n> Achievement(s) re-added due to renewed relevance:`;
         readdedAchievements.forEach(re => {
-          entry += `\n> 🟢 ${re.name} (#${re.rank})`;
+          entry += `\n> <:added:1458440716400459837> ${re.name} (#${re.rank})`;
         });
       }
       break;
 
     case 'timelineAdded':
-      entry = `🟡 **${name}** added to the Timeline at ${achievement.date || 'Unknown date'}`;
+      entry = `<:timelineadd:1458442225351393307> **${name}** added to the Timeline at ${achievement.date || 'Unknown date'}`;
       break;
 
     case 'timelineRemoved':
@@ -2237,7 +2236,6 @@ export default function SharedList({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
-    hoveredIdx,
     setHoveredIdx,
     mode,
     devMode,
@@ -2255,19 +2253,29 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-  }), [visibleList, isMobile, duplicateThumbKeys, hoveredIdx, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
       filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
-      hoveredIdx, setHoveredIdx, handleEditAchievement,
+      setHoveredIdx, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
     const thumb = useMemo(() => getThumbnailUrl(a, isMobile), [a && a.id, a && a.thumbnail, a && a.levelID, isMobile]);
     const isDup = duplicateThumbKeys.has((thumb || '').trim());
     const [isHighlightedLocal, setIsHighlightedLocal] = useState(() => highlightedIdxRef.current === index);
+
+    const [localHovered, setLocalHovered] = useState(false);
+    const handleEnter = useCallback(() => {
+      setLocalHovered(true);
+      try { if (devMode && typeof setHoveredIdx === 'function') setHoveredIdx(index); } catch (e) {}
+    }, [devMode, index, setHoveredIdx]);
+    const handleLeave = useCallback(() => {
+      setLocalHovered(false);
+      try { if (devMode && typeof setHoveredIdx === 'function') setHoveredIdx(null); } catch (e) {}
+    }, [devMode, index, setHoveredIdx]);
 
     useEffect(() => {
       const map = highlightListenersRef.current;
@@ -2291,9 +2299,9 @@ export default function SharedList({
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(index) : undefined}
-            onHoverLeave={typeof setHoveredIdx === 'function' ? () => setHoveredIdx(null) : undefined}
-            isHovered={hoveredIdx === index}
+            onHoverEnter={handleEnter}
+            onHoverLeave={handleLeave}
+            isHovered={localHovered}
             devMode={devMode}
             autoThumbAvailable={a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false}
             totalAchievements={filtered.length}
@@ -2330,7 +2338,6 @@ export default function SharedList({
     if (p.usePlatformers !== n.usePlatformers) return false;
     if (p.mode !== n.mode) return false;
     if (p.hideRank !== n.hideRank) return false;
-    if (p.hoveredIdx !== n.hoveredIdx) return false;
     const pThumb = getThumbnailUrl(pItem, p.isMobile);
     const nThumb = getThumbnailUrl(nItem, n.isMobile);
     const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
@@ -3487,19 +3494,19 @@ export default function SharedList({
           )}
         </section>
       </main>
-      {devMode && hoveredIdx !== null && visibleList && visibleList[hoveredIdx] && (
-        <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
-            <div style={{ flex: 1 }}>
-              <strong style={{ display: 'block', marginBottom: 4 }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].name) || 'Achievement'}</strong>
-              <div style={{ fontSize: 12, color: '#aaa' }}>{(visibleList[hoveredIdx] && visibleList[hoveredIdx].player) || ''} {(visibleList[hoveredIdx] && visibleList[hoveredIdx].id) ? `— ${visibleList[hoveredIdx].id}` : ''}</div>
+      {devMode && hoveredItemForDevPanel && (
+          <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
+              <div style={{ flex: 1 }}>
+                <strong style={{ display: 'block', marginBottom: 4 }}>{(hoveredItemForDevPanel && hoveredItemForDevPanel.name) || 'Achievement'}</strong>
+                <div style={{ fontSize: 12, color: '#aaa' }}>{(hoveredItemForDevPanel && hoveredItemForDevPanel.player) || ''} {(hoveredItemForDevPanel && hoveredItemForDevPanel.id) ? `— ${hoveredItemForDevPanel.id}` : ''}</div>
+              </div>
+              <div style={{ marginLeft: 8 }}>
+                <button className="devmode-btn" onClick={() => { try { const txt = hoveredItemJson; navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
+              </div>
             </div>
-            <div style={{ marginLeft: 8 }}>
-              <button className="devmode-btn" onClick={() => { try { const txt = JSON.stringify(visibleList[hoveredIdx], null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
-            </div>
+            <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{hoveredItemJson}</pre>
           </div>
-          <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{JSON.stringify(visibleList[hoveredIdx], null, 2)}</pre>
-        </div>
       )}
 
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
