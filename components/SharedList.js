@@ -2427,7 +2427,20 @@ export default function SharedList({
       ? ((reordered && reordered.length) ? reordered : (devAchievements && devAchievements.length ? devAchievements : achievements))
       : ((reordered && reordered.length) ? reordered : achievements);
     if (!source || !source.length) return;
-    const json = JSON.stringify(source.map(r => ({ ...r })), null, 2);
+    const copy = source.map(r => ({ ...r }));
+    const looksLikeAchievementList = Array.isArray(copy) &&
+      copy.length > 0 &&
+      copy[0] !== null &&
+      typeof copy[0] === 'object' &&
+      (('id' in copy[0]) || ('name' in copy[0])) &&
+      (('rank' in copy[0]) || ('levelID' in copy[0]));
+    const filenameIndicator = (dataFileName || '').toLowerCase();
+    const ACHIEVEMENT_FILE_SET = new Set([
+      'achievements.json', 'pending.json', 'legacy.json', 'platformers.json',
+      'platformertimeline.json', 'removed.json', 'timeline.json'
+    ]);
+    const shouldMinify = looksLikeAchievementList || ACHIEVEMENT_FILE_SET.has(filenameIndicator);
+    const json = shouldMinify ? JSON.stringify(copy) : JSON.stringify(copy, null, 2);
     const filename = usePlatformers
       ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
       : dataFileName;
