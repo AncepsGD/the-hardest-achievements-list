@@ -2243,7 +2243,7 @@ export default function SharedList({
     const pId = pItem && pItem.id;
     const nId = nItem && nItem.id;
     if (String(pId) !== String(nId)) return false;
-    
+
     if (p.devMode !== n.devMode) return false;
     if (p.showTiers !== n.showTiers) return false;
     if (p.usePlatformers !== n.usePlatformers) return false;
@@ -2584,115 +2584,114 @@ export default function SharedList({
   }, [newForm, newFormTags, newFormCustomTags]);
 
   async function handleCopyJson() {
-    const source = devMode
-      ? ((reordered && reordered.length) ? reordered : (devAchievements && devAchievements.length ? devAchievements : achievements))
-      : ((reordered && reordered.length) ? reordered : achievements);
-    if (!source || !source.length) return;
-    const copy = source.map(r => ({ ...r }));
-    const looksLikeAchievementList = Array.isArray(copy) &&
-      copy.length > 0 &&
-      copy[0] !== null &&
-      typeof copy[0] === 'object' &&
-      (('id' in copy[0]) || ('name' in copy[0])) &&
-      (('rank' in copy[0]) || ('levelID' in copy[0]));
-    const filenameIndicator = (dataFileName || '').toLowerCase();
-    const ACHIEVEMENT_FILE_SET = new Set([
-      'achievements.json', 'pending.json', 'legacy.json', 'platformers.json',
-      'platformertimeline.json', 'removed.json', 'timeline.json'
-    ]);
-    const shouldMinify = looksLikeAchievementList || ACHIEVEMENT_FILE_SET.has(filenameIndicator);
+    const base = reordered && reordered.length
+      ? reordered
+      : devMode
+        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
+        : achievements;
 
-    function cleanseValue(v) {
-      if (v === null) return undefined;
-      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return undefined;
+    if (!base || !base.length) return;
+
+    const cleanse = v => {
+      if (v === null) return;
+      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
       if (Array.isArray(v)) {
-        const out = [];
+        const a = [];
         for (let i = 0; i < v.length; i++) {
-          const cv = cleanseValue(v[i]);
-          if (cv !== undefined) out.push(cv);
+          const x = cleanse(v[i]);
+          if (x !== undefined) a.push(x);
         }
-        return out;
+        return a;
       }
       if (v && typeof v === 'object') {
         const o = {};
-        Object.keys(v).forEach(k => {
-          const cv = cleanseValue(v[k]);
-          if (cv !== undefined) o[k] = cv;
-        });
+        for (const k in v) {
+          const x = cleanse(v[k]);
+          if (x !== undefined) o[k] = x;
+        }
         return o;
       }
       return v;
-    }
+    };
 
-    const cleaned = copy.map(item => cleanseValue(item));
-    const json = shouldMinify ? JSON.stringify(cleaned) : JSON.stringify(cleaned, null, 2);
-    const filename = usePlatformers
-      ? (dataFileName === 'timeline.json' ? 'platformertimeline.json' : (dataFileName === 'achievements.json' ? 'platformers.json' : dataFileName))
+    const cleaned = base.map(cleanse);
+
+    const fname = usePlatformers
+      ? dataFileName === 'timeline.json'
+        ? 'platformertimeline.json'
+        : dataFileName === 'achievements.json'
+          ? 'platformers.json'
+          : dataFileName
       : dataFileName;
 
-    let compressedCopied = false;
+    const lower = (dataFileName || '').toLowerCase();
+    const shouldMinify =
+      (Array.isArray(cleaned) &&
+        cleaned.length &&
+        typeof cleaned[0] === 'object' &&
+        (cleaned[0].id || cleaned[0].name) &&
+        (cleaned[0].rank || cleaned[0].levelID)) ||
+      (
+        lower === 'achievements.json' ||
+        lower === 'pending.json' ||
+        lower === 'legacy.json' ||
+        lower === 'platformers.json' ||
+        lower === 'platformertimeline.json' ||
+        lower === 'removed.json' ||
+        lower === 'timeline.json'
+      );
 
-    if (typeof window !== 'undefined') {
+    const json = shouldMinify
+      ? JSON.stringify(cleaned)
+      : JSON.stringify(cleaned, null, 2);
+
+    let done = false;
+
+    if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined') {
       try {
-        const inputBlob = new Blob([json], { type: 'application/json' });
-
-        if (typeof CompressionStream !== 'undefined') {
+        const blob = new Blob([json], { type: 'application/json' });
+        const algs = ['br', 'brotli', 'gzip'];
+        let cs;
+        for (let i = 0; i < algs.length; i++) {
           try {
-            const tryAlgs = ['br', 'brotli', 'gzip'];
-            let cs = null;
-            let usedAlg = null;
-            for (const alg of tryAlgs) {
-              try {
-                cs = new CompressionStream(alg);
-                usedAlg = alg;
-                break;
-              } catch (err) {
-                cs = null;
-              }
-            }
+            cs = new CompressionStream(algs[i]);
             if (cs) {
-              const compressedStream = inputBlob.stream().pipeThrough(cs);
-              const compressedBlob = await new Response(compressedStream).blob();
-              const mime = (usedAlg === 'br' || usedAlg === 'brotli') ? 'application/br' : 'application/gzip';
-
-              if (navigator.clipboard && typeof ClipboardItem !== 'undefined') {
-                try {
-                  await navigator.clipboard.write([new ClipboardItem({ [mime]: compressedBlob })]);
-                  alert(`Copied compressed ${filename} (${usedAlg}) to clipboard!`);
-                  compressedCopied = true;
-                } catch (cw) {
-                  console.warn('clipboard binary write failed', cw);
-                }
+              const out = await new Response(blob.stream().pipeThrough(cs)).blob();
+              const mime = algs[i] === 'gzip' ? 'application/gzip' : 'application/br';
+              if (navigator.clipboard && ClipboardItem) {
+                await navigator.clipboard.write([new ClipboardItem({ [mime]: out })]);
+                alert(`Copied compressed ${fname} (${algs[i]}) to clipboard!`);
+                done = true;
               }
-
             }
-          } catch (e) {
-            console.warn('CompressionStream failed', e);
-          }
+            break;
+          } catch { }
         }
-      } catch (e) {
-        console.warn('compression/copy attempt failed', e);
-      }
+      } catch { }
     }
 
-    if (!compressedCopied) {
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-        try { await navigator.clipboard.writeText(json); alert(`Copied new ${filename} (uncompressed) to clipboard!`); } catch (e) { alert('Failed to copy to clipboard'); }
-      } else {
+    if (!done) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         try {
-          const textarea = document.createElement('textarea');
-          textarea.value = json;
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-          alert(`Copied new ${filename} (uncompressed) to clipboard!`);
-        } catch (e) {
-          alert('Clipboard API not available');
-        }
+          await navigator.clipboard.writeText(json);
+          alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+          return;
+        } catch { }
+      }
+      try {
+        const t = document.createElement('textarea');
+        t.value = json;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+        alert(`Copied new ${fname} (uncompressed) to clipboard!`);
+      } catch {
+        alert('Clipboard API not available');
       }
     }
   }
+
 
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
