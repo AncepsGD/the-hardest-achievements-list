@@ -30,12 +30,12 @@ const DevToolbar = React.memo(function DevToolbar({
   const handleToggleCollapsed = useCallback(() => setCollapsed(c => !c), []);
 
   const icons = {
-    copy: 'Copy .json',
-    file: 'Import .json',
-    check: 'Dupe Img Check',
-    new: 'Create',
-    changelog: 'Changelog',
-    reset: 'Reset',
+    copy: '📋',
+    file: '📂',
+    check: '✅',
+    new: '🆕',
+    changelog: '📝',
+    reset: '🔄',
     collapse: collapsed ? '▾' : '▴'
   };
 
@@ -45,27 +45,6 @@ const DevToolbar = React.memo(function DevToolbar({
         <button title="Toggle dev toolbar" aria-label="Toggle dev toolbar" onClick={handleToggleCollapsed} style={{ ...COMPACT_DEVMODE_BTN }}>{icons.collapse}</button>
         <button title="Copy .json" aria-label="Copy .json" onClick={handleCopyJson} style={COMPACT_DEVMODE_BTN}>{icons.copy}</button>
         
-        <label title="Import .json file" style={{ ...COMPACT_DEVMODE_BTN, display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
-          <span>{icons.file}</span>
-          <input
-            type="file"
-            accept="application/json,.json"
-            style={{ display: 'none' }}
-            onChange={e => {
-              const file = e.target.files && e.target.files[0];
-              if (!file) return;
-              const reader = new FileReader();
-              reader.onload = evt => {
-                try {
-                  const json = JSON.parse(evt.target.result);
-                  if (typeof onImportAchievementsJson === 'function') onImportAchievementsJson(json);
-                } catch (err) { alert('Invalid achievements.json file.'); }
-              };
-              reader.readAsText(file);
-              e.target.value = '';
-            }}
-          />
-        </label>
       </div>
     );
   }
@@ -78,7 +57,7 @@ const DevToolbar = React.memo(function DevToolbar({
       </div>
       <div className="devmode-btn-row" style={{ gap: 6, display: 'flex', flexWrap: 'wrap', alignItems: 'center', marginTop: 6 }}>
         <button className="devmode-btn" onClick={handleCopyJson} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.copy}</span>Copy .json</button>
-        
+
         <label className="devmode-btn" style={{ ...COMPACT_DEVMODE_BTN, display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
           <span style={{ lineHeight: 1 }}>{icons.file} Import .json</span>
           <input
@@ -104,13 +83,13 @@ const DevToolbar = React.memo(function DevToolbar({
             }}
           />
         </label>
-        <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.check}</span>Check Dupe Images</button>
-        <button className="devmode-btn" onClick={handleShowNewForm} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.new}</span>New Achievement</button>
+        <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.check}</span>Dupe Img Check</button>
+        <button className="devmode-btn" onClick={handleShowNewForm} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.new}</span>Create</button>
         <button className="devmode-btn" onClick={generateAndCopyChangelog} style={{ ...COMPACT_DEVMODE_BTN, backgroundColor: '#28a745', color: '#fff' }}>
-          <span style={{ marginRight: 6 }}>{icons.changelog}</span>Copy Changelog
+          <span style={{ marginRight: 6 }}>{icons.changelog}</span>Changelog
         </button>
         <button className="devmode-btn" onClick={resetChanges} style={{ ...COMPACT_DEVMODE_BTN, backgroundColor: '#ffc107' }}>
-          <span style={{ marginRight: 6 }}>{icons.reset}</span>Reset Changes
+          <span style={{ marginRight: 6 }}>{icons.reset}</span>Reset
         </button>
       </div>
     </div>
