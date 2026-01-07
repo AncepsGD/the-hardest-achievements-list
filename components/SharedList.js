@@ -2674,14 +2674,45 @@ export default function SharedList({
 
     try {
       if (typeof window !== 'undefined' && typeof CompressionStream !== 'undefined' && navigator && navigator.clipboard && navigator.clipboard.writeText) {
-        const blob = new Blob([json], { type: 'application/json' });
+        const encoder = new TextEncoder();
+        const inputBytes = encoder.encode(json);
         const algs = ['br', 'brotli', 'gzip'];
+
         for (let i = 0; i < algs.length; i++) {
           try {
             const cs = new CompressionStream(algs[i]);
-            const compressed = await new Response(blob.stream().pipeThrough(cs)).blob();
-            const ab = await compressed.arrayBuffer();
-            const { z85, origLen } = z85Encode(new Uint8Array(ab));
+
+            const inStream = new ReadableStream({
+              start(controller) {
+                controller.enqueue(inputBytes);
+                controller.close();
+              }
+            });
+
+            const compressedStream = inStream.pipeThrough(cs);
+            const reader = compressedStream.getReader();
+            const chunks = [];
+            let totalLen = 0;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              if (value) {
+                const chunk = (value instanceof Uint8Array) ? value : new Uint8Array(value);
+                chunks.push(chunk);
+                totalLen += chunk.byteLength;
+              }
+            }
+
+            if (totalLen === 0) continue;
+
+            const out = new Uint8Array(totalLen);
+            let off = 0;
+            for (const c of chunks) {
+              out.set(c, off);
+              off += c.byteLength;
+            }
+
+            const { z85, origLen } = z85Encode(out);
             const payload = `Z85|${algs[i]}|${origLen}|${z85}`;
             await navigator.clipboard.writeText(payload);
             alert(`Copied compressed ${fname} (${algs[i]}, Z85) to clipboard!`);
@@ -2711,6 +2742,138 @@ export default function SharedList({
       alert(`Copied new ${fname} (uncompressed) to clipboard!`);
     } catch (e) {
       alert('Clipboard API not available');
+    }
+  }
+
+  async function handleDownloadJson() {
+    const base = reordered && reordered.length
+      ? reordered
+      : devMode
+        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
+        : achievements;
+
+    if (!base || !base.length) return;
+
+    const cleanse = v => {
+      if (v === null) return;
+      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
+      if (Array.isArray(v)) {
+        const a = [];
+        for (let i = 0; i < v.length; i++) {
+          const x = cleanse(v[i]);
+          if (x !== undefined) a.push(x);
+        }
+        return a;
+      }
+      if (v && typeof v === 'object') {
+        const o = {};
+        for (const k in v) {
+          const x = cleanse(v[k]);
+          if (x !== undefined) o[k] = x;
+        }
+        return o;
+      }
+      return v;
+    };
+
+    const cleaned = base.map(cleanse);
+
+    const fname = usePlatformers
+      ? dataFileName === 'timeline.json'
+        ? 'platformertimeline.json'
+        : dataFileName === 'achievements.json'
+          ? 'platformers.json'
+          : dataFileName
+      : dataFileName;
+
+    const lower = (dataFileName || '').toLowerCase();
+    const shouldMinify =
+      (Array.isArray(cleaned) &&
+        cleaned.length &&
+        typeof cleaned[0] === 'object' &&
+        (cleaned[0].id || cleaned[0].name) &&
+        (cleaned[0].rank || cleaned[0].levelID)) ||
+      (
+        lower === 'achievements.json' ||
+        lower === 'pending.json' ||
+        lower === 'legacy.json' ||
+        lower === 'platformers.json' ||
+        lower === 'platformertimeline.json' ||
+        lower === 'removed.json' ||
+        lower === 'timeline.json'
+      );
+
+    const json = shouldMinify
+      ? JSON.stringify(cleaned)
+      : JSON.stringify(cleaned, null, 2);
+
+    try {
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      alert(`Saved ${fname} to disk (uncompressed JSON).`);
+    } catch (e) {
+      alert('Failed to save file locally');
+    }
+  }
+
+  async function handleUploadJson() {
+    const endpoint = (typeof window !== 'undefined' && window.__THAL_SAVE_ENDPOINT__) ? window.__THAL_SAVE_ENDPOINT__ : null;
+    if (!endpoint) {
+      alert('No save endpoint configured (window.__THAL_SAVE_ENDPOINT__)');
+      return;
+    }
+
+    const base = reordered && reordered.length
+      ? reordered
+      : devMode
+        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
+        : achievements;
+
+    if (!base || !base.length) return;
+
+    const cleanse = v => {
+      if (v === null) return;
+      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
+      if (Array.isArray(v)) {
+        const a = [];
+        for (let i = 0; i < v.length; i++) {
+          const x = cleanse(v[i]);
+          if (x !== undefined) a.push(x);
+        }
+        return a;
+      }
+      if (v && typeof v === 'object') {
+        const o = {};
+        for (const k in v) {
+          const x = cleanse(v[k]);
+          if (x !== undefined) o[k] = x;
+        }
+        return o;
+      }
+      return v;
+    };
+
+    const cleaned = base.map(cleanse);
+    const json = JSON.stringify(cleaned);
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: json,
+      });
+      if (res.ok) alert('Uploaded JSON to server successfully');
+      else alert(`Upload failed: ${res.status} ${res.statusText}`);
+    } catch (e) {
+      console.error('Upload failed', e);
+      alert('Upload failed');
     }
   }
 
@@ -2844,6 +3007,8 @@ export default function SharedList({
       handleNewFormAdd,
       handleNewFormCancel,
       handleCopyJson,
+      handleDownloadJson,
+      handleUploadJson,
       handleShowNewForm,
       generateAndCopyChangelog,
       resetChanges,
@@ -2865,6 +3030,8 @@ export default function SharedList({
   const handleNewFormAddCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormAdd && devPanelHandlersRef.current.handleNewFormAdd(...args), []);
   const handleNewFormCancelCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormCancel && devPanelHandlersRef.current.handleNewFormCancel(...args), []);
   const handleCopyJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleCopyJson && devPanelHandlersRef.current.handleCopyJson(...args), []);
+  const handleDownloadJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleDownloadJson && devPanelHandlersRef.current.handleDownloadJson(...args), []);
+  const handleUploadJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleUploadJson && devPanelHandlersRef.current.handleUploadJson(...args), []);
   const handleShowNewFormCb = useCallback((...args) => devPanelHandlersRef.current.handleShowNewForm && devPanelHandlersRef.current.handleShowNewForm(...args), []);
   const generateAndCopyChangelogCb = useCallback((...args) => devPanelHandlersRef.current.generateAndCopyChangelog && devPanelHandlersRef.current.generateAndCopyChangelog(...args), []);
   const resetChangesCb = useCallback((...args) => devPanelHandlersRef.current.resetChanges && devPanelHandlersRef.current.resetChanges(...args), []);
@@ -2894,7 +3061,7 @@ export default function SharedList({
     handleEditFormTagClickCb, handleEditFormCustomTagsChangeCb, handleEditFormSaveCb, handleEditFormCancelCb,
     handleNewFormChangeCb, handleNewFormTagClickCb, handleNewFormCustomTagsChangeCb, handleNewFormAddCb,
     handleNewFormCancelCb, handleCopyJsonCb, handleShowNewFormCb, generateAndCopyChangelogCb,
-    resetChangesCb, onImportAchievementsJsonCb,
+    resetChangesCb, onImportAchievementsJsonCb, handleDownloadJsonCb, handleUploadJsonCb,
   ]);
 
   return (
