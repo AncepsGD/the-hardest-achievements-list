@@ -2843,6 +2843,17 @@ export default function SharedList({
     } catch (e) { }
 
     const cleaned = baseForCopy.map(cleanse);
+
+    try {
+      if (devMode && dataFileName === 'pending.json') {
+        for (let i = 0; i < cleaned.length; i++) {
+          const it = cleaned[i];
+          if (it && typeof it === 'object') {
+            it.rank = Number(i + 1);
+          }
+        }
+      }
+    } catch (e) { }
     const json = JSON.stringify(cleaned, null, 2);
 
     if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
