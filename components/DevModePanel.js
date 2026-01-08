@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react';
+import { CopyIcon, FileIcon, CheckIcon, NewIcon, ChangelogIcon, ResetIcon, CollapseUpIcon, CollapseDownIcon } from './DevIcons';
 const shallowEqual = (a, b) => {
   if (a === b) return true;
   if (a == null || b == null) return false;
@@ -29,13 +30,13 @@ const DevToolbar = React.memo(function DevToolbar({
   const [collapsed, setCollapsed] = useState(false);
   const handleToggleCollapsed = useCallback(() => setCollapsed(c => !c), []);
   const icons = {
-    copy: '📋',
-    file: '📂',
-    check: '✅',
-    new: '🆕',
-    changelog: '📝',
-    reset: '🔄',
-    collapse: collapsed ? '▾' : '▴'
+    copy: <CopyIcon width={16} height={16} />,
+    file: <FileIcon width={16} height={16} />,
+    check: <CheckIcon width={16} height={16} />,
+    new: <NewIcon width={16} height={16} />,
+    changelog: <ChangelogIcon width={16} height={16} />,
+    reset: <ResetIcon width={16} height={16} />,
+    collapse: collapsed ? <CollapseDownIcon width={14} height={14} /> : <CollapseUpIcon width={14} height={14} />
   };
 
   if (collapsed) {
