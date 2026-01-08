@@ -2228,7 +2228,7 @@ export default function SharedList({
     };
   }, []);
 
-  const _onRowHoverEnter = useCallback((idx) => {
+  const _onRowHoverEnter = useCallback((idx, ev) => {
     hoveredIdxRef.current = idx;
     if (lastHoverIdxRef.current === idx) return;
     lastHoverIdxRef.current = idx;
@@ -2255,6 +2255,7 @@ export default function SharedList({
 
       try {
         panel.style.display = 'block';
+        panel.style.position = 'fixed';
         const titleEl = panel.querySelector('.devmode-hover-title');
         const metaEl = panel.querySelector('.devmode-hover-meta');
         const btnEdit = panel.querySelector('.devmode-btn-edit');
@@ -2273,10 +2274,33 @@ export default function SharedList({
         if (btnMoveDown) btnMoveDown.disabled = !item || idx >= (list.length - 1);
       } catch (e) {
       }
+
+      try {
+        let target = null;
+        if (ev && ev.currentTarget) target = ev.currentTarget;
+        else if (ev && ev.target) target = ev.target;
+        else target = document.querySelector(`[data-index=\"${idx}\"]`);
+        if (target && typeof target.getBoundingClientRect === 'function') {
+          const rect = target.getBoundingClientRect();
+          const panelW = panel.offsetWidth || 360;
+          const panelH = panel.offsetHeight || 200;
+          let left = rect.left + (rect.width / 2) - (panelW / 2);
+          const topAbove = rect.top - panelH - 8;
+          let top = topAbove;
+          if (top < 8) top = rect.bottom + 8;
+          const minLeft = 8;
+          const maxLeft = (window.innerWidth || document.documentElement.clientWidth) - panelW - 8;
+          if (left < minLeft) left = minLeft;
+          if (left > maxLeft) left = Math.max(minLeft, maxLeft);
+          panel.style.left = `${Math.round(left)}px`;
+          panel.style.top = `${Math.round(top)}px`;
+        }
+      } catch (err) {
+      }
     });
   }, []);
 
-  const _onRowHoverLeave = useCallback(() => {
+  const _onRowHoverLeave = useCallback((ev) => {
     hoveredIdxRef.current = null;
     lastHoverIdxRef.current = null;
     if (hoverRafRef.current) {
@@ -2284,7 +2308,10 @@ export default function SharedList({
       hoverRafRef.current = null;
     }
     const panel = devPanelRef.current;
-    if (panel) panel.style.display = 'none';
+    if (panel) {
+      panel.style.display = 'none';
+      try { panel.style.left = '-9999px'; panel.style.top = '-9999px'; } catch (e) {}
+    }
   }, []);
 
   const precomputedVisible = useMemo(() => {
@@ -2344,8 +2371,8 @@ export default function SharedList({
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined}
-            onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined}
+            onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter(index, e) : undefined}
+            onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave(index, e) : undefined}
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
@@ -2360,7 +2387,7 @@ export default function SharedList({
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter(index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave(index, e) : undefined} />;
           })()
         }
       </div>
@@ -3535,7 +3562,7 @@ export default function SharedList({
         </section>
       </main>
       {devMode && (
-        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'fixed', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
               <strong className="devmode-hover-title" style={{ display: 'block', marginBottom: 4 }}>Achievement</strong>
