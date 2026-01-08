@@ -1,22 +1,114 @@
 [
   {
-    "name": "Storming Summit 60hz Mobile",
-    "id": "storming-summit-60hz-mobile",
-    "player": "Hydrus73",
-    "length": 170,
+    "name": "Avernus green (KlimK) 12-100%, 35% in a row",
+    "id": "avernus-green-klimk-12-100-35-in-a-row",
+    "player": "KlimK",
+    "length": 139,
     "version": 2.2,
-    "video": "https://youtu.be/RpYx7OJeZSc",
-    "showcaseVideo": "https://youtu.be/f0Qx4K3livA",
-    "date": "2025-12-18",
-    "submitter": "kyle1saurus",
-    "levelID": 76653933,
+    "video": "https://youtu.be/a10PzEB9jVA",
+    "date": "2026-01-04",
+    "submitter": "TYATYAPKA",
     "tags": [
       "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
+      "Consistency",
+      "CBF"
     ],
-    "rank": 1
+    "rank": 3,
+    "_sortedTags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "2:19",
+    "_searchable": "avernus green (klimk) 12-100%, 35% in a row klimk avernus-green-klimk-12-100-35-in-a-row",
+    "_searchableNormalized": "avernus green klimk 12 100 35 in a row klimk avernus green klimk 12 100 35 in a row",
+    "_tagString": "Level Consistency CBF",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Angelicide (Kaza) 23%",
+    "id": "angelicide-kaza-23",
+    "player": "Kaza",
+    "length": 23,
+    "version": 2.2,
+    "video": "https://www.twitch.tv/videos/2660541740",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2026-01-04",
+    "submitter": "BenjiWii",
+    "tags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 44,
+    "_sortedTags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:23",
+    "_searchable": "angelicide (kaza) 23% kaza angelicide-kaza-23",
+    "_searchableNormalized": "angelicide kaza 23 kaza angelicide kaza 23",
+    "_tagString": "Level Progress CBF",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Voltage 51%",
+    "id": "voltage-51",
+    "player": "maybee",
+    "length": 38,
+    "version": 2.2,
+    "video": "https://youtu.be/iP_hnQqBdLw",
+    "showcaseVideo": "https://youtu.be/wssAnZ4JGOs",
+    "date": "2026-01-04",
+    "submitter": "Arcadie",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 49,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:38",
+    "_searchable": "voltage 51% maybee voltage-51",
+    "_searchableNormalized": "voltage 51 maybee voltage 51",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Voltage 35-100%",
+    "id": "voltage-35-100",
+    "player": "maybee",
+    "length": 37,
+    "version": 2.2,
+    "video": "https://youtu.be/iP_hnQqBdLw",
+    "showcaseVideo": "https://youtu.be/wssAnZ4JGOs",
+    "date": "2026-01-04",
+    "submitter": "Arcadie",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 50,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:37",
+    "_searchable": "voltage 35-100% maybee voltage-35-100",
+    "_searchableNormalized": "voltage 35 100 maybee voltage 35 100",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
   },
   {
     "name": "GREEN BULLET 34-100%",
@@ -32,39 +124,105 @@
       "Level",
       "Progress"
     ],
-    "rank": 2
+    "rank": 2,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:20",
+    "_searchable": "green bullet 34-100% nickname green-bullet-34-100",
+    "_searchableNormalized": "green bullet 34 100 nickname green bullet 34 100",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
   },
   {
-    "name": "Avernus green (KlimK) 12-100%, 35% in a row",
-    "id": "avernus-green-klimk-12-100-35-in-a-row",
-    "player": "KlimK",
-    "length": 139,
+    "name": "Silent Circles (Starchman) 47-100%",
+    "id": "silent-circles-starchman-47-100",
+    "player": "Juls",
+    "length": 35,
     "version": 2.2,
-    "video": "https://youtu.be/a10PzEB9jVA",
-    "date": "2026-01-04",
-    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/PQdn2ZmiRJA",
+    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
+    "date": "2026-01-02",
+    "submitter": "SupremeSDB",
     "tags": [
       "Level",
-      "Consistency",
+      "Progress",
       "CBF"
     ],
-    "rank": 3
+    "rank": 38,
+    "_sortedTags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:35",
+    "_searchable": "silent circles (starchman) 47-100% juls silent-circles-starchman-47-100",
+    "_searchableNormalized": "silent circles starchman 47 100 juls silent circles starchman 47 100",
+    "_tagString": "Level Progress CBF",
+    "hasThumb": false,
+    "autoThumb": false
   },
   {
-    "name": "KOCMOC UNLEASHED (Nerfed) 76%, 70% in a row",
-    "id": "kocmoc-unleashed-nerfed-76-70-in-a-row",
-    "player": "Arshadow",
-    "length": 107,
+    "name": "Nautical Nightmares 51%",
+    "id": "nautical-nightmares-51",
+    "player": "Shroomy",
+    "length": 264,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=Fyf8XHwM91s&t=4438s",
-    "date": "2025-12-27",
-    "submitter": "TYATYAPKA",
+    "video": "https://youtu.be/9E4VvY3gM3c",
+    "showcaseVideo": "https://youtu.be/tdQuD50vrNY",
+    "date": "2026-01-02",
+    "submitter": "kyle1saurus",
     "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
+      "Platformer",
+      "Progress"
     ],
-    "rank": 4
+    "rank": 51,
+    "_sortedTags": [
+      "Platformer",
+      "Progress"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "4:24",
+    "_searchable": "nautical nightmares 51% shroomy nautical-nightmares-51",
+    "_searchableNormalized": "nautical nightmares 51 shroomy nautical nightmares 51",
+    "_tagString": "Platformer Progress",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Crerro Kaizo II 300%",
+    "id": "crerro-kaizo-ii-300",
+    "player": "GDP",
+    "length": 471,
+    "version": 2.2,
+    "video": "https://youtu.be/eaXtEih-1QA",
+    "showcaseVideo": "https://youtu.be/FKmBYP0rrAU",
+    "date": "2025-12-31",
+    "submitter": "Woachi",
+    "levelID": 105567157,
+    "tags": [
+      "Platformer",
+      "Consistency",
+      "Rated"
+    ],
+    "rank": 34,
+    "_sortedTags": [
+      "Platformer",
+      "Consistency",
+      "Rated"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "7:51",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/105567157",
+    "_searchable": "crerro kaizo ii 300% gdp crerro-kaizo-ii-300 105567157",
+    "_searchableNormalized": "crerro kaizo ii 300 gdp crerro kaizo ii 300 105567157",
+    "_tagString": "Platformer Consistency Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "fake sunrise",
@@ -81,58 +239,19 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 5
-  },
-  {
-    "name": "Cautious 43-89%",
-    "id": "cautious-43-89%",
-    "player": "pozhh",
-    "length": 46,
-    "version": 2.2,
-    "video": "https://youtu.be/T6_Qn1rAPB8",
-    "showcaseVideo": "https://www.youtube.com/watch?v=4sHsPbM_kdI",
-    "date": "2025-12-28",
-    "submitter": "QwidziT",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 6
-  },
-  {
-    "name": "Cl5u37r0ph0b1a 120hz Mobile",
-    "id": "cl5u37r0ph0b1a-120hz-mobile",
-    "player": "real1243",
-    "length": 0,
-    "version": 2.2,
-    "video": "https://youtu.be/4UWIFoVv60s",
-    "showcaseVideo": "https://youtu.be/il1EO5KBhKM",
-    "date": "2025-12-28",
-    "submitter": "real1243",
-    "levelID": 112059085,
-    "tags": [
+    "rank": 5,
+    "_sortedTags": [
       "Platformer",
-      "Low Hertz",
-      "Mobile"
+      "Verified"
     ],
-    "rank": 7
-  },
-  {
-    "name": "KOCMOC UNLEASHED (Buffed) 66-100% 2 deaths, 99.94 accuracy",
-    "id": "kocmoc-unleashed-buffed-66-100-2-deaths-9994-accuracy",
-    "player": "Arshadow",
-    "length": 33,
-    "version": 2.2,
-    "video": "https://youtu.be/G6--DYm-jrU",
-    "date": "2025-12-23",
-    "submitter": "QwidziT",
-    "tags": [
-      "Level",
-      "Noclip",
-      "Progress",
-      "CBF"
-    ],
-    "rank": 8
+    "_isPlatformer": true,
+    "_lengthStr": "0:00",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/120213958",
+    "_searchable": "fake sunrise tanuklen fake-sunrise 120213958",
+    "_searchableNormalized": "fake sunrise tanuklen fake sunrise 120213958",
+    "_tagString": "Platformer Verified",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "Silent Clubstep II 38-66%",
@@ -150,216 +269,20 @@
       "Progress",
       "CBF"
     ],
-    "rank": 9
-  },
-  {
-    "name": "KOCMOC UNLEASHED (Buffed) 14-52% 3 deaths, 99.84 accuracy",
-    "id": "kocmoc-unleashed-buffed-14-52-3-deaths-9984-accuracy",
-    "player": "Arshadow",
-    "length": 33,
-    "version": 2.2,
-    "video": "https://youtu.be/0adwqDUbqlA",
-    "date": "2025-12-23",
-    "submitter": "QwidziT",
-    "tags": [
+    "rank": 9,
+    "_sortedTags": [
       "Level",
-      "Noclip",
       "Progress",
       "CBF"
     ],
-    "rank": 10
-  },
-  {
-    "name": "KOCMOC UNLEASHED (Buffed) 49-80% 2 deaths",
-    "id": "kocmoc-unleashed-buffed-49-80-2-deaths",
-    "player": "Arshadow",
-    "length": 18,
-    "version": 2.2,
-    "video": "https://youtu.be/54Ycdlw4SRg",
-    "date": "2025-12-23",
-    "submitter": "QwidziT",
-    "tags": [
-      "Level",
-      "Noclip",
-      "Progress",
-      "CBF"
-    ],
-    "rank": 11
-  },
-  {
-    "name": "Shardscapes 60hz Mobile",
-    "id": "shardscapes-60hz-mobile",
-    "player": "The5Sharks",
-    "length": 78,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=WtOT-z6zCng",
-    "showcaseVideo": "https://youtu.be/gtOsT67txFs",
-    "date": "2025-12-24",
-    "submitter": "Natalie :3",
-    "levelID": 79997992,
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
-    ],
-    "rank": 12
-  },
-  {
-    "name": "Hell Affinity 53%",
-    "id": "hell-affinity-53",
-    "player": "NordstromUSA",
-    "length": 33,
-    "version": 2.2,
-    "video": "https://youtu.be/uUxjGNMZuU8",
-    "showcaseVideo": "https://youtu.be/5Jgwp0XuxS8",
-    "date": "2025-12-12",
-    "submitter": "sayoriiCLUB",
-    "thumbnail": "https://github.com/AncepsGD/the-hardest-achievements-list/blob/main/thumbnails/image_2025-12-12_07-18-55.png?raw=true",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 13
-  },
-  {
-    "name": "Crackhead Circles 120hz Mobile",
-    "id": "crackhead-circles-mobile-120hz",
-    "player": "LCold",
-    "length": 85,
-    "version": 2.2,
-    "video": "https://youtu.be/RiXIS8zaXQE",
-    "showcaseVideo": "https://youtu.be/uqNAOesWXT4",
-    "date": "2025-12-16",
-    "submitter": "Natalie :3",
-    "levelID": 95524621,
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "Mobile",
-      "Rated"
-    ],
-    "rank": 14
-  },
-  {
-    "name": "im tired",
-    "id": "im-tired",
-    "player": "VoPlat",
-    "length": 0,
-    "version": 2.2,
-    "video": "https://youtu.be/y-_qFemFI2k",
-    "date": "2025-12-22",
-    "submitter": "kyle1saurus",
-    "levelID": 115455334,
-    "tags": [
-      "Platformer",
-      "Verified"
-    ],
-    "rank": 15
-  },
-  {
-    "name": "waking up again",
-    "id": "waking-up-again",
-    "player": "MaddyGMD",
-    "length": 0,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=J20eIalCgfg",
-    "showcaseVideo": "https://www.youtube.com/watch?v=Y84Qs0q4Av4",
-    "date": "2025-12-22",
-    "submitter": "kyle1saurus",
-    "levelID": 129921223,
-    "tags": [
-      "Platformer",
-      "Verified"
-    ],
-    "rank": 16
-  },
-  {
-    "name": "Oblivion 120hz",
-    "id": "oblivion-120hz",
-    "player": "ItzApex",
-    "length": 67,
-    "version": 2.2,
-    "video": "https://youtu.be/ovARIcUT-6k",
-    "showcaseVideo": "https://youtu.be/QNs14m3HxJE",
-    "date": "2023-11-17",
-    "submitter": "Excryst",
-    "levelID": 71025973,
-    "tags": [
-      "Low Hertz",
-      "Rated"
-    ],
-    "rank": 17
-  },
-  {
-    "name": "Silent clubstep (Old) 12%, (2), 16% in a row",
-    "id": "silent-clubstep-old-12-2-16-in-a-row",
-    "player": "Emp",
-    "length": 27,
-    "version": 2.2,
-    "video": "https://youtu.be/03fu3_bTJg8",
-    "showcaseVideo": "https://youtu.be/mTkrql917bE",
-    "date": "2025-09-30",
-    "submitter": "Emp",
-    "levelID": 38692301,
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ],
-    "rank": 18
-  },
-  {
-    "name": "Forgotten Maiden",
-    "id": "forgotten-maiden",
-    "player": "sydno",
-    "length": 17,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=iulSolHQcw0",
-    "showcaseVideo": "https://www.youtube.com/watch?v=rBrNKND3gvo",
-    "date": "2025-12-27",
-    "submitter": "TYATYAPKA",
-    "levelID": 130217575,
-    "tags": [
-      "Challenge",
-      "Verified"
-    ],
-    "rank": 20
-  },
-  {
-    "name": "Crystal Crusher 144hz",
-    "id": "crystal-crusher-144hz",
-    "player": "Nsaynchkn",
-    "length": 62,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=indZhMML8lg",
-    "showcaseVideo": "https://youtu.be/zOB0eLE_mKM",
-    "date": "2025-12-03",
-    "submitter": "kyle1saurus",
-    "levelID": 93732702,
-    "tags": [
-      "Level",
-      "Low Hertz",
-      "2P",
-      "Rated"
-    ],
-    "rank": 21
-  },
-  {
-    "name": "Angelicide (Xtra8nugz) 27-59%",
-    "id": "angelicide-xtra8nugz-27-59",
-    "player": "Xtra8nuggies",
-    "length": 29,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=afylh18LT5I&t=1000",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-12-27",
-    "submitter": "Excryst",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 22
+    "_isPlatformer": false,
+    "_lengthStr": "0:28",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/78614226",
+    "_searchable": "silent clubstep ii 38-66% skittlecatastrophe silent-clubstep-ii-38-66 78614226",
+    "_searchableNormalized": "silent clubstep ii 38 66 skittlecatastrophe silent clubstep ii 38 66 78614226",
+    "_tagString": "Level Progress CBF",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "Angelicide (Xtra8nugz) 3-26%",
@@ -375,7 +298,18 @@
       "Level",
       "Progress"
     ],
-    "rank": 23
+    "rank": 23,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:26",
+    "_searchable": "angelicide (xtra8nugz) 3-26% xtra8nuggies angelicide-xtra8nugz-3-26",
+    "_searchableNormalized": "angelicide xtra8nugz 3 26 xtra8nuggies angelicide xtra8nugz 3 26",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
   },
   {
     "name": "Vehemence 39-73%",
@@ -393,24 +327,77 @@
       "Progress"
     ],
     "removalReason": "Redundancy",
-    "rank": 24
+    "rank": 24,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:41",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/96572223",
+    "_searchable": "vehemence 39-73% a6 vehemence-39-73 96572223",
+    "_searchableNormalized": "vehemence 39 73 a6 vehemence 39 73 96572223",
+    "_tagString": "Level Progress",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "BANG BANG 55-100%",
-    "id": "bang-bang-55-100",
-    "player": "Jori",
-    "length": 32,
+    "name": "Cautious 43-89%",
+    "id": "cautious-43-89%",
+    "player": "pozhh",
+    "length": 46,
     "version": 2.2,
-    "video": "https://youtu.be/W_w3W3UYhKY",
-    "showcaseVideo": "https://www.youtube.com/watch?v=i0Evt57AYt8",
-    "date": "2025-12-19",
-    "submitter": "Natalie :3",
-    "levelID": 129244221,
+    "video": "https://youtu.be/T6_Qn1rAPB8",
+    "showcaseVideo": "https://www.youtube.com/watch?v=4sHsPbM_kdI",
+    "date": "2025-12-28",
+    "submitter": "QwidziT",
     "tags": [
       "Level",
       "Progress"
     ],
-    "rank": 25
+    "rank": 6,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:46",
+    "_searchable": "cautious 43-89% pozhh cautious-43-89%",
+    "_searchableNormalized": "cautious 43 89 pozhh cautious 43 89",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Cl5u37r0ph0b1a 120hz Mobile",
+    "id": "cl5u37r0ph0b1a-120hz-mobile",
+    "player": "real1243",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/4UWIFoVv60s",
+    "showcaseVideo": "https://youtu.be/il1EO5KBhKM",
+    "date": "2025-12-28",
+    "submitter": "real1243",
+    "levelID": 112059085,
+    "tags": [
+      "Platformer",
+      "Low Hertz",
+      "Mobile"
+    ],
+    "rank": 7,
+    "_sortedTags": [
+      "Platformer",
+      "Low Hertz",
+      "Mobile"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "0:00",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/112059085",
+    "_searchable": "cl5u37r0ph0b1a 120hz mobile real1243 cl5u37r0ph0b1a-120hz-mobile 112059085",
+    "_searchableNormalized": "cl5u37r0ph0b1a 120hz mobile real1243 cl5u37r0ph0b1a 120hz mobile 112059085",
+    "_tagString": "Platformer Low Hertz Mobile",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "Blooming Blossoms",
@@ -428,7 +415,226 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 26
+    "rank": 26,
+    "_sortedTags": [
+      "Level",
+      "Verified",
+      "Tentative"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:36",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/130293163",
+    "_searchable": "blooming blossoms piesy blooming-blossoms 130293163",
+    "_searchableNormalized": "blooming blossoms piesy blooming blossoms 130293163",
+    "_tagString": "Level Verified Tentative",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Reality Spirituality",
+    "id": "reality-spirituality",
+    "player": "LordVadercraft",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/mWTqh3X00yM",
+    "showcaseVideo": "https://youtu.be/9QoecJbSKwY",
+    "date": "2025-12-28",
+    "submitter": "TYATYAPKA",
+    "levelID": 130304231,
+    "tags": [
+      "Level",
+      "Verified"
+    ],
+    "rank": 43,
+    "_sortedTags": [
+      "Level",
+      "Verified"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:00",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/130304231",
+    "_searchable": "reality spirituality lordvadercraft reality-spirituality 130304231",
+    "_searchableNormalized": "reality spirituality lordvadercraft reality spirituality 130304231",
+    "_tagString": "Level Verified",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Trueffet 120hz Mobile",
+    "id": "trueffet-120hz-mobile",
+    "player": "Belw",
+    "length": 74,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=00TRKykJeZ4",
+    "showcaseVideo": "https://youtu.be/qkQidB9aPLA",
+    "date": "2025-12-28",
+    "submitter": "stax",
+    "levelID": 71434979,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 47,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:14",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/71434979",
+    "_searchable": "trueffet 120hz mobile belw trueffet-120hz-mobile 71434979",
+    "_searchableNormalized": "trueffet 120hz mobile belw trueffet 120hz mobile 71434979",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Cognition 60hz Mobile",
+    "id": "cognition-60hz-mobile",
+    "player": "Siaxid",
+    "length": 62,
+    "version": 2.2,
+    "video": "https://youtu.be/VHlMLSaSfbM",
+    "showcaseVideo": "https://www.youtube.com/watch?v=_fY_jzKmBuU",
+    "date": "2025-12-28",
+    "submitter": "TYATYAPKA",
+    "levelID": 57600307,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 48,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:02",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/57600307",
+    "_searchable": "cognition 60hz mobile siaxid cognition-60hz-mobile 57600307",
+    "_searchableNormalized": "cognition 60hz mobile siaxid cognition 60hz mobile 57600307",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "KOCMOC UNLEASHED (Nerfed) 76%, 70% in a row",
+    "id": "kocmoc-unleashed-nerfed-76-70-in-a-row",
+    "player": "Arshadow",
+    "length": 107,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=Fyf8XHwM91s&t=4438s",
+    "date": "2025-12-27",
+    "submitter": "TYATYAPKA",
+    "tags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
+    "rank": 4,
+    "_sortedTags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:47",
+    "_searchable": "kocmoc unleashed (nerfed) 76%, 70% in a row arshadow kocmoc-unleashed-nerfed-76-70-in-a-row",
+    "_searchableNormalized": "kocmoc unleashed nerfed 76 70 in a row arshadow kocmoc unleashed nerfed 76 70 in a row",
+    "_tagString": "Level Consistency CBF",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Forgotten Maiden",
+    "id": "forgotten-maiden",
+    "player": "sydno",
+    "length": 17,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=iulSolHQcw0",
+    "showcaseVideo": "https://www.youtube.com/watch?v=rBrNKND3gvo",
+    "date": "2025-12-27",
+    "submitter": "TYATYAPKA",
+    "levelID": 130217575,
+    "tags": [
+      "Challenge",
+      "Verified"
+    ],
+    "rank": 20,
+    "_sortedTags": [
+      "Challenge",
+      "Verified"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:17",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/130217575",
+    "_searchable": "forgotten maiden sydno forgotten-maiden 130217575",
+    "_searchableNormalized": "forgotten maiden sydno forgotten maiden 130217575",
+    "_tagString": "Challenge Verified",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Angelicide (Xtra8nugz) 27-59%",
+    "id": "angelicide-xtra8nugz-27-59",
+    "player": "Xtra8nuggies",
+    "length": 29,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=afylh18LT5I&t=1000",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-27",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 22,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:29",
+    "_searchable": "angelicide (xtra8nugz) 27-59% xtra8nuggies angelicide-xtra8nugz-27-59",
+    "_searchableNormalized": "angelicide xtra8nugz 27 59 xtra8nuggies angelicide xtra8nugz 27 59",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Angelicide (Xtra8nugz) 10-43%",
+    "id": "angelicide-xtra8nugz-10-43",
+    "player": "Xtra8nuggies",
+    "length": 30,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=afylh18LT5I&t=7316",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-27",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 42,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:30",
+    "_searchable": "angelicide (xtra8nugz) 10-43% xtra8nuggies angelicide-xtra8nugz-10-43",
+    "_searchableNormalized": "angelicide xtra8nugz 10 43 xtra8nuggies angelicide xtra8nugz 10 43",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
   },
   {
     "name": "Le Fishe 2x 75%",
@@ -447,7 +653,21 @@
       "Progress",
       "Rated"
     ],
-    "rank": 27
+    "rank": 27,
+    "_sortedTags": [
+      "Level",
+      "Speedhack",
+      "Progress",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:26",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/80647754",
+    "_searchable": "le fishe 2x 75% dramel le-fishe-2x-75 80647754",
+    "_searchableNormalized": "le fishe 2x 75 dramel le fishe 2x 75 80647754",
+    "_tagString": "Level Speedhack Progress Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "Gracefully 60hz",
@@ -465,73 +685,80 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 28
+    "rank": 28,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "2:27",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/88226064",
+    "_searchable": "gracefully 60hz cejelost gracefully-60hz 88226064",
+    "_searchableNormalized": "gracefully 60hz cejelost gracefully 60hz 88226064",
+    "_tagString": "Level Low Hertz Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "BANG BANG 64%",
-    "id": "bang-bang-64-copy",
-    "player": "Jori",
-    "length": 40,
+    "name": "Angelicide (Xtra8nugz) 19%",
+    "id": "angelicide-xtra8nugz-19",
+    "player": "Xtra8nuggies",
+    "length": 18,
     "version": 2.2,
-    "video": "https://youtu.be/W_w3W3UYhKY",
-    "showcaseVideo": "https://www.youtube.com/watch?v=i0Evt57AYt8",
-    "date": "2025-12-19",
+    "video": "https://www.youtube.com/watch?v=dJhWtoPkXk4",
+    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
+    "date": "2025-12-26",
+    "submitter": "Excryst",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 41,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:18",
+    "_searchable": "angelicide (xtra8nugz) 19% xtra8nuggies angelicide-xtra8nugz-19",
+    "_searchableNormalized": "angelicide xtra8nugz 19 xtra8nuggies angelicide xtra8nugz 19",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Shardscapes 60hz Mobile",
+    "id": "shardscapes-60hz-mobile",
+    "player": "The5Sharks",
+    "length": 78,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=WtOT-z6zCng",
+    "showcaseVideo": "https://youtu.be/gtOsT67txFs",
+    "date": "2025-12-24",
     "submitter": "Natalie :3",
-    "levelID": 129244221,
+    "levelID": 79997992,
     "tags": [
       "Level",
-      "Progress"
+      "Low Hertz",
+      "Mobile",
+      "Rated"
     ],
-    "rank": 29
-  },
-  {
-    "name": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row",
-    "id": "last-stop-15-14-4-55-7-15-13-in-a-row",
-    "player": "aytch0008",
-    "length": 28,
-    "version": 2.2,
-    "video": "https://youtu.be/VIzP6XkJSMU",
-    "showcaseVideo": "https://youtu.be/OyFvsJ0RRKE",
-    "date": "2025-12-22",
-    "submitter": "aytch0008",
-    "levelID": 64815983,
-    "tags": [
-      "Challenge",
-      "Consistency"
-    ],
-    "rank": 30
-  },
-  {
-    "name": "LIMBO (Unnerfed) 90%",
-    "id": "limbo-unnerfed-90%",
-    "player": "BGram",
-    "length": 182,
-    "version": 2.2,
-    "video": "https://youtu.be/CKJ4KfaF1u0",
-    "showcaseVideo": "https://www.youtube.com/watch?v=ryBbuH_SPbs",
-    "date": "2022-11-22",
-    "submitter": "goofygdplayer",
-    "tags": [
+    "rank": 12,
+    "_sortedTags": [
       "Level",
-      "Progress"
+      "Low Hertz",
+      "Mobile",
+      "Rated"
     ],
-    "rank": 31
-  },
-  {
-    "name": "ULTRA PARACOSM 91%",
-    "id": "ultra-paracosm-91",
-    "player": "Wity",
-    "length": 66,
-    "version": 2.2,
-    "video": "https://youtu.be/nuoSvINCKm8",
-    "showcaseVideo": "https://youtu.be/E0sQ4n9gCfc",
-    "date": "2025-12-22",
-    "submitter": "WITY",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 32
+    "_isPlatformer": false,
+    "_lengthStr": "1:18",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/79997992",
+    "_searchable": "shardscapes 60hz mobile the5sharks shardscapes-60hz-mobile 79997992",
+    "_searchableNormalized": "shardscapes 60hz mobile the5sharks shardscapes 60hz mobile 79997992",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "Silent clubstep (Sailence) 31%",
@@ -549,45 +776,409 @@
       "Progress",
       "CBF"
     ],
-    "rank": 33
+    "rank": 33,
+    "_sortedTags": [
+      "Level",
+      "Progress",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:26",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/13173489",
+    "_searchable": "silent clubstep (sailence) 31% emp silent-clubstep-sailence-31 13173489",
+    "_searchableNormalized": "silent clubstep sailence 31 emp silent clubstep sailence 31 13173489",
+    "_tagString": "Level Progress CBF",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "Crerro Kaizo II 300%",
-    "id": "crerro-kaizo-ii-300",
-    "player": "GDP",
-    "length": 471,
+    "name": "KOCMOC UNLEASHED (Buffed) 66-100% 2 deaths, 99.94 accuracy",
+    "id": "kocmoc-unleashed-buffed-66-100-2-deaths-9994-accuracy",
+    "player": "Arshadow",
+    "length": 33,
     "version": 2.2,
-    "video": "https://youtu.be/eaXtEih-1QA",
-    "showcaseVideo": "https://youtu.be/FKmBYP0rrAU",
-    "date": "2025-12-31",
-    "submitter": "Woachi",
-    "levelID": 105567157,
+    "video": "https://youtu.be/G6--DYm-jrU",
+    "date": "2025-12-23",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 8,
+    "_sortedTags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:33",
+    "_searchable": "kocmoc unleashed (buffed) 66-100% 2 deaths, 99.94 accuracy arshadow kocmoc-unleashed-buffed-66-100-2-deaths-9994-accuracy",
+    "_searchableNormalized": "kocmoc unleashed buffed 66 100 2 deaths 99 94 accuracy arshadow kocmoc unleashed buffed 66 100 2 deaths 9994 accuracy",
+    "_tagString": "Level Noclip Progress CBF",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "KOCMOC UNLEASHED (Buffed) 14-52% 3 deaths, 99.84 accuracy",
+    "id": "kocmoc-unleashed-buffed-14-52-3-deaths-9984-accuracy",
+    "player": "Arshadow",
+    "length": 33,
+    "version": 2.2,
+    "video": "https://youtu.be/0adwqDUbqlA",
+    "date": "2025-12-23",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 10,
+    "_sortedTags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:33",
+    "_searchable": "kocmoc unleashed (buffed) 14-52% 3 deaths, 99.84 accuracy arshadow kocmoc-unleashed-buffed-14-52-3-deaths-9984-accuracy",
+    "_searchableNormalized": "kocmoc unleashed buffed 14 52 3 deaths 99 84 accuracy arshadow kocmoc unleashed buffed 14 52 3 deaths 9984 accuracy",
+    "_tagString": "Level Noclip Progress CBF",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "KOCMOC UNLEASHED (Buffed) 49-80% 2 deaths",
+    "id": "kocmoc-unleashed-buffed-49-80-2-deaths",
+    "player": "Arshadow",
+    "length": 18,
+    "version": 2.2,
+    "video": "https://youtu.be/54Ycdlw4SRg",
+    "date": "2025-12-23",
+    "submitter": "QwidziT",
+    "tags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "rank": 11,
+    "_sortedTags": [
+      "Level",
+      "Noclip",
+      "Progress",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:18",
+    "_searchable": "kocmoc unleashed (buffed) 49-80% 2 deaths arshadow kocmoc-unleashed-buffed-49-80-2-deaths",
+    "_searchableNormalized": "kocmoc unleashed buffed 49 80 2 deaths arshadow kocmoc unleashed buffed 49 80 2 deaths",
+    "_tagString": "Level Noclip Progress CBF",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "im tired",
+    "id": "im-tired",
+    "player": "VoPlat",
+    "length": 0,
+    "version": 2.2,
+    "video": "https://youtu.be/y-_qFemFI2k",
+    "date": "2025-12-22",
+    "submitter": "kyle1saurus",
+    "levelID": 115455334,
     "tags": [
       "Platformer",
-      "Consistency",
-      "Rated"
+      "Verified"
     ],
-    "rank": 34
+    "rank": 15,
+    "_sortedTags": [
+      "Platformer",
+      "Verified"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "0:00",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/115455334",
+    "_searchable": "im tired voplat im-tired 115455334",
+    "_searchableNormalized": "im tired voplat im tired 115455334",
+    "_tagString": "Platformer Verified",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "ORDINARY 60hz Mobile 34%",
-    "id": "ordinary-60hz-mobile-34",
-    "player": "SeaWolfMikes",
-    "length": 25,
+    "name": "waking up again",
+    "id": "waking-up-again",
+    "player": "MaddyGMD",
+    "length": 0,
     "version": 2.2,
-    "video": "https://youtu.be/MGksnkX_BTo",
-    "showcaseVideo": "https://youtu.be/h55wbCsem9E",
-    "date": "2025-06-08",
-    "submitter": "autorouting",
-    "levelID": 105593215,
+    "video": "https://www.youtube.com/watch?v=J20eIalCgfg",
+    "showcaseVideo": "https://www.youtube.com/watch?v=Y84Qs0q4Av4",
+    "date": "2025-12-22",
+    "submitter": "kyle1saurus",
+    "levelID": 129921223,
+    "tags": [
+      "Platformer",
+      "Verified"
+    ],
+    "rank": 16,
+    "_sortedTags": [
+      "Platformer",
+      "Verified"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "0:00",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/129921223",
+    "_searchable": "waking up again maddygmd waking-up-again 129921223",
+    "_searchableNormalized": "waking up again maddygmd waking up again 129921223",
+    "_tagString": "Platformer Verified",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row",
+    "id": "last-stop-15-14-4-55-7-15-13-in-a-row",
+    "player": "aytch0008",
+    "length": 28,
+    "version": 2.2,
+    "video": "https://youtu.be/VIzP6XkJSMU",
+    "showcaseVideo": "https://youtu.be/OyFvsJ0RRKE",
+    "date": "2025-12-22",
+    "submitter": "aytch0008",
+    "levelID": 64815983,
+    "tags": [
+      "Challenge",
+      "Consistency"
+    ],
+    "rank": 30,
+    "_sortedTags": [
+      "Challenge",
+      "Consistency"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:28",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/64815983",
+    "_searchable": "last stop 15%, 14%, (4), 55%, (7), 15%, 13% in a row aytch0008 last-stop-15-14-4-55-7-15-13-in-a-row 64815983",
+    "_searchableNormalized": "last stop 15 14 4 55 7 15 13 in a row aytch0008 last stop 15 14 4 55 7 15 13 in a row 64815983",
+    "_tagString": "Challenge Consistency",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "ULTRA PARACOSM 91%",
+    "id": "ultra-paracosm-91",
+    "player": "Wity",
+    "length": 66,
+    "version": 2.2,
+    "video": "https://youtu.be/nuoSvINCKm8",
+    "showcaseVideo": "https://youtu.be/E0sQ4n9gCfc",
+    "date": "2025-12-22",
+    "submitter": "WITY",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 32,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:06",
+    "_searchable": "ultra paracosm 91% wity ultra-paracosm-91",
+    "_searchableNormalized": "ultra paracosm 91 wity ultra paracosm 91",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "SARY NEVER CLEAR (Optic Sunflow) 2.2 88%",
+    "id": "sary-never-clear-optic-sunflow-88",
+    "player": "noname228gg",
+    "length": 66,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=oZo5QhoK66U",
+    "showcaseVideo": "https://youtu.be/a-xQc7_GnA8",
+    "date": "2025-12-21",
+    "submitter": "hyperboll",
+    "levelID": 609629,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 46,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:06",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/609629",
+    "_searchable": "sary never clear (optic sunflow) 2.2 88% noname228gg sary-never-clear-optic-sunflow-88 609629",
+    "_searchableNormalized": "sary never clear optic sunflow 2 2 88 noname228gg sary never clear optic sunflow 88 609629",
+    "_tagString": "Level Progress",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "BANG BANG 55-100%",
+    "id": "bang-bang-55-100",
+    "player": "Jori",
+    "length": 32,
+    "version": 2.2,
+    "video": "https://youtu.be/W_w3W3UYhKY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=i0Evt57AYt8",
+    "date": "2025-12-19",
+    "submitter": "Natalie :3",
+    "levelID": 129244221,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 25,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:32",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/129244221",
+    "_searchable": "bang bang 55-100% jori bang-bang-55-100 129244221",
+    "_searchableNormalized": "bang bang 55 100 jori bang bang 55 100 129244221",
+    "_tagString": "Level Progress",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "BANG BANG 64%",
+    "id": "bang-bang-64-copy",
+    "player": "Jori",
+    "length": 40,
+    "version": 2.2,
+    "video": "https://youtu.be/W_w3W3UYhKY",
+    "showcaseVideo": "https://www.youtube.com/watch?v=i0Evt57AYt8",
+    "date": "2025-12-19",
+    "submitter": "Natalie :3",
+    "levelID": 129244221,
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 29,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:40",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/129244221",
+    "_searchable": "bang bang 64% jori bang-bang-64-copy 129244221",
+    "_searchableNormalized": "bang bang 64 jori bang bang 64 copy 129244221",
+    "_tagString": "Level Progress",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Storming Summit 60hz Mobile",
+    "id": "storming-summit-60hz-mobile",
+    "player": "Hydrus73",
+    "length": 170,
+    "version": 2.2,
+    "video": "https://youtu.be/RpYx7OJeZSc",
+    "showcaseVideo": "https://youtu.be/f0Qx4K3livA",
+    "date": "2025-12-18",
+    "submitter": "kyle1saurus",
+    "levelID": 76653933,
     "tags": [
       "Level",
       "Low Hertz",
       "Mobile",
-      "Progress",
       "Rated"
     ],
-    "rank": 35
+    "rank": 1,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "2:50",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/76653933",
+    "_searchable": "storming summit 60hz mobile hydrus73 storming-summit-60hz-mobile 76653933",
+    "_searchableNormalized": "storming summit 60hz mobile hydrus73 storming summit 60hz mobile 76653933",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Tower of Infinity (Deathless, 120hz Mobile)",
+    "id": "tower-of-infinity-deathless-120hz-mobile",
+    "player": "CuriousTheFurious",
+    "length": 277,
+    "version": 2.2,
+    "video": "https://youtu.be/q7XogJ4x0V0",
+    "showcaseVideo": "https://youtu.be/9iZZFUC2QVo",
+    "date": "2025-12-18",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Platformer",
+      "Deathless",
+      "Rated",
+      "Low Hertz",
+      "Mobile"
+    ],
+    "rank": 52,
+    "_sortedTags": [
+      "Platformer",
+      "Deathless",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "4:37",
+    "_searchable": "tower of infinity (deathless, 120hz mobile) curiousthefurious tower-of-infinity-deathless-120hz-mobile",
+    "_searchableNormalized": "tower of infinity deathless 120hz mobile curiousthefurious tower of infinity deathless 120hz mobile",
+    "_tagString": "Platformer Deathless Low Hertz Mobile Rated",
+    "hasThumb": false,
+    "autoThumb": false
+  },
+  {
+    "name": "Crackhead Circles 120hz Mobile",
+    "id": "crackhead-circles-mobile-120hz",
+    "player": "LCold",
+    "length": 85,
+    "version": 2.2,
+    "video": "https://youtu.be/RiXIS8zaXQE",
+    "showcaseVideo": "https://youtu.be/uqNAOesWXT4",
+    "date": "2025-12-16",
+    "submitter": "Natalie :3",
+    "levelID": 95524621,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "rank": 14,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:25",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/95524621",
+    "_searchable": "crackhead circles 120hz mobile lcold crackhead-circles-mobile-120hz 95524621",
+    "_searchableNormalized": "crackhead circles 120hz mobile lcold crackhead circles mobile 120hz 95524621",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "X84 60z Mobile",
@@ -606,64 +1197,50 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 36
-  },
-  {
-    "name": "ConClusion 60hz Mobile",
-    "id": "conclusion-60hz-mobile",
-    "player": "Blinkkous",
-    "length": 87,
-    "version": 2.2,
-    "video": "https://youtu.be/4xM70yGSxlo",
-    "showcaseVideo": "https://www.youtube.com/watch?v=6zHr7dmhUn0",
-    "date": "2025-07-10",
-    "submitter": "duskIIdawn",
-    "levelID": 96471171,
-    "tags": [
+    "rank": 36,
+    "_sortedTags": [
       "Level",
       "Low Hertz",
       "Mobile",
       "Rated"
     ],
-    "removalReason": "Superseded",
-    "rank": 37
+    "_isPlatformer": false,
+    "_lengthStr": "1:23",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/110791899",
+    "_searchable": "x84 60z mobile timmydog x84-60z-mobile 110791899",
+    "_searchableNormalized": "x84 60z mobile timmydog x84 60z mobile 110791899",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "Silent Circles (Starchman) 47-100%",
-    "id": "silent-circles-starchman-47-100",
-    "player": "Juls",
-    "length": 35,
+    "name": "Hell Affinity 53%",
+    "id": "hell-affinity-53",
+    "player": "NordstromUSA",
+    "length": 33,
     "version": 2.2,
-    "video": "https://youtu.be/PQdn2ZmiRJA",
-    "showcaseVideo": "https://youtu.be/uZsilHbMc2s",
-    "date": "2026-01-02",
-    "submitter": "SupremeSDB",
+    "video": "https://youtu.be/uUxjGNMZuU8",
+    "showcaseVideo": "https://youtu.be/5Jgwp0XuxS8",
+    "date": "2025-12-12",
+    "submitter": "sayoriiCLUB",
+    "thumbnail": "https://github.com/AncepsGD/the-hardest-achievements-list/blob/main/thumbnails/image_2025-12-12_07-18-55.png?raw=true",
     "tags": [
       "Level",
-      "Progress",
-      "CBF"
+      "Progress"
     ],
-    "rank": 38
-  },
-  {
-    "name": "Zodiac 144hz Mobile 78%",
-    "id": "zodiac-144hz-mobile-78",
-    "player": "Vergus",
-    "length": 158,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=buObSXwAPuc&t=1s",
-    "showcaseVideo": "https://youtu.be/9ZX_EHHpf04",
-    "date": "2025-12-03",
-    "submitter": "hyperboll",
-    "levelID": 52374843,
-    "tags": [
+    "rank": 13,
+    "_sortedTags": [
       "Level",
-      "Low Hertz",
-      "Mobile",
-      "Progress",
-      "Rated"
+      "Progress"
     ],
-    "rank": 39
+    "_isPlatformer": false,
+    "_lengthStr": "0:33",
+    "_thumbnail": "https://github.com/AncepsGD/the-hardest-achievements-list/blob/main/thumbnails/image_2025-12-12_07-18-55.png?raw=true",
+    "_searchable": "hell affinity 53% nordstromusa hell-affinity-53",
+    "_searchableNormalized": "hell affinity 53 nordstromusa hell affinity 53",
+    "_tagString": "Level Progress",
+    "hasThumb": true,
+    "autoThumb": false
   },
   {
     "name": "Zodiac 120hz Mobile 38-98%",
@@ -683,73 +1260,90 @@
       "Progress",
       "Rated"
     ],
-    "rank": 40
-  },
-  {
-    "name": "Angelicide (Xtra8nugz) 19%",
-    "id": "angelicide-xtra8nugz-19",
-    "player": "Xtra8nuggies",
-    "length": 18,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=dJhWtoPkXk4",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-12-26",
-    "submitter": "Excryst",
-    "tags": [
+    "rank": 40,
+    "_sortedTags": [
       "Level",
-      "Progress"
-    ],
-    "rank": 41
-  },
-  {
-    "name": "Angelicide (Xtra8nugz) 10-43%",
-    "id": "angelicide-xtra8nugz-10-43",
-    "player": "Xtra8nuggies",
-    "length": 30,
-    "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=afylh18LT5I&t=7316",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2025-12-27",
-    "submitter": "Excryst",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 42
-  },
-  {
-    "name": "Reality Spirituality",
-    "id": "reality-spirituality",
-    "player": "LordVadercraft",
-    "length": 0,
-    "version": 2.2,
-    "video": "https://youtu.be/mWTqh3X00yM",
-    "showcaseVideo": "https://youtu.be/9QoecJbSKwY",
-    "date": "2025-12-28",
-    "submitter": "TYATYAPKA",
-    "levelID": 130304231,
-    "tags": [
-      "Level",
-      "Verified"
-    ],
-    "rank": 43
-  },
-  {
-    "name": "Angelicide (Kaza) 23%",
-    "id": "angelicide-kaza-23",
-    "player": "Kaza",
-    "length": 23,
-    "version": 2.2,
-    "video": "https://www.twitch.tv/videos/2660541740",
-    "showcaseVideo": "https://youtu.be/UvLvEh_xN5A",
-    "date": "2026-01-04",
-    "submitter": "BenjiWii",
-    "tags": [
-      "Level",
+      "Low Hertz",
+      "Mobile",
       "Progress",
-      "CBF"
+      "Rated"
     ],
-    "rank": 44
+    "_isPlatformer": false,
+    "_lengthStr": "1:59",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/52374843",
+    "_searchable": "zodiac 120hz mobile 38-98% rustednavy15 zodiac-120hz-38-98-mobile 52374843",
+    "_searchableNormalized": "zodiac 120hz mobile 38 98 rustednavy15 zodiac 120hz 38 98 mobile 52374843",
+    "_tagString": "Level Low Hertz Mobile Progress Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Crystal Crusher 144hz",
+    "id": "crystal-crusher-144hz",
+    "player": "Nsaynchkn",
+    "length": 62,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=indZhMML8lg",
+    "showcaseVideo": "https://youtu.be/zOB0eLE_mKM",
+    "date": "2025-12-03",
+    "submitter": "kyle1saurus",
+    "levelID": 93732702,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "2P",
+      "Rated"
+    ],
+    "rank": 21,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "2P",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:02",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/93732702",
+    "_searchable": "crystal crusher 144hz nsaynchkn crystal-crusher-144hz 93732702",
+    "_searchableNormalized": "crystal crusher 144hz nsaynchkn crystal crusher 144hz 93732702",
+    "_tagString": "Level Low Hertz 2P Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Zodiac 144hz Mobile 78%",
+    "id": "zodiac-144hz-mobile-78",
+    "player": "Vergus",
+    "length": 158,
+    "version": 2.2,
+    "video": "https://www.youtube.com/watch?v=buObSXwAPuc&t=1s",
+    "showcaseVideo": "https://youtu.be/9ZX_EHHpf04",
+    "date": "2025-12-03",
+    "submitter": "hyperboll",
+    "levelID": 52374843,
+    "tags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ],
+    "rank": 39,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "2:38",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/52374843",
+    "_searchable": "zodiac 144hz mobile 78% vergus zodiac-144hz-mobile-78 52374843",
+    "_searchableNormalized": "zodiac 144hz mobile 78 vergus zodiac 144hz mobile 78 52374843",
+    "_tagString": "Level Low Hertz Mobile Progress Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
     "name": "laith",
@@ -766,128 +1360,174 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 45
+    "rank": 45,
+    "_sortedTags": [
+      "Platformer",
+      "Verified"
+    ],
+    "_isPlatformer": true,
+    "_lengthStr": "0:00",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/128813553",
+    "_searchable": "laith pepesito laith 128813553",
+    "_searchableNormalized": "laith pepesito laith 128813553",
+    "_tagString": "Platformer Verified",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "SARY NEVER CLEAR (Optic Sunflow) 2.2 88%",
-    "id": "sary-never-clear-optic-sunflow-88",
-    "player": "noname228gg",
-    "length": 66,
+    "name": "Silent clubstep (Old) 12%, (2), 16% in a row",
+    "id": "silent-clubstep-old-12-2-16-in-a-row",
+    "player": "Emp",
+    "length": 27,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=oZo5QhoK66U",
-    "showcaseVideo": "https://youtu.be/a-xQc7_GnA8",
-    "date": "2025-12-21",
-    "submitter": "hyperboll",
-    "levelID": 609629,
+    "video": "https://youtu.be/03fu3_bTJg8",
+    "showcaseVideo": "https://youtu.be/mTkrql917bE",
+    "date": "2025-09-30",
+    "submitter": "Emp",
+    "levelID": 38692301,
     "tags": [
       "Level",
-      "Progress"
+      "Consistency",
+      "CBF"
     ],
-    "rank": 46
+    "rank": 18,
+    "_sortedTags": [
+      "Level",
+      "Consistency",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:27",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/38692301",
+    "_searchable": "silent clubstep (old) 12%, (2), 16% in a row emp silent-clubstep-old-12-2-16-in-a-row 38692301",
+    "_searchableNormalized": "silent clubstep old 12 2 16 in a row emp silent clubstep old 12 2 16 in a row 38692301",
+    "_tagString": "Level Consistency CBF",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "Trueffet 120hz Mobile",
-    "id": "trueffet-120hz-mobile",
-    "player": "Belw",
-    "length": 74,
+    "name": "ConClusion 60hz Mobile",
+    "id": "conclusion-60hz-mobile",
+    "player": "Blinkkous",
+    "length": 87,
     "version": 2.2,
-    "video": "https://www.youtube.com/watch?v=00TRKykJeZ4",
-    "showcaseVideo": "https://youtu.be/qkQidB9aPLA",
-    "date": "2025-12-28",
-    "submitter": "stax",
-    "levelID": 71434979,
+    "video": "https://youtu.be/4xM70yGSxlo",
+    "showcaseVideo": "https://www.youtube.com/watch?v=6zHr7dmhUn0",
+    "date": "2025-07-10",
+    "submitter": "duskIIdawn",
+    "levelID": 96471171,
     "tags": [
       "Level",
       "Low Hertz",
       "Mobile",
       "Rated"
     ],
-    "rank": 47
-  },
-  {
-    "name": "Cognition 60hz Mobile",
-    "id": "cognition-60hz-mobile",
-    "player": "Siaxid",
-    "length": 62,
-    "version": 2.2,
-    "video": "https://youtu.be/VHlMLSaSfbM",
-    "showcaseVideo": "https://www.youtube.com/watch?v=_fY_jzKmBuU",
-    "date": "2025-12-28",
-    "submitter": "TYATYAPKA",
-    "levelID": 57600307,
-    "tags": [
+    "removalReason": "Superseded",
+    "rank": 37,
+    "_sortedTags": [
       "Level",
       "Low Hertz",
       "Mobile",
       "Rated"
     ],
-    "rank": 48
+    "_isPlatformer": false,
+    "_lengthStr": "1:27",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/96471171",
+    "_searchable": "conclusion 60hz mobile blinkkous conclusion-60hz-mobile 96471171",
+    "_searchableNormalized": "conclusion 60hz mobile blinkkous conclusion 60hz mobile 96471171",
+    "_tagString": "Level Low Hertz Mobile Rated",
+    "hasThumb": true,
+    "autoThumb": true
   },
   {
-    "name": "Voltage 51%",
-    "id": "voltage-51",
-    "player": "maybee",
-    "length": 38,
+    "name": "ORDINARY 60hz Mobile 34%",
+    "id": "ordinary-60hz-mobile-34",
+    "player": "SeaWolfMikes",
+    "length": 25,
     "version": 2.2,
-    "video": "https://youtu.be/iP_hnQqBdLw",
-    "showcaseVideo": "https://youtu.be/wssAnZ4JGOs",
-    "date": "2026-01-04",
-    "submitter": "Arcadie",
+    "video": "https://youtu.be/MGksnkX_BTo",
+    "showcaseVideo": "https://youtu.be/h55wbCsem9E",
+    "date": "2025-06-08",
+    "submitter": "autorouting",
+    "levelID": 105593215,
     "tags": [
       "Level",
-      "Progress"
-    ],
-    "rank": 49
-  },
-  {
-    "name": "Voltage 35-100%",
-    "id": "voltage-35-100",
-    "player": "maybee",
-    "length": 37,
-    "version": 2.2,
-    "video": "https://youtu.be/iP_hnQqBdLw",
-    "showcaseVideo": "https://youtu.be/wssAnZ4JGOs",
-    "date": "2026-01-04",
-    "submitter": "Arcadie",
-    "tags": [
-      "Level",
-      "Progress"
-    ],
-    "rank": 50
-  },
-  {
-    "name": "Nautical Nightmares 51%",
-    "id": "nautical-nightmares-51",
-    "player": "Shroomy",
-    "length": 264,
-    "version": 2.2,
-    "video": "https://youtu.be/9E4VvY3gM3c",
-    "showcaseVideo": "https://youtu.be/tdQuD50vrNY",
-    "date": "2026-01-02",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Platformer",
-      "Progress"
-    ],
-    "rank": 51
-  },
-  {
-    "name": "Tower of Infinity (Deathless, 120hz Mobile)",
-    "id": "tower-of-infinity-deathless-120hz-mobile",
-    "player": "CuriousTheFurious",
-    "length": 277,
-    "version": 2.2,
-    "video": "https://youtu.be/q7XogJ4x0V0",
-    "showcaseVideo": "https://youtu.be/9iZZFUC2QVo",
-    "date": "2025-12-18",
-    "submitter": "kyle1saurus",
-    "tags": [
-      "Platformer",
-      "Deathless",
-      "Rated",
       "Low Hertz",
-      "Mobile"
+      "Mobile",
+      "Progress",
+      "Rated"
     ],
-    "rank": 52
+    "rank": 35,
+    "_sortedTags": [
+      "Level",
+      "Low Hertz",
+      "Mobile",
+      "Progress",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "0:25",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/105593215",
+    "_searchable": "ordinary 60hz mobile 34% seawolfmikes ordinary-60hz-mobile-34 105593215",
+    "_searchableNormalized": "ordinary 60hz mobile 34 seawolfmikes ordinary 60hz mobile 34 105593215",
+    "_tagString": "Level Low Hertz Mobile Progress Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Oblivion 120hz",
+    "id": "oblivion-120hz",
+    "player": "ItzApex",
+    "length": 67,
+    "version": 2.2,
+    "video": "https://youtu.be/ovARIcUT-6k",
+    "showcaseVideo": "https://youtu.be/QNs14m3HxJE",
+    "date": "2023-11-17",
+    "submitter": "Excryst",
+    "levelID": 71025973,
+    "tags": [
+      "Low Hertz",
+      "Rated"
+    ],
+    "rank": 17,
+    "_sortedTags": [
+      "Low Hertz",
+      "Rated"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:07",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/71025973",
+    "_searchable": "oblivion 120hz itzapex oblivion-120hz 71025973",
+    "_searchableNormalized": "oblivion 120hz itzapex oblivion 120hz 71025973",
+    "_tagString": "Low Hertz Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "LIMBO (Unnerfed) 90%",
+    "id": "limbo-unnerfed-90%",
+    "player": "BGram",
+    "length": 182,
+    "version": 2.2,
+    "video": "https://youtu.be/CKJ4KfaF1u0",
+    "showcaseVideo": "https://www.youtube.com/watch?v=ryBbuH_SPbs",
+    "date": "2022-11-22",
+    "submitter": "goofygdplayer",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 31,
+    "_sortedTags": [
+      "Level",
+      "Progress"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "3:02",
+    "_searchable": "limbo (unnerfed) 90% bgram limbo-unnerfed-90%",
+    "_searchableNormalized": "limbo unnerfed 90 bgram limbo unnerfed 90",
+    "_tagString": "Level Progress",
+    "hasThumb": false,
+    "autoThumb": false
   }
 ]
