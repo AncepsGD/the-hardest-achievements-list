@@ -2221,12 +2221,31 @@ export default function SharedList({
   
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
-
   const devPanelRef = useRef(null);
+  const hoverRafRef = useRef(null);
+  const lastHoverIdxRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (hoverRafRef.current) {
+        cancelAnimationFrame(hoverRafRef.current);
+        hoverRafRef.current = null;
+      }
+    };
+  }, []);
 
   const _onRowHoverEnter = useCallback((idx) => {
-    try {
-      hoveredIdxRef.current = idx;
+    hoveredIdxRef.current = idx;
+    if (lastHoverIdxRef.current === idx) return;
+    lastHoverIdxRef.current = idx;
+
+    if (hoverRafRef.current) {
+      cancelAnimationFrame(hoverRafRef.current);
+      hoverRafRef.current = null;
+    }
+
+    hoverRafRef.current = requestAnimationFrame(() => {
+      hoverRafRef.current = null;
       const panel = devPanelRef.current;
       if (!panel) return;
       if (!devModeRef.current) {
@@ -2235,10 +2254,11 @@ export default function SharedList({
       }
       const list = visibleListRef.current || [];
       const item = list[idx];
-      if (!item) {
+      if (!item || hoveredIdxRef.current !== idx) {
         panel.style.display = 'none';
         return;
       }
+
       try {
         panel.style.display = 'block';
         const titleEl = panel.querySelector('.devmode-hover-title');
@@ -2247,12 +2267,20 @@ export default function SharedList({
         if (titleEl) titleEl.textContent = item.name || 'Achievement';
         if (metaEl) metaEl.textContent = `${item.player || ''}${item.id ? ' — ' + item.id : ''}`;
         if (preEl) preEl.textContent = JSON.stringify(item, null, 2);
-      } catch (e) {}
-    } catch (e) {}
+      } catch (e) {
+      }
+    });
   }, []);
 
   const _onRowHoverLeave = useCallback(() => {
-    try { hoveredIdxRef.current = null; const panel = devPanelRef.current; if (panel) panel.style.display = 'none'; } catch (e) {}
+    hoveredIdxRef.current = null;
+    lastHoverIdxRef.current = null;
+    if (hoverRafRef.current) {
+      cancelAnimationFrame(hoverRafRef.current);
+      hoverRafRef.current = null;
+    }
+    const panel = devPanelRef.current;
+    if (panel) panel.style.display = 'none';
   }, []);
 
   const precomputedVisible = useMemo(() => {
