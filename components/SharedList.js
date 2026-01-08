@@ -640,11 +640,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               )}
             </div>
           </div>
-          <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
-            <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
-              <span className="bi bi-pencil" aria-hidden="true"></span>
-            </button>
-          </div>
+          
         </div>
       </a>
     </Link>
@@ -732,11 +728,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               )}
             </div>
           </div>
-          <div className={"hover-menu" + ((typeof onEditHandler !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
-            <button className="hover-menu-btn" onClick={typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined} title={typeof onEditHandler === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEditHandler === 'function' ? undefined : 'true'}>
-              ✏️
-            </button>
-          </div>
+          
         </div>
       </a>
     </Link>
