@@ -599,7 +599,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
       <a
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
         onClick={handleClick}
+        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} }} }
         onMouseDown={handleClick}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} } }}
         tabIndex={devMode ? -1 : 0}
         aria-disabled={devMode ? 'true' : undefined}
       >
@@ -684,7 +686,9 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           cursor: devMode ? 'not-allowed' : 'pointer',
         }}
         onClick={handleClick}
+        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} }} }
         onMouseDown={handleClick}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} } }}
         tabIndex={devMode ? -1 : 0}
         aria-disabled={devMode ? 'true' : undefined}
       >
