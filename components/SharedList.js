@@ -609,6 +609,8 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
           style={{ cursor: 'pointer', position: 'relative' }}
           onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
           onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+          onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -692,6 +694,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           style={{ cursor: devMode ? 'not-allowed' : 'pointer', transition: 'opacity 0.1s', position: 'relative' }}
           onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
           onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+          onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -2256,7 +2260,6 @@ export default function SharedList({
 
       try {
         panel.style.display = 'block';
-        panel.style.position = 'fixed';
         const titleEl = panel.querySelector('.devmode-hover-title');
         const metaEl = panel.querySelector('.devmode-hover-meta');
         const btnEdit = panel.querySelector('.devmode-btn-edit');
@@ -2280,21 +2283,32 @@ export default function SharedList({
         let target = null;
         if (ev && ev.currentTarget) target = ev.currentTarget;
         else if (ev && ev.target) target = ev.target;
-        else target = document.querySelector(`[data-index=\"${idx}\"]`);
-        if (target && typeof target.getBoundingClientRect === 'function') {
-          const rect = target.getBoundingClientRect();
-          const panelW = panel.offsetWidth || 360;
-          const panelH = panel.offsetHeight || 200;
-          let left = rect.left + (rect.width / 2) - (panelW / 2);
-          const topAbove = rect.top - panelH - 8;
-          let top = topAbove;
-          if (top < 8) top = rect.bottom + 8;
-          const minLeft = 8;
-          const maxLeft = (window.innerWidth || document.documentElement.clientWidth) - panelW - 8;
-          if (left < minLeft) left = minLeft;
-          if (left > maxLeft) left = Math.max(minLeft, maxLeft);
-          panel.style.left = `${Math.round(left)}px`;
-          panel.style.top = `${Math.round(top)}px`;
+        else target = document.querySelector(`[data-index="${idx}"]`);
+        const root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
+        if (root && root instanceof HTMLElement) {
+          try {
+            if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
+            if (panel.parentElement !== root) root.appendChild(panel);
+          } catch (err) {}
+
+          panel.style.position = 'absolute';
+          panel.style.left = '50%';
+          panel.style.top = '50%';
+          panel.style.transform = 'translate(-50%, -50%)';
+          panel.style.pointerEvents = 'auto';
+
+          const pad = 16;
+          const pw = Math.min(360, Math.max(120, Math.floor(root.clientWidth - pad)));
+          panel.style.width = `${pw}px`;
+
+          const ph = panel.offsetHeight || 200;
+          if (ph > (root.clientHeight - 16)) {
+            panel.style.maxHeight = `${Math.max(80, root.clientHeight - 16)}px`;
+            panel.style.overflowY = 'auto';
+          } else {
+            panel.style.maxHeight = '';
+            panel.style.overflowY = '';
+          }
         }
       } catch (err) {
       }
@@ -2311,7 +2325,7 @@ export default function SharedList({
     const panel = devPanelRef.current;
     if (panel) {
       panel.style.display = 'none';
-      try { panel.style.left = '-9999px'; panel.style.top = '-9999px'; } catch (e) {}
+      try { panel.style.transform = ''; panel.style.left = '-9999px'; panel.style.top = '-9999px'; panel.style.position = 'absolute'; } catch (e) {}
       try {
         const orig = devPanelOriginalParentRef.current;
         if (orig && panel.parentElement && panel.parentElement !== orig) {
@@ -2320,6 +2334,10 @@ export default function SharedList({
           panel.style.left = '-9999px';
           panel.style.top = '-9999px';
           panel.style.width = '360px';
+          panel.style.transform = '';
+          panel.style.pointerEvents = '';
+          panel.style.maxHeight = '';
+          panel.style.overflowY = '';
         }
       } catch (err) {}
     }
