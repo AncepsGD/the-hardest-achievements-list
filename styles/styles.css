@@ -111,6 +111,32 @@
   max-height: 80vh;
   overflow-y: auto;
 }
+.devmode-form-panel input[type="text"],
+.devmode-form-panel input[type="number"],
+.devmode-form-panel input[type="file"],
+.devmode-form-panel textarea,
+.devmode-form-panel select {
+  background: var(--card-bg, #181818);
+  color: var(--text-color, #DFE3F5);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 10px;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+  font-size: 0.95rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.devmode-form-panel label { color: var(--text-color, #DFE3F5); }
+.devmode-form-panel input::placeholder,
+.devmode-form-panel textarea::placeholder { color: rgba(255,255,255,0.4); }
+.devmode-form-panel input:focus,
+.devmode-form-panel textarea:focus,
+.devmode-form-panel select:focus {
+  outline: none;
+  border-color: var(--primary-accent, #e67e22);
+  box-shadow: 0 4px 14px rgba(230,126,34,0.12);
+}
+.devmode-form-panel .devmode-form-btn-row .devmode-btn { margin-right: 8px; }
 
 .devmode-form-title {
   margin-top: 0;
