@@ -665,7 +665,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -695,6 +695,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           className="achievement-item"
           tabIndex={0}
           style={{ cursor: devMode ? 'not-allowed' : 'pointer', transition: 'opacity 0.1s', position: 'relative' }}
+          onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
           <div className="rank-date-container">
             {!isPlatformer && (
@@ -2356,7 +2358,7 @@ export default function SharedList({
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined} />;
           })()
         }
       </div>
@@ -3530,18 +3532,18 @@ export default function SharedList({
           )}
         </section>
       </main>
-      {devMode && hoveredIdxRef.current !== null && visibleList && visibleList[hoveredIdxRef.current] && (
-        <div className="devmode-hover-panel" style={{ position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+      {devMode && (
+        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
-              <strong style={{ display: 'block', marginBottom: 4 }}>{(visibleList[hoveredIdxRef.current] && visibleList[hoveredIdxRef.current].name) || 'Achievement'}</strong>
-              <div style={{ fontSize: 12, color: '#aaa' }}>{(visibleList[hoveredIdxRef.current] && visibleList[hoveredIdxRef.current].player) || ''} {(visibleList[hoveredIdxRef.current] && visibleList[hoveredIdxRef.current].id) ? `— ${visibleList[hoveredIdxRef.current].id}` : ''}</div>
+              <strong className="devmode-hover-title" style={{ display: 'block', marginBottom: 4 }}>Achievement</strong>
+              <div className="devmode-hover-meta" style={{ fontSize: 12, color: '#aaa' }}></div>
             </div>
             <div style={{ marginLeft: 8 }}>
-              <button className="devmode-btn" onClick={() => { try { const txt = JSON.stringify(visibleList[hoveredIdxRef.current], null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
+              <button className="devmode-btn" onClick={() => { try { const list = visibleListRef.current || []; const item = list[hoveredIdxRef.current]; const txt = JSON.stringify(item, null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
             </div>
           </div>
-          <pre style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}>{JSON.stringify(visibleList[hoveredIdxRef.current], null, 2)}</pre>
+          <pre className="devmode-hover-pre" style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}></pre>
         </div>
       )}
 
