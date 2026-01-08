@@ -560,6 +560,9 @@ main {
   opacity: 0;
   pointer-events: none;
   transition: opacity .12s ease;
+  padding: 0;
+  margin: 0;
+  z-index: 6;
 }
 .achievement-item:hover .hover-menu {
   opacity: 1;
