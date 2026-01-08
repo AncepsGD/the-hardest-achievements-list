@@ -2825,7 +2825,24 @@ export default function SharedList({
       return v;
     };
 
-    const cleaned = base.map(cleanse);
+    let baseForCopy = base;
+    try {
+      if (devMode && dataFileName === 'pending.json') {
+        baseForCopy = [...base].slice().sort((a, b) => {
+          try {
+            const da = parseAsLocal(a && a.date);
+            const db = parseAsLocal(b && b.date);
+            const ta = (da && !isNaN(da)) ? da.getTime() : 0;
+            const tb = (db && !isNaN(db)) ? db.getTime() : 0;
+            return tb - ta;
+          } catch (e) {
+            return 0;
+          }
+        });
+      }
+    } catch (e) { }
+
+    const cleaned = baseForCopy.map(cleanse);
     const json = JSON.stringify(cleaned, null, 2);
 
     if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
