@@ -116,7 +116,7 @@
 .devmode-form-panel input[type="file"],
 .devmode-form-panel textarea,
 .devmode-form-panel select {
-  background: var(--card-bg, #181818);
+  background: #161928;
   color: var(--text-color, #DFE3F5);
   border: 1px solid rgba(255,255,255,0.06);
   padding: 8px 10px;
@@ -178,6 +178,63 @@
 }
 
 * {
+  .devmode-form-title {
+    font-size: 1.12rem;
+    font-weight: 800;
+    color: var(--primary-accent, #e67e22);
+    margin-bottom: 6px;
+  }
+  .devmode-form-panel form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .devmode-form-panel form label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted, #DFE3F5);
+  }
+  .devmode-form-panel label > input,
+  .devmode-form-panel label > textarea,
+  .devmode-form-panel label > select {
+    margin-top: 6px;
+  }
+  .devmode-form-btn-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 6px;
+  }
+  .devmode-form-btn-row .devmode-btn {
+    padding: 8px 12px;
+    font-weight: 700;
+    border-radius: 8px;
+  }
+  .devmode-form-btn-row .devmode-btn[type="submit"],
+  .devmode-form-btn-row .devmode-btn.save {
+    background: linear-gradient(180deg, #2ecc71, #27ae60);
+    color: #fff;
+    border-color: rgba(46,204,113,0.9);
+  }
+  .devmode-form-btn-row .devmode-btn.cancel {
+    background: transparent;
+    color: var(--text-color, #DFE3F5);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .devmode-form-btn-row .devmode-btn:hover { transform: translateY(-2px); }
+  .devmode-form-panel textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  @media (min-width: 760px) {
+    .devmode-form-panel form {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .devmode-form-panel form label.fullwidth {
+      grid-column: 1 / -1;
+    }
+  }
   margin: 0;
   padding: 0;
   box-sizing: border-box;
