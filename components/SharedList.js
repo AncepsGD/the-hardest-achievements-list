@@ -28,6 +28,7 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
   const name = achievement.name || 'Unknown';
   const rank = achievement.rank || '?';
   const allAchievements = achievements || [];
+
   let newIdx = -1;
   if (idIndexMap && achievement && achievement.id && idIndexMap.has(achievement.id)) {
     newIdx = idIndexMap.get(achievement.id);
@@ -35,11 +36,9 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
     newIdx = allAchievements.findIndex(a => a.id === achievement.id);
   }
   const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
-
   const showOnlyOneContext = mode === 'dev';
 
   let entry = '';
-
   switch (type) {
     case 'added':
       entry = `<:added:1458440716400459837> **${name}** added at #${rank}`;
@@ -2216,10 +2215,12 @@ export default function SharedList({
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
   const devPanelRef = useRef(null);
+  const devPanelOriginalParentRef = useRef(null);
   const hoverRafRef = useRef(null);
   const lastHoverIdxRef = useRef(null);
 
   useEffect(() => {
+    try { if (devPanelRef.current && !devPanelOriginalParentRef.current) devPanelOriginalParentRef.current = devPanelRef.current.parentElement; } catch (e) {}
     return () => {
       if (hoverRafRef.current) {
         cancelAnimationFrame(hoverRafRef.current);
@@ -2311,6 +2312,16 @@ export default function SharedList({
     if (panel) {
       panel.style.display = 'none';
       try { panel.style.left = '-9999px'; panel.style.top = '-9999px'; } catch (e) {}
+      try {
+        const orig = devPanelOriginalParentRef.current;
+        if (orig && panel.parentElement && panel.parentElement !== orig) {
+          orig.appendChild(panel);
+          panel.style.position = 'absolute';
+          panel.style.left = '-9999px';
+          panel.style.top = '-9999px';
+          panel.style.width = '360px';
+        }
+      } catch (err) {}
     }
   }, []);
 
@@ -3562,7 +3573,7 @@ export default function SharedList({
         </section>
       </main>
       {devMode && (
-        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'fixed', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
             <div style={{ flex: 1 }}>
               <strong className="devmode-hover-title" style={{ display: 'block', marginBottom: 4 }}>Achievement</strong>
