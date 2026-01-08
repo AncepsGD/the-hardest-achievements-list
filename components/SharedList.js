@@ -11,6 +11,7 @@ import { useDateFormat } from '../components/DateFormatContext';
 import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
 import TierTag, { getTierByRank } from '../components/TierSystem';
 import DevModePanel from '../components/DevModePanel';
+import { EditIcon, UpIcon, CopyIcon, DownIcon, AddIcon, DeleteIcon } from './DevIcons';
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
 
@@ -3244,6 +3245,46 @@ export default function SharedList({
     setScrollToIdx(realIdx + 1);
   }
 
+  function handleCopyItemJson() {
+    try {
+      const idx = hoveredIdxRef.current;
+      const list = visibleListRef.current || [];
+      if (idx == null || idx < 0 || idx >= list.length) return;
+      const item = list[idx];
+      if (!item) return;
+      const sanitized = JSON.parse(JSON.stringify(item));
+      const json = JSON.stringify(sanitized, null, 2);
+      if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(json).then(() => {
+          try { alert('Copied achievement JSON to clipboard'); } catch (e) {}
+        }).catch(() => {
+          try {
+            const t = document.createElement('textarea');
+            t.value = json;
+            document.body.appendChild(t);
+            t.select();
+            document.execCommand('copy');
+            document.body.removeChild(t);
+            alert('Copied achievement JSON to clipboard');
+          } catch (e) {
+          }
+        });
+      } else {
+        try {
+          const t = document.createElement('textarea');
+          t.value = json;
+          document.body.appendChild(t);
+          t.select();
+          document.execCommand('copy');
+          document.body.removeChild(t);
+          alert('Copied achievement JSON to clipboard');
+        } catch (e) {
+        }
+      }
+    } catch (e) {
+    }
+  }
+
   const onImportAchievementsJson = useCallback((json) => {
     let imported = Array.isArray(json) ? json : (json && json.achievements) || [];
     if (!Array.isArray(imported)) {
@@ -3616,19 +3657,22 @@ export default function SharedList({
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
               <div style={{ display: 'flex', gap: 6 }}>
                 <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) {} }}>
-                  ✏️
+                  <EditIcon width={16} height={16} />
                 </button>
                 <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) {} }}>
-                  ⬆️
+                  <UpIcon width={16} height={16} />
+                </button>
+                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-copy" title="Copy JSON" aria-label="Copy JSON" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); handleCopyItemJson(); } catch (e) {} }}>
+                  <CopyIcon width={16} height={16} />
                 </button>
                 <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-down" title="Move Down" aria-label="Move Down" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) {} }}>
-                  ⬇️
+                  <DownIcon width={16} height={16} />
                 </button>
                 <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-duplicate" title="Duplicate" aria-label="Duplicate" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) {} }}>
-                  ✚
+                  <AddIcon width={16} height={16} />
                 </button>
                 <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-delete" title="Delete" aria-label="Delete" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) {} }} style={{ background: '#dc3545', color: '#fff', borderColor: 'rgba(220,53,69,0.9)' }}>
-                  🗑️
+                  <DeleteIcon width={16} height={16} />
                 </button>
               </div>
             </div>
