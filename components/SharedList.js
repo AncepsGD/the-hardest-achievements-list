@@ -152,6 +152,80 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
 const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
 
+function formatDate(date, dateFormat) {
+  if (!date) return 'N/A';
+  function parseAsLocal(input) {
+    if (input instanceof Date) return input;
+    if (typeof input === 'number') return new Date(input);
+    if (typeof input !== 'string') return new Date(input);
+
+    const m = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      return new Date(y, mo - 1, d);
+    }
+
+    return new Date(input);
+  }
+
+  const d = parseAsLocal(date);
+  if (isNaN(d)) return 'N/A';
+  const yy = String(d.getFullYear()).slice(-2);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
+  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
+  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
+  try {
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  } catch (e) {
+    return `${yyyy}-${mm}-${dd}`;
+  }
+}
+
+const AVAILABLE_TAGS = [
+  "Level", "Challenge", "Platformer", "Verified", "Deathless", "Coin Route", "Low Hertz", "Mobile", "Speedhack",
+  "Noclip", "Miscellaneous", "Progress", "Consistency", "Speedrun",
+  "2P", "CBF", "Rated", "Formerly Rated", "Outdated Version", "Tentative"
+];
+
+function shouldShowTier(tier, mode, usePlatformers, showTiers) {
+  return !!tier && !usePlatformers && showTiers === true;
+}
+
+const _enhanceCache = new Map();
+let _enhanceCacheHits = 0;
+let _enhanceCacheMisses = 0;
+const _enhanceCacheWrites = new Map();
+const _enhanceCacheHitCounts = new Map();
+
+function getEnhanceCacheStats() {
+  try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
+}
+
+function getEnhanceCachePerIdStats() {
+  try {
+    const writes = Array.from(_enhanceCacheWrites.entries()).map(([id, count]) => ({ id, writes: count }));
+    const hits = Array.from(_enhanceCacheHitCounts.entries()).map(([id, count]) => ({ id, hits: count }));
+    return { writes, hits };
+  } catch (e) { return { writes: [], hits: [] }; }
+}
+
+function validateEnhanceCache(opts = {}) {
+  try {
+    const { minHitRate = 0.5, maxWritesPerId = 1 } = opts || {};
+    const s = getEnhanceCacheStats();
+    const total = (s.hits || 0) + (s.misses || 0);
+    const hitRate = total ? (s.hits / total) : 0;
+    const unstable = [];
+    _enhanceCacheWrites.forEach((count, id) => { if (count > maxWritesPerId) unstable.push({ id, writes: count }); });
+    return { hitRate, hits: s.hits, misses: s.misses, unstable, healthy: hitRate >= minHitRate && unstable.length === 0 };
+  } catch (e) { return { hitRate: 0, hits: 0, misses: 0, unstable: [], healthy: false }; }
+}
+
 function resetEnhanceCache() {
   try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
 }
@@ -281,37 +355,89 @@ function enhanceAchievement(a) {
   return enhanced;
 }
 
-function formatDate(date, dateFormat) {
-  if (!date) return 'N/A';
-  function parseAsLocal(input) {
-    if (input instanceof Date) return input;
-    if (typeof input === 'number') return new Date(input);
-    if (typeof input !== 'string') return new Date(input);
-    const s = String(input).trim();
-    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) {
-      const yy = Number(m[1]);
-      const mm = Number(m[2]);
-      const dd = Number(m[3]);
-      return new Date(yy, mm - 1, dd);
-    }
+function mulberry32(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ (t >>> 15), t | 1);
+    r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+
+function normalizeYoutubeUrl(input) {
+  if (!input || typeof input !== 'string') return input;
+  const s = input.trim();
+
+  let m = s.match(/(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?&#\/]+)/i);
+  if (m) {
+    const id = m[1];
     try {
-      return new Date(s);
+      const parsedShort = new URL(s.startsWith('http') ? s : `https://${s}`);
+      const t = parsedShort.searchParams.get('t') || parsedShort.searchParams.get('start') || parsedShort.searchParams.get('time_continue');
+      if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
     } catch (e) {
-      return new Date(NaN);
     }
+    return `https://youtu.be/${id}`;
   }
 
-  const d = parseAsLocal(date);
-  if (!d || isNaN(d)) return 'N/A';
-  const yy = String(d.getFullYear()).slice(-2);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
-  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
-  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
-  try { return d.toLocaleDateString(); } catch (e) { return `${yyyy}-${mm}-${dd}`; }
+  let parsed;
+  try {
+    parsed = new URL(s.startsWith('http') ? s : `https://${s}`);
+  } catch (err) {
+    m = s.match(/[?&]v=([^?&#]+)/);
+    if (m) return `https://youtu.be/${m[1]}`;
+    m = s.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/live\/([^?&#\/]+)/i);
+    if (m) return `https://youtu.be/${m[1]}`;
+    m = s.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^?&#\/]+)/i);
+    if (m) return `https://youtu.be/${m[1]}`;
+    return input;
+  }
+
+  const host = parsed.hostname.toLowerCase();
+
+  if (host === 'youtu.be') {
+    const id = parsed.pathname.split('/').filter(Boolean)[0];
+    if (id) {
+      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
+      if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
+      return `https://youtu.be/${id}`;
+    }
+    const raw = parsed.pathname.replace(/^\//, '');
+    const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
+    if (t) return `https://www.youtube.com/watch?v=${raw}&t=${t}`;
+    return `https://youtu.be/${raw}`;
+  }
+
+  if (host.endsWith('youtube.com') || host.endsWith('youtube-nocookie.com')) {
+    const v = parsed.searchParams.get('v');
+    if (v) {
+      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
+      return t ? `https://www.youtube.com/watch?v=${v}&t=${t}` : `https://www.youtube.com/watch?v=${v}`;
+    }
+
+    const path = parsed.pathname || '';
+    let parts = path.split('/').filter(Boolean);
+
+    const liveIdx = parts.indexOf('live');
+    if (liveIdx !== -1 && parts[liveIdx + 1]) {
+      const id = parts[liveIdx + 1];
+      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
+      return t ? `https://www.youtube.com/watch?v=${id}&t=${t}` : `https://www.youtube.com/watch?v=${id}`;
+    }
+
+    const shortsIdx = parts.indexOf('shorts');
+    if (shortsIdx !== -1 && parts[shortsIdx + 1]) {
+      const id = parts[shortsIdx + 1];
+      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
+      return t ? `https://www.youtube.com/watch?v=${id}&t=${t}` : `https://www.youtube.com/watch?v=${id}`;
+    }
+
+    return parsed.href;
+  }
+
+  return null;
 }
 
 function sanitizeImageUrl(input) {
@@ -440,7 +566,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, onMoveUp, onMoveDown, onDuplicate, onDelete, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
@@ -514,16 +640,10 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               )}
             </div>
           </div>
-          <div className={"hover-menu" + ((!(devMode && typeof onEdit === 'function') ) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8, display: 'flex', gap: 6 }}>
-            {devMode && (
-              <>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onEdit === 'function') onEdit(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveUp === 'function') onMoveUp(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↑</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveDown === 'function') onMoveDown(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↓</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDuplicate === 'function') onDuplicate(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDelete === 'function') onDelete(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
-              </>
-            )}
+          <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
+            <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
+              <span className="bi bi-pencil" aria-hidden="true"></span>
+            </button>
           </div>
         </div>
       </a>
@@ -545,7 +665,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave, onMoveUp, onMoveDown, onDuplicate, onDelete }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -612,16 +732,10 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               )}
             </div>
           </div>
-          <div className={"hover-menu" + ((!(devMode && typeof onEditHandler === 'function')) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8, display: 'flex', gap: 6 }}>
-            {devMode && (
-              <>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onEditHandler === 'function') onEditHandler(onEditIdx); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveUp === 'function') onMoveUp(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↑</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveDown === 'function') onMoveDown(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↓</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDuplicate === 'function') onDuplicate(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
-                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDelete === 'function') onDelete(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
-              </>
-            )}
+          <div className={"hover-menu" + ((typeof onEditHandler !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
+            <button className="hover-menu-btn" onClick={typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined} title={typeof onEditHandler === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEditHandler === 'function' ? undefined : 'true'}>
+              ✏️
+            </button>
           </div>
         </div>
       </a>
@@ -2109,6 +2223,77 @@ export default function SharedList({
   
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
+  const devPanelRef = useRef(null);
+  const hoverRafRef = useRef(null);
+  const lastHoverIdxRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (hoverRafRef.current) {
+        cancelAnimationFrame(hoverRafRef.current);
+        hoverRafRef.current = null;
+      }
+    };
+  }, []);
+
+  const _onRowHoverEnter = useCallback((idx) => {
+    hoveredIdxRef.current = idx;
+    if (lastHoverIdxRef.current === idx) return;
+    lastHoverIdxRef.current = idx;
+
+    if (hoverRafRef.current) {
+      cancelAnimationFrame(hoverRafRef.current);
+      hoverRafRef.current = null;
+    }
+
+    hoverRafRef.current = requestAnimationFrame(() => {
+      hoverRafRef.current = null;
+      const panel = devPanelRef.current;
+      if (!panel) return;
+      if (!devModeRef.current) {
+        panel.style.display = 'none';
+        return;
+      }
+      const list = visibleListRef.current || [];
+      const item = list[idx];
+      if (!item || hoveredIdxRef.current !== idx) {
+        panel.style.display = 'none';
+        return;
+      }
+
+      try {
+        panel.style.display = 'block';
+        const titleEl = panel.querySelector('.devmode-hover-title');
+        const metaEl = panel.querySelector('.devmode-hover-meta');
+        const btnEdit = panel.querySelector('.devmode-btn-edit');
+        const btnMoveUp = panel.querySelector('.devmode-btn-move-up');
+        const btnMoveDown = panel.querySelector('.devmode-btn-move-down');
+        const btnDup = panel.querySelector('.devmode-btn-duplicate');
+        const btnDel = panel.querySelector('.devmode-btn-delete');
+
+        if (titleEl) titleEl.textContent = item.name || 'Achievement';
+        if (metaEl) metaEl.textContent = `${item.player || ''}${item.id ? ' — ' + item.id : ''}`;
+
+        if (btnEdit) btnEdit.disabled = !item;
+        if (btnDup) btnDup.disabled = !item;
+        if (btnDel) btnDel.disabled = !item;
+        if (btnMoveUp) btnMoveUp.disabled = !item || idx <= 0;
+        if (btnMoveDown) btnMoveDown.disabled = !item || idx >= (list.length - 1);
+      } catch (e) {
+      }
+    });
+  }, []);
+
+  const _onRowHoverLeave = useCallback(() => {
+    hoveredIdxRef.current = null;
+    lastHoverIdxRef.current = null;
+    if (hoverRafRef.current) {
+      cancelAnimationFrame(hoverRafRef.current);
+      hoverRafRef.current = null;
+    }
+    const panel = devPanelRef.current;
+    if (panel) panel.style.display = 'none';
+  }, []);
 
   const precomputedVisible = useMemo(() => {
     try {
@@ -2144,9 +2329,10 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-    
+    onRowHoverEnter: _onRowHoverEnter,
+    onRowHoverLeave: _onRowHoverLeave,
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, precomputedVisible]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, _onRowHoverEnter, _onRowHoverLeave, precomputedVisible]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
@@ -2166,8 +2352,8 @@ export default function SharedList({
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-                  onHoverEnter={undefined}
-                  onHoverLeave={undefined}
+            onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined}
+            onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined}
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
@@ -2177,16 +2363,12 @@ export default function SharedList({
             usePlatformers={usePlatformers}
             extraLists={extraLists}
             listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')}
-                  onMoveUp={typeof handleMoveAchievementUp === 'function' ? () => handleMoveAchievementUp(index) : undefined}
-                  onMoveDown={typeof handleMoveAchievementDown === 'function' ? () => handleMoveAchievementDown(index) : undefined}
-                  onDuplicate={typeof handleDuplicateAchievement === 'function' ? () => handleDuplicateAchievement(index) : undefined}
-                  onDelete={typeof handleRemoveAchievement === 'function' ? () => handleRemoveAchievement(index) : undefined}
           />
           :
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={undefined} onHoverLeave={undefined} onMoveUp={typeof handleMoveAchievementUp === 'function' ? () => handleMoveAchievementUp(index) : undefined} onMoveDown={typeof handleMoveAchievementDown === 'function' ? () => handleMoveAchievementDown(index) : undefined} onDuplicate={typeof handleDuplicateAchievement === 'function' ? () => handleDuplicateAchievement(index) : undefined} onDelete={typeof handleRemoveAchievement === 'function' ? () => handleRemoveAchievement(index) : undefined} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined} />;
           })()
         }
       </div>
@@ -3360,6 +3542,23 @@ export default function SharedList({
           )}
         </section>
       </main>
+      {devMode && (
+        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
+            <div style={{ flex: 1 }}>
+              <strong className="devmode-hover-title" style={{ display: 'block', marginBottom: 4 }}>Achievement</strong>
+              <div className="devmode-hover-meta" style={{ fontSize: 12, color: '#aaa' }}></div>
+            </div>
+            <div style={{ marginLeft: 8, display: 'flex', gap: 6 }}>
+              <button type="button" className="devmode-btn devmode-btn-edit" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
+              <button type="button" className="devmode-btn devmode-btn-move-up" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
+              <button type="button" className="devmode-btn devmode-btn-move-down" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
+              <button type="button" className="devmode-btn devmode-btn-duplicate" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
+              <button type="button" className="devmode-btn devmode-btn-delete" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
         {noMatchMessage}
