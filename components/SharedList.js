@@ -2265,10 +2265,20 @@ export default function SharedList({
         panel.style.display = 'block';
         const titleEl = panel.querySelector('.devmode-hover-title');
         const metaEl = panel.querySelector('.devmode-hover-meta');
-        const preEl = panel.querySelector('.devmode-hover-pre');
+        const btnEdit = panel.querySelector('.devmode-btn-edit');
+        const btnMoveUp = panel.querySelector('.devmode-btn-move-up');
+        const btnMoveDown = panel.querySelector('.devmode-btn-move-down');
+        const btnDup = panel.querySelector('.devmode-btn-duplicate');
+        const btnDel = panel.querySelector('.devmode-btn-delete');
+
         if (titleEl) titleEl.textContent = item.name || 'Achievement';
         if (metaEl) metaEl.textContent = `${item.player || ''}${item.id ? ' — ' + item.id : ''}`;
-        if (preEl) preEl.textContent = JSON.stringify(item, null, 2);
+
+        if (btnEdit) btnEdit.disabled = !item;
+        if (btnDup) btnDup.disabled = !item;
+        if (btnDel) btnDel.disabled = !item;
+        if (btnMoveUp) btnMoveUp.disabled = !item || idx <= 0;
+        if (btnMoveDown) btnMoveDown.disabled = !item || idx >= (list.length - 1);
       } catch (e) {
       }
     });
@@ -3539,11 +3549,14 @@ export default function SharedList({
               <strong className="devmode-hover-title" style={{ display: 'block', marginBottom: 4 }}>Achievement</strong>
               <div className="devmode-hover-meta" style={{ fontSize: 12, color: '#aaa' }}></div>
             </div>
-            <div style={{ marginLeft: 8 }}>
-              <button className="devmode-btn" onClick={() => { try { const list = visibleListRef.current || []; const item = list[hoveredIdxRef.current]; const txt = JSON.stringify(item, null, 2); navigator.clipboard && navigator.clipboard.writeText(txt); } catch (e) {} }} style={{ fontSize: 12, padding: '4px 6px', borderRadius: 4 }}>Copy</button>
+            <div style={{ marginLeft: 8, display: 'flex', gap: 6 }}>
+              <button type="button" className="devmode-btn devmode-btn-edit" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
+              <button type="button" className="devmode-btn devmode-btn-move-up" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
+              <button type="button" className="devmode-btn devmode-btn-move-down" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
+              <button type="button" className="devmode-btn devmode-btn-duplicate" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
+              <button type="button" className="devmode-btn devmode-btn-delete" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
             </div>
           </div>
-          <pre className="devmode-hover-pre" style={{ fontSize: 12, whiteSpace: 'pre-wrap', marginTop: 8 }}></pre>
         </div>
       )}
 
