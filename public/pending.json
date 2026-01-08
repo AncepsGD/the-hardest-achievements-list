@@ -13,7 +13,7 @@
       "Consistency",
       "CBF"
     ],
-    "rank": 3,
+    "rank": 1,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -42,7 +42,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 44,
+    "rank": 2,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -70,7 +70,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 49,
+    "rank": 3,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -97,7 +97,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 50,
+    "rank": 4,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -124,7 +124,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 2,
+    "rank": 5,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -152,7 +152,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 38,
+    "rank": 6,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -180,7 +180,7 @@
       "Platformer",
       "Progress"
     ],
-    "rank": 51,
+    "rank": 7,
     "_sortedTags": [
       "Platformer",
       "Progress"
@@ -209,7 +209,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 34,
+    "rank": 8,
     "_sortedTags": [
       "Platformer",
       "Consistency",
@@ -239,7 +239,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 5,
+    "rank": 9,
     "_sortedTags": [
       "Platformer",
       "Verified"
@@ -269,7 +269,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 9,
+    "rank": 10,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -298,7 +298,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 23,
+    "rank": 11,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -327,7 +327,7 @@
       "Progress"
     ],
     "removalReason": "Redundancy",
-    "rank": 24,
+    "rank": 12,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -355,7 +355,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 6,
+    "rank": 13,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -384,7 +384,7 @@
       "Low Hertz",
       "Mobile"
     ],
-    "rank": 7,
+    "rank": 14,
     "_sortedTags": [
       "Platformer",
       "Low Hertz",
@@ -415,7 +415,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 26,
+    "rank": 15,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -445,7 +445,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 43,
+    "rank": 16,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -476,7 +476,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 47,
+    "rank": 17,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -509,7 +509,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 48,
+    "rank": 18,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -539,7 +539,7 @@
       "Consistency",
       "CBF"
     ],
-    "rank": 4,
+    "rank": 19,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -596,7 +596,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 22,
+    "rank": 21,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -623,7 +623,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 42,
+    "rank": 22,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -653,7 +653,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 27,
+    "rank": 23,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -685,7 +685,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 28,
+    "rank": 24,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -714,7 +714,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 41,
+    "rank": 25,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -744,7 +744,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 12,
+    "rank": 26,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -776,7 +776,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 33,
+    "rank": 27,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -806,7 +806,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 8,
+    "rank": 28,
     "_sortedTags": [
       "Level",
       "Noclip",
@@ -836,7 +836,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 10,
+    "rank": 29,
     "_sortedTags": [
       "Level",
       "Noclip",
@@ -866,7 +866,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 11,
+    "rank": 30,
     "_sortedTags": [
       "Level",
       "Noclip",
@@ -895,7 +895,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 15,
+    "rank": 31,
     "_sortedTags": [
       "Platformer",
       "Verified"
@@ -924,7 +924,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 16,
+    "rank": 32,
     "_sortedTags": [
       "Platformer",
       "Verified"
@@ -953,7 +953,7 @@
       "Challenge",
       "Consistency"
     ],
-    "rank": 30,
+    "rank": 33,
     "_sortedTags": [
       "Challenge",
       "Consistency"
@@ -981,7 +981,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 32,
+    "rank": 34,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -1009,7 +1009,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 46,
+    "rank": 35,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -1038,7 +1038,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 25,
+    "rank": 36,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -1067,7 +1067,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 29,
+    "rank": 37,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -1098,7 +1098,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 1,
+    "rank": 38,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1131,7 +1131,7 @@
       "Low Hertz",
       "Mobile"
     ],
-    "rank": 52,
+    "rank": 39,
     "_sortedTags": [
       "Platformer",
       "Deathless",
@@ -1164,7 +1164,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 14,
+    "rank": 40,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1197,7 +1197,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 36,
+    "rank": 41,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1228,7 +1228,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 13,
+    "rank": 42,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -1260,7 +1260,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 40,
+    "rank": 43,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1294,7 +1294,7 @@
       "2P",
       "Rated"
     ],
-    "rank": 21,
+    "rank": 44,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1328,7 +1328,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 39,
+    "rank": 45,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1360,7 +1360,7 @@
       "Platformer",
       "Verified"
     ],
-    "rank": 45,
+    "rank": 46,
     "_sortedTags": [
       "Platformer",
       "Verified"
@@ -1390,7 +1390,7 @@
       "Consistency",
       "CBF"
     ],
-    "rank": 18,
+    "rank": 47,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -1423,7 +1423,7 @@
       "Rated"
     ],
     "removalReason": "Superseded",
-    "rank": 37,
+    "rank": 48,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1457,7 +1457,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 35,
+    "rank": 49,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -1489,7 +1489,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 17,
+    "rank": 50,
     "_sortedTags": [
       "Low Hertz",
       "Rated"
@@ -1517,7 +1517,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 31,
+    "rank": 51,
     "_sortedTags": [
       "Level",
       "Progress"
