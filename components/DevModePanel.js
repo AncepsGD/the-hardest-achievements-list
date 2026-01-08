@@ -82,10 +82,10 @@ const DevToolbar = React.memo(function DevToolbar({
         </label>
         <button className="devmode-btn" onClick={handleCheckDuplicateThumbnails} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.check}</span>Dupe Img Check</button>
         <button className="devmode-btn" onClick={handleShowNewForm} style={COMPACT_DEVMODE_BTN}><span style={{ marginRight: 6 }}>{icons.new}</span>Create</button>
-        <button className="devmode-btn" onClick={generateAndCopyChangelog} style={{ ...COMPACT_DEVMODE_BTN, backgroundColor: '#28a745', color: '#fff' }}>
+        <button className="devmode-btn" onClick={generateAndCopyChangelog} style={COMPACT_DEVMODE_BTN}>
           <span style={{ marginRight: 6 }}>{icons.changelog}</span>Changelog
         </button>
-        <button className="devmode-btn" onClick={resetChanges} style={{ ...COMPACT_DEVMODE_BTN, backgroundColor: '#ffc107' }}>
+        <button className="devmode-btn" onClick={resetChanges} style={COMPACT_DEVMODE_BTN}>
           <span style={{ marginRight: 6 }}>{icons.reset}</span>Reset
         </button>
       </div>
