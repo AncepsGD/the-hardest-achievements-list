@@ -5,225 +5,18 @@ import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import Sidebar from '../components/Sidebar';
-import Background from '../components/Background';
-import { useDateFormat } from '../components/DateFormatContext';
-import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
-import TierTag, { getTierByRank } from '../components/TierSystem';
-import DevModePanel from '../components/DevModePanel';
-import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
-import { useScrollPersistence } from '../hooks/useScrollPersistence';
-
-function getAchievementContext(achievement, allAchievements, index) {
-  const below = index > 0 ? allAchievements[index - 1]?.name : null;
-  const above = index < allAchievements.length - 1 ? allAchievements[index + 1]?.name : null;
-  return { below, above };
-}
-
-function formatChangelogEntry(change, achievements, mode, idIndexMap) {
-  const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
-
-  if (!achievement) return '';
-
-  const name = achievement.name || 'Unknown';
-  const rank = achievement.rank || '?';
-  const allAchievements = achievements || [];
-  let newIdx = -1;
-  if (idIndexMap && achievement && achievement.id && idIndexMap.has(achievement.id)) {
-    newIdx = idIndexMap.get(achievement.id);
-  } else {
-    newIdx = allAchievements.findIndex(a => a.id === achievement.id);
-  }
-  const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
-
-  const showOnlyOneContext = mode === 'dev';
-
-  let entry = '';
-
-  switch (type) {
-    case 'added':
-      entry = `<:added:1458440716400459837> **${name}** added at #${rank}`;
-      if (showOnlyOneContext) {
-        if (context.below) entry += `\n> Below ${context.below}`;
-      } else {
-        if (context.below) entry += `\n> Below ${context.below}`;
-        if (context.above) entry += `\n> Above ${context.above}`;
-      }
-      break;
-
-    case 'removed':
-      entry = `⛔ **${name}** removed from #${oldRank || rank}`;
-      if (oldAchievement) {
-        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-        if (showOnlyOneContext) {
-          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-        } else {
-          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
-        }
-      }
-      break;
-
-    case 'movedUp':
-      entry = `🔼 **${name}** moved up from #${oldRank} to #${rank}`;
-      if (showOnlyOneContext) {
-        if (context.below) entry += `\n> Now below ${context.below}`;
-      } else {
-        if (context.below) entry += `\n> Now below ${context.below}`;
-        if (context.above) entry += `\n> Now above ${context.above}`;
-      }
-      break;
-
-    case 'movedDown':
-      entry = `🔽 **${name}** moved down from #${oldRank} to #${rank}`;
-      if (showOnlyOneContext) {
-        if (context.below) entry += `\n> Now below ${context.below}`;
-      } else {
-        if (context.below) entry += `\n> Now below ${context.below}`;
-        if (context.above) entry += `\n> Now above ${context.above}`;
-      }
-      break;
-
-    case 'swapped':
-      {
-        const a = achievement;
-        const b = oldAchievement;
-        const nameA = (a && a.name) ? a.name : 'Unknown';
-        const nameB = (b && b.name) ? b.name : 'Unknown';
-        const newA = (newRank != null) ? newRank : (a && a.rank) ? a.rank : '?';
-        const newB = (change && change.newRankB != null) ? change.newRankB : (b && b.rank) ? b.rank : '?';
-        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**`;
-        entry += `\n> Now ${nameA} is #${newA}`;
-        entry += `\n> And ${nameB} is #${newB}`;
-      }
-      break;
-
-    case 'renamed':
-      entry = `⚪ ${oldAchievement?.name || 'Unknown'} updated to **${name}**`;
-      break;
-
-    case 'addedWithRemovals':
-      entry = `<:updatedup:1375890567870812322> **${name}** added at #${rank}`;
-      if (showOnlyOneContext) {
-        if (context.below) entry += `\n> Now below ${context.below}`;
-      } else {
-        if (context.below) entry += `\n> Now below ${context.below}`;
-        if (context.above) entry += `\n> Now above ${context.above}`;
-      }
-      if (removedDuplicates && removedDuplicates.length > 0) {
-        entry += `\n>\n> Achievement(s) removed for redundancy:`;
-        removedDuplicates.forEach(dup => {
-          entry += `\n> ⛔ ${dup.name} (#${dup.rank})`;
-        });
-      }
-      break;
-
-    case 'removedWithReadds':
-      entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
-      if (oldAchievement) {
-        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
-        if (showOnlyOneContext) {
-          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-        } else {
-          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
-          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
-        }
-      }
-      if (readdedAchievements && readdedAchievements.length > 0) {
-        entry += `\n>\n> Achievement(s) re-added due to renewed relevance:`;
-        readdedAchievements.forEach(re => {
-          entry += `\n> <:added:1458440716400459837> ${re.name} (#${re.rank})`;
-        });
-      }
-      break;
-
-    case 'timelineAdded':
-      entry = `<:timelineadd:1458442225351393307> **${name}** added to the Timeline at ${achievement.date || 'Unknown date'}`;
-      break;
-
-    case 'timelineRemoved':
-      entry = `<:timelineremove:1375894648383606945> **${name}** removed from the Timeline at ${achievement.date || 'Unknown date'}`;
-      break;
-  }
-
-  return entry;
-}
-
 const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
 
 function formatDate(date, dateFormat) {
   if (!date) return 'N/A';
-  function parseAsLocal(input) {
-    if (input instanceof Date) return input;
-    if (typeof input === 'number') return new Date(input);
-    if (typeof input !== 'string') return new Date(input);
-
-    const m = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) {
-      const y = Number(m[1]);
-      const mo = Number(m[2]);
-      const d = Number(m[3]);
-      return new Date(y, mo - 1, d);
-    }
-
-    return new Date(input);
-  }
-
-  const d = parseAsLocal(date);
-  if (isNaN(d)) return 'N/A';
-  const yy = String(d.getFullYear()).slice(-2);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
-  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
-  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
   try {
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    const parsed = typeof parseAsLocal === 'function' ? parseAsLocal(date) : new Date(date);
+    if (!parsed || isNaN(parsed)) return 'N/A';
+    return parsed.toLocaleDateString();
   } catch (e) {
-    return `${yyyy}-${mm}-${dd}`;
+    return 'N/A';
   }
-}
-
-const AVAILABLE_TAGS = [
-  "Level", "Challenge", "Platformer", "Verified", "Deathless", "Coin Route", "Low Hertz", "Mobile", "Speedhack",
-  "Noclip", "Miscellaneous", "Progress", "Consistency", "Speedrun",
-  "2P", "CBF", "Rated", "Formerly Rated", "Outdated Version", "Tentative"
-];
-
-function shouldShowTier(tier, mode, usePlatformers, showTiers) {
-  return !!tier && !usePlatformers && showTiers === true;
-}
-
-const _enhanceCache = new Map();
-let _enhanceCacheHits = 0;
-let _enhanceCacheMisses = 0;
-const _enhanceCacheWrites = new Map();
-const _enhanceCacheHitCounts = new Map();
-
-function getEnhanceCacheStats() {
-  try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
-}
-
-function getEnhanceCachePerIdStats() {
-  try {
-    const writes = Array.from(_enhanceCacheWrites.entries()).map(([id, count]) => ({ id, writes: count }));
-    const hits = Array.from(_enhanceCacheHitCounts.entries()).map(([id, count]) => ({ id, hits: count }));
-    return { writes, hits };
-  } catch (e) { return { writes: [], hits: [] }; }
-}
-
-function validateEnhanceCache(opts = {}) {
-  try {
-    const { minHitRate = 0.5, maxWritesPerId = 1 } = opts || {};
-    const s = getEnhanceCacheStats();
-    const total = (s.hits || 0) + (s.misses || 0);
-    const hitRate = total ? (s.hits / total) : 0;
-    const unstable = [];
-    _enhanceCacheWrites.forEach((count, id) => { if (count > maxWritesPerId) unstable.push({ id, writes: count }); });
-    return { hitRate, hits: s.hits, misses: s.misses, unstable, healthy: hitRate >= minHitRate && unstable.length === 0 };
-  } catch (e) { return { hitRate: 0, hits: 0, misses: 0, unstable: [], healthy: false }; }
 }
 
 function resetEnhanceCache() {
@@ -566,7 +359,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+  function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main', onInlineEdit, onInlineMoveUp, onInlineMoveDown, onInlineDuplicate, onInlineDelete }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
@@ -641,9 +434,19 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
             </div>
           </div>
           <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
-            <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
-              <span className="bi bi-pencil" aria-hidden="true"></span>
-            </button>
+            {devMode ? (
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineEdit === 'function' ? onInlineEdit : (typeof onEdit === 'function' ? onEdit : undefined)} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveUp === 'function' ? onInlineMoveUp : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveDown === 'function' ? onInlineMoveDown : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDuplicate === 'function' ? onInlineDuplicate : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDelete === 'function' ? onInlineDelete : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
+              </div>
+            ) : (
+              <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
+                <span className="bi bi-pencil" aria-hidden="true"></span>
+              </button>
+            )}
           </div>
         </div>
       </a>
@@ -651,7 +454,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
   );
 }
 
-const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
+  const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
   const pa = prev.achievement || {};
   const na = next.achievement || {};
   const sameId = (pa.id && na.id) ? String(pa.id) === String(na.id) : pa === na;
@@ -665,7 +468,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave }) {
+  const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave, onInlineEdit, onInlineMoveUp, onInlineMoveDown, onInlineDuplicate, onInlineDelete }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -733,9 +536,19 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             </div>
           </div>
           <div className={"hover-menu" + ((typeof onEditHandler !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
-            <button className="hover-menu-btn" onClick={typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined} title={typeof onEditHandler === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEditHandler === 'function' ? undefined : 'true'}>
-              ✏️
-            </button>
+            {devMode ? (
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineEdit === 'function' ? onInlineEdit : (typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined)} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveUp === 'function' ? onInlineMoveUp : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveDown === 'function' ? onInlineMoveDown : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDuplicate === 'function' ? onInlineDuplicate : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
+                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDelete === 'function' ? onInlineDelete : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
+              </div>
+            ) : (
+              <button className="hover-menu-btn" onClick={typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined} title={typeof onEditHandler === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEditHandler === 'function' ? undefined : 'true'}>
+                ✏️
+              </button>
+            )}
           </div>
         </div>
       </a>
@@ -3542,23 +3355,7 @@ export default function SharedList({
           )}
         </section>
       </main>
-      {devMode && (
-        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'fixed', right: 20, bottom: 20, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center' }}>
-            <div style={{ flex: 1 }}>
-              <strong className="devmode-hover-title" style={{ display: 'block', marginBottom: 4 }}>Achievement</strong>
-              <div className="devmode-hover-meta" style={{ fontSize: 12, color: '#aaa' }}></div>
-            </div>
-            <div style={{ marginLeft: 8, display: 'flex', gap: 6 }}>
-              <button type="button" className="devmode-btn devmode-btn-edit" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
-              <button type="button" className="devmode-btn devmode-btn-move-up" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
-              <button type="button" className="devmode-btn devmode-btn-move-down" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
-              <button type="button" className="devmode-btn devmode-btn-duplicate" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
-              <button type="button" className="devmode-btn devmode-btn-delete" onClick={() => { try { const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Inline dev buttons are rendered inside each card's hover-menu; no global floating panel. */}
 
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
         {noMatchMessage}
