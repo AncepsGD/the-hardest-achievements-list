@@ -952,7 +952,7 @@ export default function SharedList({
         if (v) return v;
       }
     } catch (e) { }
-    return storageKeySuffix === 'pending' ? 'date' : 'rank';
+    return 'rank';
   });
 
   const [sortDir, setSortDir] = useState(() => {
@@ -962,7 +962,7 @@ export default function SharedList({
         if (v) return v;
       }
     } catch (e) { }
-    return storageKeySuffix === 'pending' ? 'desc' : 'asc';
+    return 'asc';
   });
 
   const compareByKey = useCallback((a, b, key) => {
