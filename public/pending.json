@@ -870,5 +870,24 @@
       "Progress"
     ],
     "rank": 51
+  },
+  {
+    "name": "Tower of Infinity (Deathless, 120hz Mobile)",
+    "id": "tower-of-infinity-deathless-120hz-mobile",
+    "player": "CuriousTheFurious",
+    "length": 277,
+    "version": 2.2,
+    "video": "https://youtu.be/q7XogJ4x0V0",
+    "showcaseVideo": "https://youtu.be/9iZZFUC2QVo",
+    "date": "2025-12-18",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "Platformer",
+      "Deathless",
+      "Rated",
+      "Low Hertz",
+      "Mobile"
+    ],
+    "rank": 51
   }
 ]
