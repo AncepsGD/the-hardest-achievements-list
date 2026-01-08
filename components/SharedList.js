@@ -5,18 +5,184 @@ import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import Sidebar from '../components/Sidebar';
+import Background from '../components/Background';
+import { useDateFormat } from '../components/DateFormatContext';
+import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
+import TierTag, { getTierByRank } from '../components/TierSystem';
+import DevModePanel from '../components/DevModePanel';
+import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
+import { useScrollPersistence } from '../hooks/useScrollPersistence';
+
+function getAchievementContext(achievement, allAchievements, index) {
+  const below = index > 0 ? allAchievements[index - 1]?.name : null;
+  const above = index < allAchievements.length - 1 ? allAchievements[index + 1]?.name : null;
+  return { below, above };
+}
+
+function formatChangelogEntry(change, achievements, mode, idIndexMap) {
+  const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
+
+  if (!achievement) return '';
+
+  const name = achievement.name || 'Unknown';
+  const rank = achievement.rank || '?';
+  const allAchievements = achievements || [];
+  let newIdx = -1;
+  if (idIndexMap && achievement && achievement.id && idIndexMap.has(achievement.id)) {
+    newIdx = idIndexMap.get(achievement.id);
+  } else {
+    newIdx = allAchievements.findIndex(a => a.id === achievement.id);
+  }
+  const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
+
+  const showOnlyOneContext = mode === 'dev';
+
+  let entry = '';
+
+  switch (type) {
+    case 'added':
+      entry = `<:added:1458440716400459837> **${name}** added at #${rank}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Below ${context.below}`;
+        if (context.above) entry += `\n> Above ${context.above}`;
+      }
+      break;
+
+    case 'removed':
+      entry = `⛔ **${name}** removed from #${oldRank || rank}`;
+      if (oldAchievement) {
+        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
+        if (showOnlyOneContext) {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        } else {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        }
+      }
+      break;
+
+    case 'movedUp':
+      entry = `🔼 **${name}** moved up from #${oldRank} to #${rank}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
+      break;
+
+    case 'movedDown':
+      entry = `🔽 **${name}** moved down from #${oldRank} to #${rank}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
+      break;
+
+    case 'swapped':
+      {
+        const a = achievement;
+        const b = oldAchievement;
+        const nameA = (a && a.name) ? a.name : 'Unknown';
+        const nameB = (b && b.name) ? b.name : 'Unknown';
+        const newA = (newRank != null) ? newRank : (a && a.rank) ? a.rank : '?';
+        const newB = (change && change.newRankB != null) ? change.newRankB : (b && b.rank) ? b.rank : '?';
+        entry = `:repeat: **${nameA}** swapped placement with **${nameB}**`;
+        entry += `\n> Now ${nameA} is #${newA}`;
+        entry += `\n> And ${nameB} is #${newB}`;
+      }
+      break;
+
+    case 'renamed':
+      entry = `⚪ ${oldAchievement?.name || 'Unknown'} updated to **${name}**`;
+      break;
+
+    case 'addedWithRemovals':
+      entry = `<:updatedup:1375890567870812322> **${name}** added at #${rank}`;
+      if (showOnlyOneContext) {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+      } else {
+        if (context.below) entry += `\n> Now below ${context.below}`;
+        if (context.above) entry += `\n> Now above ${context.above}`;
+      }
+      if (removedDuplicates && removedDuplicates.length > 0) {
+        entry += `\n>\n> Achievement(s) removed for redundancy:`;
+        removedDuplicates.forEach(dup => {
+          entry += `\n> ⛔ ${dup.name} (#${dup.rank})`;
+        });
+      }
+      break;
+
+    case 'removedWithReadds':
+      entry = `<:updateddown:1375890556059783371> **${name}** removed from #${oldRank || rank}`;
+      if (oldAchievement) {
+        const oldContext = getAchievementContext(oldAchievement, achievements || [], oldIndex || 0);
+        if (showOnlyOneContext) {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+        } else {
+          if (oldContext.below) entry += `\n> Formerly below ${oldContext.below}`;
+          if (oldContext.above) entry += `\n> Formerly above ${oldContext.above}`;
+        }
+      }
+      if (readdedAchievements && readdedAchievements.length > 0) {
+        entry += `\n>\n> Achievement(s) re-added due to renewed relevance:`;
+        readdedAchievements.forEach(re => {
+          entry += `\n> <:added:1458440716400459837> ${re.name} (#${re.rank})`;
+        });
+      }
+      break;
+
+    case 'timelineAdded':
+      entry = `<:timelineadd:1458442225351393307> **${name}** added to the Timeline at ${achievement.date || 'Unknown date'}`;
+      break;
+
+    case 'timelineRemoved':
+      entry = `<:timelineremove:1375894648383606945> **${name}** removed from the Timeline at ${achievement.date || 'Unknown date'}`;
+      break;
+  }
+
+  return entry;
+}
+
 const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
 
 function formatDate(date, dateFormat) {
   if (!date) return 'N/A';
-  try {
-    const parsed = typeof parseAsLocal === 'function' ? parseAsLocal(date) : new Date(date);
-    if (!parsed || isNaN(parsed)) return 'N/A';
-    return parsed.toLocaleDateString();
-  } catch (e) {
-    return 'N/A';
+  function parseAsLocal(input) {
+    if (input instanceof Date) return input;
+    if (typeof input === 'number') return new Date(input);
+    if (typeof input !== 'string') return new Date(input);
+    const s = String(input).trim();
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      const yy = Number(m[1]);
+      const mm = Number(m[2]);
+      const dd = Number(m[3]);
+      return new Date(yy, mm - 1, dd);
+    }
+    try {
+      return new Date(s);
+    } catch (e) {
+      return new Date(NaN);
+    }
   }
+
+  const d = parseAsLocal(date);
+  if (!d || isNaN(d)) return 'N/A';
+  const yy = String(d.getFullYear()).slice(-2);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
+  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
+  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
+  try { return d.toLocaleDateString(); } catch (e) { return `${yyyy}-${mm}-${dd}`; }
 }
 
 function resetEnhanceCache() {
@@ -148,89 +314,37 @@ function enhanceAchievement(a) {
   return enhanced;
 }
 
-function mulberry32(seed) {
-  let t = seed >>> 0;
-  return function () {
-    t += 0x6D2B79F5;
-    let r = Math.imul(t ^ (t >>> 15), t | 1);
-    r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
-    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-
-function normalizeYoutubeUrl(input) {
-  if (!input || typeof input !== 'string') return input;
-  const s = input.trim();
-
-  let m = s.match(/(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?&#\/]+)/i);
-  if (m) {
-    const id = m[1];
+function formatDate(date, dateFormat) {
+  if (!date) return 'N/A';
+  function parseAsLocal(input) {
+    if (input instanceof Date) return input;
+    if (typeof input === 'number') return new Date(input);
+    if (typeof input !== 'string') return new Date(input);
+    const s = String(input).trim();
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (m) {
+      const yy = Number(m[1]);
+      const mm = Number(m[2]);
+      const dd = Number(m[3]);
+      return new Date(yy, mm - 1, dd);
+    }
     try {
-      const parsedShort = new URL(s.startsWith('http') ? s : `https://${s}`);
-      const t = parsedShort.searchParams.get('t') || parsedShort.searchParams.get('start') || parsedShort.searchParams.get('time_continue');
-      if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
+      return new Date(s);
     } catch (e) {
+      return new Date(NaN);
     }
-    return `https://youtu.be/${id}`;
   }
 
-  let parsed;
-  try {
-    parsed = new URL(s.startsWith('http') ? s : `https://${s}`);
-  } catch (err) {
-    m = s.match(/[?&]v=([^?&#]+)/);
-    if (m) return `https://youtu.be/${m[1]}`;
-    m = s.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/live\/([^?&#\/]+)/i);
-    if (m) return `https://youtu.be/${m[1]}`;
-    m = s.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^?&#\/]+)/i);
-    if (m) return `https://youtu.be/${m[1]}`;
-    return input;
-  }
-
-  const host = parsed.hostname.toLowerCase();
-
-  if (host === 'youtu.be') {
-    const id = parsed.pathname.split('/').filter(Boolean)[0];
-    if (id) {
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
-      return `https://youtu.be/${id}`;
-    }
-    const raw = parsed.pathname.replace(/^\//, '');
-    const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-    if (t) return `https://www.youtube.com/watch?v=${raw}&t=${t}`;
-    return `https://youtu.be/${raw}`;
-  }
-
-  if (host.endsWith('youtube.com') || host.endsWith('youtube-nocookie.com')) {
-    const v = parsed.searchParams.get('v');
-    if (v) {
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      return t ? `https://www.youtube.com/watch?v=${v}&t=${t}` : `https://www.youtube.com/watch?v=${v}`;
-    }
-
-    const path = parsed.pathname || '';
-    let parts = path.split('/').filter(Boolean);
-
-    const liveIdx = parts.indexOf('live');
-    if (liveIdx !== -1 && parts[liveIdx + 1]) {
-      const id = parts[liveIdx + 1];
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      return t ? `https://www.youtube.com/watch?v=${id}&t=${t}` : `https://www.youtube.com/watch?v=${id}`;
-    }
-
-    const shortsIdx = parts.indexOf('shorts');
-    if (shortsIdx !== -1 && parts[shortsIdx + 1]) {
-      const id = parts[shortsIdx + 1];
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      return t ? `https://www.youtube.com/watch?v=${id}&t=${t}` : `https://www.youtube.com/watch?v=${id}`;
-    }
-
-    return parsed.href;
-  }
-
-  return null;
+  const d = parseAsLocal(date);
+  if (!d || isNaN(d)) return 'N/A';
+  const yy = String(d.getFullYear()).slice(-2);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
+  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
+  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
+  try { return d.toLocaleDateString(); } catch (e) { return `${yyyy}-${mm}-${dd}`; }
 }
 
 function sanitizeImageUrl(input) {
@@ -359,7 +473,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-  function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main', onInlineEdit, onInlineMoveUp, onInlineMoveDown, onInlineDuplicate, onInlineDelete }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, onMoveUp, onMoveDown, onDuplicate, onDelete, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
@@ -433,19 +547,15 @@ function calculateDaysLasted(currentDate, previousDate) {
               )}
             </div>
           </div>
-          <div className={"hover-menu" + ((typeof onEdit !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
-            {devMode ? (
-              <div style={{ display: 'flex', gap: 6 }}>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineEdit === 'function' ? onInlineEdit : (typeof onEdit === 'function' ? onEdit : undefined)} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveUp === 'function' ? onInlineMoveUp : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveDown === 'function' ? onInlineMoveDown : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDuplicate === 'function' ? onInlineDuplicate : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDelete === 'function' ? onInlineDelete : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
-              </div>
-            ) : (
-              <button className="hover-menu-btn" onClick={typeof onEdit === 'function' ? onEdit : undefined} title={typeof onEdit === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEdit === 'function' ? undefined : 'true'}>
-                <span className="bi bi-pencil" aria-hidden="true"></span>
-              </button>
+          <div className={"hover-menu" + ((!(devMode && typeof onEdit === 'function') ) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8, display: 'flex', gap: 6 }}>
+            {devMode && (
+              <>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onEdit === 'function') onEdit(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveUp === 'function') onMoveUp(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↑</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveDown === 'function') onMoveDown(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↓</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDuplicate === 'function') onDuplicate(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDelete === 'function') onDelete(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
+              </>
             )}
           </div>
         </div>
@@ -454,7 +564,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   );
 }
 
-  const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
+const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
   const pa = prev.achievement || {};
   const na = next.achievement || {};
   const sameId = (pa.id && na.id) ? String(pa.id) === String(na.id) : pa === na;
@@ -468,7 +578,7 @@ function calculateDaysLasted(currentDate, previousDate) {
     && prev.listType === next.listType;
 });
 
-  const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave, onInlineEdit, onInlineMoveUp, onInlineMoveDown, onInlineDuplicate, onInlineDelete }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave, onMoveUp, onMoveDown, onDuplicate, onDelete }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -535,19 +645,15 @@ function calculateDaysLasted(currentDate, previousDate) {
               )}
             </div>
           </div>
-          <div className={"hover-menu" + ((typeof onEditHandler !== 'function' || !devMode) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8 }}>
-            {devMode ? (
-              <div style={{ display: 'flex', gap: 6 }}>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineEdit === 'function' ? onInlineEdit : (typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined)} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveUp === 'function' ? onInlineMoveUp : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Up</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineMoveDown === 'function' ? onInlineMoveDown : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Move Down</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDuplicate === 'function' ? onInlineDuplicate : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
-                <button className="devmode-btn" type="button" onMouseDown={e => e.stopPropagation()} onClick={typeof onInlineDelete === 'function' ? onInlineDelete : undefined} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
-              </div>
-            ) : (
-              <button className="hover-menu-btn" onClick={typeof onEditHandler === 'function' ? () => onEditHandler(onEditIdx) : undefined} title={typeof onEditHandler === 'function' ? 'Edit achievement' : undefined} aria-disabled={typeof onEditHandler === 'function' ? undefined : 'true'}>
-                ✏️
-              </button>
+          <div className={"hover-menu" + ((!(devMode && typeof onEditHandler === 'function')) ? ' hover-menu--disabled' : '')} style={{ position: 'absolute', right: 8, top: 8, display: 'flex', gap: 6 }}>
+            {devMode && (
+              <>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onEditHandler === 'function') onEditHandler(onEditIdx); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Edit</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveUp === 'function') onMoveUp(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↑</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onMoveDown === 'function') onMoveDown(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>↓</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDuplicate === 'function') onDuplicate(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4 }}>Duplicate</button>
+                <button className="devmode-action" onClick={(e) => { e.stopPropagation(); e.preventDefault(); try { if (typeof onDelete === 'function') onDelete(); } catch (err) {} }} style={{ fontSize: 12, padding: '6px 8px', borderRadius: 4, background: '#dc3545', color: '#fff' }}>Delete</button>
+              </>
             )}
           </div>
         </div>
@@ -2036,77 +2142,6 @@ export default function SharedList({
   
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
-  const devPanelRef = useRef(null);
-  const hoverRafRef = useRef(null);
-  const lastHoverIdxRef = useRef(null);
-
-  useEffect(() => {
-    return () => {
-      if (hoverRafRef.current) {
-        cancelAnimationFrame(hoverRafRef.current);
-        hoverRafRef.current = null;
-      }
-    };
-  }, []);
-
-  const _onRowHoverEnter = useCallback((idx) => {
-    hoveredIdxRef.current = idx;
-    if (lastHoverIdxRef.current === idx) return;
-    lastHoverIdxRef.current = idx;
-
-    if (hoverRafRef.current) {
-      cancelAnimationFrame(hoverRafRef.current);
-      hoverRafRef.current = null;
-    }
-
-    hoverRafRef.current = requestAnimationFrame(() => {
-      hoverRafRef.current = null;
-      const panel = devPanelRef.current;
-      if (!panel) return;
-      if (!devModeRef.current) {
-        panel.style.display = 'none';
-        return;
-      }
-      const list = visibleListRef.current || [];
-      const item = list[idx];
-      if (!item || hoveredIdxRef.current !== idx) {
-        panel.style.display = 'none';
-        return;
-      }
-
-      try {
-        panel.style.display = 'block';
-        const titleEl = panel.querySelector('.devmode-hover-title');
-        const metaEl = panel.querySelector('.devmode-hover-meta');
-        const btnEdit = panel.querySelector('.devmode-btn-edit');
-        const btnMoveUp = panel.querySelector('.devmode-btn-move-up');
-        const btnMoveDown = panel.querySelector('.devmode-btn-move-down');
-        const btnDup = panel.querySelector('.devmode-btn-duplicate');
-        const btnDel = panel.querySelector('.devmode-btn-delete');
-
-        if (titleEl) titleEl.textContent = item.name || 'Achievement';
-        if (metaEl) metaEl.textContent = `${item.player || ''}${item.id ? ' — ' + item.id : ''}`;
-
-        if (btnEdit) btnEdit.disabled = !item;
-        if (btnDup) btnDup.disabled = !item;
-        if (btnDel) btnDel.disabled = !item;
-        if (btnMoveUp) btnMoveUp.disabled = !item || idx <= 0;
-        if (btnMoveDown) btnMoveDown.disabled = !item || idx >= (list.length - 1);
-      } catch (e) {
-      }
-    });
-  }, []);
-
-  const _onRowHoverLeave = useCallback(() => {
-    hoveredIdxRef.current = null;
-    lastHoverIdxRef.current = null;
-    if (hoverRafRef.current) {
-      cancelAnimationFrame(hoverRafRef.current);
-      hoverRafRef.current = null;
-    }
-    const panel = devPanelRef.current;
-    if (panel) panel.style.display = 'none';
-  }, []);
 
   const precomputedVisible = useMemo(() => {
     try {
@@ -2142,10 +2177,9 @@ export default function SharedList({
     handleEditAchievement,
     handleDuplicateAchievement,
     handleRemoveAchievement,
-    onRowHoverEnter: _onRowHoverEnter,
-    onRowHoverLeave: _onRowHoverLeave,
+    
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, _onRowHoverEnter, _onRowHoverLeave, precomputedVisible]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, precomputedVisible]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
@@ -2165,8 +2199,8 @@ export default function SharedList({
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined}
-            onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined}
+                  onHoverEnter={undefined}
+                  onHoverLeave={undefined}
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
@@ -2176,12 +2210,16 @@ export default function SharedList({
             usePlatformers={usePlatformers}
             extraLists={extraLists}
             listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')}
+                  onMoveUp={typeof handleMoveAchievementUp === 'function' ? () => handleMoveAchievementUp(index) : undefined}
+                  onMoveDown={typeof handleMoveAchievementDown === 'function' ? () => handleMoveAchievementDown(index) : undefined}
+                  onDuplicate={typeof handleDuplicateAchievement === 'function' ? () => handleDuplicateAchievement(index) : undefined}
+                  onDelete={typeof handleRemoveAchievement === 'function' ? () => handleRemoveAchievement(index) : undefined}
           />
           :
           (() => {
             const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? () => onRowHoverEnter(index) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? () => onRowHoverLeave(index) : undefined} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={undefined} onHoverLeave={undefined} onMoveUp={typeof handleMoveAchievementUp === 'function' ? () => handleMoveAchievementUp(index) : undefined} onMoveDown={typeof handleMoveAchievementDown === 'function' ? () => handleMoveAchievementDown(index) : undefined} onDuplicate={typeof handleDuplicateAchievement === 'function' ? () => handleDuplicateAchievement(index) : undefined} onDelete={typeof handleRemoveAchievement === 'function' ? () => handleRemoveAchievement(index) : undefined} />;
           })()
         }
       </div>
@@ -3355,7 +3393,6 @@ export default function SharedList({
           )}
         </section>
       </main>
-      {/* Inline dev buttons are rendered inside each card's hover-menu; no global floating panel. */}
 
       <div aria-live="polite" aria-atomic="true" style={{ position: 'absolute', left: -9999, top: 'auto', width: 1, height: 1, overflow: 'hidden' }}>
         {noMatchMessage}
