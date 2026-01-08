@@ -152,39 +152,6 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
 const ID_INDEX_TTL_MS = 5 * 60 * 1000;
 const _idIndexCache = new Map();
 
-function formatDate(date, dateFormat) {
-  if (!date) return 'N/A';
-  function parseAsLocal(input) {
-    if (input instanceof Date) return input;
-    if (typeof input === 'number') return new Date(input);
-    if (typeof input !== 'string') return new Date(input);
-    const s = String(input).trim();
-    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) {
-      const yy = Number(m[1]);
-      const mm = Number(m[2]);
-      const dd = Number(m[3]);
-      return new Date(yy, mm - 1, dd);
-    }
-    try {
-      return new Date(s);
-    } catch (e) {
-      return new Date(NaN);
-    }
-  }
-
-  const d = parseAsLocal(date);
-  if (!d || isNaN(d)) return 'N/A';
-  const yy = String(d.getFullYear()).slice(-2);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
-  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
-  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
-  try { return d.toLocaleDateString(); } catch (e) { return `${yyyy}-${mm}-${dd}`; }
-}
-
 function resetEnhanceCache() {
   try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
 }
