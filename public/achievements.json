@@ -2358,34 +2358,6 @@
     "autoThumb": false
   },
   {
-    "name": "Avernus green (KlimK) 12-100%, 35% in a row",
-    "id": "avernus-green-klimk-12-100-35-in-a-row",
-    "player": "KlimK",
-    "length": 139,
-    "version": 2.2,
-    "video": "https://youtu.be/a10PzEB9jVA",
-    "date": "2026-01-04",
-    "submitter": "TYATYAPKA",
-    "tags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ],
-    "rank": 77,
-    "_sortedTags": [
-      "Level",
-      "Consistency",
-      "CBF"
-    ],
-    "_isPlatformer": false,
-    "_lengthStr": "2:19",
-    "_searchable": "avernus green (klimk) 12-100%, 35% in a row klimk avernus-green-klimk-12-100-35-in-a-row",
-    "_searchableNormalized": "avernus green klimk 12 100 35 in a row klimk avernus green klimk 12 100 35 in a row",
-    "_tagString": "Level Consistency CBF",
-    "hasThumb": false,
-    "autoThumb": false
-  },
-  {
     "name": "Blue Avernus",
     "id": "blue-avernus",
     "player": "KlimK",
@@ -2401,7 +2373,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 78,
+    "rank": 77,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -2431,7 +2403,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 79,
+    "rank": 78,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -2443,6 +2415,36 @@
     "_searchable": "avernus zoink avernus 89496627",
     "_searchableNormalized": "avernus zoink avernus 89496627",
     "_tagString": "Level Verified Rated",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
+    "name": "Avernus green (KlimK)",
+    "id": "avernus-green-klimk",
+    "player": "KlimK",
+    "length": 78,
+    "version": 2.2,
+    "video": "https://youtu.be/vD-bTz0zOD0",
+    "date": "2026-01-05",
+    "submitter": "kyle1saurus",
+    "tags": [
+      "CBF",
+      "Verified",
+      "Level"
+    ],
+    "rank": 79,
+    "_sortedTags": [
+      "Level",
+      "Verified",
+      "CBF"
+    ],
+    "_isPlatformer": false,
+    "levelID": 130867589,
+    "_lengthStr": "1:18",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/130867589",
+    "_searchable": "avernus green (klimk) klimk avernus-green-klimk 130867589",
+    "_searchableNormalized": "avernus green klimk klimk avernus green klimk 130867589",
+    "_tagString": "Level Verified CBF",
     "hasThumb": true,
     "autoThumb": true
   },
@@ -13379,6 +13381,38 @@
     "autoThumb": true
   },
   {
+    "name": "Waterfall uldm sp bu",
+    "id": "waterfall-uldm-sp-bu",
+    "player": "Sqwazar",
+    "length": 97,
+    "version": 2.2,
+    "video": "https://youtu.be/bA0yN9HDVoU",
+    "date": "2025-11-22",
+    "submitter": "Arcadie",
+    "levelID": 128211443,
+    "tags": [
+      "Level",
+      "Verified",
+      "CBF",
+      "Tentative"
+    ],
+    "rank": 439,
+    "_sortedTags": [
+      "Level",
+      "Verified",
+      "CBF",
+      "Tentative"
+    ],
+    "_isPlatformer": false,
+    "_lengthStr": "1:37",
+    "_thumbnail": "https://levelthumbs.prevter.me/thumbnail/128211443",
+    "_searchable": "waterfall uldm sp bu sqwazar waterfall-uldm-sp-bu 128211443",
+    "_searchableNormalized": "waterfall uldm sp bu sqwazar waterfall uldm sp bu 128211443",
+    "_tagString": "Level Verified CBF Tentative",
+    "hasThumb": true,
+    "autoThumb": true
+  },
+  {
     "name": "COMBUSTION",
     "id": "combustion",
     "player": "Slithium",
@@ -13394,7 +13428,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 439,
+    "rank": 440,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -13426,7 +13460,7 @@
       "2P",
       "CBF"
     ],
-    "rank": 440,
+    "rank": 441,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -13456,7 +13490,7 @@
       "Miscellaneous",
       "CBF"
     ],
-    "rank": 441,
+    "rank": 442,
     "_sortedTags": [
       "Miscellaneous",
       "CBF"
@@ -13486,7 +13520,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 442,
+    "rank": 443,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -13514,7 +13548,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 443,
+    "rank": 444,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -13542,7 +13576,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 444,
+    "rank": 445,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -13573,7 +13607,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 445,
+    "rank": 446,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -13606,7 +13640,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 446,
+    "rank": 447,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -13638,7 +13672,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 447,
+    "rank": 448,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -13669,7 +13703,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 448,
+    "rank": 449,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -13699,7 +13733,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 449,
+    "rank": 450,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -13727,7 +13761,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 450,
+    "rank": 451,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -13756,7 +13790,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 451,
+    "rank": 452,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -13787,7 +13821,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 452,
+    "rank": 453,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -13819,7 +13853,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 453,
+    "rank": 454,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -13850,7 +13884,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 454,
+    "rank": 455,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -13878,7 +13912,7 @@
       "Challenge",
       "Progress"
     ],
-    "rank": 455,
+    "rank": 456,
     "_sortedTags": [
       "Challenge",
       "Progress"
@@ -13909,7 +13943,7 @@
       "2P",
       "CBF"
     ],
-    "rank": 456,
+    "rank": 457,
     "_sortedTags": [
       "Level",
       "Coin Route",
@@ -13941,7 +13975,7 @@
       "2P",
       "CBF"
     ],
-    "rank": 457,
+    "rank": 458,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -13973,7 +14007,7 @@
       "Verified",
       "2P"
     ],
-    "rank": 458,
+    "rank": 459,
     "_sortedTags": [
       "Challenge",
       "Verified",
@@ -14004,7 +14038,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 459,
+    "rank": 460,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -14033,7 +14067,7 @@
       "Challenge",
       "Progress"
     ],
-    "rank": 460,
+    "rank": 461,
     "_sortedTags": [
       "Challenge",
       "Progress"
@@ -14063,7 +14097,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 461,
+    "rank": 462,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -14095,7 +14129,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 462,
+    "rank": 463,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -14127,7 +14161,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 463,
+    "rank": 464,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -14158,7 +14192,7 @@
       "Low Hertz",
       "Mobile"
     ],
-    "rank": 464,
+    "rank": 465,
     "_sortedTags": [
       "Challenge",
       "Low Hertz",
@@ -14189,7 +14223,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 465,
+    "rank": 466,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -14219,7 +14253,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 466,
+    "rank": 467,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14249,7 +14283,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 467,
+    "rank": 468,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -14279,7 +14313,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 468,
+    "rank": 469,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -14308,7 +14342,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 469,
+    "rank": 470,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14338,7 +14372,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 470,
+    "rank": 471,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -14371,7 +14405,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 471,
+    "rank": 472,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -14403,7 +14437,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 472,
+    "rank": 473,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -14434,7 +14468,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 473,
+    "rank": 474,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -14465,7 +14499,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 474,
+    "rank": 475,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -14495,7 +14529,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 475,
+    "rank": 476,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14525,7 +14559,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 476,
+    "rank": 477,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -14557,7 +14591,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 477,
+    "rank": 478,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -14589,7 +14623,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 478,
+    "rank": 479,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -14620,7 +14654,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 479,
+    "rank": 480,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -14653,7 +14687,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 480,
+    "rank": 481,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -14683,7 +14717,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 481,
+    "rank": 482,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14711,7 +14745,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 482,
+    "rank": 483,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14740,7 +14774,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 483,
+    "rank": 484,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14770,7 +14804,7 @@
       "Verified",
       "CBF"
     ],
-    "rank": 484,
+    "rank": 485,
     "_sortedTags": [
       "Challenge",
       "Verified",
@@ -14800,7 +14834,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 485,
+    "rank": 486,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14828,7 +14862,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 486,
+    "rank": 487,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14857,7 +14891,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 487,
+    "rank": 488,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -14888,7 +14922,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 488,
+    "rank": 489,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -14917,7 +14951,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 489,
+    "rank": 490,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14944,7 +14978,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 490,
+    "rank": 491,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14971,7 +15005,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 491,
+    "rank": 492,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -14999,7 +15033,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 492,
+    "rank": 493,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15027,7 +15061,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 493,
+    "rank": 494,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -15059,7 +15093,7 @@
       "2P",
       "Rated"
     ],
-    "rank": 494,
+    "rank": 495,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -15093,7 +15127,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 495,
+    "rank": 496,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -15124,7 +15158,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 496,
+    "rank": 497,
     "length": 56,
     "_sortedTags": [
       "Level",
@@ -15155,7 +15189,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 497,
+    "rank": 498,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15184,7 +15218,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 498,
+    "rank": 499,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15213,7 +15247,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 499,
+    "rank": 500,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15242,7 +15276,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 500,
+    "rank": 501,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15271,7 +15305,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 501,
+    "rank": 502,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15300,7 +15334,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 502,
+    "rank": 503,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15329,7 +15363,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 503,
+    "rank": 504,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15361,7 +15395,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 504,
+    "rank": 505,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -15393,7 +15427,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 505,
+    "rank": 506,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -15423,7 +15457,7 @@
       "Verified",
       "CBF"
     ],
-    "rank": 506,
+    "rank": 507,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -15453,7 +15487,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 507,
+    "rank": 508,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15483,7 +15517,7 @@
       "Progress",
       "2P"
     ],
-    "rank": 508,
+    "rank": 509,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -15515,7 +15549,7 @@
       "CBF",
       "Tentative"
     ],
-    "rank": 509,
+    "rank": 510,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -15546,7 +15580,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 510,
+    "rank": 511,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15577,7 +15611,7 @@
       "2P",
       "Rated"
     ],
-    "rank": 511,
+    "rank": 512,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -15610,7 +15644,7 @@
       "2P",
       "Rated"
     ],
-    "rank": 512,
+    "rank": 513,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -15641,7 +15675,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 513,
+    "rank": 514,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15670,7 +15704,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 514,
+    "rank": 515,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15699,7 +15733,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 515,
+    "rank": 516,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15728,7 +15762,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 516,
+    "rank": 517,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15757,7 +15791,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 517,
+    "rank": 518,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15786,7 +15820,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 518,
+    "rank": 519,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15816,7 +15850,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 519,
+    "rank": 520,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -15846,7 +15880,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 520,
+    "rank": 521,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -15877,7 +15911,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 521,
+    "rank": 522,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -15909,7 +15943,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 522,
+    "rank": 523,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -15940,7 +15974,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 523,
+    "rank": 524,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15968,7 +16002,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 524,
+    "rank": 525,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -15997,7 +16031,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 525,
+    "rank": 526,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16027,7 +16061,7 @@
       "Challenge",
       "Progress"
     ],
-    "rank": 526,
+    "rank": 527,
     "_sortedTags": [
       "Challenge",
       "Progress"
@@ -16055,7 +16089,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 527,
+    "rank": 528,
     "submitter": "kyle1saurus",
     "_sortedTags": [
       "Level",
@@ -16085,7 +16119,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 528,
+    "rank": 529,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -16115,7 +16149,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 529,
+    "rank": 530,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16144,7 +16178,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 530,
+    "rank": 531,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16173,7 +16207,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 531,
+    "rank": 532,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -16204,7 +16238,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 532,
+    "rank": 533,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16233,7 +16267,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 533,
+    "rank": 534,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16261,7 +16295,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 534,
+    "rank": 535,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -16292,7 +16326,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 535,
+    "rank": 536,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -16323,7 +16357,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 536,
+    "rank": 537,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16354,7 +16388,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 537,
+    "rank": 538,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -16385,7 +16419,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 538,
+    "rank": 539,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -16415,7 +16449,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 539,
+    "rank": 540,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16443,7 +16477,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 540,
+    "rank": 541,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -16471,7 +16505,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 541,
+    "rank": 542,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16501,7 +16535,7 @@
       "CBF",
       "Tentative"
     ],
-    "rank": 542,
+    "rank": 543,
     "_sortedTags": [
       "Challenge",
       "Progress",
@@ -16531,7 +16565,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 543,
+    "rank": 544,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16559,7 +16593,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 544,
+    "rank": 545,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -16588,7 +16622,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 545,
+    "rank": 546,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -16616,7 +16650,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 546,
+    "rank": 547,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -16646,7 +16680,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 547,
+    "rank": 548,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16675,7 +16709,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 548,
+    "rank": 549,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16704,7 +16738,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 549,
+    "rank": 550,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16735,7 +16769,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 550,
+    "rank": 551,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16764,7 +16798,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 551,
+    "rank": 552,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16791,7 +16825,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 552,
+    "rank": 553,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16818,7 +16852,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 553,
+    "rank": 554,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -16846,7 +16880,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 554,
+    "rank": 555,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -16878,7 +16912,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 555,
+    "rank": 556,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -16911,7 +16945,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 556,
+    "rank": 557,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -16942,7 +16976,7 @@
       "Low Hertz",
       "Mobile"
     ],
-    "rank": 557,
+    "rank": 558,
     "_sortedTags": [
       "Challenge",
       "Low Hertz",
@@ -16972,7 +17006,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 558,
+    "rank": 559,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17001,7 +17035,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 559,
+    "rank": 560,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -17030,7 +17064,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 560,
+    "rank": 561,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17058,7 +17092,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 561,
+    "rank": 562,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17087,7 +17121,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 562,
+    "rank": 563,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -17116,7 +17150,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 563,
+    "rank": 564,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17145,7 +17179,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 564,
+    "rank": 565,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17175,7 +17209,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 565,
+    "rank": 566,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17206,7 +17240,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 566,
+    "rank": 567,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17237,7 +17271,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 567,
+    "rank": 568,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17268,7 +17302,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 568,
+    "rank": 569,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17298,7 +17332,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 569,
+    "rank": 570,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17326,7 +17360,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 570,
+    "rank": 571,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17354,7 +17388,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 571,
+    "rank": 572,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17385,7 +17419,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 572,
+    "rank": 573,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17416,7 +17450,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 573,
+    "rank": 574,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17445,7 +17479,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 574,
+    "rank": 575,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17474,7 +17508,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 575,
+    "rank": 576,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -17505,7 +17539,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 576,
+    "rank": 577,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -17534,7 +17568,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 577,
+    "rank": 578,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17564,7 +17598,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 578,
+    "rank": 579,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17595,7 +17629,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 579,
+    "rank": 580,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17625,7 +17659,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 580,
+    "rank": 581,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17655,7 +17689,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 581,
+    "rank": 582,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17687,7 +17721,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 582,
+    "rank": 583,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -17718,7 +17752,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 583,
+    "rank": 584,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -17747,7 +17781,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 584,
+    "rank": 585,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17775,7 +17809,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 585,
+    "rank": 586,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17803,7 +17837,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 586,
+    "rank": 587,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -17832,7 +17866,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 587,
+    "rank": 588,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -17861,7 +17895,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 588,
+    "rank": 589,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -17891,7 +17925,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 589,
+    "rank": 590,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -17922,7 +17956,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 590,
+    "rank": 591,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -17952,7 +17986,7 @@
       "Level",
       "Consistency"
     ],
-    "rank": 591,
+    "rank": 592,
     "_sortedTags": [
       "Level",
       "Consistency"
@@ -17982,7 +18016,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 592,
+    "rank": 593,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18011,7 +18045,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 593,
+    "rank": 594,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18040,7 +18074,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 594,
+    "rank": 595,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -18072,7 +18106,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 595,
+    "rank": 596,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18105,7 +18139,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 596,
+    "rank": 597,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -18137,7 +18171,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 597,
+    "rank": 598,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18169,7 +18203,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 598,
+    "rank": 599,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18198,7 +18232,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 599,
+    "rank": 600,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18227,7 +18261,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 600,
+    "rank": 601,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -18256,7 +18290,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 601,
+    "rank": 602,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18285,7 +18319,7 @@
       "Verified",
       "Tentative"
     ],
-    "rank": 602,
+    "rank": 603,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -18317,7 +18351,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 603,
+    "rank": 604,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18350,7 +18384,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 604,
+    "rank": 605,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18381,7 +18415,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 605,
+    "rank": 606,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -18409,7 +18443,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 606,
+    "rank": 607,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18437,7 +18471,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 607,
+    "rank": 608,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18466,7 +18500,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 608,
+    "rank": 609,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -18494,7 +18528,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 609,
+    "rank": 610,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18522,7 +18556,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 610,
+    "rank": 611,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -18551,7 +18585,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 611,
+    "rank": 612,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -18581,7 +18615,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 612,
+    "rank": 613,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -18614,7 +18648,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 613,
+    "rank": 614,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18648,7 +18682,7 @@
       "2P",
       "Rated"
     ],
-    "rank": 614,
+    "rank": 615,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18681,7 +18715,7 @@
       "2P",
       "Rated"
     ],
-    "rank": 615,
+    "rank": 616,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -18711,7 +18745,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 616,
+    "rank": 617,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18740,7 +18774,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 617,
+    "rank": 618,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18771,7 +18805,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 618,
+    "rank": 619,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -18802,7 +18836,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 619,
+    "rank": 620,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -18832,7 +18866,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 620,
+    "rank": 621,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -18861,7 +18895,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 621,
+    "rank": 622,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -18889,7 +18923,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 622,
+    "rank": 623,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -18918,7 +18952,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 623,
+    "rank": 624,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -18950,7 +18984,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 624,
+    "rank": 625,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -18981,7 +19015,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 625,
+    "rank": 626,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -19011,7 +19045,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 626,
+    "rank": 627,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -19042,7 +19076,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 627,
+    "rank": 628,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -19073,7 +19107,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 628,
+    "rank": 629,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -19105,7 +19139,7 @@
       "Coin Route",
       "Rated"
     ],
-    "rank": 629,
+    "rank": 630,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -19140,7 +19174,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 630,
+    "rank": 631,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19172,7 +19206,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 631,
+    "rank": 632,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -19205,7 +19239,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 632,
+    "rank": 633,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19238,7 +19272,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 633,
+    "rank": 634,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -19266,7 +19300,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 634,
+    "rank": 635,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -19298,7 +19332,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 635,
+    "rank": 636,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19333,7 +19367,7 @@
       "Rated",
       "Tentative"
     ],
-    "rank": 636,
+    "rank": 637,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19364,7 +19398,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 637,
+    "rank": 638,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -19396,7 +19430,7 @@
       "Rated",
       "Tentative"
     ],
-    "rank": 638,
+    "rank": 639,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19430,7 +19464,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 639,
+    "rank": 640,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -19462,7 +19496,7 @@
       "Speedhack",
       "Progress"
     ],
-    "rank": 640,
+    "rank": 641,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -19494,7 +19528,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 641,
+    "rank": 642,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19526,7 +19560,7 @@
       "Verified",
       "Outdated Version"
     ],
-    "rank": 642,
+    "rank": 643,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -19559,7 +19593,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 643,
+    "rank": 644,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19593,7 +19627,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 644,
+    "rank": 645,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -19626,7 +19660,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 645,
+    "rank": 646,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -19660,7 +19694,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 646,
+    "rank": 647,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19692,7 +19726,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 647,
+    "rank": 648,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -19725,7 +19759,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 648,
+    "rank": 649,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19759,7 +19793,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 649,
+    "rank": 650,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -19789,7 +19823,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 650,
+    "rank": 651,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -19822,7 +19856,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 651,
+    "rank": 652,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19857,7 +19891,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 652,
+    "rank": 653,
     "_sortedTags": [
       "Level",
       "Noclip",
@@ -19889,7 +19923,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 653,
+    "rank": 654,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -19919,7 +19953,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 654,
+    "rank": 655,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -19951,7 +19985,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 655,
+    "rank": 656,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -19983,7 +20017,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 656,
+    "rank": 657,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -20015,7 +20049,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 657,
+    "rank": 658,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20048,7 +20082,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 658,
+    "rank": 659,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20078,7 +20112,7 @@
       "Speedhack",
       "Progress"
     ],
-    "rank": 659,
+    "rank": 660,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -20109,7 +20143,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 660,
+    "rank": 661,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20140,7 +20174,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 661,
+    "rank": 662,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -20170,7 +20204,7 @@
       "Verified",
       "CBF"
     ],
-    "rank": 662,
+    "rank": 663,
     "_sortedTags": [
       "Level",
       "Verified",
@@ -20201,7 +20235,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 663,
+    "rank": 664,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -20233,7 +20267,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 664,
+    "rank": 665,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20266,7 +20300,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 665,
+    "rank": 666,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20300,7 +20334,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 666,
+    "rank": 667,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20332,7 +20366,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 667,
+    "rank": 668,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -20364,7 +20398,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 668,
+    "rank": 669,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20400,7 +20434,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 669,
+    "rank": 670,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20436,7 +20470,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 670,
+    "rank": 671,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20467,7 +20501,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 671,
+    "rank": 672,
     "_sortedTags": [
       "Challenge",
       "Progress",
@@ -20497,7 +20531,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 672,
+    "rank": 673,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -20528,7 +20562,7 @@
       "Progress",
       "Tentative"
     ],
-    "rank": 673,
+    "rank": 674,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -20562,7 +20596,7 @@
       "CBF",
       "Rated"
     ],
-    "rank": 674,
+    "rank": 675,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20595,7 +20629,7 @@
       "Low Hertz",
       "Rated"
     ],
-    "rank": 675,
+    "rank": 676,
     "submitter": "TYATYAPKA",
     "_sortedTags": [
       "Level",
@@ -20627,7 +20661,7 @@
       "Mobile",
       "CBF"
     ],
-    "rank": 676,
+    "rank": 677,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -20660,7 +20694,7 @@
       "Progress",
       "Rated"
     ],
-    "rank": 677,
+    "rank": 678,
     "_sortedTags": [
       "Level",
       "Speedhack",
@@ -20692,7 +20726,7 @@
       "Speedhack",
       "Progress"
     ],
-    "rank": 678,
+    "rank": 679,
     "_sortedTags": [
       "Challenge",
       "Speedhack",
@@ -20722,7 +20756,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 679,
+    "rank": 680,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -20751,7 +20785,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 680,
+    "rank": 681,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -20780,7 +20814,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 681,
+    "rank": 682,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -20808,7 +20842,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 682,
+    "rank": 683,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -20836,7 +20870,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 683,
+    "rank": 684,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -20865,7 +20899,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 684,
+    "rank": 685,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -20893,7 +20927,7 @@
       "Progress",
       "CBF"
     ],
-    "rank": 685,
+    "rank": 686,
     "_sortedTags": [
       "Level",
       "Progress",
@@ -20922,7 +20956,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 686,
+    "rank": 687,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -20950,7 +20984,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 687,
+    "rank": 688,
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/Silent%20Club%20Plus.webp",
     "_sortedTags": [
       "Level",
@@ -20980,7 +21014,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 688,
+    "rank": 689,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -21007,7 +21041,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 689,
+    "rank": 690,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -21035,7 +21069,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 690,
+    "rank": 691,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -21066,7 +21100,7 @@
       "Mobile",
       "Rated"
     ],
-    "rank": 691,
+    "rank": 692,
     "_sortedTags": [
       "Level",
       "Low Hertz",
@@ -21095,7 +21129,7 @@
       "Challenge",
       "Progress"
     ],
-    "rank": 692,
+    "rank": 693,
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/119425652.webp",
     "_sortedTags": [
       "Challenge",
@@ -21125,7 +21159,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 693,
+    "rank": 694,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -21154,7 +21188,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 694,
+    "rank": 695,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -21182,7 +21216,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 695,
+    "rank": 696,
     "thumbnail": "https://raw.githubusercontent.com/AncepsGD/the-hardest-achievements-list/refs/heads/main/thumbnails/CHROMACAVE.jpeg",
     "_sortedTags": [
       "Level",
@@ -21213,7 +21247,7 @@
       "Consistency",
       "Rated"
     ],
-    "rank": 696,
+    "rank": 697,
     "_sortedTags": [
       "Level",
       "Consistency",
@@ -21243,7 +21277,7 @@
       "Challenge",
       "Verified"
     ],
-    "rank": 697,
+    "rank": 698,
     "_sortedTags": [
       "Challenge",
       "Verified"
@@ -21273,7 +21307,7 @@
       "Level",
       "Progress"
     ],
-    "rank": 698,
+    "rank": 699,
     "_sortedTags": [
       "Level",
       "Progress"
@@ -21302,7 +21336,7 @@
       "Level",
       "Verified"
     ],
-    "rank": 699,
+    "rank": 700,
     "_sortedTags": [
       "Level",
       "Verified"
@@ -21332,7 +21366,7 @@
       "Verified",
       "Rated"
     ],
-    "rank": 700,
+    "rank": 701,
     "_sortedTags": [
       "Level",
       "Verified",

@@ -1490,5 +1490,35 @@
       "Rated"
     ],
     "rank": 587
-  }
+  },
+  {
+  "name": "Avernus green (KlimK) 12-100%, 35% in a row",
+  "id": "avernus-green-klimk-12-100-35-in-a-row",
+  "player": "KlimK",
+  "length": 139,
+  "version": 2.2,
+  "video": "https://youtu.be/a10PzEB9jVA",
+  "date": "2026-01-04",
+  "submitter": "TYATYAPKA",
+  "tags": [
+    "Level",
+    "Consistency",
+    "CBF"
+  ],
+  "rank": 77,
+  "_sortedTags": [
+    "Level",
+    "Consistency",
+    "CBF"
+  ],
+  "_isPlatformer": false,
+  "_lengthStr": "2:19",
+  "_thumbnail": null,
+  "_searchable": "avernus green (klimk) 12-100%, 35% in a row klimk avernus-green-klimk-12-100-35-in-a-row",
+  "_searchableNormalized": "avernus green klimk 12 100 35 in a row klimk avernus green klimk 12 100 35 in a row",
+  "_tagString": "Level Consistency CBF",
+  "hasThumb": false,
+  "autoThumb": false,
+  "levelID": 0
+}
 ]
