@@ -302,24 +302,6 @@
     "rank": 17
   },
   {
-    "name": "Firework 82%, 100% in a row",
-    "id": "firework-82-100-in-a-row",
-    "player": "Trick",
-    "levelID": 75206202,
-    "date": "2021-10-30",
-    "length": 220,
-    "version": 2.1,
-    "submitter": "kittycatiscute",
-    "video": "https://youtu.be/PaieCfSUBdg",
-    "showcaseVideo": "https://youtu.be/DU6mRmGHy74",
-    "tags": [
-      "Level",
-      "Consistency",
-      "Outdated Version"
-    ],
-    "rank": 18
-  },
-  {
     "id": "old-aod-98",
     "name": "Old AoD 98%",
     "player": "Dils thik",
@@ -333,7 +315,7 @@
     "levelID": "76680844",
     "video": "https://youtu.be/CNv735bQfkU",
     "showcaseVideo": "https://youtu.be/9xnaAgxqqJs",
-    "rank": 19
+    "rank": 18
   },
   {
     "id": "old-aod-95",
@@ -350,7 +332,7 @@
     "levelID": "76680844",
     "video": "https://youtu.be/ui6UCk8Sc-Y",
     "showcaseVideo": "https://youtu.be/9xnaAgxqqJs",
-    "rank": 20
+    "rank": 19
   },
   {
     "id": "old-aod-76",
@@ -367,7 +349,7 @@
     "levelID": "76680844",
     "video": "https://youtu.be/JsOjKOLOo4s",
     "showcaseVideo": "https://youtu.be/9xnaAgxqqJs",
-    "rank": 21
+    "rank": 20
   },
   {
     "id": "blind-blizzard",
@@ -384,7 +366,7 @@
     "levelID": "65679976",
     "video": "https://youtu.be/veFJtgFFvNM",
     "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
-    "rank": 22
+    "rank": 21
   },
   {
     "id": "blind-blizzard-98",
@@ -401,7 +383,7 @@
     "levelID": 65679976,
     "video": "https://clips.twitch.tv/DirtyObliviousDuckTakeNRG",
     "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
-    "rank": 23,
+    "rank": 22,
     "submitter": "Anceps"
   },
   {
@@ -419,7 +401,7 @@
     "levelID": 65679976,
     "video": "https://youtu.be/lTCdp8SwFIk",
     "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
-    "rank": 24
+    "rank": 23
   },
   {
     "id": "blind-blizzard-82",
@@ -436,7 +418,7 @@
     "levelID": 65679976,
     "video": "https://clips.twitch.tv/TawdryResilientWaspFUNgineer",
     "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
-    "rank": 25,
+    "rank": 24,
     "submitter": "Anceps"
   },
   {
@@ -454,7 +436,7 @@
     "levelID": "65679976",
     "video": "https://youtu.be/3826sxJVxJM",
     "showcaseVideo": "https://youtu.be/yozw67YK6Gc",
-    "rank": 26
+    "rank": 25
   },
   {
     "id": "3sh-in-hell",
@@ -470,7 +452,7 @@
     "levelID": "61614466",
     "video": "https://youtu.be/E3-9s2DyjJI",
     "showcaseVideo": "https://youtu.be/E3-9s2DyjJI",
-    "rank": 27
+    "rank": 26
   },
   {
     "id": "3sh-in-hell-89",
@@ -486,7 +468,7 @@
     "levelID": "61614466",
     "video": "https://cdn.discordapp.com/attachments/1364175601014931527/1427111557585834145/image.png?ex=68f2f2b5&is=68f1a135&hm=bf4a0341ddaf2f47ecc200db9fdcd66d3973532eaad6f500ceaf00792cde9407&",
     "showcaseVideo": "https://youtu.be/E3-9s2DyjJI",
-    "rank": 28
+    "rank": 27
   },
   {
     "id": "tartarus",
@@ -503,7 +485,7 @@
     "levelID": "59075347",
     "video": "https://youtu.be/UGzWwFD3-gk",
     "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
-    "rank": 29
+    "rank": 28
   },
   {
     "id": "tartarus-98",
@@ -521,7 +503,7 @@
     "levelID": "59075347",
     "video": "https://youtu.be/jAHi9t6l7b4",
     "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
-    "rank": 30
+    "rank": 29
   },
   {
     "id": "tartarus-97",
@@ -539,7 +521,7 @@
     "levelID": "59075347",
     "video": "https://youtu.be/fNoPN-CwjKg",
     "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
-    "rank": 31
+    "rank": 30
   },
   {
     "id": "tartarus-91",
@@ -557,7 +539,7 @@
     "levelID": "59075347",
     "video": "https://youtu.be/5F1IrMm2EAM",
     "showcaseVideo": "https://youtu.be/lm1498Rfl0s",
-    "rank": 32
+    "rank": 31
   },
   {
     "id": "sonic-wave-75hz-75",
@@ -576,7 +558,7 @@
     "video": "https://www.youtube.com/watch?v=n4QCAP4tqOk",
     "showcaseVideo": "https://youtu.be/iQowrO4trlk",
     "submitter": "TTB18",
-    "rank": 33
+    "rank": 32
   },
   {
     "id": "sonic-wave-75hz-74",
@@ -595,7 +577,7 @@
     "video": "https://www.youtube.com/watch?v=QAD19pE0c1E",
     "showcaseVideo": "https://youtu.be/iQowrO4trlk",
     "submitter": "TTB18",
-    "rank": 34
+    "rank": 33
   },
   {
     "id": "plasma-pulse-finale-60hz-72",
@@ -613,7 +595,23 @@
     "levelID": "38655495",
     "video": "https://youtu.be/efl4b9pWBQg",
     "showcaseVideo": "https://youtu.be/CDUcdR1-uho",
-    "rank": 35
+    "rank": 34
+  },
+  {
+    "name": "INNARDS (Cinci) 50%",
+    "id": "innards-cinci-50",
+    "player": "Cinci",
+    "length": 51,
+    "version": 2.1,
+    "video": "https://www.youtube.com/watch?v=nvUpEgmmTFo",
+    "date": "2017-07-27",
+    "submitter": "Anceps",
+    "tags": [
+      "Level",
+      "Progress"
+    ],
+    "rank": 35,
+    "thumbnail": "https://levelthumbs.prevter.me/thumbnail/88216956"
   },
   {
     "id": "bloodlust-98",
