@@ -890,24 +890,43 @@ export default function SharedList({
     } catch (e) { }
     try { if (prevActive && typeof prevActive.focus === 'function' && document.activeElement !== prevActive) prevActive.focus(); } catch (e) { }
   }
-  function restoreScrollToIndex(index, prevScrollTop, prevScrollLeft, prevActive) {
+
+  function adjustScrollToKeepElementById(id, prevTop, prevActive) {
     try {
+      if (!id) return false;
       const listCur = listRef && listRef.current;
-      if (listCur) {
-        if (typeof listCur.scrollToItem === 'function' && typeof index === 'number') {
-          try { listCur.scrollToItem(Math.max(0, index), 'center'); if (prevActive && typeof prevActive.focus === 'function') prevActive.focus(); return; } catch (e) { }
-        }
-        if (typeof listCur.scrollTo === 'function' && typeof index === 'number') {
+      const outer = listCur && (listCur._outerRef || listCur.outerRef || listCur._listRef || listCur._scrollingContainer) || null;
+      let foundEl = null;
+      try {
+        const refs = achievementRefs && achievementRefs.current ? achievementRefs.current : [];
+        for (let i = 0; i < refs.length; i++) {
+          const el = refs[i];
+          if (!el) continue;
           try {
-            const offset = index * 150;
-            listCur.scrollTo(offset);
-            if (prevActive && typeof prevActive.focus === 'function') prevActive.focus();
-            return;
+            if (el.dataset && String(el.dataset.achievementId) === String(id)) { foundEl = el; break; }
+            if (el.getAttribute && el.getAttribute('data-achievement-id') === String(id)) { foundEl = el; break; }
           } catch (e) { }
         }
+      } catch (e) { }
+      if (!foundEl && outer) {
+        try { foundEl = outer.querySelector && outer.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`); } catch (e) { }
       }
-    } catch (e) { }
-    return restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+      if (!foundEl) return false;
+      const newTop = foundEl.getBoundingClientRect().top;
+      const delta = newTop - prevTop;
+      if (delta === 0) return true;
+      try {
+        if (outer && typeof outer.scrollTop === 'number') {
+          outer.scrollTop = (outer.scrollTop || 0) + delta;
+        } else {
+          window.scrollBy(0, delta);
+        }
+      } catch (e) {
+        try { window.scrollBy(0, delta); } catch (ee) { }
+      }
+      try { if (prevActive && typeof prevActive.focus === 'function' && document.activeElement !== prevActive) prevActive.focus(); } catch (e) { }
+      return true;
+    } catch (e) { return false; }
   }
   const derivedCacheRef = useRef({ filtered: new Map(), dev: new Map() });
   function getListSignature(list) {
@@ -918,12 +937,6 @@ export default function SharedList({
       try { return String(list.length || 0); } catch (ee) { return '0'; }
     }
   }
-  useEffect(() => {
-    try {
-      const c = derivedCacheRef.current;
-      if (c) { try { c.filtered && c.filtered.clear(); } catch (e) { } try { c.dev && c.dev.clear(); } catch (e) { } }
-    } catch (e) {}
-  }, [achievements, reordered, stagedReordered, sortKey, sortDir, randomSeed, _normalizedFilterTags, queryTokens]);
   const [search, setSearch] = useState('');
   const searchInputRef = useRef(null);
   const inputValueRef = useRef(search);
@@ -1197,6 +1210,15 @@ export default function SharedList({
     const prevScrollTop = listOuter ? listOuter.scrollTop : (scrollEl ? scrollEl.scrollTop : 0);
     const prevScrollLeft = listOuter ? listOuter.scrollLeft : (scrollEl ? scrollEl.scrollLeft : 0);
     const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
+    let movedId = null;
+    let prevElemTop = null;
+    try {
+      const list = visibleListRef.current || [];
+      const displayed = (list && list.length) ? list[idx] : null;
+      if (displayed && displayed.id) movedId = String(displayed.id);
+      const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
+      if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
+    } catch (e) { }
     const ensureStaged = () => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
       const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
@@ -1236,7 +1258,9 @@ export default function SharedList({
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           try {
-            restoreScrollToIndex(realIdx - 1, prevScrollTop, prevScrollLeft, prevActive);
+            let ok = false;
+            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
+            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
           } catch (e) { }
         }));
       } catch (e) { }
@@ -1249,6 +1273,15 @@ export default function SharedList({
     const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
     const prevScrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
     const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
+    let movedId = null;
+    let prevElemTop = null;
+    try {
+      const list = visibleListRef.current || [];
+      const displayed = (list && list.length) ? list[idx] : null;
+      if (displayed && displayed.id) movedId = String(displayed.id);
+      const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
+      if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
+    } catch (e) { }
     const ensureStaged = () => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
       const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
@@ -1288,7 +1321,9 @@ export default function SharedList({
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           try {
-            restoreScrollToIndex(realIdx + 1, prevScrollTop, prevScrollLeft, prevActive);
+            let ok = false;
+            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
+            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
           } catch (e) { }
         }));
       } catch (e) { }
@@ -2384,25 +2419,21 @@ export default function SharedList({
 
   const devAchievements = useMemo(() => {
     try {
-      const currentOrder = (stagedIdOrder && Array.isArray(stagedIdOrder) && stagedIdOrder.length) ? stagedIdOrder : idOrder;
-      if (!currentOrder || !Array.isArray(currentOrder)) return [];
-      const map = idMapRef.current || new Map();
-      const base = currentOrder.map(id => map.get(id)).filter(Boolean);
-      const orderSig = currentOrder.join(',');
-      const sig = `${orderSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
+      if (!baseDev) return baseDev;
+      const sig = `${getListSignature(baseDev)}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
       const cache = derivedCacheRef.current && derivedCacheRef.current.dev;
       if (cache && cache.has(sig)) return cache.get(sig);
 
-      let result = base;
+      let result = baseDev;
       if (sortKey) {
         if (sortKey === 'levelID') {
-          const onlyWithLevel = base.filter(a => { const num = Number(a && a.levelID); return !isNaN(num) && num > 0; });
+          const onlyWithLevel = baseDev.filter(a => { const num = Number(a && a.levelID); return !isNaN(num) && num > 0; });
           const copy = [...onlyWithLevel];
           copy.sort((x, y) => compareByKey(x, y, 'levelID'));
           if (sortDir === 'desc') copy.reverse();
           result = copy;
         } else if (sortKey === 'random') {
-          const copy = [...base];
+          const copy = [...baseDev];
           const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
           const seed = randomSeed != null ? randomSeed : 1;
           const rng = mulberry32(seed);
@@ -2410,14 +2441,14 @@ export default function SharedList({
             const j = Math.floor(rng() * (i + 1));
             const t = keys[i]; keys[i] = keys[j]; keys[j] = t;
           }
-          const mapIdx = {};
-          keys.forEach((k, i) => { mapIdx[k] = i; });
-          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${base.indexOf(item)}`;
-          copy.sort((x, y) => ((mapIdx[getKey(x)] || 0) - (mapIdx[getKey(y)] || 0)));
+          const map = {};
+          keys.forEach((k, i) => { map[k] = i; });
+          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
+          copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
           if (sortDir === 'desc') copy.reverse();
           result = copy;
         } else {
-          const copy = [...base];
+          const copy = [...baseDev];
           copy.sort((x, y) => compareByKey(x, y, sortKey));
           if (sortDir === 'desc') copy.reverse();
           result = copy;
@@ -2425,8 +2456,8 @@ export default function SharedList({
       }
       try { if (cache) cache.set(sig, result); } catch (e) { }
       return result;
-    } catch (e) { return []; }
-  }, [idOrder, stagedIdOrder, sortKey, sortDir, compareByKey, randomSeed]);
+    } catch (e) { return baseDev; }
+  }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
 
   const visibleList = devMode ? devAchievements : filtered;
 
@@ -2634,7 +2665,7 @@ export default function SharedList({
     const isHighlightedLocal = false;
 
     return (
-      <div data-index={index} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
+      <div data-index={index} data-achievement-id={(a && a.id) ? String(a.id) : ''} ref={el => { try { achievementRefs.current[index] = el; } catch (e) { } }} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
         {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
