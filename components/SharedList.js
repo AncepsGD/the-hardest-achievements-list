@@ -2384,21 +2384,25 @@ export default function SharedList({
 
   const devAchievements = useMemo(() => {
     try {
-      if (!baseDev) return baseDev;
-      const sig = `${getListSignature(baseDev)}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
+      const currentOrder = (stagedIdOrder && Array.isArray(stagedIdOrder) && stagedIdOrder.length) ? stagedIdOrder : idOrder;
+      if (!currentOrder || !Array.isArray(currentOrder)) return [];
+      const map = idMapRef.current || new Map();
+      const base = currentOrder.map(id => map.get(id)).filter(Boolean);
+      const orderSig = currentOrder.join(',');
+      const sig = `${orderSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
       const cache = derivedCacheRef.current && derivedCacheRef.current.dev;
       if (cache && cache.has(sig)) return cache.get(sig);
 
-      let result = baseDev;
+      let result = base;
       if (sortKey) {
         if (sortKey === 'levelID') {
-          const onlyWithLevel = baseDev.filter(a => { const num = Number(a && a.levelID); return !isNaN(num) && num > 0; });
+          const onlyWithLevel = base.filter(a => { const num = Number(a && a.levelID); return !isNaN(num) && num > 0; });
           const copy = [...onlyWithLevel];
           copy.sort((x, y) => compareByKey(x, y, 'levelID'));
           if (sortDir === 'desc') copy.reverse();
           result = copy;
         } else if (sortKey === 'random') {
-          const copy = [...baseDev];
+          const copy = [...base];
           const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
           const seed = randomSeed != null ? randomSeed : 1;
           const rng = mulberry32(seed);
@@ -2406,14 +2410,14 @@ export default function SharedList({
             const j = Math.floor(rng() * (i + 1));
             const t = keys[i]; keys[i] = keys[j]; keys[j] = t;
           }
-          const map = {};
-          keys.forEach((k, i) => { map[k] = i; });
-          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
-          copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
+          const mapIdx = {};
+          keys.forEach((k, i) => { mapIdx[k] = i; });
+          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${base.indexOf(item)}`;
+          copy.sort((x, y) => ((mapIdx[getKey(x)] || 0) - (mapIdx[getKey(y)] || 0)));
           if (sortDir === 'desc') copy.reverse();
           result = copy;
         } else {
-          const copy = [...baseDev];
+          const copy = [...base];
           copy.sort((x, y) => compareByKey(x, y, sortKey));
           if (sortDir === 'desc') copy.reverse();
           result = copy;
@@ -2421,8 +2425,8 @@ export default function SharedList({
       }
       try { if (cache) cache.set(sig, result); } catch (e) { }
       return result;
-    } catch (e) { return baseDev; }
-  }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
+    } catch (e) { return []; }
+  }, [idOrder, stagedIdOrder, sortKey, sortDir, compareByKey, randomSeed]);
 
   const visibleList = devMode ? devAchievements : filtered;
 
