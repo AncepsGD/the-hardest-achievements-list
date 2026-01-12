@@ -890,6 +890,25 @@ export default function SharedList({
     } catch (e) { }
     try { if (prevActive && typeof prevActive.focus === 'function' && document.activeElement !== prevActive) prevActive.focus(); } catch (e) { }
   }
+  function restoreScrollToIndex(index, prevScrollTop, prevScrollLeft, prevActive) {
+    try {
+      const listCur = listRef && listRef.current;
+      if (listCur) {
+        if (typeof listCur.scrollToItem === 'function' && typeof index === 'number') {
+          try { listCur.scrollToItem(Math.max(0, index), 'center'); if (prevActive && typeof prevActive.focus === 'function') prevActive.focus(); return; } catch (e) { }
+        }
+        if (typeof listCur.scrollTo === 'function' && typeof index === 'number') {
+          try {
+            const offset = index * 150;
+            listCur.scrollTo(offset);
+            if (prevActive && typeof prevActive.focus === 'function') prevActive.focus();
+            return;
+          } catch (e) { }
+        }
+      }
+    } catch (e) { }
+    return restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+  }
   const derivedCacheRef = useRef({ filtered: new Map(), dev: new Map() });
   function getListSignature(list) {
     try {
@@ -899,6 +918,36 @@ export default function SharedList({
       try { return String(list.length || 0); } catch (ee) { return '0'; }
     }
   }
+  const idMapRef = useRef(new Map());
+  const [idOrder, setIdOrder] = useState([]);
+  const idOrderRef = useRef(idOrder);
+  useEffect(() => { idOrderRef.current = idOrder; }, [idOrder]);
+
+  const [stagedIdOrder, setStagedIdOrder] = useState(null);
+  const stagedIdOrderRef = useRef(stagedIdOrder);
+  useEffect(() => { stagedIdOrderRef.current = stagedIdOrder; }, [stagedIdOrder]);
+
+  useEffect(() => {
+    try {
+      const source = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : ((reordered && Array.isArray(reordered) && reordered.length) ? reordered : (achievements || []));
+      const map = new Map();
+      const order = [];
+      for (let i = 0; i < (source || []).length; i++) {
+        const a = source[i];
+        const id = (a && a.id) ? String(a.id) : `__idx_${i}`;
+        map.set(id, a);
+        order.push(id);
+      }
+      idMapRef.current = map;
+      setIdOrder(order);
+    } catch (e) { }
+  }, [achievements, reordered, stagedReordered]);
+  useEffect(() => {
+    try {
+      const c = derivedCacheRef.current;
+      if (c) { try { c.filtered && c.filtered.clear(); } catch (e) { } try { c.dev && c.dev.clear(); } catch (e) { } }
+    } catch (e) {}
+  }, [achievements, reordered, stagedReordered, sortKey, sortDir, randomSeed, _normalizedFilterTags, queryTokens]);
   const [search, setSearch] = useState('');
   const searchInputRef = useRef(null);
   const inputValueRef = useRef(search);
@@ -1143,21 +1192,15 @@ export default function SharedList({
 
   function resolveRealIdx(displayIdx) {
     try {
-      const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
-      if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) return displayIdx;
-      if (currentReordered[displayIdx] && devAchievements && devAchievements[displayIdx] && currentReordered[displayIdx].id && devAchievements[displayIdx].id && currentReordered[displayIdx].id === devAchievements[displayIdx].id) {
-        return displayIdx;
-      }
-      if (currentReordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === currentReordered[displayIdx].id : false) === -1)) {
-        return displayIdx;
-      }
+      const currentOrder = (stagedIdOrder && Array.isArray(stagedIdOrder) && stagedIdOrder.length) ? stagedIdOrder : idOrder;
+      if (!currentOrder || !Array.isArray(currentOrder) || currentOrder.length === 0) return displayIdx;
       const displayed = (devAchievements && devAchievements.length) ? devAchievements[displayIdx] : null;
       if (!displayed) return displayIdx;
       if (displayed.id) {
-        const real = currentReordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
+        const real = currentOrder.findIndex(x => x === String(displayed.id));
         return real === -1 ? displayIdx : real;
       }
-      const realByObj = currentReordered.findIndex(x => x === displayed);
+      const realByObj = currentOrder.findIndex(x => idMapRef.current && idMapRef.current.get(x) === displayed);
       return realByObj === -1 ? displayIdx : realByObj;
     } catch (e) {
       return displayIdx;
@@ -1172,46 +1215,38 @@ export default function SharedList({
     const prevScrollTop = listOuter ? listOuter.scrollTop : (scrollEl ? scrollEl.scrollTop : 0);
     const prevScrollLeft = listOuter ? listOuter.scrollLeft : (scrollEl ? scrollEl.scrollLeft : 0);
     const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
-    const ensureStaged = () => {
-      if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
-      const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-      const copy = base.map(a => ({ ...(a || {}) }));
-      setStagedReordered(copy);
+    const ensureStagedIdOrder = () => {
+      if (stagedIdOrderRef.current && Array.isArray(stagedIdOrderRef.current)) return stagedIdOrderRef.current;
+      const base = (Array.isArray(idOrderRef.current) && idOrderRef.current.length) ? idOrderRef.current : ((Array.isArray(reorderedRef.current) && reorderedRef.current.length) ? reorderedRef.current.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`) : (Array.isArray(achievementsRef.current) ? achievementsRef.current.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`) : []));
+      const copy = Array.isArray(base) ? base.slice() : [];
+      setStagedIdOrder(copy);
       return copy;
     };
     startTransition(() => {
-      if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        setStagedReordered(prev => {
+      if (stagedIdOrderRef.current && Array.isArray(stagedIdOrderRef.current)) {
+        setStagedIdOrder(prev => {
           const arr = Array.isArray(prev) ? prev.slice() : [];
           const len = arr.length;
           if (realIdx <= 0 || realIdx >= len) return prev;
           const [removed] = arr.splice(realIdx, 1);
           arr.splice(realIdx - 1, 0, removed);
-          const iA = realIdx - 1;
-          const iB = realIdx;
-          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
           return arr;
         });
       } else {
-        ensureStaged();
-        setStagedReordered(prev => {
+        ensureStagedIdOrder();
+        setStagedIdOrder(prev => {
           const arr = Array.isArray(prev) ? prev.slice() : [];
           const len = arr.length;
           if (realIdx <= 0 || realIdx >= len) return prev;
           const [removed] = arr.splice(realIdx, 1);
           arr.splice(realIdx - 1, 0, removed);
-          const iA = realIdx - 1;
-          const iB = realIdx;
-          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
           return arr;
         });
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           try {
-            restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+            restoreScrollToIndex(realIdx - 1, prevScrollTop, prevScrollLeft, prevActive);
           } catch (e) { }
         }));
       } catch (e) { }
@@ -1263,7 +1298,7 @@ export default function SharedList({
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           try {
-            restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+            restoreScrollToIndex(realIdx + 1, prevScrollTop, prevScrollLeft, prevActive);
           } catch (e) { }
         }));
       } catch (e) { }
