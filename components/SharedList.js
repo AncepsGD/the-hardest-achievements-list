@@ -963,9 +963,9 @@ export default function SharedList({
         setDevMode(true);
       }
       if (!reorderedRef.current) {
-        const copy = (achievementsRef.current || []).map(a => ({ ...a }));
-        reorderedRef.current = copy;
-        setReordered(copy);
+          const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
+          reorderedRef.current = copy;
+          setReordered(copy);
       }
       setSearch('');
       if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
@@ -1157,33 +1157,35 @@ export default function SharedList({
     if (typeof mutator !== 'function') return;
     startTransition(() => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        setStagedReordered(prev => {
-          const copy = Array.isArray(prev) ? prev.map(a => ({ ...(a || {}) })) : [];
-          try {
-            const result = mutator(copy) || copy;
-            if (Array.isArray(result)) {
-              result.forEach((a, i) => { if (a) a.rank = i + 1; });
-              return result;
-            }
-          } catch (e) {
-            return prev;
+        const applyMutatorToArray = (arr) => {
+          const copy = Array.isArray(arr) ? arr.slice() : [];
+          let result;
+          try { result = mutator(copy) || copy; } catch (e) { return arr; }
+          if (!Array.isArray(result)) return arr;
+          for (let i = 0; i < result.length; i++) {
+            const a = result[i];
+            const expectedRank = i + 1;
+            if (a && a.rank !== expectedRank) result[i] = { ...a, rank: expectedRank };
           }
-          return prev;
-        });
+          return result;
+        };
+
+        setStagedReordered(prev => applyMutatorToArray(prev));
       } else {
-        setReordered(prev => {
-          const copy = Array.isArray(prev) ? prev.map(a => ({ ...(a || {}) })) : [];
-          try {
-            const result = mutator(copy) || copy;
-            if (Array.isArray(result)) {
-              result.forEach((a, i) => { if (a) a.rank = i + 1; });
-              return result;
-            }
-          } catch (e) {
-            return prev;
+        const applyMutatorToArray = (arr) => {
+          const copy = Array.isArray(arr) ? arr.slice() : [];
+          let result;
+          try { result = mutator(copy) || copy; } catch (e) { return arr; }
+          if (!Array.isArray(result)) return arr;
+          for (let i = 0; i < result.length; i++) {
+            const a = result[i];
+            const expectedRank = i + 1;
+            if (a && a.rank !== expectedRank) result[i] = { ...a, rank: expectedRank };
           }
-          return prev;
-        });
+          return result;
+        };
+
+        setReordered(prev => applyMutatorToArray(prev));
       }
     });
   }
@@ -1231,7 +1233,7 @@ export default function SharedList({
     const ensureStaged = () => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
       const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-      const copy = base.map(a => ({ ...(a || {}) }));
+      const copy = Array.isArray(base) ? base.slice() : [];
       setStagedReordered(copy);
       return copy;
     };
@@ -1294,7 +1296,7 @@ export default function SharedList({
     const ensureStaged = () => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
       const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-      const copy = base.map(a => ({ ...(a || {}) }));
+      const copy = Array.isArray(base) ? base.slice() : [];
       setStagedReordered(copy);
       return copy;
     };
@@ -2023,7 +2025,7 @@ export default function SharedList({
     const ok = typeof window !== 'undefined' ? window.confirm('Are you sure you want to reset all changes and restore the original JSON?') : true;
     if (!ok) return;
     try {
-      const restored = originalAchievements.map(a => ({ ...a }));
+      const restored = Array.isArray(originalAchievements) ? originalAchievements.slice() : [];
       setReordered(restored);
       try { setStagedReordered(null); } catch (e) { }
       try { if (stagedRef) stagedRef.current = null; } catch (e) { }
@@ -2084,7 +2086,7 @@ export default function SharedList({
           const withRank = valid.map((a, i) => ({ ...a, rank: i + 1 }));
           const enhanced = withRank.map(enhanceAchievement);
           setAchievements(enhanced);
-          setOriginalAchievements(withRank.map(a => ({ ...a })));
+          setOriginalAchievements(Array.isArray(withRank) ? withRank.slice() : []);
         }
         const tagSet = new Set();
         if (data && Array.isArray(data.tags)) data.tags.forEach(t => tagSet.add(t));
@@ -2123,13 +2125,13 @@ export default function SharedList({
       setDevMode(v => {
         const next = !v;
         if (!next) {
-          if (stagedRef.current && Array.isArray(stagedRef.current)) {
-            setReordered(stagedRef.current.map(a => ({ ...(a || {}) })));
-            setStagedReordered(null);
-          } else {
-            setReordered(null);
-            reorderedRef.current = null;
-          }
+            if (stagedRef.current && Array.isArray(stagedRef.current)) {
+              setReordered(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : []);
+              setStagedReordered(null);
+            } else {
+              setReordered(null);
+              reorderedRef.current = null;
+            }
         } else {
           setReordered(achievementsRef.current);
           reorderedRef.current = achievementsRef.current;
@@ -3584,11 +3586,24 @@ export default function SharedList({
   }
 
   useEffect(() => {
-    if (scrollToIdx !== null && achievementRefs.current[scrollToIdx]) {
-      achievementRefs.current[scrollToIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setScrollToIdx(null);
-      if (searchJumpPending) setSearchJumpPending(false);
-    }
+    if (scrollToIdx === null) return;
+    try {
+      const idx = Math.max(0, Math.min(scrollToIdx, (visibleListRef.current || []).length - 1));
+      if (listRef && listRef.current && typeof listRef.current.scrollToItem === 'function') {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try {
+            listRef.current.scrollToItem(idx, 'center');
+          } catch (e) { }
+          if (searchJumpPending) setSearchJumpPending(false);
+        }));
+      } else if (achievementRefs.current && achievementRefs.current[scrollToIdx]) {
+        try {
+          achievementRefs.current[scrollToIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (e) { }
+        if (searchJumpPending) setSearchJumpPending(false);
+      }
+    } catch (e) { }
+    setScrollToIdx(null);
   }, [scrollToIdx, devAchievements]);
 
 
@@ -3665,7 +3680,7 @@ export default function SharedList({
   function commitStaged() {
     try {
       if (!stagedRef.current || !Array.isArray(stagedRef.current)) return;
-      const copy = stagedRef.current.map(a => ({ ...(a || {}) }));
+      const copy = Array.isArray(stagedRef.current) ? stagedRef.current.slice() : [];
       setReordered(copy);
       setStagedReordered(null);
     } catch (e) { }
