@@ -1155,6 +1155,21 @@ export default function SharedList({
 
   function batchUpdateReordered(mutator) {
     if (typeof mutator !== 'function') return;
+    const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
+    const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
+    const prevScrollTop = listOuter ? listOuter.scrollTop : (scrollEl ? scrollEl.scrollTop : 0);
+    const prevScrollLeft = listOuter ? listOuter.scrollLeft : (scrollEl ? scrollEl.scrollLeft : 0);
+    const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
+    let movedId = null;
+    let prevElemTop = null;
+    try {
+      const list = visibleListRef.current || [];
+      const displayed = (list && list.length) ? list[0] : null;
+      if (displayed && displayed.id) movedId = String(displayed.id);
+      const node = achievementRefs && achievementRefs.current ? achievementRefs.current[0] : null;
+      if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
+    } catch (e) { }
+
     startTransition(() => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) {
         const applyMutatorToArray = (arr) => {
@@ -1187,6 +1202,15 @@ export default function SharedList({
 
         setReordered(prev => applyMutatorToArray(prev));
       }
+      try {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try {
+            let ok = false;
+            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
+            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+          } catch (e) { }
+        }));
+      } catch (e) { }
     });
   }
 
