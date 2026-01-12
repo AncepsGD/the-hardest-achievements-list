@@ -4006,6 +4006,7 @@ export default function SharedList({
             setDevMode={setDevMode}
             setScrollToIdx={setScrollToIdx}
             setInsertIdx={setInsertIdx}
+            insertIdx={insertIdx}
             devAchievements={devAchievements}
             handlePasteSelect={handlePasteSelect}
             onImportAchievementsJson={onImportAchievementsJson}
