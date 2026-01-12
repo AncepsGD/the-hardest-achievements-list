@@ -385,6 +385,7 @@ function DevModePanelInner({
   setDevMode,
   setScrollToIdx,
   setInsertIdx,
+  insertIdx,
   devAchievements,
 
   handlePasteSelect,
