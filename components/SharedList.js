@@ -936,7 +936,7 @@ export default function SharedList({
   function getListSignature(list) {
     try {
       if (!Array.isArray(list)) return String(list || '');
-      return `${list.length}:${list.map(a => (a && a.id) ? String(a.id) : ((a && a.rank) ? `#${a.rank}` : (a && a.name) ? String(a.name).slice(0,24) : '__')) .join(',')}`;
+      return `${list.length}:${list.map(a => (a && a.id) ? String(a.id) : ((a && a.rank) ? `#${a.rank}` : (a && a.name) ? String(a.name).slice(0, 24) : '__')).join(',')}`;
     } catch (e) {
       try { return String(list.length || 0); } catch (ee) { return '0'; }
     }
@@ -1464,6 +1464,26 @@ export default function SharedList({
       else if (!devMode) delete entry.showcaseVideo;
     }
 
+    let anchorId = null;
+    let prevElemTop = null;
+    let prevScrollTop = 0;
+    let prevScrollLeft = 0;
+    let prevActive = null;
+    try {
+      prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
+      const anchorIdx = (typeof getMostVisibleIdx === 'function') ? getMostVisibleIdx() : null;
+      const list = visibleListRef.current || [];
+      const anchorItem = (anchorIdx != null && anchorIdx >= 0 && anchorIdx < list.length) ? list[anchorIdx] : null;
+      if (anchorItem && anchorItem.id) anchorId = String(anchorItem.id);
+      const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
+      prevScrollTop = listOuter ? listOuter.scrollTop : ((typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body).scrollTop : 0);
+      prevScrollLeft = listOuter ? listOuter.scrollLeft : ((typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body).scrollLeft : 0);
+      if (anchorIdx != null && achievementRefs && achievementRefs.current && achievementRefs.current[anchorIdx]) {
+        const node = achievementRefs.current[anchorIdx];
+        if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
+      }
+    } catch (e) { }
+
     batchUpdateReordered(arr => {
       if (!arr) return arr;
       const original = arr[editIdx];
@@ -1483,6 +1503,16 @@ export default function SharedList({
 
       return arr;
     });
+
+    try {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        try {
+          let ok = false;
+          try { if (anchorId && prevElemTop != null) ok = adjustScrollToKeepElementById(anchorId, prevElemTop, prevActive); } catch (e) { ok = false; }
+          if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+        } catch (e) { }
+      }));
+    } catch (e) { }
     setEditIdx(null);
     setEditForm(null);
     setEditFormTags([]);
@@ -1995,6 +2025,10 @@ export default function SharedList({
     try {
       const restored = originalAchievements.map(a => ({ ...a }));
       setReordered(restored);
+      try { setStagedReordered(null); } catch (e) { }
+      try { if (stagedRef) stagedRef.current = null; } catch (e) { }
+      try { if (derivedCacheRef && derivedCacheRef.current && derivedCacheRef.current.dev) derivedCacheRef.current.dev.clear(); } catch (e) { }
+      try { if (derivedCacheRef && derivedCacheRef.current && derivedCacheRef.current.filtered) derivedCacheRef.current.filtered.clear(); } catch (e) { }
       setDevMode(false);
       setEditIdx(null);
       setEditForm(null);
@@ -2089,13 +2123,13 @@ export default function SharedList({
       setDevMode(v => {
         const next = !v;
         if (!next) {
-            if (stagedRef.current && Array.isArray(stagedRef.current)) {
-              setReordered(stagedRef.current.map(a => ({ ...(a || {}) })));
-              setStagedReordered(null);
-            } else {
-              setReordered(null);
-              reorderedRef.current = null;
-            }
+          if (stagedRef.current && Array.isArray(stagedRef.current)) {
+            setReordered(stagedRef.current.map(a => ({ ...(a || {}) })));
+            setStagedReordered(null);
+          } else {
+            setReordered(null);
+            reorderedRef.current = null;
+          }
         } else {
           setReordered(achievementsRef.current);
           reorderedRef.current = achievementsRef.current;
@@ -2213,7 +2247,7 @@ export default function SharedList({
       const itemsSigList = Array.isArray(achievements) ? achievements : [];
       const filterTagSig = `${(_normalizedFilterTags && _normalizedFilterTags.include) ? _normalizedFilterTags.include.join(',') : ''}|${(_normalizedFilterTags && _normalizedFilterTags.exclude) ? _normalizedFilterTags.exclude.join(',') : ''}`;
       const qSig = (queryTokens && queryTokens.length) ? queryTokens.join(',') : '';
-      const filterSig = `${getListSignature(itemsSigList)}|${filterTagSig}|${qSig}|${String(sortKey||'')}|${String(sortDir||'')}|${String(randomSeed||'')}`;
+      const filterSig = `${getListSignature(itemsSigList)}|${filterTagSig}|${qSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
       const cache = derivedCacheRef.current && derivedCacheRef.current.filtered;
       if (cache && cache.has(filterSig)) {
         try { setFiltered(cache.get(filterSig)); } catch (e) { }
@@ -2287,7 +2321,7 @@ export default function SharedList({
               const copy = [...onlyWithLevel];
               copy.sort((x, y) => compareByKey(x, y, 'levelID'));
               if (sortDir === 'desc') copy.reverse();
-              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) {} setFiltered(copy); } catch (e) { }
+              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) { } setFiltered(copy); } catch (e) { }
               return;
             }
             if (sortKey === 'random') {
@@ -2305,17 +2339,17 @@ export default function SharedList({
               keys.forEach((k, i) => { map[k] = i; });
               const getKey = item => (item && item.id) ? String(item.id) : `__idx_${result.indexOf(item)}`;
               copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) {} setFiltered(copy); } catch (e) { }
+              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) { } setFiltered(copy); } catch (e) { }
               return;
             }
             if (sortKey) {
               const copy = [...result];
               copy.sort((x, y) => compareByKey(x, y, sortKey));
               if (sortDir === 'desc') copy.reverse();
-              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) {} setFiltered(copy); } catch (e) { }
+              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) { } setFiltered(copy); } catch (e) { }
               return;
             }
-            try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, result); } catch (ee) {} setFiltered(result); } catch (e) { }
+            try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, result); } catch (ee) { } setFiltered(result); } catch (e) { }
           } catch (e) { }
         }
 
@@ -2940,6 +2974,18 @@ export default function SharedList({
     }
 
     newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
+
+    newArr = newArr.map(a => {
+      if (!a) return a;
+      if (!a.id) {
+        try {
+          a.id = `new-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        } catch (e) {
+          a.id = `new-${Math.random().toString(36).slice(2, 8)}`;
+        }
+      }
+      return a;
+    });
 
     newArr = newArr.map(enhanceAchievement);
     batchUpdateReordered(() => newArr);
@@ -3585,7 +3631,9 @@ export default function SharedList({
   function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     const orig = (stagedRef.current && stagedRef.current[realIdx]) || (reorderedRef.current && reorderedRef.current[realIdx]) || {};
-    const copy = { ...orig, id: (((orig && orig.id) ? orig.id : `item-${realIdx}`) + '-copy') };
+    const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const newId = (orig && orig.id) ? `${orig.id}-copy-${uniqueSuffix}` : `new-${uniqueSuffix}`;
+    const copy = { ...orig, id: newId };
     const enhancedCopy = enhanceAchievement(copy);
     if (stagedRef.current) {
       setStagedReordered(prev => {
@@ -3611,7 +3659,7 @@ export default function SharedList({
       handleEditRef.current = handleEditAchievement;
       handleRemoveRef.current = handleRemoveAchievement;
       handleDuplicateRef.current = handleDuplicateAchievement;
-    } catch (e) {}
+    } catch (e) { }
   });
 
   function commitStaged() {
