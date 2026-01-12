@@ -847,21 +847,6 @@ export default function SharedList({
   const [achievements, setAchievements] = useState([]);
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
-  const enhancedMapRef = useRef(new Map());
-  useEffect(() => {
-    try {
-      const base = (reordered && reordered.length) ? reordered : achievements;
-      const m = new Map();
-      if (Array.isArray(base)) {
-        for (let i = 0; i < base.length; i++) {
-          const it = base[i];
-          if (it && it.id !== undefined && it.id !== null) m.set(String(it.id), it);
-        }
-      }
-      enhancedMapRef.current = m;
-    } catch (e) {
-    }
-  }, [achievements, reordered]);
 
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
