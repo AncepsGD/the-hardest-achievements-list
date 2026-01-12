@@ -1105,23 +1105,42 @@ export default function SharedList({
 
   function handleMoveAchievementUp(idx) {
     const realIdx = resolveRealIdx(idx);
-    batchUpdateReordered(arr => {
-      if (!arr || realIdx <= 0) return arr;
-      const temp = arr[realIdx - 1];
-      arr[realIdx - 1] = arr[realIdx];
-      arr[realIdx] = temp;
-      return arr;
+    if (realIdx <= 0) return;
+    startTransition(() => {
+      setReordered(prev => {
+        if (!Array.isArray(prev)) return prev;
+        const len = prev.length;
+        if (realIdx <= 0 || realIdx >= len) return prev;
+        const arr = prev.slice();
+        const a = arr[realIdx - 1];
+        const b = arr[realIdx];
+        if (!a || !b) return prev;
+        const movedDown = { ...a, rank: realIdx + 1 };
+        const movedUp = { ...b, rank: realIdx };
+        arr[realIdx - 1] = movedUp;
+        arr[realIdx] = movedDown;
+        return arr;
+      });
     });
   }
 
   function handleMoveAchievementDown(idx) {
     const realIdx = resolveRealIdx(idx);
-    batchUpdateReordered(arr => {
-      if (!arr || realIdx >= arr.length - 1) return arr;
-      const temp = arr[realIdx + 1];
-      arr[realIdx + 1] = arr[realIdx];
-      arr[realIdx] = temp;
-      return arr;
+    startTransition(() => {
+      setReordered(prev => {
+        if (!Array.isArray(prev)) return prev;
+        const len = prev.length;
+        if (realIdx < 0 || realIdx >= len - 1) return prev;
+        const arr = prev.slice();
+        const a = arr[realIdx];
+        const b = arr[realIdx + 1];
+        if (!a || !b) return prev;
+        const movedUp = { ...a, rank: realIdx + 2 };
+        const movedDown = { ...b, rank: realIdx + 1 };
+        arr[realIdx] = movedDown;
+        arr[realIdx + 1] = movedUp;
+        return arr;
+      });
     });
   }
 
