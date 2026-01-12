@@ -1359,20 +1359,38 @@ export default function SharedList({
   useEffect(() => {
     try { if (neighborContextRef && neighborContextRef.current) neighborContextRef.current.clear(); } catch (e) { }
   }, [achievements, reordered]);
-  function handleEditAchievement(idx) {
-    const realIdx = resolveRealIdx(idx);
-    if (!reordered || !reordered[realIdx]) return;
-    const a = reordered[realIdx];
-    setEditIdx(realIdx);
-    setEditForm({
-      ...a,
-      version: Number(a.version) || 2,
-      levelID: Number(a.levelID) || 0,
-      length: Number(a.length) || 0
-    });
-    setEditFormTags(Array.isArray(a.tags) ? [...a.tags] : []);
-    setEditFormCustomTags('');
-    setShowNewForm(false);
+  function handleEditAchievement(idxOrId) {
+    try {
+      const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
+      if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) return;
+
+      let realIdx = null;
+
+      if (typeof idxOrId === 'string' || (idxOrId && typeof idxOrId === 'object' && idxOrId.id)) {
+        const id = typeof idxOrId === 'string' ? idxOrId : idxOrId.id;
+        realIdx = currentReordered.findIndex(x => x && x.id ? String(x.id) === String(id) : false);
+        if (realIdx === -1) return;
+      } else {
+        const displayIdx = Number(idxOrId);
+        if (Number.isNaN(displayIdx)) return;
+        realIdx = resolveRealIdx(displayIdx);
+      }
+
+      if (!currentReordered || !currentReordered[realIdx]) return;
+      const a = currentReordered[realIdx];
+      setEditIdx(realIdx);
+      setEditForm({
+        ...a,
+        version: Number(a.version) || 2,
+        levelID: Number(a.levelID) || 0,
+        length: Number(a.length) || 0
+      });
+      setEditFormTags(Array.isArray(a.tags) ? [...a.tags] : []);
+      setEditFormCustomTags('');
+      setShowNewForm(false);
+    } catch (e) {
+      return;
+    }
   }
 
   function handleEditFormChange(e) {
@@ -4024,7 +4042,7 @@ export default function SharedList({
         <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
             <div style={{ display: 'flex', gap: 6 }}>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) { } }}>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = visibleListRef.current || []; const itm = list[i]; if (itm && itm.id) handleEditAchievement(itm.id); else handleEditAchievement(i); } catch (e) { } }}>
                 <EditIcon width={16} height={16} />
               </button>
               <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) { } }}>
