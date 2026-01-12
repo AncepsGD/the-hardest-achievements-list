@@ -1143,6 +1143,11 @@ export default function SharedList({
   const [editFormTags, setEditFormTags] = useState([]);
   const [editFormCustomTags, setEditFormCustomTags] = useState('');
   const achievementRefs = useRef([]);
+  const handleMoveUpRef = useRef(null);
+  const handleMoveDownRef = useRef(null);
+  const handleEditRef = useRef(null);
+  const handleRemoveRef = useRef(null);
+  const handleDuplicateRef = useRef(null);
 
   function batchUpdateReordered(mutator) {
     if (typeof mutator !== 'function') return;
@@ -2614,6 +2619,25 @@ export default function SharedList({
     }
   }, []);
 
+  const _lastHoverTimeRef = useRef(0);
+  const onRowHoverEnterCb = useCallback((idx, ev) => {
+    try {
+      if (!devModeRef.current) return;
+      const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+      const THROTTLE_MS = 40;
+      if (now - (_lastHoverTimeRef.current || 0) < THROTTLE_MS) return;
+      _lastHoverTimeRef.current = now;
+      _onRowHoverEnter(idx, ev);
+    } catch (e) { }
+  }, []);
+
+  const onRowHoverLeaveCb = useCallback((idxOrEv, maybeEv) => {
+    try {
+      if (!devModeRef.current) return;
+      _onRowHoverLeave(idxOrEv, maybeEv);
+    } catch (e) { }
+  }, []);
+
   const precomputedVisible = useMemo(() => {
     try {
       const arr = Array.isArray(visibleList) ? visibleList : [];
@@ -2627,6 +2651,31 @@ export default function SharedList({
       });
     } catch (e) { return []; }
   }, [visibleList, isMobile, duplicateThumbKeys, autoThumbMap, rankOffset]);
+
+  const handleMoveAchievementUpCb = useCallback((idx, ...args) => {
+    const fn = handleMoveUpRef.current;
+    if (typeof fn === 'function') return fn(idx, ...args);
+  }, []);
+
+  const handleMoveAchievementDownCb = useCallback((idx, ...args) => {
+    const fn = handleMoveDownRef.current;
+    if (typeof fn === 'function') return fn(idx, ...args);
+  }, []);
+
+  const handleEditAchievementCb = useCallback((idx, ...args) => {
+    const fn = handleEditRef.current;
+    if (typeof fn === 'function') return fn(idx, ...args);
+  }, []);
+
+  const handleRemoveAchievementCb = useCallback((idx, ...args) => {
+    const fn = handleRemoveRef.current;
+    if (typeof fn === 'function') return fn(idx, ...args);
+  }, []);
+
+  const handleDuplicateAchievementCb = useCallback((idx, ...args) => {
+    const fn = handleDuplicateRef.current;
+    if (typeof fn === 'function') return fn(idx, ...args);
+  }, []);
 
   const listItemData = useMemo(() => ({
     filtered: visibleList,
@@ -2643,15 +2692,15 @@ export default function SharedList({
     achievements,
     storageKeySuffix,
     dataFileName,
-    handleMoveAchievementUp,
-    handleMoveAchievementDown,
-    handleEditAchievement,
-    handleDuplicateAchievement,
-    handleRemoveAchievement,
-    onRowHoverEnter: _onRowHoverEnter,
-    onRowHoverLeave: _onRowHoverLeave,
+    handleMoveAchievementUp: handleMoveAchievementUpCb,
+    handleMoveAchievementDown: handleMoveAchievementDownCb,
+    handleEditAchievement: handleEditAchievementCb,
+    handleDuplicateAchievement: handleDuplicateAchievementCb,
+    handleRemoveAchievement: handleRemoveAchievementCb,
+    onRowHoverEnter: onRowHoverEnterCb,
+    onRowHoverLeave: onRowHoverLeaveCb,
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUp, handleMoveAchievementDown, handleEditAchievement, handleDuplicateAchievement, handleRemoveAchievement, _onRowHoverEnter, _onRowHoverLeave, precomputedVisible]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
@@ -3532,6 +3581,16 @@ export default function SharedList({
     }
     setScrollToIdx(realIdx + 1);
   }
+
+  useEffect(() => {
+    try {
+      handleMoveUpRef.current = handleMoveAchievementUp;
+      handleMoveDownRef.current = handleMoveAchievementDown;
+      handleEditRef.current = handleEditAchievement;
+      handleRemoveRef.current = handleRemoveAchievement;
+      handleDuplicateRef.current = handleDuplicateAchievement;
+    } catch (e) {}
+  });
 
   function commitStaged() {
     try {
