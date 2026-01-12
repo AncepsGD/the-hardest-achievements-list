@@ -21,7 +21,7 @@ function getAchievementContext(achievement, allAchievements, index) {
   return { below, above };
 }
 
-function formatChangelogEntry(change, achievements, mode, idIndexMap) {
+function formatChangelogEntry(change, achievements, mode, idIndexMap, contextMap) {
   const { type, achievement, oldAchievement, oldRank, newRank, removedDuplicates, readdedAchievements, oldIndex, newIndex } = change;
 
   if (!achievement) return '';
@@ -36,7 +36,19 @@ function formatChangelogEntry(change, achievements, mode, idIndexMap) {
   } else {
     newIdx = allAchievements.findIndex(a => a.id === achievement.id);
   }
-  const context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
+  let context = { below: null, above: null };
+  try {
+    if (contextMap && achievement && achievement.id && contextMap.has(achievement.id)) {
+      context = contextMap.get(achievement.id);
+    } else if (newIdx >= 0) {
+      context = getAchievementContext(achievement, allAchievements, newIdx);
+      if (contextMap && achievement && achievement.id) {
+        try { contextMap.set(achievement.id, context); } catch (e) { }
+      }
+    }
+  } catch (e) {
+    context = newIdx >= 0 ? getAchievementContext(achievement, allAchievements, newIdx) : { below: null, above: null };
+  }
   const showOnlyOneContext = mode === 'dev';
 
   let entry = '';
@@ -952,7 +964,7 @@ export default function SharedList({
         if (v) return v;
       }
     } catch (e) { }
-    return (mode === 'timeline' || dataFileName === 'timeline.json') ? 'date' : 'rank';
+    return 'rank';
   });
 
   const [sortDir, setSortDir] = useState(() => {
@@ -962,7 +974,7 @@ export default function SharedList({
         if (v) return v;
       }
     } catch (e) { }
-    return (mode === 'timeline' || dataFileName === 'timeline.json') ? 'desc' : 'asc';
+    return 'asc';
   });
 
   const compareByKey = useCallback((a, b, key) => {
@@ -1028,6 +1040,7 @@ export default function SharedList({
   const [bgImage, setBgImage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
   const hoveredIdxRef = useRef(null);
+  const neighborContextRef = useRef(new Map());
   const [duplicateThumbKeys, setDuplicateThumbKeys] = useState(new Set());
   const [autoThumbMap, setAutoThumbMap] = useState(() => {
     try {
@@ -1158,6 +1171,10 @@ export default function SharedList({
   const [scrollToIdx, setScrollToIdx] = useState(null);
   const [changelogPreview, setChangelogPreview] = useState(null);
   const [showChangelogPreview, setShowChangelogPreview] = useState(false);
+
+  useEffect(() => {
+    try { if (neighborContextRef && neighborContextRef.current) neighborContextRef.current.clear(); } catch (e) { }
+  }, [achievements, reordered]);
   function handleEditAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     if (!reordered || !reordered[realIdx]) return;
@@ -1711,10 +1728,10 @@ export default function SharedList({
       idIndexMap = map;
     }
 
-    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
+    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap, neighborContextRef.current)).filter(s => s && s.trim()).join('\n\n');
 
     if (finalChanges && finalChanges.length > 20) {
-      const previewEntries = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim());
+      const previewEntries = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap, neighborContextRef.current)).filter(s => s && s.trim());
       setChangelogPreview(previewEntries);
       setShowChangelogPreview(true);
       return;
@@ -1739,7 +1756,7 @@ export default function SharedList({
             else chosen.push(arr[0]);
           }
         }
-        const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
+        const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap, neighborContextRef.current)).filter(s => s && s.trim()).join('\n\n');
         if (alt && alt.trim()) formatted = alt;
       }
     }
@@ -2288,6 +2305,15 @@ export default function SharedList({
         panel.style.display = 'none';
         return;
       }
+
+      try {
+        if (item && item.id && neighborContextRef && neighborContextRef.current) {
+          try {
+            const ctx = getAchievementContext(item, list, idx);
+            neighborContextRef.current.set(item.id, ctx);
+          } catch (e) { }
+        }
+      } catch (e) { }
 
       try {
         panel.style.display = 'block';
