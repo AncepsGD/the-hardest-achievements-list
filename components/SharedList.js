@@ -313,7 +313,11 @@ function enhanceAchievement(a) {
     if (cached && cached.signature === sig) {
       _enhanceCacheHits++;
       try { _enhanceCacheHitCounts.set(id, (_enhanceCacheHitCounts.get(id) || 0) + 1); } catch (e) { }
-      return cached.value;
+      try {
+        return Object.assign({}, cached.value, a);
+      } catch (e) {
+        return cached.value;
+      }
     }
   }
   const base = { ...a };
