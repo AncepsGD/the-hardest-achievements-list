@@ -1025,6 +1025,9 @@ export default function SharedList({
   const [reordered, setReordered] = useState(null);
   const reorderedRef = useRef(reordered);
   useEffect(() => { reorderedRef.current = reordered; }, [reordered]);
+  const [stagedReordered, setStagedReordered] = useState(null);
+  const stagedRef = useRef(stagedReordered);
+  useEffect(() => { stagedRef.current = stagedReordered; }, [stagedReordered]);
   const ongoingFilterControllerRef = useRef(null);
   const manualSearchControllerRef = useRef(null);
   useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
@@ -1078,38 +1081,55 @@ export default function SharedList({
   function batchUpdateReordered(mutator) {
     if (typeof mutator !== 'function') return;
     startTransition(() => {
-      setReordered(prev => {
-        const copy = Array.isArray(prev) ? prev.map(a => ({ ...(a || {}) })) : [];
-        try {
-          const result = mutator(copy) || copy;
-          if (Array.isArray(result)) {
-            result.forEach((a, i) => { if (a) a.rank = i + 1; });
-            return result;
+      if (stagedRef.current && Array.isArray(stagedRef.current)) {
+        setStagedReordered(prev => {
+          const copy = Array.isArray(prev) ? prev.map(a => ({ ...(a || {}) })) : [];
+          try {
+            const result = mutator(copy) || copy;
+            if (Array.isArray(result)) {
+              result.forEach((a, i) => { if (a) a.rank = i + 1; });
+              return result;
+            }
+          } catch (e) {
+            return prev;
           }
-        } catch (e) {
           return prev;
-        }
-        return prev;
-      });
+        });
+      } else {
+        setReordered(prev => {
+          const copy = Array.isArray(prev) ? prev.map(a => ({ ...(a || {}) })) : [];
+          try {
+            const result = mutator(copy) || copy;
+            if (Array.isArray(result)) {
+              result.forEach((a, i) => { if (a) a.rank = i + 1; });
+              return result;
+            }
+          } catch (e) {
+            return prev;
+          }
+          return prev;
+        });
+      }
     });
   }
 
   function resolveRealIdx(displayIdx) {
     try {
-      if (!reordered || !Array.isArray(reordered) || reordered.length === 0) return displayIdx;
-      if (reordered[displayIdx] && devAchievements && devAchievements[displayIdx] && reordered[displayIdx].id && devAchievements[displayIdx].id && reordered[displayIdx].id === devAchievements[displayIdx].id) {
+      const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
+      if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) return displayIdx;
+      if (currentReordered[displayIdx] && devAchievements && devAchievements[displayIdx] && currentReordered[displayIdx].id && devAchievements[displayIdx].id && currentReordered[displayIdx].id === devAchievements[displayIdx].id) {
         return displayIdx;
       }
-      if (reordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === reordered[displayIdx].id : false) === -1)) {
+      if (currentReordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === currentReordered[displayIdx].id : false) === -1)) {
         return displayIdx;
       }
       const displayed = (devAchievements && devAchievements.length) ? devAchievements[displayIdx] : null;
       if (!displayed) return displayIdx;
       if (displayed.id) {
-        const real = reordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
+        const real = currentReordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
         return real === -1 ? displayIdx : real;
       }
-      const realByObj = reordered.findIndex(x => x === displayed);
+      const realByObj = currentReordered.findIndex(x => x === displayed);
       return realByObj === -1 ? displayIdx : realByObj;
     } catch (e) {
       return displayIdx;
@@ -1119,39 +1139,103 @@ export default function SharedList({
   function handleMoveAchievementUp(idx) {
     const realIdx = resolveRealIdx(idx);
     if (realIdx <= 0) return;
+    const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
+    const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
+    const prevScrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+    const ensureStaged = () => {
+      if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
+      const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
+      const copy = base.map(a => ({ ...(a || {}) }));
+      setStagedReordered(copy);
+      return copy;
+    };
     startTransition(() => {
-      setReordered(prev => {
-        if (!Array.isArray(prev)) return prev;
-        const len = prev.length;
-        if (realIdx <= 0 || realIdx >= len) return prev;
-        const arr = prev.slice();
-        const [removed] = arr.splice(realIdx, 1);
-        arr.splice(realIdx - 1, 0, removed);
-        const iA = realIdx - 1;
-        const iB = realIdx;
-        if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-        if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
-        return arr;
-      });
+      if (stagedRef.current && Array.isArray(stagedRef.current)) {
+        setStagedReordered(prev => {
+          const arr = Array.isArray(prev) ? prev.slice() : [];
+          const len = arr.length;
+          if (realIdx <= 0 || realIdx >= len) return prev;
+          const [removed] = arr.splice(realIdx, 1);
+          arr.splice(realIdx - 1, 0, removed);
+          const iA = realIdx - 1;
+          const iB = realIdx;
+          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
+          return arr;
+        });
+      } else {
+        ensureStaged();
+        setStagedReordered(prev => {
+          const arr = Array.isArray(prev) ? prev.slice() : [];
+          const len = arr.length;
+          if (realIdx <= 0 || realIdx >= len) return prev;
+          const [removed] = arr.splice(realIdx, 1);
+          arr.splice(realIdx - 1, 0, removed);
+          const iA = realIdx - 1;
+          const iB = realIdx;
+          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
+          return arr;
+        });
+      }
+      try {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try {
+            if (scrollEl) { scrollEl.scrollTop = prevScrollTop; scrollEl.scrollLeft = prevScrollLeft; }
+          } catch (e) { }
+        }));
+      } catch (e) { }
     });
   }
 
   function handleMoveAchievementDown(idx) {
     const realIdx = resolveRealIdx(idx);
+    const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
+    const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
+    const prevScrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+    const ensureStaged = () => {
+      if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
+      const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
+      const copy = base.map(a => ({ ...(a || {}) }));
+      setStagedReordered(copy);
+      return copy;
+    };
     startTransition(() => {
-      setReordered(prev => {
-        if (!Array.isArray(prev)) return prev;
-        const len = prev.length;
-        if (realIdx < 0 || realIdx >= len - 1) return prev;
-        const arr = prev.slice();
-        const [removed] = arr.splice(realIdx, 1);
-        arr.splice(realIdx + 1, 0, removed);
-        const iA = realIdx;
-        const iB = realIdx + 1;
-        if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-        if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
-        return arr;
-      });
+      if (stagedRef.current && Array.isArray(stagedRef.current)) {
+        setStagedReordered(prev => {
+          const arr = Array.isArray(prev) ? prev.slice() : [];
+          const len = arr.length;
+          if (realIdx < 0 || realIdx >= len - 1) return prev;
+          const [removed] = arr.splice(realIdx, 1);
+          arr.splice(realIdx + 1, 0, removed);
+          const iA = realIdx;
+          const iB = realIdx + 1;
+          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
+          return arr;
+        });
+      } else {
+        ensureStaged();
+        setStagedReordered(prev => {
+          const arr = Array.isArray(prev) ? prev.slice() : [];
+          const len = arr.length;
+          if (realIdx < 0 || realIdx >= len - 1) return prev;
+          const [removed] = arr.splice(realIdx, 1);
+          arr.splice(realIdx + 1, 0, removed);
+          const iA = realIdx;
+          const iB = realIdx + 1;
+          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
+          return arr;
+        });
+      }
+      try {
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try {
+            if (scrollEl) { scrollEl.scrollTop = prevScrollTop; scrollEl.scrollLeft = prevScrollLeft; }
+          } catch (e) { }
+        }));
+      } catch (e) { }
     });
   }
 
@@ -1296,7 +1380,7 @@ export default function SharedList({
 
   function generateAndCopyChangelog() {
     const original = originalAchievements || [];
-    const current = (reordered && reordered.length) ? reordered : achievements || [];
+    const current = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
 
     if (dataFileName === 'pending.json') {
       if (!current || !current.length) {
@@ -1887,8 +1971,13 @@ export default function SharedList({
       setDevMode(v => {
         const next = !v;
         if (!next) {
-          setReordered(null);
-          reorderedRef.current = null;
+            if (stagedRef.current && Array.isArray(stagedRef.current)) {
+              setReordered(stagedRef.current.map(a => ({ ...(a || {}) })));
+              setStagedReordered(null);
+            } else {
+              setReordered(null);
+              reorderedRef.current = null;
+            }
         } else {
           setReordered(achievementsRef.current);
           reorderedRef.current = achievementsRef.current;
@@ -2152,7 +2241,7 @@ export default function SharedList({
       return true;
     };
 
-    const baseList = (devModeRef.current && reorderedRef.current) ? reorderedRef.current : achievementsRef.current || [];
+    const baseList = (devModeRef.current && (stagedRef.current || reorderedRef.current)) ? (stagedRef.current || reorderedRef.current) : achievementsRef.current || [];
     const preFiltered = [];
     for (let i = 0; i < baseList.length; i++) {
       if (manualController.aborted) break;
@@ -2223,7 +2312,7 @@ export default function SharedList({
 
 
 
-  const baseDev = devMode && reordered ? reordered : achievements;
+  const baseDev = devMode && (stagedReordered || reordered) ? (stagedReordered || reordered) : achievements;
 
   const devAchievements = useMemo(() => {
     if (!baseDev) return baseDev;
@@ -2651,7 +2740,7 @@ export default function SharedList({
       predictedInsertedIdx = insertIdx + 1;
     }
 
-    const before = (reorderedRef.current && Array.isArray(reorderedRef.current)) ? reorderedRef.current : (achievementsRef.current || []);
+    const before = (stagedRef.current && Array.isArray(stagedRef.current)) ? stagedRef.current : (reorderedRef.current && Array.isArray(reorderedRef.current)) ? reorderedRef.current : (achievementsRef.current || []);
     let newArr;
     let insertedIdx = 0;
     if (!before || before.length === 0) {
@@ -2847,11 +2936,13 @@ export default function SharedList({
   }, [newForm, newFormTags, newFormCustomTags]);
 
   async function handleCopyJson() {
-    const base = reordered && reordered.length
-      ? reordered
-      : devMode
-        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
-        : achievements;
+    const base = (stagedReordered && stagedReordered.length)
+      ? stagedReordered
+      : (reordered && reordered.length)
+        ? reordered
+        : devMode
+          ? (devAchievements && devAchievements.length ? devAchievements : achievements)
+          : achievements;
 
     if (!base || !base.length) return;
 
@@ -3314,15 +3405,39 @@ export default function SharedList({
 
   function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
-    const orig = (reorderedRef.current && reorderedRef.current[realIdx]) || {};
+    const orig = (stagedRef.current && stagedRef.current[realIdx]) || (reorderedRef.current && reorderedRef.current[realIdx]) || {};
     const copy = { ...orig, id: (((orig && orig.id) ? orig.id : `item-${realIdx}`) + '-copy') };
     const enhancedCopy = enhanceAchievement(copy);
-    batchUpdateReordered(arr => {
-      if (!arr) return arr;
-      arr.splice(realIdx + 1, 0, enhancedCopy);
-      return arr;
-    });
+    if (stagedRef.current) {
+      setStagedReordered(prev => {
+        const arr = Array.isArray(prev) ? prev.slice() : [];
+        arr.splice(realIdx + 1, 0, enhancedCopy);
+        arr.forEach((a, i) => { if (a) a.rank = i + 1; });
+        return arr;
+      });
+    } else {
+      batchUpdateReordered(arr => {
+        if (!arr) return arr;
+        arr.splice(realIdx + 1, 0, enhancedCopy);
+        return arr;
+      });
+    }
     setScrollToIdx(realIdx + 1);
+  }
+
+  function commitStaged() {
+    try {
+      if (!stagedRef.current || !Array.isArray(stagedRef.current)) return;
+      const copy = stagedRef.current.map(a => ({ ...(a || {}) }));
+      setReordered(copy);
+      setStagedReordered(null);
+    } catch (e) { }
+  }
+
+  function cancelStaged() {
+    try {
+      setStagedReordered(null);
+    } catch (e) { }
   }
 
   function handleCopyItemJson() {
@@ -3417,6 +3532,8 @@ export default function SharedList({
       handleUploadJson,
       handleShowNewForm,
       generateAndCopyChangelog,
+      commitStaged,
+      cancelStaged,
       resetChanges,
       onImportAchievementsJson,
     };
