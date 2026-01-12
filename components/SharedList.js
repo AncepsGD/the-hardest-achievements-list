@@ -600,9 +600,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
       <a
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
         onClick={handleClick}
-        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} }} }
+        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
         onMouseDown={handleClick}
-        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} } }}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
         tabIndex={devMode ? -1 : 0}
         aria-disabled={devMode ? 'true' : undefined}
       >
@@ -644,7 +644,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit
               )}
             </div>
           </div>
-          
+
         </div>
       </a>
     </Link>
@@ -687,9 +687,9 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           cursor: devMode ? 'not-allowed' : 'pointer',
         }}
         onClick={handleClick}
-        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} }} }
+        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
         onMouseDown={handleClick}
-        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) {} } }}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
         tabIndex={devMode ? -1 : 0}
         aria-disabled={devMode ? 'true' : undefined}
       >
@@ -736,7 +736,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               )}
             </div>
           </div>
-          
+
         </div>
       </a>
     </Link>
@@ -847,7 +847,7 @@ export default function SharedList({
   const [achievements, setAchievements] = useState([]);
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
-  
+
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
       const v = typeof window !== 'undefined' ? window.localStorage.getItem('usePlatformers') : null;
@@ -864,7 +864,7 @@ export default function SharedList({
   const inputValueRef = useRef(search);
   const setSearchDebounceRef = useRef(null);
   const [manualSearch, setManualSearch] = useState('');
-  
+
   const [noMatchMessage, setNoMatchMessage] = useState('');
   const debouncedSearch = useDebouncedValue(search, { minDelay: 120, maxDelay: 400, useIdle: true });
   const debouncedManualSearch = useDebouncedValue(manualSearch, { minDelay: 100, maxDelay: 300, useIdle: false });
@@ -952,7 +952,7 @@ export default function SharedList({
         if (v) return v;
       }
     } catch (e) { }
-    return 'rank';
+    return (mode === 'timeline' || dataFileName === 'timeline.json') ? 'date' : 'rank';
   });
 
   const [sortDir, setSortDir] = useState(() => {
@@ -962,7 +962,7 @@ export default function SharedList({
         if (v) return v;
       }
     } catch (e) { }
-    return 'asc';
+    return (mode === 'timeline' || dataFileName === 'timeline.json') ? 'desc' : 'asc';
   });
 
   const compareByKey = useCallback((a, b, key) => {
@@ -2220,7 +2220,7 @@ export default function SharedList({
   }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
 
   const visibleList = devMode ? devAchievements : filtered;
-  
+
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
   const devPanelRef = useRef(null);
@@ -2229,7 +2229,7 @@ export default function SharedList({
   const lastHoverIdxRef = useRef(null);
 
   useEffect(() => {
-    try { if (devPanelRef.current && !devPanelOriginalParentRef.current) devPanelOriginalParentRef.current = devPanelRef.current.parentElement; } catch (e) {}
+    try { if (devPanelRef.current && !devPanelOriginalParentRef.current) devPanelOriginalParentRef.current = devPanelRef.current.parentElement; } catch (e) { }
     return () => {
       if (hoverRafRef.current) {
         cancelAnimationFrame(hoverRafRef.current);
@@ -2289,7 +2289,7 @@ export default function SharedList({
           try {
             if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
             if (panel.parentElement !== root) root.appendChild(panel);
-          } catch (err) {}
+          } catch (err) { }
 
           panel.style.position = 'absolute';
           panel.style.left = '50%';
@@ -2347,7 +2347,7 @@ export default function SharedList({
     const panel = devPanelRef.current;
     if (panel) {
       panel.style.display = 'none';
-      try { panel.style.transform = ''; panel.style.left = '-9999px'; panel.style.top = '-9999px'; panel.style.position = 'absolute'; } catch (e) {}
+      try { panel.style.transform = ''; panel.style.left = '-9999px'; panel.style.top = '-9999px'; panel.style.position = 'absolute'; } catch (e) { }
       try {
         const orig = devPanelOriginalParentRef.current;
         if (orig && panel.parentElement && panel.parentElement !== orig) {
@@ -2361,7 +2361,7 @@ export default function SharedList({
           panel.style.maxHeight = '';
           panel.style.overflowY = '';
         }
-      } catch (err) {}
+      } catch (err) { }
     }
   }, []);
 
@@ -2407,8 +2407,8 @@ export default function SharedList({
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
       filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
-        usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
-        onRowHoverEnter, onRowHoverLeave, handleEditAchievement,
+      usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
+      onRowHoverEnter, onRowHoverLeave, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
@@ -3223,7 +3223,7 @@ export default function SharedList({
     }
   }, [scrollToIdx, devAchievements]);
 
-  
+
 
   useEffect(() => {
     if (scrollToIdx === null) return;
@@ -3284,7 +3284,7 @@ export default function SharedList({
       const json = JSON.stringify(sanitized, null, 2);
       if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(json).then(() => {
-          try { alert('Copied achievement JSON to clipboard'); } catch (e) {}
+          try { alert('Copied achievement JSON to clipboard'); } catch (e) { }
         }).catch(() => {
           try {
             const t = document.createElement('textarea');
@@ -3539,7 +3539,7 @@ export default function SharedList({
                   onChange={e => {
                     const v = e.target.value;
                     setSortKey(v);
-                    try { localStorage.setItem('sortKey', v); } catch (err) { }
+                    try { localStorage.setItem(`thal_sort_key_${storageKeySuffix}`, v); } catch (err) { }
                   }}
                   style={{ padding: '6px 8px', borderRadius: 6, background: 'var(--primary-bg)', color: 'var(--text-color)', border: '1px solid var(--hover-bg)' }}
                 >
@@ -3556,7 +3556,7 @@ export default function SharedList({
                   onClick={() => {
                     const next = sortDir === 'asc' ? 'desc' : 'asc';
                     setSortDir(next);
-                    try { localStorage.setItem('sortDir', next); } catch (err) { }
+                    try { localStorage.setItem(`thal_sort_dir_${storageKeySuffix}`, next); } catch (err) { }
                   }}
                   style={{ padding: '6px 10px', borderRadius: 6, background: 'var(--primary-accent)', color: '#fff', border: 'none', cursor: 'pointer' }}
                 >
@@ -3683,27 +3683,27 @@ export default function SharedList({
       {devMode && (
         <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
-              <div style={{ display: 'flex', gap: 6 }}>
-                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) {} }}>
-                  <EditIcon width={16} height={16} />
-                </button>
-                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) {} }}>
-                  <UpIcon width={16} height={16} />
-                </button>
-                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-copy" title="Copy JSON" aria-label="Copy JSON" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); handleCopyItemJson(); } catch (e) {} }}>
-                  <CopyIcon width={16} height={16} />
-                </button>
-                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-down" title="Move Down" aria-label="Move Down" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) {} }}>
-                  <DownIcon width={16} height={16} />
-                </button>
-                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-duplicate" title="Duplicate" aria-label="Duplicate" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) {} }}>
-                  <AddIcon width={16} height={16} />
-                </button>
-                <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-delete" title="Delete" aria-label="Delete" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) {} }} style={{ background: '#dc3545', color: '#fff', borderColor: 'rgba(220,53,69,0.9)' }}>
-                  <DeleteIcon width={16} height={16} />
-                </button>
-              </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleEditAchievement(i); } catch (e) { } }}>
+                <EditIcon width={16} height={16} />
+              </button>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) { } }}>
+                <UpIcon width={16} height={16} />
+              </button>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-down" title="Move Down" aria-label="Move Down" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) { } }}>
+                <DownIcon width={16} height={16} />
+              </button>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-duplicate" title="Duplicate" aria-label="Duplicate" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) { } }}>
+                <AddIcon width={16} height={16} />
+              </button>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-delete" title="Delete" aria-label="Delete" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) { } }} style={{ background: '#dc3545', color: '#fff', borderColor: 'rgba(220,53,69,0.9)' }}>
+                <DeleteIcon width={16} height={16} />
+              </button>
+              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-copy" title="Copy JSON" aria-label="Copy JSON" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); handleCopyItemJson(); } catch (e) { } }}>
+                <CopyIcon width={16} height={16} />
+              </button>
             </div>
+          </div>
         </div>
       )}
 
