@@ -1,4 +1,5 @@
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react';
+import { FixedSizeList as ListWindow } from 'react-window';
 import { CopyIcon, FileIcon, CheckIcon, NewIcon, ChangelogIcon, ResetIcon, CollapseUpIcon, CollapseDownIcon } from './DevIcons';
 const shallowEqual = (a, b) => {
   if (a === b) return true;
@@ -153,6 +154,16 @@ const PreviewBox = React.memo(function PreviewBox({ content }) {
   );
 }, (p, n) => shallowEqual(p.content, n.content));
 const PasteSearchBox = React.memo(function PasteSearchBox({ pasteSearch, setPasteSearch, pasteShowResults, setPasteShowResults, pasteCandidates, handlePasteSelect }) {
+  const containerRef = useRef(null);
+  const Row = useCallback(({ index, style }) => {
+    const p = pasteCandidates[index];
+    return (
+      <div style={style}>
+        <CandidateButton key={p && p.id ? p.id : `p-${index}`} p={p} onSelect={handlePasteSelect} />
+      </div>
+    );
+  }, [pasteCandidates, handlePasteSelect]);
+
   return (
     <div style={{ marginTop: 8, marginBottom: 6 }}>
       <label style={{ color: 'var(--muted, #DFE3F5)', fontSize: 13, display: 'block', marginBottom: 4 }}>Paste from previous achievements</label>
@@ -166,13 +177,24 @@ const PasteSearchBox = React.memo(function PasteSearchBox({ pasteSearch, setPast
         style={{ width: '100%' }}
       />
       {pasteShowResults && pasteSearch && (
-        <div style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
+        <div ref={containerRef} style={{ maxHeight: 240, overflowY: 'auto', background: 'var(--secondary-bg, #232323)', border: '1px solid var(--hover-bg)', borderRadius: 6, padding: 8, marginTop: 6 }}>
           {pasteCandidates.length === 0 ? (
             <div style={{ color: '#aaa', fontSize: 13 }}>No matches</div>
           ) : (
-            pasteCandidates.map((p, i) => (
-              <CandidateButton key={p && p.id ? p.id : `p-${i}`} p={p} onSelect={handlePasteSelect} />
-            ))
+            pasteCandidates.length > 20 ? (
+              <ListWindow
+                height={Math.min(240, pasteCandidates.length * 48)}
+                itemCount={pasteCandidates.length}
+                itemSize={48}
+                width={'100%'}
+              >
+                {Row}
+              </ListWindow>
+            ) : (
+              pasteCandidates.map((p, i) => (
+                <CandidateButton key={p && p.id ? p.id : `p-${i}`} p={p} onSelect={handlePasteSelect} />
+              ))
+            )
           )}
         </div>
       )}
@@ -201,9 +223,24 @@ const EditFormPanel = React.memo(function EditFormPanel({
         <label style={{ display: 'block', fontSize: 13, marginTop: 6 }}>Player<input type="text" name="player" value={editForm.player || ''} onChange={handleEditFormChange} placeholder="Zoink" style={{ width: '100%', fontSize: 14, padding: 4, marginTop: 2, boxSizing: 'border-box' }} /></label>
         <label style={{ display: 'block', fontSize: 13, marginTop: 6 }}>Tags
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 4 }}>
-            {AVAILABLE_TAGS.map(tag => (
-              <TagButton key={tag} tag={tag} selected={editFormTags.includes(tag)} onToggle={handleEditFormTagClick} />
-            ))}
+            {AVAILABLE_TAGS.length > 20 ? (
+              <div style={{ width: '100%', height: 160 }}>
+                <ListWindow height={160} itemCount={AVAILABLE_TAGS.length} itemSize={34} width={'100%'}>
+                  {({ index, style }) => {
+                    const tag = AVAILABLE_TAGS[index];
+                    return (
+                      <div style={{ ...style, display: 'inline-block', paddingRight: 6 }}>
+                        <TagButton key={tag} tag={tag} selected={editFormTags.includes(tag)} onToggle={handleEditFormTagClick} />
+                      </div>
+                    );
+                  }}
+                </ListWindow>
+              </div>
+            ) : (
+              AVAILABLE_TAGS.map(tag => (
+                <TagButton key={tag} tag={tag} selected={editFormTags.includes(tag)} onToggle={handleEditFormTagClick} />
+              ))
+            )}
           </div>
           <input type="text" value={editFormCustomTags} onChange={handleEditFormCustomTagsChange} placeholder="Or type custom tags separated by commas" style={{ width: '100%', fontSize: 14, padding: 4, marginTop: 2, boxSizing: 'border-box' }} />
           <div style={{ marginTop: 4, fontSize: 13 }}>
@@ -257,9 +294,24 @@ const NewFormPanel = React.memo(function NewFormPanel({
         <label style={{ display: 'block', fontSize: 13, marginTop: 6 }}>Player<input type="text" name="player" value={newForm.player} onChange={handleNewFormChange} placeholder="Zoink" style={{ width: '100%', fontSize: 14, padding: 4, marginTop: 2, boxSizing: 'border-box' }} /></label>
         <label style={{ display: 'block', fontSize: 13, marginTop: 6 }}>Tags
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 4 }}>
-            {AVAILABLE_TAGS.map(tag => (
-              <TagButton key={tag} tag={tag} selected={newFormTags.includes(tag)} onToggle={handleNewFormTagClick} />
-            ))}
+            {AVAILABLE_TAGS.length > 20 ? (
+              <div style={{ width: '100%', height: 160 }}>
+                <ListWindow height={160} itemCount={AVAILABLE_TAGS.length} itemSize={34} width={'100%'}>
+                  {({ index, style }) => {
+                    const tag = AVAILABLE_TAGS[index];
+                    return (
+                      <div style={{ ...style, display: 'inline-block', paddingRight: 6 }}>
+                        <TagButton key={tag} tag={tag} selected={newFormTags.includes(tag)} onToggle={handleNewFormTagClick} />
+                      </div>
+                    );
+                  }}
+                </ListWindow>
+              </div>
+            ) : (
+              AVAILABLE_TAGS.map(tag => (
+                <TagButton key={tag} tag={tag} selected={newFormTags.includes(tag)} onToggle={handleNewFormTagClick} />
+              ))
+            )}
           </div>
           <input type="text" value={newFormCustomTags} onChange={handleNewFormCustomTagsChange} placeholder="Or type custom tags separated by commas" style={{ width: '100%', fontSize: 14, padding: 4, marginTop: 2, boxSizing: 'border-box' }} />
           <div style={{ marginTop: 4, fontSize: 13 }}>
