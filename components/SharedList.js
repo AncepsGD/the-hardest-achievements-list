@@ -1156,6 +1156,8 @@ export default function SharedList({
     setDuplicateThumbKeys(dupKeys);
   }
   const [scrollToIdx, setScrollToIdx] = useState(null);
+  const [changelogPreview, setChangelogPreview] = useState(null);
+  const [showChangelogPreview, setShowChangelogPreview] = useState(false);
   function handleEditAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     if (!reordered || !reordered[realIdx]) return;
@@ -1710,6 +1712,13 @@ export default function SharedList({
     }
 
     let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
+
+    if (finalChanges && finalChanges.length > 20) {
+      const previewEntries = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim());
+      setChangelogPreview(previewEntries);
+      setShowChangelogPreview(true);
+      return;
+    }
 
     if (!formatted || formatted.trim() === '') {
       const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
@@ -3720,6 +3729,36 @@ export default function SharedList({
                 <CopyIcon width={16} height={16} />
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showChangelogPreview && changelogPreview && (
+        <div className="changelog-modal" style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 10000, background: 'var(--secondary-bg, #121212)', color: 'var(--text-color)', padding: 12, borderRadius: 8, width: '80%', maxWidth: 900, maxHeight: '80vh', boxShadow: '0 8px 32px rgba(0,0,0,0.7)', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <strong>Changelog Preview ({changelogPreview.length} entries)</strong>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => {
+                try {
+                  const text = changelogPreview.join('\n\n');
+                  if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+                    navigator.clipboard.writeText(text).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy'));
+                  } else {
+                    const t = document.createElement('textarea'); t.value = text; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert('Changelog copied to clipboard!');
+                  }
+                } catch (e) { alert('Failed to copy changelog'); }
+              }} className="devmode-btn">Copy</button>
+              <button onClick={() => { setShowChangelogPreview(false); setChangelogPreview(null); }} className="devmode-btn">Close</button>
+            </div>
+          </div>
+          <div style={{ height: 'calc(100% - 44px)', padding: 6 }}>
+            <ListWindow height={Math.min(600, changelogPreview.length * 56)} itemCount={changelogPreview.length} itemSize={56} width={'100%'}>
+              {({ index, style }) => (
+                <div style={{ ...style, padding: 8, boxSizing: 'border-box', borderBottom: '1px solid rgba(255,255,255,0.03)', overflow: 'hidden' }}>
+                  <div style={{ whiteSpace: 'pre-wrap', fontSize: 13, lineHeight: 1.3 }}>{changelogPreview[index]}</div>
+                </div>
+              )}
+            </ListWindow>
           </div>
         </div>
       )}
