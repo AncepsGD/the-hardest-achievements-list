@@ -847,6 +847,21 @@ export default function SharedList({
   const [achievements, setAchievements] = useState([]);
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
+  const enhancedMapRef = useRef(new Map());
+  useEffect(() => {
+    try {
+      const base = (reordered && reordered.length) ? reordered : achievements;
+      const m = new Map();
+      if (Array.isArray(base)) {
+        for (let i = 0; i < base.length; i++) {
+          const it = base[i];
+          if (it && it.id !== undefined && it.id !== null) m.set(String(it.id), it);
+        }
+      }
+      enhancedMapRef.current = m;
+    } catch (e) {
+    }
+  }, [achievements, reordered]);
 
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
@@ -1112,13 +1127,12 @@ export default function SharedList({
         const len = prev.length;
         if (realIdx <= 0 || realIdx >= len) return prev;
         const arr = prev.slice();
-        const a = arr[realIdx - 1];
-        const b = arr[realIdx];
-        if (!a || !b) return prev;
-        const movedDown = { ...a, rank: realIdx + 1 };
-        const movedUp = { ...b, rank: realIdx };
-        arr[realIdx - 1] = movedUp;
-        arr[realIdx] = movedDown;
+        const [removed] = arr.splice(realIdx, 1);
+        arr.splice(realIdx - 1, 0, removed);
+        const iA = realIdx - 1;
+        const iB = realIdx;
+        if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
+        if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
         return arr;
       });
     });
@@ -1132,13 +1146,12 @@ export default function SharedList({
         const len = prev.length;
         if (realIdx < 0 || realIdx >= len - 1) return prev;
         const arr = prev.slice();
-        const a = arr[realIdx];
-        const b = arr[realIdx + 1];
-        if (!a || !b) return prev;
-        const movedUp = { ...a, rank: realIdx + 2 };
-        const movedDown = { ...b, rank: realIdx + 1 };
-        arr[realIdx] = movedDown;
-        arr[realIdx + 1] = movedUp;
+        const [removed] = arr.splice(realIdx, 1);
+        arr.splice(realIdx + 1, 0, removed);
+        const iA = realIdx;
+        const iB = realIdx + 1;
+        if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
+        if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
         return arr;
       });
     });
@@ -1711,51 +1724,80 @@ export default function SharedList({
       idIndexMap = map;
     }
 
-    let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
-
-    if (!formatted || formatted.trim() === '') {
-      const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
-      if (moveOnly && moveOnly.length) {
-        const byPair = new Map();
-        moveOnly.forEach(m => {
-          const key = `${Math.min(m.oldRank, m.newRank)}:${Math.max(m.oldRank, m.newRank)}`;
-          if (!byPair.has(key)) byPair.set(key, []);
-          byPair.get(key).push(m);
-        });
-        const chosen = [];
-        for (const arr of byPair.values()) {
-          if (!arr || !arr.length) continue;
-          if (arr.length === 1) chosen.push(arr[0]);
-          else {
-            const up = arr.find(x => x.type === 'movedUp');
-            if (up) chosen.push(up);
-            else chosen.push(arr[0]);
-          }
-        }
-        const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
-        if (alt && alt.trim()) formatted = alt;
-      }
-    }
-
-    if (!formatted) {
-      alert('No changes detected');
+    if (!generateAndCopyChangelog._inProgress) generateAndCopyChangelog._inProgress = { busy: false, pending: false };
+    const state = generateAndCopyChangelog._inProgress;
+    if (state.busy) {
+      state.pending = true;
       return;
     }
+    state.busy = true;
 
-    if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      navigator.clipboard.writeText(formatted).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
-    } else {
+    const doFormatAndCopy = () => {
       try {
-        const textarea = document.createElement('textarea');
-        textarea.value = formatted;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        alert('Changelog copied to clipboard!');
-      } catch (e) {
-        alert('Clipboard API not available');
+        let formatted = finalChanges.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
+
+        if (!formatted || formatted.trim() === '') {
+          const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
+          if (moveOnly && moveOnly.length) {
+            const byPair = new Map();
+            moveOnly.forEach(m => {
+              const key = `${Math.min(m.oldRank, m.newRank)}:${Math.max(m.oldRank, m.newRank)}`;
+              if (!byPair.has(key)) byPair.set(key, []);
+              byPair.get(key).push(m);
+            });
+            const chosen = [];
+            for (const arr of byPair.values()) {
+              if (!arr || !arr.length) continue;
+              if (arr.length === 1) chosen.push(arr[0]);
+              else {
+                const up = arr.find(x => x.type === 'movedUp');
+                if (up) chosen.push(up);
+                else chosen.push(arr[0]);
+              }
+            }
+            const alt = chosen.map(c => formatChangelogEntry(c, baseList, mode, idIndexMap)).filter(s => s && s.trim()).join('\n\n');
+            if (alt && alt.trim()) formatted = alt;
+          }
+        }
+
+        if (!formatted) {
+          try { alert('No changes detected'); } catch (e) { }
+          return;
+        }
+
+        const write = () => {
+          if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(formatted).then(() => { try { alert('Changelog copied to clipboard!'); } catch (e) { } }).catch(() => { try { alert('Failed to copy to clipboard'); } catch (e) { } });
+          } else {
+            try {
+              const textarea = document.createElement('textarea');
+              textarea.value = formatted;
+              document.body.appendChild(textarea);
+              textarea.select();
+              document.execCommand('copy');
+              document.body.removeChild(textarea);
+              try { alert('Changelog copied to clipboard!'); } catch (e) { }
+            } catch (e) {
+              try { alert('Clipboard API not available'); } catch (e) { }
+            }
+          }
+        };
+
+        try { Promise.resolve().then(write); } catch (e) { write(); }
+      } finally {
+        state.busy = false;
+        if (state.pending) {
+          state.pending = false;
+          if (typeof requestIdleCallback === 'function') requestIdleCallback(() => generateAndCopyChangelog());
+          else setTimeout(() => generateAndCopyChangelog(), 200);
+        }
       }
+    };
+
+    if (typeof requestIdleCallback === 'function') {
+      requestIdleCallback(doFormatAndCopy, { timeout: 1000 });
+    } else {
+      startTransition(() => setTimeout(doFormatAndCopy, 50));
     }
   }
 
