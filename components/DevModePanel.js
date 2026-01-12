@@ -616,7 +616,7 @@ function DevModePanelInner({
     const { name, value } = e.target;
     let newVal;
     if (name === 'id') {
-      newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
+      newVal = String(value || '').trim().replace(/\s+/g, '-').replace(/[^A-Za-z0-9\-_.~]/g, '').toLowerCase();
     } else {
       if (name === 'video' || name === 'showcaseVideo') {
         const norm = normalizeYoutubeUrlLocal(value);
@@ -625,7 +625,26 @@ function DevModePanelInner({
         newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
       }
     }
-    if (typeof setEditForm === 'function') setEditForm(f => ({ ...f, [name]: newVal }));
+    if (typeof setEditForm !== 'function') return;
+
+    const generateIdFromName = (src) => {
+      if (!src || typeof src !== 'string') return '';
+      let s = src.trim().replace(/\s+/g, '-');
+      s = s.replace(/[^A-Za-z0-9\-_.~]/g, '');
+      return s.toLowerCase();
+    };
+
+    setEditForm(f => {
+      const next = { ...f, [name]: newVal };
+      if (name === 'name') {
+        const autoId = generateIdFromName(String(newVal || ''));
+        const prevAuto = generateIdFromName(String(f && f.name ? f.name : ''));
+        if (!f.id || (f.id === prevAuto)) {
+          next.id = autoId;
+        }
+      }
+      return next;
+    });
   }, [setEditForm, normalizeYoutubeUrlLocal, devMode]);
 
   const handleEditFormTagClick = useCallback((tag) => {
@@ -688,8 +707,29 @@ function DevModePanelInner({
   }, [setEditIdx, setEditForm, setEditFormTags, setEditFormCustomTags]);
 
   const handleNewFormChange = useCallback((e) => {
-    const { name, value } = e.target; const newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
-    if (typeof setNewForm === 'function') setNewForm(f => ({ ...f, [name]: newVal }));
+    const { name, value } = e.target;
+    const newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
+    if (typeof setNewForm !== 'function') return;
+
+    const generateIdFromName = (src) => {
+      if (!src || typeof src !== 'string') return '';
+      let s = src.trim().replace(/\s+/g, '-');
+      s = s.replace(/[^A-Za-z0-9\-_.~]/g, '');
+      return s.toLowerCase();
+    };
+
+    setNewForm(prev => {
+      const next = { ...prev, [name]: newVal };
+      if (name === 'name') {
+        const autoId = generateIdFromName(String(newVal || ''));
+
+        const prevAuto = generateIdFromName(String(prev && prev.name ? prev.name : ''));
+        if (!prev.id || (prev.id === prevAuto)) {
+          next.id = autoId;
+        }
+      }
+      return next;
+    });
   }, [setNewForm]);
 
   const handleNewFormTagClick = useCallback((tag) => { if (typeof setNewFormTags === 'function') setNewFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]); }, [setNewFormTags]);
