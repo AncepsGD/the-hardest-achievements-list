@@ -871,6 +871,34 @@ export default function SharedList({
   const [visibleCount, setVisibleCount] = useState(100);
   const [searchJumpPending, setSearchJumpPending] = useState(false);
   const listRef = useRef(null);
+  function restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive) {
+    try {
+      const listCur = listRef && listRef.current;
+      if (listCur) {
+        if (typeof listCur.scrollTo === 'function') {
+          try { listCur.scrollTo(prevScrollTop); } catch (e) { }
+        }
+        const outer = listCur._outerRef || listCur.outerRef || listCur._listRef || listCur._scrollingContainer || null;
+        if (outer && outer.scrollTop !== undefined) {
+          outer.scrollTop = prevScrollTop; outer.scrollLeft = prevScrollLeft; return;
+        }
+      }
+    } catch (e) { }
+    try {
+      const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
+      if (scrollEl) { scrollEl.scrollTop = prevScrollTop; scrollEl.scrollLeft = prevScrollLeft; }
+    } catch (e) { }
+    try { if (prevActive && typeof prevActive.focus === 'function' && document.activeElement !== prevActive) prevActive.focus(); } catch (e) { }
+  }
+  const derivedCacheRef = useRef({ filtered: new Map(), dev: new Map() });
+  function getListSignature(list) {
+    try {
+      if (!Array.isArray(list)) return String(list || '');
+      return `${list.length}:${list.map(a => (a && a.id) ? String(a.id) : ((a && a.rank) ? `#${a.rank}` : (a && a.name) ? String(a.name).slice(0,24) : '__')) .join(',')}`;
+    } catch (e) {
+      try { return String(list.length || 0); } catch (ee) { return '0'; }
+    }
+  }
   const [search, setSearch] = useState('');
   const searchInputRef = useRef(null);
   const inputValueRef = useRef(search);
@@ -1140,8 +1168,10 @@ export default function SharedList({
     const realIdx = resolveRealIdx(idx);
     if (realIdx <= 0) return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
-    const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
-    const prevScrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+    const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
+    const prevScrollTop = listOuter ? listOuter.scrollTop : (scrollEl ? scrollEl.scrollTop : 0);
+    const prevScrollLeft = listOuter ? listOuter.scrollLeft : (scrollEl ? scrollEl.scrollLeft : 0);
+    const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
     const ensureStaged = () => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
       const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
@@ -1181,7 +1211,7 @@ export default function SharedList({
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           try {
-            if (scrollEl) { scrollEl.scrollTop = prevScrollTop; scrollEl.scrollLeft = prevScrollLeft; }
+            restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
           } catch (e) { }
         }));
       } catch (e) { }
@@ -1193,6 +1223,7 @@ export default function SharedList({
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
     const prevScrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
+    const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
     const ensureStaged = () => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
       const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
@@ -1232,7 +1263,7 @@ export default function SharedList({
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
           try {
-            if (scrollEl) { scrollEl.scrollTop = prevScrollTop; scrollEl.scrollLeft = prevScrollLeft; }
+            restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
           } catch (e) { }
         }));
       } catch (e) { }
@@ -2091,6 +2122,18 @@ export default function SharedList({
     const controller = { aborted: false, abort() { this.aborted = true; } };
     ongoingFilterControllerRef.current = controller;
 
+    try {
+      const itemsSigList = Array.isArray(achievements) ? achievements : [];
+      const filterTagSig = `${(_normalizedFilterTags && _normalizedFilterTags.include) ? _normalizedFilterTags.include.join(',') : ''}|${(_normalizedFilterTags && _normalizedFilterTags.exclude) ? _normalizedFilterTags.exclude.join(',') : ''}`;
+      const qSig = (queryTokens && queryTokens.length) ? queryTokens.join(',') : '';
+      const filterSig = `${getListSignature(itemsSigList)}|${filterTagSig}|${qSig}|${String(sortKey||'')}|${String(sortDir||'')}|${String(randomSeed||'')}`;
+      const cache = derivedCacheRef.current && derivedCacheRef.current.filtered;
+      if (cache && cache.has(filterSig)) {
+        try { setFiltered(cache.get(filterSig)); } catch (e) { }
+        return () => { try { controller.abort(); } catch (e) { } };
+      }
+    } catch (e) { }
+
     startTransition(() => {
       setTimeout(() => {
         if (controller.aborted) return;
@@ -2157,7 +2200,7 @@ export default function SharedList({
               const copy = [...onlyWithLevel];
               copy.sort((x, y) => compareByKey(x, y, 'levelID'));
               if (sortDir === 'desc') copy.reverse();
-              try { setFiltered(copy); } catch (e) { }
+              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) {} setFiltered(copy); } catch (e) { }
               return;
             }
             if (sortKey === 'random') {
@@ -2175,17 +2218,17 @@ export default function SharedList({
               keys.forEach((k, i) => { map[k] = i; });
               const getKey = item => (item && item.id) ? String(item.id) : `__idx_${result.indexOf(item)}`;
               copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-              try { setFiltered(copy); } catch (e) { }
+              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) {} setFiltered(copy); } catch (e) { }
               return;
             }
             if (sortKey) {
               const copy = [...result];
               copy.sort((x, y) => compareByKey(x, y, sortKey));
               if (sortDir === 'desc') copy.reverse();
-              try { setFiltered(copy); } catch (e) { }
+              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) {} setFiltered(copy); } catch (e) { }
               return;
             }
-            try { setFiltered(result); } catch (e) { }
+            try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, result); } catch (ee) {} setFiltered(result); } catch (e) { }
           } catch (e) { }
         }
 
@@ -2315,40 +2358,45 @@ export default function SharedList({
   const baseDev = devMode && (stagedReordered || reordered) ? (stagedReordered || reordered) : achievements;
 
   const devAchievements = useMemo(() => {
-    if (!baseDev) return baseDev;
-    if (!sortKey) return baseDev;
-    if (sortKey === 'levelID') {
-      const onlyWithLevel = baseDev.filter(a => {
-        const num = Number(a && a.levelID);
-        return !isNaN(num) && num > 0;
-      });
-      const copy = [...onlyWithLevel];
-      copy.sort((x, y) => compareByKey(x, y, 'levelID'));
-      if (sortDir === 'desc') copy.reverse();
-      return copy;
-    }
-    if (sortKey === 'random') {
-      const copy = [...baseDev];
-      const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
-      const seed = randomSeed != null ? randomSeed : 1;
-      const rng = mulberry32(seed);
-      for (let i = keys.length - 1; i > 0; i--) {
-        const j = Math.floor(rng() * (i + 1));
-        const t = keys[i];
-        keys[i] = keys[j];
-        keys[j] = t;
+    try {
+      if (!baseDev) return baseDev;
+      const sig = `${getListSignature(baseDev)}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
+      const cache = derivedCacheRef.current && derivedCacheRef.current.dev;
+      if (cache && cache.has(sig)) return cache.get(sig);
+
+      let result = baseDev;
+      if (sortKey) {
+        if (sortKey === 'levelID') {
+          const onlyWithLevel = baseDev.filter(a => { const num = Number(a && a.levelID); return !isNaN(num) && num > 0; });
+          const copy = [...onlyWithLevel];
+          copy.sort((x, y) => compareByKey(x, y, 'levelID'));
+          if (sortDir === 'desc') copy.reverse();
+          result = copy;
+        } else if (sortKey === 'random') {
+          const copy = [...baseDev];
+          const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
+          const seed = randomSeed != null ? randomSeed : 1;
+          const rng = mulberry32(seed);
+          for (let i = keys.length - 1; i > 0; i--) {
+            const j = Math.floor(rng() * (i + 1));
+            const t = keys[i]; keys[i] = keys[j]; keys[j] = t;
+          }
+          const map = {};
+          keys.forEach((k, i) => { map[k] = i; });
+          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
+          copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
+          if (sortDir === 'desc') copy.reverse();
+          result = copy;
+        } else {
+          const copy = [...baseDev];
+          copy.sort((x, y) => compareByKey(x, y, sortKey));
+          if (sortDir === 'desc') copy.reverse();
+          result = copy;
+        }
       }
-      const map = {};
-      keys.forEach((k, i) => { map[k] = i; });
-      const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
-      copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-      if (sortDir === 'desc') copy.reverse();
-      return copy;
-    }
-    const copy = [...baseDev];
-    copy.sort((x, y) => compareByKey(x, y, sortKey));
-    if (sortDir === 'desc') copy.reverse();
-    return copy;
+      try { if (cache) cache.set(sig, result); } catch (e) { }
+      return result;
+    } catch (e) { return baseDev; }
   }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
 
   const visibleList = devMode ? devAchievements : filtered;
