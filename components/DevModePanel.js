@@ -342,41 +342,53 @@ const NewFormPanel = React.memo(function NewFormPanel({
 
 function DevModePanelInner({
   devMode,
+  achievements,
+  reordered,
+  stagedReordered,
+  originalAchievements,
+  batchUpdateReordered,
+  setReordered,
+  setStagedReordered,
+  setEditIdx,
   editIdx,
   editForm,
+  setEditForm,
   editFormTags,
+  setEditFormTags,
   editFormCustomTags,
+  setEditFormCustomTags,
   AVAILABLE_TAGS,
-  handleEditFormChange,
-  handleEditFormTagClick,
-  handleEditFormCustomTagsChange,
-  handleEditFormSave,
-  handleEditFormCancel,
+
   showNewForm,
   newForm,
+  setNewForm,
   newFormTags,
+  setNewFormTags,
   newFormCustomTags,
-  handleNewFormChange,
-  handleNewFormTagClick,
-  handleNewFormCustomTagsChange,
-  handleNewFormAdd,
-  handleNewFormCancel,
-  handleCopyJson,
-  handleCopyCompressedJson,
-  handlePasteCompressedJson,
-  handleShowNewForm,
-  newFormPreview,
-  handleCheckDuplicateThumbnails,
-  onImportAchievementsJson,
+  setNewFormCustomTags,
+  setShowNewForm,
+
   pasteSearch,
   setPasteSearch,
   pasteShowResults,
   setPasteShowResults,
   getPasteCandidates,
-  handlePasteSelect,
-  generateAndCopyChangelog,
-  resetChanges,
 
+  getMostVisibleIdx,
+  listRef,
+  visibleListRef,
+  achievementRefs,
+  storageKeySuffix,
+  dataFileName,
+  usePlatformers,
+  setDuplicateThumbKeys,
+  setDevMode,
+  setScrollToIdx,
+  setInsertIdx,
+  devAchievements,
+
+  handlePasteSelect,
+  onImportAchievementsJson,
 }) {
   const getPasteCandidatesRef = useRef(getPasteCandidates);
   useEffect(() => { getPasteCandidatesRef.current = getPasteCandidates; }, [getPasteCandidates]);
@@ -404,16 +416,330 @@ function DevModePanelInner({
     }
     return { ...editForm, tags };
   }, [editForm, editFormTags, editFormCustomTags]);
+
+  const newFormPreview = useMemo(() => {
+    let tags = [...newFormTags];
+    if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
+      newFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => { if (!tags.includes(t)) tags.push(t); });
+    }
+    const entry = {};
+    Object.entries(newForm || {}).forEach(([k, v]) => {
+      if (k === 'version') { const num = Number(v); if (!isNaN(num)) entry[k] = num; return; }
+      if (k === 'levelID') { const num = Number(v); if (!isNaN(num) && num > 0) entry[k] = num; return; }
+      if (typeof v === 'string') { if (v.trim() !== '') entry[k] = v.trim(); }
+      else if (v !== undefined && v !== null && v !== '') entry[k] = v;
+    });
+    if (tags.length) entry.tags = tags;
+    return entry;
+  }, [newForm, newFormTags, newFormCustomTags]);
+  const handleCopyJson = useCallback(async () => {
+    try {
+      const arr = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
+      const json = JSON.stringify(arr.map(a => {
+        const copy = { ...a };
+        delete copy._sortedTags; delete copy._isPlatformer; delete copy._lengthStr; delete copy._thumbnail;
+        delete copy._searchable; delete copy._searchableNormalized; delete copy._tagString; delete copy.hasThumb; delete copy.autoThumb;
+        return copy;
+      }));
+      if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        await navigator.clipboard.writeText(json);
+        alert('Copied achievement JSON to clipboard');
+      } else {
+        const t = document.createElement('textarea');
+        t.value = json;
+        document.body.appendChild(t);
+        t.select();
+        document.execCommand('copy');
+        document.body.removeChild(t);
+        alert('Copied achievement JSON to clipboard');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, [achievements, reordered, stagedReordered]);
+
+  const handleCheckDuplicateThumbnailsLocal = useCallback(() => {
+    const items = devMode && reordered ? reordered : achievements;
+    const map = new Map();
+    (items || []).forEach((a) => {
+      const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
+      const key = String(thumb || '').trim();
+      if (!key) return;
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    const dupKeys = new Set();
+    map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
+    if (typeof setDuplicateThumbKeys === 'function') setDuplicateThumbKeys(dupKeys);
+  }, [achievements, reordered, devMode, setDuplicateThumbKeys]);
+
+  const parseAsLocal = (input) => {
+    if (input instanceof Date) return input;
+    if (typeof input === 'number') return new Date(input);
+    if (typeof input !== 'string') return new Date(input);
+    const m = input.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
+    if (m) {
+      const y = Number(m[1]);
+      const mo = Number(m[2]);
+      const d = Number(m[3]);
+      return new Date(y, mo - 1, d);
+    }
+    return new Date(input);
+  };
+
+  const ID_INDEX_TTL_MS_LOCAL = 5 * 60 * 1000;
+  const _idIndexCache_local = useRef(new Map()).current;
+
+  const formatChangelogEntryLocal = (change, achievementsList, mode, idIndexMap, contextMap) => {
+    try {
+      const { type, achievement, oldAchievement, oldRank, newRank } = change;
+      if (!achievement) return '';
+      const name = achievement.name || 'Unknown';
+      const rank = achievement.rank || '?';
+      let newIdx = -1;
+      if (idIndexMap && achievement && achievement.id && idIndexMap.has(achievement.id)) newIdx = idIndexMap.get(achievement.id);
+      else newIdx = (achievementsList || []).findIndex(a => a.id === achievement.id);
+      const getAchievementContextLocal = (achievementParam, allAchievementsParam, indexParam) => {
+        const below = indexParam > 0 ? allAchievementsParam[indexParam - 1]?.name : null;
+        const above = indexParam < allAchievementsParam.length - 1 ? allAchievementsParam[indexParam + 1]?.name : null;
+        return { below, above };
+      };
+      let context = { below: null, above: null };
+      if (contextMap && achievement && achievement.id && contextMap.has(achievement.id)) context = contextMap.get(achievement.id);
+      else if (newIdx >= 0) context = getAchievementContextLocal(achievement, achievementsList, newIdx);
+      const showOnlyOneContext = mode === 'dev';
+      let entry = '';
+      switch (type) {
+        case 'added':
+          entry = `**${name}** added at #${rank}`;
+          if (showOnlyOneContext) { if (context.below) entry += `\n> Below ${context.below}`; }
+          else { if (context.below) entry += `\n> Below ${context.below}`; if (context.above) entry += `\n> Above ${context.above}`; }
+          break;
+        case 'removed':
+          entry = `⛔ **${name}** removed from #${oldRank || rank}`;
+          break;
+        case 'movedUp':
+          entry = `🔼 **${name}** moved up from #${oldRank} to #${rank}`;
+          break;
+        case 'movedDown':
+          entry = `🔽 **${name}** moved down from #${oldRank} to #${rank}`;
+          break;
+        case 'renamed':
+          entry = `⚪ ${oldAchievement?.name || 'Unknown'} updated to **${name}**`;
+          break;
+      }
+      return entry;
+    } catch (e) { return ''; }
+  };
+
+  const generateAndCopyChangelogLocal = useCallback(() => {
+    try {
+      const original = originalAchievements || [];
+      const current = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
+      if (!original || !original.length) { alert('Original JSON not available to diff against.'); return; }
+      const byIdOriginal = new Map(); original.forEach(a => { if (a && a.id) byIdOriginal.set(a.id, a); });
+      const byIdCurrent = new Map(); current.forEach(a => { if (a && a.id) byIdCurrent.set(a.id, a); });
+      const changes = [];
+      for (const [id, a] of byIdOriginal.entries()) { if (!byIdCurrent.has(id)) changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank }); }
+      for (const [id, a] of byIdCurrent.entries()) { if (!byIdOriginal.has(id)) changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null }); }
+      for (const [id, orig] of byIdOriginal.entries()) {
+        if (!byIdCurrent.has(id)) continue;
+        const curr = byIdCurrent.get(id);
+        if (!curr) continue;
+        if ((orig.name || '') !== (curr.name || '')) changes.push({ type: 'renamed', oldAchievement: orig, achievement: curr });
+        const oldRank = Number(orig.rank) || null; const newRank = Number(curr.rank) || null;
+        if (oldRank != null && newRank != null && oldRank !== newRank) changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
+      }
+      const now = Date.now();
+      const firstId = (current && current[0] && current[0].id) ? String(current[0].id) : '';
+      const lastId = (current && current[current.length - 1] && current[current.length - 1].id) ? String(current[current.length - 1].id) : '';
+      const cacheKey = `${storageKeySuffix}::${(current || []).length}::${firstId}::${lastId}`;
+      let idIndexMap = null;
+      const cached = _idIndexCache_local.get(cacheKey);
+      if (cached && (now - cached.ts) < ID_INDEX_TTL_MS_LOCAL) idIndexMap = cached.map;
+      else {
+        const map = new Map(); (current || []).forEach((a, i) => { if (a && a.id) map.set(a.id, i); });
+        try { _idIndexCache_local.set(cacheKey, { map, ts: now }); } catch (e) { }
+        idIndexMap = map;
+      }
+      const formatted = changes.map(c => formatChangelogEntryLocal(c, current, 'dev', idIndexMap, new Map())).filter(Boolean).join('\n\n');
+      if (!formatted) { alert('No changes detected'); return; }
+      if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(formatted).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
+      } else {
+        try { const t = document.createElement('textarea'); t.value = formatted; document.body.appendChild(t); t.select(); document.execCommand('copy'); document.body.removeChild(t); alert('Changelog copied to clipboard!'); } catch (e) { alert('Clipboard API not available'); }
+      }
+    } catch (e) { console.error(e); alert('Failed to generate changelog'); }
+  }, [originalAchievements, stagedReordered, reordered, achievements, storageKeySuffix]);
+
+  const resetChangesLocal = useCallback(() => {
+    if (!originalAchievements || !originalAchievements.length) { alert('No original JSON loaded to reset to.'); return; }
+    const ok = typeof window !== 'undefined' ? window.confirm('Are you sure you want to reset all changes and restore the original JSON?') : true;
+    if (!ok) return;
+    try {
+      const restored = Array.isArray(originalAchievements) ? originalAchievements.slice() : [];
+      if (typeof setReordered === 'function') setReordered(restored);
+      if (typeof setStagedReordered === 'function') setStagedReordered(null);
+      if (typeof setEditIdx === 'function') setEditIdx(null);
+      if (typeof setEditForm === 'function') setEditForm(null);
+      if (typeof setEditFormTags === 'function') setEditFormTags([]);
+      if (typeof setNewForm === 'function') setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
+      if (typeof setNewFormTags === 'function') setNewFormTags([]);
+      if (typeof setNewFormCustomTags === 'function') setNewFormCustomTags('');
+      if (typeof setInsertIdx === 'function') setInsertIdx(null);
+      if (typeof setScrollToIdx === 'function') setScrollToIdx(0);
+      if (typeof setDevMode === 'function') setDevMode(false);
+    } catch (e) { console.error('Failed to reset changes', e); alert('Failed to reset changes'); }
+  }, [originalAchievements, setReordered, setStagedReordered, setEditIdx, setEditForm, setEditFormTags, setNewForm, setNewFormTags, setNewFormCustomTags, setInsertIdx, setScrollToIdx, setDevMode]);
+
+  const handleShowNewFormLocal = useCallback(() => {
+    if (typeof setShowNewForm === 'function') setShowNewForm(true);
+  }, [setShowNewForm]);
+
+  const normalizeYoutubeUrlLocal = useCallback((input) => {
+    if (!input || typeof input !== 'string') return input;
+    const s = input.trim();
+    let m = s.match(/(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?&#\/]+)/i);
+    if (m) {
+      const id = m[1];
+      try {
+        const parsedShort = new URL(s.startsWith('http') ? s : `https://${s}`);
+        const t = parsedShort.searchParams.get('t') || parsedShort.searchParams.get('start') || parsedShort.searchParams.get('time_continue');
+        if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
+      } catch (e) { }
+      return `https://youtu.be/${id}`;
+    }
+    return s;
+  }, []);
+
+  const handleEditFormChange = useCallback((e) => {
+    const { name, value } = e.target;
+    let newVal;
+    if (name === 'id') {
+      newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
+    } else {
+      if (name === 'video' || name === 'showcaseVideo') {
+        const norm = normalizeYoutubeUrlLocal(value);
+        newVal = devMode ? (norm || String(value || '').trim()) : norm;
+      } else {
+        newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
+      }
+    }
+    if (typeof setEditForm === 'function') setEditForm(f => ({ ...f, [name]: newVal }));
+  }, [setEditForm, normalizeYoutubeUrlLocal, devMode]);
+
+  const handleEditFormTagClick = useCallback((tag) => {
+    if (typeof setEditFormTags !== 'function') return;
+    setEditFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
+  }, [setEditFormTags]);
+
+  const handleEditFormCustomTagsChange = useCallback((e) => { if (typeof setEditFormCustomTags === 'function') setEditFormCustomTags(e.target.value); }, [setEditFormCustomTags]);
+
+  const handleEditFormSave = useCallback(() => {
+    if (!batchUpdateReordered) return;
+    const entry = {};
+    if (!editForm) return;
+    Object.entries(editForm).forEach(([k, v]) => {
+      if (k === 'version') { const num = Number(v); if (!isNaN(num)) { entry[k] = num; } return; }
+      if (k === 'levelID') { const num = Number(v); if (!isNaN(num) && num > 0) { entry[k] = num; } return; }
+      if (typeof v === 'string') { if (v.trim() !== '') entry[k] = v.trim(); }
+      else if (v !== undefined && v !== null && v !== '') entry[k] = v;
+    });
+    let tags = Array.isArray(editFormTags) ? [...editFormTags] : [];
+    if (typeof editFormCustomTags === 'string' && editFormCustomTags.trim()) {
+      editFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => { if (!tags.includes(t)) tags.push(t); });
+    }
+    if (tags.length) entry.tags = tags;
+    if (entry.video) {
+      const nv = normalizeYoutubeUrlLocal(entry.video);
+      if (nv) entry.video = nv; else if (!devMode) delete entry.video;
+    }
+    if (entry.showcaseVideo) {
+      const nv2 = normalizeYoutubeUrlLocal(entry.showcaseVideo);
+      if (nv2) entry.showcaseVideo = nv2; else if (!devMode) delete entry.showcaseVideo;
+    }
+    batchUpdateReordered(arr => {
+      if (!arr) return arr;
+      const original = arr[editIdx];
+      const newRank = entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' ? Number(entry.rank) : null;
+      const oldRank = original ? Number(original.rank) : null;
+      const rankIsChanging = newRank !== null && !isNaN(newRank) && newRank !== oldRank;
+      if (rankIsChanging) {
+        const [removed] = arr.splice(editIdx, 1);
+        const updated = { ...removed, ...entry };
+        const idx = Math.max(0, Math.min(arr.length, newRank - 1));
+        arr.splice(idx, 0, updated);
+      } else {
+        arr[editIdx] = { ...arr[editIdx], ...entry };
+      }
+      return arr;
+    });
+    if (typeof setEditIdx === 'function') setEditIdx(null);
+    if (typeof setEditForm === 'function') setEditForm(null);
+    if (typeof setEditFormTags === 'function') setEditFormTags([]);
+    if (typeof setEditFormCustomTags === 'function') setEditFormCustomTags('');
+  }, [batchUpdateReordered, editForm, editFormTags, editFormCustomTags, editIdx, normalizeYoutubeUrlLocal, devMode, setEditIdx, setEditForm, setEditFormTags, setEditFormCustomTags]);
+
+  const handleEditFormCancel = useCallback(() => {
+    if (typeof setEditIdx === 'function') setEditIdx(null);
+    if (typeof setEditForm === 'function') setEditForm(null);
+    if (typeof setEditFormTags === 'function') setEditFormTags([]);
+    if (typeof setEditFormCustomTags === 'function') setEditFormCustomTags('');
+  }, [setEditIdx, setEditForm, setEditFormTags, setEditFormCustomTags]);
+
+  const handleNewFormChange = useCallback((e) => {
+    const { name, value } = e.target; const newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
+    if (typeof setNewForm === 'function') setNewForm(f => ({ ...f, [name]: newVal }));
+  }, [setNewForm]);
+
+  const handleNewFormTagClick = useCallback((tag) => { if (typeof setNewFormTags === 'function') setNewFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]); }, [setNewFormTags]);
+
+  const handleNewFormCustomTagsChange = useCallback((e) => { if (typeof setNewFormCustomTags === 'function') setNewFormCustomTags(e.target.value); }, [setNewFormCustomTags]);
+
+  const handleNewFormAdd = useCallback(() => {
+    if (!batchUpdateReordered) return;
+    const entry = {};
+    Object.entries(newForm || {}).forEach(([k, v]) => {
+      if (k === 'version') { const num = Number(v); if (!isNaN(num)) entry[k] = num; return; }
+      if (k === 'levelID') { const num = Number(v); if (!isNaN(num) && num > 0) entry[k] = num; return; }
+      if (typeof v === 'string') { if (v.trim() !== '') entry[k] = v.trim(); }
+      else if (v !== undefined && v !== null && v !== '') entry[k] = v;
+    });
+    let tags = Array.isArray(newFormTags) ? [...newFormTags] : [];
+    if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
+      newFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => { if (!tags.includes(t)) tags.push(t); });
+    }
+    if (tags.length) entry.tags = tags;
+    const copy = { ...entry };
+    batchUpdateReordered(arr => {
+      const target = Array.isArray(arr) ? arr.slice() : [];
+      const idx = (typeof insertIdx === 'number' && insertIdx >= 0) ? Math.min(insertIdx, target.length) : target.length;
+      copy.rank = idx + 1; target.splice(idx, 0, copy);
+      for (let i = 0; i < target.length; i++) { if (target[i]) target[i].rank = i + 1; }
+      return target;
+    });
+    if (typeof setNewForm === 'function') setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
+    if (typeof setNewFormTags === 'function') setNewFormTags([]);
+    if (typeof setNewFormCustomTags === 'function') setNewFormCustomTags('');
+    if (typeof setShowNewForm === 'function') setShowNewForm(false);
+  }, [batchUpdateReordered, newForm, newFormTags, newFormCustomTags, insertIdx, setNewForm, setNewFormTags, setNewFormCustomTags, setShowNewForm]);
+
+  const handleNewFormCancel = useCallback(() => {
+    if (typeof setShowNewForm === 'function') setShowNewForm(false);
+    if (typeof setNewForm === 'function') setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
+    if (typeof setNewFormTags === 'function') setNewFormTags([]);
+    if (typeof setNewFormCustomTags === 'function') setNewFormCustomTags('');
+  }, [setShowNewForm, setNewForm, setNewFormTags, setNewFormCustomTags]);
+
   return (
     <>
       <DevToolbar
         devMode={devMode}
         handleCopyJson={handleCopyJson}
-        handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnails}
+        handleCheckDuplicateThumbnails={handleCheckDuplicateThumbnailsLocal}
         onImportAchievementsJson={onImportAchievementsJson}
-        handleShowNewForm={handleShowNewForm}
-        generateAndCopyChangelog={generateAndCopyChangelog}
-        resetChanges={resetChanges}
+        handleShowNewForm={handleShowNewFormLocal}
+        generateAndCopyChangelog={generateAndCopyChangelogLocal}
+        resetChanges={resetChangesLocal}
       />
 
       {devMode && editIdx !== null && editForm && (
@@ -462,7 +788,6 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && shallowEqual(prev.editForm, next.editForm)
     && shallowEqual(prev.newForm, next.newForm)
     && shallowEqual(prev.newFormTags, next.newFormTags)
-    && shallowEqual(prev.newFormPreview, next.newFormPreview)
     && prev.pasteSearch === next.pasteSearch
     && prev.pasteShowResults === next.pasteShowResults;
 });
