@@ -963,9 +963,9 @@ export default function SharedList({
         setDevMode(true);
       }
       if (!reorderedRef.current) {
-          const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
-          reorderedRef.current = copy;
-          setReordered(copy);
+        const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
+        reorderedRef.current = copy;
+        setReordered(copy);
       }
       setSearch('');
       if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
@@ -2125,13 +2125,13 @@ export default function SharedList({
       setDevMode(v => {
         const next = !v;
         if (!next) {
-            if (stagedRef.current && Array.isArray(stagedRef.current)) {
-              setReordered(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : []);
-              setStagedReordered(null);
-            } else {
-              setReordered(null);
-              reorderedRef.current = null;
-            }
+          if (stagedRef.current && Array.isArray(stagedRef.current)) {
+            setReordered(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : []);
+            setStagedReordered(null);
+          } else {
+            setReordered(null);
+            reorderedRef.current = null;
+          }
         } else {
           setReordered(achievementsRef.current);
           reorderedRef.current = achievementsRef.current;
@@ -3761,88 +3761,6 @@ export default function SharedList({
     alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
   }, [getMostVisibleIdx, setScrollToIdx, usePlatformers, dataFileName]);
 
-  const devPanelHandlersRef = useRef({});
-  useEffect(() => {
-    devPanelHandlersRef.current = {
-      handleCheckDuplicateThumbnails,
-      getPasteCandidates,
-      handlePasteSelect,
-      handleEditFormChange,
-      handleEditFormTagClick,
-      handleEditFormCustomTagsChange,
-      handleEditFormSave,
-      handleEditFormCancel,
-      handleNewFormChange,
-      handleNewFormTagClick,
-      handleNewFormCustomTagsChange,
-      handleNewFormAdd,
-      handleNewFormCancel,
-      handleCopyJson,
-      handleCopyCompressedJson,
-      handlePasteCompressedJson,
-      handleDownloadJson,
-      handleUploadJson,
-      handleShowNewForm,
-      generateAndCopyChangelog,
-      commitStaged,
-      cancelStaged,
-      resetChanges,
-      onImportAchievementsJson,
-    };
-  });
-
-  const handleCheckDuplicateThumbnailsCb = useCallback((...args) => devPanelHandlersRef.current.handleCheckDuplicateThumbnails && devPanelHandlersRef.current.handleCheckDuplicateThumbnails(...args), []);
-  const getPasteCandidatesCb = useCallback((...args) => devPanelHandlersRef.current.getPasteCandidates && devPanelHandlersRef.current.getPasteCandidates(...args), []);
-  const handlePasteSelectCb = useCallback((...args) => devPanelHandlersRef.current.handlePasteSelect && devPanelHandlersRef.current.handlePasteSelect(...args), []);
-  const handleEditFormChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormChange && devPanelHandlersRef.current.handleEditFormChange(...args), []);
-  const handleEditFormTagClickCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormTagClick && devPanelHandlersRef.current.handleEditFormTagClick(...args), []);
-  const handleEditFormCustomTagsChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormCustomTagsChange && devPanelHandlersRef.current.handleEditFormCustomTagsChange(...args), []);
-  const handleEditFormSaveCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormSave && devPanelHandlersRef.current.handleEditFormSave(...args), []);
-  const handleEditFormCancelCb = useCallback((...args) => devPanelHandlersRef.current.handleEditFormCancel && devPanelHandlersRef.current.handleEditFormCancel(...args), []);
-  const handleNewFormChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormChange && devPanelHandlersRef.current.handleNewFormChange(...args), []);
-  const handleNewFormTagClickCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormTagClick && devPanelHandlersRef.current.handleNewFormTagClick(...args), []);
-  const handleNewFormCustomTagsChangeCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormCustomTagsChange && devPanelHandlersRef.current.handleNewFormCustomTagsChange(...args), []);
-  const handleNewFormAddCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormAdd && devPanelHandlersRef.current.handleNewFormAdd(...args), []);
-  const handleNewFormCancelCb = useCallback((...args) => devPanelHandlersRef.current.handleNewFormCancel && devPanelHandlersRef.current.handleNewFormCancel(...args), []);
-  const handleCopyJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleCopyJson && devPanelHandlersRef.current.handleCopyJson(...args), []);
-  const handleCopyCompressedCb = useCallback((...args) => devPanelHandlersRef.current.handleCopyCompressedJson && devPanelHandlersRef.current.handleCopyCompressedJson(...args), []);
-  const handlePasteCompressedCb = useCallback((...args) => devPanelHandlersRef.current.handlePasteCompressedJson && devPanelHandlersRef.current.handlePasteCompressedJson(...args), []);
-  const handleDownloadJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleDownloadJson && devPanelHandlersRef.current.handleDownloadJson(...args), []);
-  const handleUploadJsonCb = useCallback((...args) => devPanelHandlersRef.current.handleUploadJson && devPanelHandlersRef.current.handleUploadJson(...args), []);
-  const handleShowNewFormCb = useCallback((...args) => devPanelHandlersRef.current.handleShowNewForm && devPanelHandlersRef.current.handleShowNewForm(...args), []);
-  const generateAndCopyChangelogCb = useCallback((...args) => devPanelHandlersRef.current.generateAndCopyChangelog && devPanelHandlersRef.current.generateAndCopyChangelog(...args), []);
-  const resetChangesCb = useCallback((...args) => devPanelHandlersRef.current.resetChanges && devPanelHandlersRef.current.resetChanges(...args), []);
-  const onImportAchievementsJsonCb = useCallback((...args) => devPanelHandlersRef.current.onImportAchievementsJson && devPanelHandlersRef.current.onImportAchievementsJson(...args), []);
-
-  const stableDevPanelProps = useMemo(() => ({
-    handleCheckDuplicateThumbnails: handleCheckDuplicateThumbnailsCb,
-    getPasteCandidates: getPasteCandidatesCb,
-    handlePasteSelect: handlePasteSelectCb,
-    handleEditFormChange: handleEditFormChangeCb,
-    handleEditFormTagClick: handleEditFormTagClickCb,
-    handleEditFormCustomTagsChange: handleEditFormCustomTagsChangeCb,
-    handleEditFormSave: handleEditFormSaveCb,
-    handleEditFormCancel: handleEditFormCancelCb,
-    handleNewFormChange: handleNewFormChangeCb,
-    handleNewFormTagClick: handleNewFormTagClickCb,
-    handleNewFormCustomTagsChange: handleNewFormCustomTagsChangeCb,
-    handleNewFormAdd: handleNewFormAddCb,
-    handleNewFormCancel: handleNewFormCancelCb,
-    handleCopyJson: handleCopyJsonCb,
-    handleCopyCompressedJson: handleCopyCompressedCb,
-    handlePasteCompressedJson: handlePasteCompressedCb,
-    handleShowNewForm: handleShowNewFormCb,
-    generateAndCopyChangelog: generateAndCopyChangelogCb,
-    resetChanges: resetChangesCb,
-    onImportAchievementsJson: onImportAchievementsJsonCb,
-  }), [
-    handleCheckDuplicateThumbnailsCb, getPasteCandidatesCb, handlePasteSelectCb, handleEditFormChangeCb,
-    handleEditFormTagClickCb, handleEditFormCustomTagsChangeCb, handleEditFormSaveCb, handleEditFormCancelCb,
-    handleNewFormChangeCb, handleNewFormTagClickCb, handleNewFormCustomTagsChangeCb, handleNewFormAddCb,
-    handleNewFormCancelCb, handleCopyJsonCb, handleShowNewFormCb, generateAndCopyChangelogCb,
-    resetChangesCb, onImportAchievementsJsonCb, handleDownloadJsonCb, handleUploadJsonCb,
-  ]);
-
 
 
   return (
@@ -4048,22 +3966,49 @@ export default function SharedList({
 
           <DevModePanel
             devMode={devMode}
-            {...stableDevPanelProps}
+            achievements={achievements}
+            reordered={reordered}
+            stagedReordered={stagedReordered}
+            originalAchievements={originalAchievements}
+            batchUpdateReordered={batchUpdateReordered}
+            setReordered={setReordered}
+            setStagedReordered={setStagedReordered}
+            setEditIdx={setEditIdx}
             editIdx={editIdx}
             editForm={editForm}
+            setEditForm={setEditForm}
             editFormTags={editFormTags}
+            setEditFormTags={setEditFormTags}
             editFormCustomTags={editFormCustomTags}
+            setEditFormCustomTags={setEditFormCustomTags}
+            AVAILABLE_TAGS={AVAILABLE_TAGS}
+            showNewForm={showNewForm}
+            newForm={newForm}
+            setNewForm={setNewForm}
+            newFormTags={newFormTags}
+            setNewFormTags={setNewFormTags}
+            newFormCustomTags={newFormCustomTags}
+            setNewFormCustomTags={setNewFormCustomTags}
+            setShowNewForm={setShowNewForm}
             pasteSearch={pasteSearch}
             setPasteSearch={setPasteSearch}
             pasteShowResults={pasteShowResults}
             setPasteShowResults={setPasteShowResults}
-            AVAILABLE_TAGS={AVAILABLE_TAGS}
-            showNewForm={showNewForm}
-            newForm={newForm}
-            newFormTags={newFormTags}
-            newFormCustomTags={newFormCustomTags}
-            newFormPreview={newFormPreview}
+            getPasteCandidates={getPasteCandidates}
+            getMostVisibleIdx={getMostVisibleIdx}
+            listRef={listRef}
+            visibleListRef={visibleListRef}
+            achievementRefs={achievementRefs}
+            storageKeySuffix={storageKeySuffix}
             dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
+            usePlatformers={usePlatformers}
+            setDuplicateThumbKeys={setDuplicateThumbKeys}
+            setDevMode={setDevMode}
+            setScrollToIdx={setScrollToIdx}
+            setInsertIdx={setInsertIdx}
+            devAchievements={devAchievements}
+            handlePasteSelect={handlePasteSelect}
+            onImportAchievementsJson={onImportAchievementsJson}
           />
           {isPending ? (
             <div className="no-achievements">Loading...</div>
