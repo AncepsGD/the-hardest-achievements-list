@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Sidebar from '../components/Sidebar';
 import Background from '../components/Background';
 import { useDateFormat } from '../components/DateFormatContext';
+import { formatDate } from './formatDate';
 import sharedListManager from './sharedListManager';
 import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
 import TierTag, { getTierByRank } from '../components/TierSystem';
