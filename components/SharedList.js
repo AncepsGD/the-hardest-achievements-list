@@ -545,6 +545,19 @@ export default function SharedList({
   }, [_includeTags, _excludeTags, getActiveFilters]);
 
   const [allTags, setAllTags] = useState([]);
+  const AVAILABLE_TAGS = useMemo(() => {
+    try {
+      const uniq = Array.from(new Set(Array.isArray(allTags) ? allTags : []));
+      return uniq.sort((a, b) => {
+        const ia = TAG_PRIORITY_ORDER.indexOf(String(a || '').toUpperCase());
+        const ib = TAG_PRIORITY_ORDER.indexOf(String(b || '').toUpperCase());
+        if (ia === ib) return String(a || '').localeCompare(String(b || ''));
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      });
+    } catch (e) { return Array.isArray(allTags) ? allTags.slice() : []; }
+  }, [allTags]);
   const [isMobile, setIsMobile] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
