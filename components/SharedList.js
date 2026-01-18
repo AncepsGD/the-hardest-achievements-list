@@ -3,18 +3,17 @@ import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition
 import Fuse from 'fuse.js';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 
 import Sidebar from '../components/Sidebar';
 import Background from '../components/Background';
 import { useDateFormat } from '../components/DateFormatContext';
+import sharedListManager from './sharedListManager';
 import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
 import TierTag, { getTierByRank } from '../components/TierSystem';
 import DevModePanel from '../components/DevModePanel';
 import { EditIcon, UpIcon, CopyIcon, DownIcon, AddIcon, DeleteIcon } from './DevIcons';
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
-import { generateChangelog, formatChangelogEntry, moveUp, moveDown, removeAt, duplicateAt } from './changelogHelpers';
 
 class LRUCache {
   constructor(opts = {}) {
@@ -137,9 +136,11 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
 
 const ENHANCE_CACHE_MAX = 2000;
 const ENHANCE_CACHE_TTL_MS = 10 * 60 * 1000;
-const _enhanceCache = new LRUCache({ max: ENHANCE_CACHE_MAX, ttl: ENHANCE_CACHE_TTL_MS, onEvict: (k) => {
-  try { _enhanceCacheWrites.delete(k); _enhanceCacheHitCounts.delete(k); } catch (e) { }
-} });
+const _enhanceCache = new LRUCache({
+  max: ENHANCE_CACHE_MAX, ttl: ENHANCE_CACHE_TTL_MS, onEvict: (k) => {
+    try { _enhanceCacheWrites.delete(k); _enhanceCacheHitCounts.delete(k); } catch (e) { }
+  }
+});
 let _enhanceCacheHits = 0;
 let _enhanceCacheMisses = 0;
 const _enhanceCacheWrites = new Map();
@@ -248,11 +249,11 @@ function enhanceAchievement(a) {
       try { _enhanceCacheHitCounts.set(id, (_enhanceCacheHitCounts.get(id) || 0) + 1); } catch (e) { }
       try {
         const merged = Object.assign({}, cached.value, a);
-        try { Object.defineProperty(merged, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) {}
+        try { Object.defineProperty(merged, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) { }
         return merged;
       } catch (e) {
         const out = Object.assign({}, cached.value);
-        try { Object.defineProperty(out, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (ee) {}
+        try { Object.defineProperty(out, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (ee) { }
         return out;
       }
     }
@@ -293,7 +294,7 @@ function enhanceAchievement(a) {
     hasThumb,
     autoThumb,
   };
-  try { Object.defineProperty(enhanced, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) {}
+  try { Object.defineProperty(enhanced, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) { }
   if (id) {
     try {
       _enhanceCache.set(id, { signature: sig, value: enhanced });
@@ -348,79 +349,6 @@ function mapEnhanceArray(origArr, prevEnhanced) {
 }
 
 
-function normalizeYoutubeUrl(input) {
-  if (!input || typeof input !== 'string') return input;
-  const s = input.trim();
-
-  let m = s.match(/(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^?&#\/]+)/i);
-  if (m) {
-    const id = m[1];
-    try {
-      const parsedShort = new URL(s.startsWith('http') ? s : `https://${s}`);
-      const t = parsedShort.searchParams.get('t') || parsedShort.searchParams.get('start') || parsedShort.searchParams.get('time_continue');
-      if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
-    } catch (e) {
-    }
-    return `https://youtu.be/${id}`;
-  }
-
-  let parsed;
-  try {
-    parsed = new URL(s.startsWith('http') ? s : `https://${s}`);
-  } catch (err) {
-    m = s.match(/[?&]v=([^?&#]+)/);
-    if (m) return `https://youtu.be/${m[1]}`;
-    m = s.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/live\/([^?&#\/]+)/i);
-    if (m) return `https://youtu.be/${m[1]}`;
-    m = s.match(/(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^?&#\/]+)/i);
-    if (m) return `https://youtu.be/${m[1]}`;
-    return input;
-  }
-
-  const host = parsed.hostname.toLowerCase();
-
-  if (host === 'youtu.be') {
-    const id = parsed.pathname.split('/').filter(Boolean)[0];
-    if (id) {
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      if (t) return `https://www.youtube.com/watch?v=${id}&t=${t}`;
-      return `https://youtu.be/${id}`;
-    }
-    const raw = parsed.pathname.replace(/^\//, '');
-    const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-    if (t) return `https://www.youtube.com/watch?v=${raw}&t=${t}`;
-    return `https://youtu.be/${raw}`;
-  }
-
-  if (host.endsWith('youtube.com') || host.endsWith('youtube-nocookie.com')) {
-    const v = parsed.searchParams.get('v');
-    if (v) {
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      return t ? `https://www.youtube.com/watch?v=${v}&t=${t}` : `https://www.youtube.com/watch?v=${v}`;
-    }
-
-    const path = parsed.pathname || '';
-    let parts = path.split('/').filter(Boolean);
-
-    const liveIdx = parts.indexOf('live');
-    if (liveIdx !== -1 && parts[liveIdx + 1]) {
-      const id = parts[liveIdx + 1];
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      return t ? `https://www.youtube.com/watch?v=${id}&t=${t}` : `https://www.youtube.com/watch?v=${id}`;
-    }
-
-    const shortsIdx = parts.indexOf('shorts');
-    if (shortsIdx !== -1 && parts[shortsIdx + 1]) {
-      const id = parts[shortsIdx + 1];
-      const t = parsed.searchParams.get('t') || parsed.searchParams.get('start') || parsed.searchParams.get('time_continue');
-      return t ? `https://www.youtube.com/watch?v=${id}&t=${t}` : `https://www.youtube.com/watch?v=${id}`;
-    }
-
-    return parsed.href;
-  }
-
-  return null;
-}
 
 function sanitizeImageUrl(input) {
   if (!input || typeof input !== 'string') return null;
@@ -838,7 +766,6 @@ export default function SharedList({
       return false;
     }
   });
-  const [visibleCount, setVisibleCount] = useState(100);
   const searchJumpPendingRef = useRef(false);
   const listRef = useRef(null);
   function restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive) {
@@ -898,9 +825,7 @@ export default function SharedList({
       return true;
     } catch (e) { return false; }
   }
-  const DERIVED_CACHE_MAX = 128;
-  const DERIVED_CACHE_TTL_MS = 5 * 60 * 1000;
-  const derivedCacheRef = useRef({ filtered: new LRUCache({ max: DERIVED_CACHE_MAX, ttl: DERIVED_CACHE_TTL_MS }), dev: new LRUCache({ max: DERIVED_CACHE_MAX, ttl: DERIVED_CACHE_TTL_MS }) });
+  const derivedCacheRef = sharedListManager.derivedCacheRef;
   function getListSignature(list) {
     try {
       if (!Array.isArray(list)) return String(list || '');
@@ -944,8 +869,7 @@ export default function SharedList({
 
     setManualSearch(rawQuery);
     setPendingSearchJump(rawQuery);
-    try { searchJumpPendingRef.current = true; } catch (e) {}
-    setVisibleCount(0);
+    try { searchJumpPendingRef.current = true; } catch (e) { }
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
     }
@@ -986,8 +910,6 @@ export default function SharedList({
   const [showSidebar, setShowSidebar] = useState(false);
   const mobileBtnRef = useRef();
   const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
-  const { dateFormat, setDateFormat } = useDateFormat();
-  const [showSettings, setShowSettings] = useState(false);
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
   useEffect(() => { devModeRef.current = devMode; }, [devMode]);
@@ -995,6 +917,7 @@ export default function SharedList({
   const hideRank = storageKeySuffix === 'pending' || dataFileName === 'pending.json';
 
   const [originalAchievements, setOriginalAchievements] = useState(null);
+  const originalSnapshotRef = useRef(null);
   const [sortKey, setSortKey] = useState(() => {
     try {
       if (typeof window !== 'undefined') {
@@ -1061,11 +984,11 @@ export default function SharedList({
   }, []);
 
   const [reordered, setReordered] = useState(null);
-  const reorderedRef = useRef(reordered);
-  useEffect(() => { reorderedRef.current = reordered; }, [reordered]);
+  const reorderedRef = sharedListManager.reorderedRef;
+  useEffect(() => { try { sharedListManager.reorderedRef.current = reordered; } catch (e) { } }, [reordered]);
   const [stagedReordered, setStagedReordered] = useState(null);
-  const stagedRef = useRef(stagedReordered);
-  useEffect(() => { stagedRef.current = stagedReordered; }, [stagedReordered]);
+  const stagedRef = sharedListManager.stagedRef;
+  useEffect(() => { try { sharedListManager.stagedRef.current = stagedReordered; } catch (e) { } }, [stagedReordered]);
   const ongoingFilterControllerRef = useRef(null);
   const manualSearchControllerRef = useRef(null);
   useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
@@ -1103,8 +1026,8 @@ export default function SharedList({
   const [pasteSearch, setPasteSearch] = useState('');
   const [pasteShowResults, setPasteShowResults] = useState(false);
   const [pasteIndex, setPasteIndex] = useState([]);
-  const pasteIndexRef = useRef([]);
-  const pastePrefixMapRef = useRef(new Map());
+  const pasteIndexRef = sharedListManager.pasteIndexRef;
+  const pastePrefixMapRef = sharedListManager.pastePrefixMapRef;
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, { minDelay: 80, maxDelay: 250, useIdle: true });
   const [pendingSearchJump, setPendingSearchJump] = useState(null);
   const [extraLists, setExtraLists] = useState({});
@@ -1114,6 +1037,9 @@ export default function SharedList({
   const [editForm, setEditForm] = useState(null);
   const [editFormTags, setEditFormTags] = useState([]);
   const [editFormCustomTags, setEditFormCustomTags] = useState('');
+
+  useEffect(() => { try { sharedListManager.editIdxRef.current = editIdx; } catch (e) { } }, [editIdx]);
+  useEffect(() => { try { sharedListManager.editFormRef.current = editForm; sharedListManager.editFormTagsRef.current = editFormTags; sharedListManager.editFormCustomTagsRef.current = editFormCustomTags; } catch (e) { } }, [editForm, editFormTags, editFormCustomTags]);
   const achievementRefs = useRef([]);
   const handleMoveUpRef = useRef(null);
   const handleMoveDownRef = useRef(null);
@@ -1226,13 +1152,6 @@ export default function SharedList({
       const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
       if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
     } catch (e) { }
-    const ensureStaged = () => {
-      if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
-      const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-      const copy = Array.isArray(base) ? base.slice() : [];
-      setStagedReordered(copy);
-      return copy;
-    };
     startTransition(() => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) {
         setStagedReordered(prev => {
@@ -1243,24 +1162,23 @@ export default function SharedList({
           arr.splice(realIdx - 1, 0, removed);
           const iA = realIdx - 1;
           const iB = realIdx;
-          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
+          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
           return arr;
         });
       } else {
-        ensureStaged();
-        setStagedReordered(prev => {
-          const arr = Array.isArray(prev) ? prev.slice() : [];
-          const len = arr.length;
-          if (realIdx <= 0 || realIdx >= len) return prev;
+        const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
+        const arr = Array.isArray(base) ? base.slice() : [];
+        const len = arr.length;
+        if (realIdx > 0 && realIdx < len) {
           const [removed] = arr.splice(realIdx, 1);
           arr.splice(realIdx - 1, 0, removed);
           const iA = realIdx - 1;
           const iB = realIdx;
-          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
-          return arr;
-        });
+          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
+        }
+        setStagedReordered(arr);
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1289,13 +1207,6 @@ export default function SharedList({
       const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
       if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
     } catch (e) { }
-    const ensureStaged = () => {
-      if (stagedRef.current && Array.isArray(stagedRef.current)) return stagedRef.current;
-      const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-      const copy = Array.isArray(base) ? base.slice() : [];
-      setStagedReordered(copy);
-      return copy;
-    };
     startTransition(() => {
       if (stagedRef.current && Array.isArray(stagedRef.current)) {
         setStagedReordered(prev => {
@@ -1306,24 +1217,23 @@ export default function SharedList({
           arr.splice(realIdx + 1, 0, removed);
           const iA = realIdx;
           const iB = realIdx + 1;
-          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
+          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
           return arr;
         });
       } else {
-        ensureStaged();
-        setStagedReordered(prev => {
-          const arr = Array.isArray(prev) ? prev.slice() : [];
-          const len = arr.length;
-          if (realIdx < 0 || realIdx >= len - 1) return prev;
+        const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
+        const arr = Array.isArray(base) ? base.slice() : [];
+        const len = arr.length;
+        if (!(realIdx < 0 || realIdx >= len - 1)) {
           const [removed] = arr.splice(realIdx, 1);
           arr.splice(realIdx + 1, 0, removed);
           const iA = realIdx;
           const iB = realIdx + 1;
-          if (arr[iA]) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB]) arr[iB] = { ...arr[iB], rank: iB + 1 };
-          return arr;
-        });
+          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
+          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
+        }
+        setStagedReordered(arr);
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1459,7 +1369,9 @@ export default function SharedList({
         }
 
         setAchievements(() => finalEnhanced);
-        setOriginalAchievements(Array.isArray(finalOriginal) ? finalOriginal.slice() : []);
+        const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
+        setOriginalAchievements(snap);
+        try { originalSnapshotRef.current = snap; } catch (e) { }
 
         const tagSet = new Set();
         if (data && Array.isArray(data.tags)) data.tags.forEach(t => tagSet.add(t));
@@ -1736,20 +1648,6 @@ export default function SharedList({
   }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomSeed, startTransition]);
 
   useEffect(() => {
-    let pref = 100;
-    if (searchJumpPendingRef.current) return;
-    try {
-      if (typeof window !== 'undefined') {
-        const v = localStorage.getItem('itemsPerPage');
-        pref = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
-      }
-    } catch (e) { pref = 100; }
-
-    if (pref === 'all') setVisibleCount(filtered.length);
-    else setVisibleCount(Math.min(pref, filtered.length));
-  }, [filtered]);
-
-  useEffect(() => {
     if (!pendingSearchJump) return;
     if (debouncedManualSearch !== pendingSearchJump) return;
 
@@ -1788,7 +1686,7 @@ export default function SharedList({
     }
     if (manualController.aborted) {
       setPendingSearchJump(null);
-      try { searchJumpPendingRef.current = false; } catch (e) {}
+      try { searchJumpPendingRef.current = false; } catch (e) { }
       return;
     }
     const matchingItems = [];
@@ -1799,7 +1697,7 @@ export default function SharedList({
     }
     if (!matchingItems || matchingItems.length === 0) {
       setPendingSearchJump(null);
-      try { searchJumpPendingRef.current = false; } catch (e) {}
+      try { searchJumpPendingRef.current = false; } catch (e) { }
       return;
     }
 
@@ -1807,8 +1705,6 @@ export default function SharedList({
     const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
 
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      const countToShow = Math.max(20, matchingItems.length);
-      setVisibleCount(prev => Math.max(prev, countToShow));
 
       if (devModeRef.current) {
         setScrollToIdx(targetIdxInPreFiltered);
@@ -1845,7 +1741,7 @@ export default function SharedList({
     }));
 
     setPendingSearchJump(null);
-    try { searchJumpPendingRef.current = false; } catch (e) {}
+    try { searchJumpPendingRef.current = false; } catch (e) { }
   }, [debouncedManualSearch, pendingSearchJump, filtered, searchLower]);
 
 
@@ -2370,51 +2266,7 @@ export default function SharedList({
 
 
 
-  function z85Encode(bytes) {
-    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
-    let out = '';
-    let i = 0;
-    const pad = (4 - (bytes.length % 4)) % 4;
-    const arr = new Uint8Array(bytes.length + pad);
-    arr.set(bytes, 0);
-    while (i < arr.length) {
-      const a = (arr[i++] << 24) >>> 0;
-      const b = (arr[i++] << 16) >>> 0;
-      const c = (arr[i++] << 8) >>> 0;
-      const d = (arr[i++]) >>> 0;
-      const value = (a | b | c | d) >>> 0;
-      let div = value;
-      const block = new Array(5);
-      for (let k = 4; k >= 0; k--) {
-        block[k] = alphabet[div % 85];
-        div = Math.floor(div / 85);
-      }
-      out += block.join('');
-    }
-    return out;
-  }
 
-  function z85Decode(str) {
-    const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
-    const map = {};
-    for (let i = 0; i < alphabet.length; i++) map[alphabet[i]] = i;
-    const out = [];
-    let i = 0;
-    while (i < str.length) {
-      let value = 0;
-      for (let k = 0; k < 5; k++) {
-        const ch = str.charAt(i++);
-        const v = map[ch];
-        if (v === undefined) throw new Error('Invalid Z85 char');
-        value = value * 85 + v;
-      }
-      out.push((value >>> 24) & 0xFF);
-      out.push((value >>> 16) & 0xFF);
-      out.push((value >>> 8) & 0xFF);
-      out.push(value & 0xFF);
-    }
-    return new Uint8Array(out);
-  }
 
 
 
@@ -2755,6 +2607,7 @@ export default function SharedList({
             reordered={reordered}
             stagedReordered={stagedReordered}
             originalAchievements={originalAchievements}
+            originalSnapshotRef={originalSnapshotRef}
             batchUpdateReordered={batchUpdateReordered}
             setReordered={setReordered}
             setStagedReordered={setStagedReordered}
@@ -2800,26 +2653,13 @@ export default function SharedList({
             <ListWindow
               ref={listRef}
               height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
-              itemCount={Math.min(visibleCount, (visibleList || []).length)}
+              itemCount={(visibleList || []).length}
               itemSize={150}
               overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
               width={'100%'}
               style={{ overflowX: 'hidden' }}
               itemData={listItemData}
-              onItemsRendered={({ visibleStopIndex }) => {
-                try {
-                  const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
-                  const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
-                  if (pageSize === 'all') return;
-                  if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                    setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
-                  }
-                } catch (err) {
-                  if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                    setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
-                  }
-                }
-              }}
+              onItemsRendered={() => {}}
             >
               {ListRow}
             </ListWindow>
