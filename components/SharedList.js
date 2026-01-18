@@ -101,6 +101,16 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
+function shouldShowTier(tier, mode, usePlatformers, showTiers) {
+  try {
+    if (!tier) return false;
+    if (showTiers !== true) return false;
+    if (mode === 'timeline') return false;
+    if (usePlatformers) return false;
+    return true;
+  } catch (e) { return false; }
+}
+
 function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
