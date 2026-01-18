@@ -1,6 +1,5 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
-import Fuse from 'fuse.js';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 
@@ -451,14 +450,6 @@ export default function SharedList({
     } catch (e) { return false; }
   }
   const derivedCacheRef = sharedListManager.derivedCacheRef;
-  function getListSignature(list) {
-    try {
-      if (!Array.isArray(list)) return String(list || '');
-      return `${list.length}:${list.map(a => (a && a.id) ? String(a.id) : ((a && a.rank) ? `#${a.rank}` : (a && a.name) ? String(a.name).slice(0, 24) : '__')).join(',')}`;
-    } catch (e) {
-      try { return String(list.length || 0); } catch (ee) { return '0'; }
-    }
-  }
   const [search, setSearch] = useState('');
   const searchInputRef = useRef(null);
   const inputValueRef = useRef(search);
@@ -1208,36 +1199,7 @@ export default function SharedList({
             setTimeout(processTagBatch, 0);
           } else {
             if (!queryTokens || !queryTokens.length) return onProcessingComplete(tagFiltered);
-            try {
-              if (controller.aborted) return onProcessingComplete(null);
-              const q = queryTokens.join(' ');
-              const fuseOpts = {
-                keys: [
-                  { name: 'name', weight: 0.6 },
-                  { name: 'player', weight: 0.2 },
-                  { name: 'id', weight: 0.1 },
-                  { name: 'levelID', weight: 0.05 },
-                  { name: 'tags', weight: 0.05 }
-                ],
-                threshold: 0.3,
-                ignoreLocation: true,
-                minMatchCharLength: 2,
-              };
-              if (workerRef && workerRef.current) {
-                postWorkerMessage('fuseSearch', { items: tagFiltered, query: q, options: fuseOpts }).then(res => {
-                  try { return onProcessingComplete(res || tagFiltered); } catch (e) { return onProcessingComplete(tagFiltered); }
-                }).catch(() => {
-                  try { const fuse = new Fuse(tagFiltered, fuseOpts); const fres = fuse.search(q); const searched = fres.map(r => (r && r.item) ? r.item : r); return onProcessingComplete(searched); } catch (e) { return onProcessingComplete(tagFiltered); }
-                });
-              } else {
-                const fuse = new Fuse(tagFiltered, fuseOpts);
-                const res = fuse.search(q);
-                const searched = res.map(r => (r && r.item) ? r.item : r);
-                return onProcessingComplete(searched);
-              }
-            } catch (e) {
-              return onProcessingComplete(tagFiltered);
-            }
+            return onProcessingComplete(tagFiltered);
           }
         }
 
