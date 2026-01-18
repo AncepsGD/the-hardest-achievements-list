@@ -16,9 +16,81 @@ import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
 import { generateChangelog, formatChangelogEntry, moveUp, moveDown, removeAt, duplicateAt } from './changelogHelpers';
 
-const ID_INDEX_TTL_MS = 5 * 60 * 1000;
-const _idIndexCache = new Map();
+class LRUCache {
+  constructor(opts = {}) {
+    const { max = 1000, ttl = 0, onEvict = null } = opts || {};
+    this.max = Number(max) || 1000;
+    this.ttl = Number(ttl) || 0;
+    this.onEvict = typeof onEvict === 'function' ? onEvict : null;
+    this._map = new Map();
+  }
 
+  get size() { return this._map.size; }
+
+  _isExpired(entry) {
+    if (!entry) return true;
+    if (!this.ttl) return false;
+    return (Date.now() - (entry.ts || 0)) > this.ttl;
+  }
+
+  has(key) {
+    try {
+      const e = this._map.get(key);
+      if (!e) return false;
+      if (this._isExpired(e)) {
+        this._map.delete(key);
+        if (this.onEvict) try { this.onEvict(key, e.value); } catch (err) { }
+        return false;
+      }
+      return true;
+    } catch (e) { return false; }
+  }
+
+  peek(key) {
+    const e = this._map.get(key);
+    if (!e) return undefined;
+    if (this._isExpired(e)) {
+      this._map.delete(key);
+      if (this.onEvict) try { this.onEvict(key, e.value); } catch (err) { }
+      return undefined;
+    }
+    return e.value;
+  }
+
+  get(key) {
+    const e = this._map.get(key);
+    if (!e) return undefined;
+    if (this._isExpired(e)) {
+      this._map.delete(key);
+      if (this.onEvict) try { this.onEvict(key, e.value); } catch (err) { }
+      return undefined;
+    }
+    this._map.delete(key);
+    this._map.set(key, { value: e.value, ts: e.ts });
+    return e.value;
+  }
+
+  set(key, value) {
+    try {
+      if (this._map.has(key)) this._map.delete(key);
+      this._map.set(key, { value, ts: Date.now() });
+      while (this._map.size > this.max) {
+        const oldestKey = this._map.keys().next().value;
+        const oldest = this._map.get(oldestKey);
+        this._map.delete(oldestKey);
+        if (this.onEvict) try { this.onEvict(oldestKey, oldest && oldest.value); } catch (err) { }
+      }
+    } catch (e) { }
+  }
+
+  delete(key) {
+    try { return this._map.delete(key); } catch (e) { return false; }
+  }
+
+  clear() {
+    try { this._map.clear(); } catch (e) { }
+  }
+}
 function formatDate(date, dateFormat) {
   if (!date) return 'N/A';
   function parseAsLocal(input) {
@@ -63,7 +135,11 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
   return !!tier && !usePlatformers && showTiers === true;
 }
 
-const _enhanceCache = new Map();
+const ENHANCE_CACHE_MAX = 2000;
+const ENHANCE_CACHE_TTL_MS = 10 * 60 * 1000;
+const _enhanceCache = new LRUCache({ max: ENHANCE_CACHE_MAX, ttl: ENHANCE_CACHE_TTL_MS, onEvict: (k) => {
+  try { _enhanceCacheWrites.delete(k); _enhanceCacheHitCounts.delete(k); } catch (e) { }
+} });
 let _enhanceCacheHits = 0;
 let _enhanceCacheMisses = 0;
 const _enhanceCacheWrites = new Map();
@@ -97,7 +173,9 @@ function resetEnhanceCache() {
   try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
 }
 
-const _pasteIndexCache = new Map();
+const PASTE_INDEX_CACHE_MAX = 64;
+const PASTE_INDEX_CACHE_TTL_MS = 5 * 60 * 1000;
+const _pasteIndexCache = new LRUCache({ max: PASTE_INDEX_CACHE_MAX, ttl: PASTE_INDEX_CACHE_TTL_MS });
 
 function _makePasteSignature(items) {
   try {
@@ -169,9 +247,13 @@ function enhanceAchievement(a) {
       _enhanceCacheHits++;
       try { _enhanceCacheHitCounts.set(id, (_enhanceCacheHitCounts.get(id) || 0) + 1); } catch (e) { }
       try {
-        return Object.assign({}, cached.value, a);
+        const merged = Object.assign({}, cached.value, a);
+        try { Object.defineProperty(merged, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) {}
+        return merged;
       } catch (e) {
-        return cached.value;
+        const out = Object.assign({}, cached.value);
+        try { Object.defineProperty(out, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (ee) {}
+        return out;
       }
     }
   }
@@ -211,6 +293,7 @@ function enhanceAchievement(a) {
     hasThumb,
     autoThumb,
   };
+  try { Object.defineProperty(enhanced, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) {}
   if (id) {
     try {
       _enhanceCache.set(id, { signature: sig, value: enhanced });
@@ -234,6 +317,34 @@ function mulberry32(seed) {
     r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
     return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
   };
+}
+
+function mapEnhanceArray(origArr, prevEnhanced) {
+  if (!Array.isArray(origArr)) return origArr;
+  const out = new Array(origArr.length);
+  const prevById = new Map();
+  if (Array.isArray(prevEnhanced)) {
+    for (let i = 0; i < prevEnhanced.length; i++) {
+      const e = prevEnhanced[i];
+      if (e && e.id !== undefined && e.id !== null) prevById.set(String(e.id), e);
+    }
+  }
+
+  for (let i = 0; i < origArr.length; i++) {
+    const a = origArr[i];
+    if (!a) { out[i] = a; continue; }
+    const id = a && a.id ? String(a.id) : null;
+    const sig = _makeEnhanceSignature(a);
+    if (id && prevById.has(id)) {
+      const prev = prevById.get(id);
+      if (prev && prev._enhanceSig === sig) {
+        out[i] = prev;
+        continue;
+      }
+    }
+    out[i] = enhanceAchievement(a);
+  }
+  return out;
 }
 
 
@@ -787,7 +898,9 @@ export default function SharedList({
       return true;
     } catch (e) { return false; }
   }
-  const derivedCacheRef = useRef({ filtered: new Map(), dev: new Map() });
+  const DERIVED_CACHE_MAX = 128;
+  const DERIVED_CACHE_TTL_MS = 5 * 60 * 1000;
+  const derivedCacheRef = useRef({ filtered: new LRUCache({ max: DERIVED_CACHE_MAX, ttl: DERIVED_CACHE_TTL_MS }), dev: new LRUCache({ max: DERIVED_CACHE_MAX, ttl: DERIVED_CACHE_TTL_MS }) });
   function getListSignature(list) {
     try {
       if (!Array.isArray(list)) return String(list || '');
@@ -1596,10 +1709,10 @@ export default function SharedList({
         let finalEnhanced = [];
         if (dataFileName === 'pending.json') {
           finalOriginal = valid.map((a, i) => ({ ...a, rank: i + 1 }));
-          finalEnhanced = finalOriginal.map(enhanceAchievement);
+          finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
         } else {
           finalOriginal = valid.map((a, i) => ({ ...a, rank: i + 1 }));
-          finalEnhanced = finalOriginal.map(enhanceAchievement);
+          finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
         }
 
         setAchievements(() => finalEnhanced);
@@ -2492,21 +2605,16 @@ export default function SharedList({
       insertedIdx = insertIdx + 1;
     }
 
-    newArr.forEach((a, i) => { if (a) a.rank = i + 1; });
-
-    newArr = newArr.map(a => {
-      if (!a) return a;
+    for (let i = 0; i < newArr.length; i++) {
+      const a = newArr[i];
+      if (!a) continue;
+      a.rank = i + 1;
       if (!a.id) {
-        try {
-          a.id = `new-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        } catch (e) {
-          a.id = `new-${Math.random().toString(36).slice(2, 8)}`;
-        }
+        try { a.id = `new-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; } catch (e) { a.id = `new-${Math.random().toString(36).slice(2, 8)}`; }
       }
-      return a;
-    });
+    }
 
-    newArr = newArr.map(enhanceAchievement);
+    newArr = mapEnhanceArray(newArr, before);
     batchUpdateReordered(() => newArr);
     setScrollToIdx(insertedIdx);
     setShowNewForm(false);
@@ -3255,7 +3363,8 @@ export default function SharedList({
       alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
       return;
     }
-    imported = imported.map((a, i) => enhanceAchievement({ ...a, rank: i + 1 }));
+    imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
+    imported = mapEnhanceArray(imported, achievementsRef.current || []);
     try {
       const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
       reorderedRef.current = imported;
