@@ -903,6 +903,24 @@ export default function SharedList({
   const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
+  const [debouncedFilterTags, setDebouncedFilterTags] = useState(() => filterTags);
+  const debouncedFilterTagsRef = useRef(debouncedFilterTags);
+  useEffect(() => { debouncedFilterTagsRef.current = debouncedFilterTags; }, [debouncedFilterTags]);
+  const filterTagsDebounceRef = useRef(null);
+  const handleSetFilterTags = useCallback((next) => {
+    try {
+      setFilterTags(next);
+      if (filterTagsDebounceRef.current) clearTimeout(filterTagsDebounceRef.current);
+      filterTagsDebounceRef.current = setTimeout(() => {
+        try { setDebouncedFilterTags(next); } catch (e) { }
+      }, 140);
+    } catch (e) { }
+  }, []);
+  useEffect(() => {
+    return () => {
+      try { if (filterTagsDebounceRef.current) clearTimeout(filterTagsDebounceRef.current); } catch (e) { }
+    };
+  }, []);
 
   const [allTags, setAllTags] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
@@ -989,6 +1007,21 @@ export default function SharedList({
   const [stagedReordered, setStagedReordered] = useState(null);
   const stagedRef = sharedListManager.stagedRef;
   useEffect(() => { try { sharedListManager.stagedRef.current = stagedReordered; } catch (e) { } }, [stagedReordered]);
+  const stagedApplyTimerRef = useRef(null);
+  useEffect(() => {
+    try {
+      if (stagedApplyTimerRef.current) clearTimeout(stagedApplyTimerRef.current);
+      if (!Array.isArray(stagedReordered) || stagedReordered.length === 0) return;
+      stagedApplyTimerRef.current = setTimeout(() => {
+        try {
+          setReordered(prev => {
+            try { return mapEnhanceArray(stagedReordered, achievementsRef.current || prev || []); } catch (e) { return stagedReordered; }
+          });
+        } catch (e) { }
+      }, 180);
+    } catch (e) { }
+    return () => { try { if (stagedApplyTimerRef.current) { clearTimeout(stagedApplyTimerRef.current); stagedApplyTimerRef.current = null; } } catch (e) { } };
+  }, [stagedReordered]);
   const ongoingFilterControllerRef = useRef(null);
   const manualSearchControllerRef = useRef(null);
   useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
@@ -1096,9 +1129,13 @@ export default function SharedList({
       };
 
       if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        setStagedReordered(prev => applyMutatorToArrayMinimal(prev));
+        setStagedReordered(prev => {
+          try { return mapEnhanceArray(applyMutatorToArrayMinimal(prev), achievementsRef.current || prev || []); } catch (e) { return applyMutatorToArrayMinimal(prev); }
+        });
       } else {
-        setReordered(prev => applyMutatorToArrayMinimal(prev));
+        setReordered(prev => {
+          try { return mapEnhanceArray(applyMutatorToArrayMinimal(prev), achievementsRef.current || prev || []); } catch (e) { return applyMutatorToArrayMinimal(prev); }
+        });
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1164,7 +1201,7 @@ export default function SharedList({
           const iB = realIdx;
           if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
           if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
-          return arr;
+          try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
         });
       } else {
         const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
@@ -1178,7 +1215,7 @@ export default function SharedList({
           if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
           if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
         }
-        setStagedReordered(arr);
+        try { setStagedReordered(mapEnhanceArray(arr, achievementsRef.current || arr || [])); } catch (e) { setStagedReordered(arr); }
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1219,7 +1256,7 @@ export default function SharedList({
           const iB = realIdx + 1;
           if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
           if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
-          return arr;
+          try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
         });
       } else {
         const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
@@ -1233,7 +1270,7 @@ export default function SharedList({
           if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
           if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
         }
-        setStagedReordered(arr);
+        try { setStagedReordered(mapEnhanceArray(arr, achievementsRef.current || arr || [])); } catch (e) { setStagedReordered(arr); }
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1410,14 +1447,14 @@ export default function SharedList({
         const next = !v;
         if (!next) {
           if (stagedRef.current && Array.isArray(stagedRef.current)) {
-            setReordered(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : []);
+            try { setReordered(mapEnhanceArray(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : [], achievementsRef.current || stagedRef.current || [])); } catch (e) { setReordered(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : []); }
             setStagedReordered(null);
           } else {
             setReordered(null);
             reorderedRef.current = null;
           }
         } else {
-          setReordered(achievementsRef.current);
+          try { setReordered(mapEnhanceArray(achievementsRef.current || [], achievementsRef.current || [])); } catch (e) { setReordered(achievementsRef.current); }
           reorderedRef.current = achievementsRef.current;
         }
         return next;
@@ -1501,10 +1538,11 @@ export default function SharedList({
   const queryTokens = useMemo(() => (searchNormalized || '') ? searchNormalized.split(' ').filter(Boolean) : [], [searchNormalized]);
 
   const _normalizedFilterTags = useMemo(() => {
-    const inc = Array.isArray(filterTags.include) ? filterTags.include.slice().map(s => String(s || '').toUpperCase()) : [];
-    const exc = Array.isArray(filterTags.exclude) ? filterTags.exclude.slice().map(s => String(s || '').toUpperCase()) : [];
+    const src = debouncedFilterTags || { include: [], exclude: [] };
+    const inc = Array.isArray(src.include) ? src.include.slice().map(s => String(s || '').toUpperCase()) : [];
+    const exc = Array.isArray(src.exclude) ? src.exclude.slice().map(s => String(s || '').toUpperCase()) : [];
     return { include: inc, exclude: exc };
-  }, [filterTags.include, filterTags.exclude]);
+  }, [debouncedFilterTags]);
 
   const filterFn = useCallback(
     a => {
@@ -1671,7 +1709,7 @@ export default function SharedList({
     const respectsTagFilters = a => {
       if (manualController.aborted) return false;
       const tags = (a.tags || []).map(t => t.toUpperCase());
-      const ft = filterTagsRef.current || { include: [], exclude: [] };
+      const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
       if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
       if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
       return true;
@@ -1716,7 +1754,7 @@ export default function SharedList({
         } else {
           visibleFiltered = (achievementsRef.current || []).filter(a => {
             const tags = (a.tags || []).map(t => t.toUpperCase());
-            const ft = filterTagsRef.current || { include: [], exclude: [] };
+            const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
             if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
             if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
             if (normalizedQueryLocal) {
@@ -1859,37 +1897,37 @@ export default function SharedList({
       } catch (e) {
       }
 
-      try {
-        let target = null;
-        if (ev && ev.currentTarget) target = ev.currentTarget;
-        else if (ev && ev.target) target = ev.target;
-        else target = document.querySelector(`[data-index="${idx}"]`);
-        const root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
-        if (root && root instanceof HTMLElement) {
-          try {
-            if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
-            if (panel.parentElement !== root) root.appendChild(panel);
-          } catch (err) { }
+        try {
+          let target = null;
+          if (ev && ev.currentTarget) target = ev.currentTarget;
+          else if (ev && ev.target) target = ev.target;
+          else target = document.querySelector(`[data-index="${idx}"]`);
+          const root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
+          if (root && root instanceof HTMLElement) {
+            try {
+              if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
+            } catch (err) { }
 
-          panel.style.position = 'absolute';
-          panel.style.left = '50%';
-          panel.style.top = '50%';
-          panel.style.transform = 'translate(-50%, -50%)';
-          panel.style.pointerEvents = 'auto';
+            const rect = root.getBoundingClientRect();
+            panel.style.position = 'fixed';
+            panel.style.left = `${rect.left + (root.clientWidth / 2)}px`;
+            panel.style.top = `${rect.top + (root.clientHeight / 2)}px`;
+            panel.style.transform = 'translate(-50%, -50%)';
+            panel.style.pointerEvents = 'auto';
 
-          const pad = 16;
-          const pw = Math.min(360, Math.max(120, Math.floor(root.clientWidth - pad)));
-          panel.style.width = `${pw}px`;
+            const pad = 16;
+            const pw = Math.min(360, Math.max(120, Math.floor(root.clientWidth - pad)));
+            panel.style.width = `${pw}px`;
 
-          const ph = panel.offsetHeight || 200;
-          if (ph > (root.clientHeight - 16)) {
-            panel.style.maxHeight = `${Math.max(80, root.clientHeight - 16)}px`;
-            panel.style.overflowY = 'auto';
-          } else {
-            panel.style.maxHeight = '';
-            panel.style.overflowY = '';
+            const ph = panel.offsetHeight || 200;
+            if (ph > (root.clientHeight - 16)) {
+              panel.style.maxHeight = `${Math.max(80, root.clientHeight - 16)}px`;
+              panel.style.overflowY = 'auto';
+            } else {
+              panel.style.maxHeight = '';
+              panel.style.overflowY = '';
+            }
           }
-        }
       } catch (err) {
       }
     });
@@ -2304,7 +2342,7 @@ export default function SharedList({
           if (!a) continue;
           if (a.rank !== i + 1) arr[i] = { ...a, rank: i + 1 };
         }
-        return arr;
+        try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
       });
     } else {
       batchUpdateReordered(arr => {
@@ -2480,7 +2518,7 @@ export default function SharedList({
                 <TagFilterPills
                   allTags={allTags}
                   filterTags={filterTags}
-                  setFilterTags={setFilterTags}
+                  setFilterTags={handleSetFilterTags}
                   isMobile={isMobile}
                   show={showMobileFilters}
                   setShow={setShowMobileFilters}
@@ -2570,7 +2608,7 @@ export default function SharedList({
             <TagFilterPills
               allTags={allTags}
               filterTags={filterTags}
-              setFilterTags={setFilterTags}
+              setFilterTags={handleSetFilterTags}
               isMobile={isMobile}
               show={showMobileFilters}
               setShow={setShowMobileFilters}
