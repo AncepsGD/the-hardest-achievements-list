@@ -527,6 +527,10 @@ export default function SharedList({
     } catch (e) { }
   }, [_setIncludeTags, _setExcludeTags]);
 
+  const handleSetFilterTags = useCallback((next) => {
+    try { setFilterTags(next); } catch (e) { }
+  }, [setFilterTags]);
+
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
 
