@@ -346,6 +346,7 @@ function DevModePanelInner({
   reordered,
   stagedReordered,
   originalAchievements,
+  originalSnapshotRef,
   batchUpdateReordered,
   setReordered,
   setStagedReordered,
@@ -534,7 +535,7 @@ function DevModePanelInner({
 
   const generateAndCopyChangelogLocal = useCallback(() => {
     try {
-      const original = originalAchievements || [];
+      const original = (originalSnapshotRef && originalSnapshotRef.current) ? originalSnapshotRef.current : (originalAchievements || []);
       const current = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
       if (!original || !original.length) { alert('Original JSON not available to diff against.'); return; }
       const byIdOriginal = new Map(); original.forEach(a => { if (a && a.id) byIdOriginal.set(a.id, a); });
@@ -573,11 +574,12 @@ function DevModePanelInner({
   }, [originalAchievements, stagedReordered, reordered, achievements, storageKeySuffix]);
 
   const resetChangesLocal = useCallback(() => {
-    if (!originalAchievements || !originalAchievements.length) { alert('No original JSON loaded to reset to.'); return; }
+    const original = (originalSnapshotRef && originalSnapshotRef.current) ? originalSnapshotRef.current : (originalAchievements || []);
+    if (!original || !original.length) { alert('No original JSON loaded to reset to.'); return; }
     const ok = typeof window !== 'undefined' ? window.confirm('Are you sure you want to reset all changes and restore the original JSON?') : true;
     if (!ok) return;
     try {
-      const restored = Array.isArray(originalAchievements) ? originalAchievements.slice() : [];
+      const restored = Array.isArray(original) ? original.slice() : [];
       if (typeof setReordered === 'function') setReordered(restored);
       if (typeof setStagedReordered === 'function') setStagedReordered(null);
       if (typeof setEditIdx === 'function') setEditIdx(null);
