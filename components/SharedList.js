@@ -14,385 +14,10 @@ import DevModePanel from '../components/DevModePanel';
 import { EditIcon, UpIcon, CopyIcon, DownIcon, AddIcon, DeleteIcon } from './DevIcons';
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
-
-class LRUCache {
-  constructor(opts = {}) {
-    const { max = 1000, ttl = 0, onEvict = null } = opts || {};
-    this.max = Number(max) || 1000;
-    this.ttl = Number(ttl) || 0;
-    this.onEvict = typeof onEvict === 'function' ? onEvict : null;
-    this._map = new Map();
-  }
-
-  get size() { return this._map.size; }
-
-  _isExpired(entry) {
-    if (!entry) return true;
-    if (!this.ttl) return false;
-    return (Date.now() - (entry.ts || 0)) > this.ttl;
-  }
-
-  has(key) {
-    try {
-      const e = this._map.get(key);
-      if (!e) return false;
-      if (this._isExpired(e)) {
-        this._map.delete(key);
-        if (this.onEvict) try { this.onEvict(key, e.value); } catch (err) { }
-        return false;
-      }
-      return true;
-    } catch (e) { return false; }
-  }
-
-  peek(key) {
-    const e = this._map.get(key);
-    if (!e) return undefined;
-    if (this._isExpired(e)) {
-      this._map.delete(key);
-      if (this.onEvict) try { this.onEvict(key, e.value); } catch (err) { }
-      return undefined;
-    }
-    return e.value;
-  }
-
-  get(key) {
-    const e = this._map.get(key);
-    if (!e) return undefined;
-    if (this._isExpired(e)) {
-      this._map.delete(key);
-      if (this.onEvict) try { this.onEvict(key, e.value); } catch (err) { }
-      return undefined;
-    }
-    this._map.delete(key);
-    this._map.set(key, { value: e.value, ts: e.ts });
-    return e.value;
-  }
-
-  set(key, value) {
-    try {
-      if (this._map.has(key)) this._map.delete(key);
-      this._map.set(key, { value, ts: Date.now() });
-      while (this._map.size > this.max) {
-        const oldestKey = this._map.keys().next().value;
-        const oldest = this._map.get(oldestKey);
-        this._map.delete(oldestKey);
-        if (this.onEvict) try { this.onEvict(oldestKey, oldest && oldest.value); } catch (err) { }
-      }
-    } catch (e) { }
-  }
-
-  delete(key) {
-    try { return this._map.delete(key); } catch (e) { return false; }
-  }
-
-  clear() {
-    try { this._map.clear(); } catch (e) { }
-  }
-}
-function formatDate(date, dateFormat) {
-  if (!date) return 'N/A';
-  function parseAsLocal(input) {
-    if (input instanceof Date) return input;
-    if (typeof input === 'number') return new Date(input);
-    if (typeof input !== 'string') return new Date(input);
-
-    const m = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (m) {
-      const y = Number(m[1]);
-      const mo = Number(m[2]);
-      const d = Number(m[3]);
-      return new Date(y, mo - 1, d);
-    }
-
-    return new Date(input);
-  }
-
-  const d = parseAsLocal(date);
-  if (isNaN(d)) return 'N/A';
-  const yy = String(d.getFullYear()).slice(-2);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
-  if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
-  if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
-  try {
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  } catch (e) {
-    return `${yyyy}-${mm}-${dd}`;
-  }
-}
-
-const AVAILABLE_TAGS = [
-  "Level", "Challenge", "Platformer", "Verified", "Deathless", "Coin Route", "Low Hertz", "Mobile", "Speedhack",
-  "Noclip", "Miscellaneous", "Progress", "Consistency", "Speedrun",
-  "2P", "CBF", "Rated", "Formerly Rated", "Outdated Version", "Tentative"
-];
-
-function shouldShowTier(tier, mode, usePlatformers, showTiers) {
-  return !!tier && !usePlatformers && showTiers === true;
-}
-
-const ENHANCE_CACHE_MAX = 2000;
-const ENHANCE_CACHE_TTL_MS = 10 * 60 * 1000;
-const _enhanceCache = new LRUCache({
-  max: ENHANCE_CACHE_MAX, ttl: ENHANCE_CACHE_TTL_MS, onEvict: (k) => {
-    try { _enhanceCacheWrites.delete(k); _enhanceCacheHitCounts.delete(k); } catch (e) { }
-  }
-});
-let _enhanceCacheHits = 0;
-let _enhanceCacheMisses = 0;
-const _enhanceCacheWrites = new Map();
-const _enhanceCacheHitCounts = new Map();
-
-function getEnhanceCacheStats() {
-  try { return { size: _enhanceCache.size, hits: _enhanceCacheHits, misses: _enhanceCacheMisses }; } catch (e) { return { size: 0, hits: 0, misses: 0 }; }
-}
-
-function getEnhanceCachePerIdStats() {
-  try {
-    const writes = Array.from(_enhanceCacheWrites.entries()).map(([id, count]) => ({ id, writes: count }));
-    const hits = Array.from(_enhanceCacheHitCounts.entries()).map(([id, count]) => ({ id, hits: count }));
-    return { writes, hits };
-  } catch (e) { return { writes: [], hits: [] }; }
-}
-
-function validateEnhanceCache(opts = {}) {
-  try {
-    const { minHitRate = 0.5, maxWritesPerId = 1 } = opts || {};
-    const s = getEnhanceCacheStats();
-    const total = (s.hits || 0) + (s.misses || 0);
-    const hitRate = total ? (s.hits / total) : 0;
-    const unstable = [];
-    _enhanceCacheWrites.forEach((count, id) => { if (count > maxWritesPerId) unstable.push({ id, writes: count }); });
-    return { hitRate, hits: s.hits, misses: s.misses, unstable, healthy: hitRate >= minHitRate && unstable.length === 0 };
-  } catch (e) { return { hitRate: 0, hits: 0, misses: 0, unstable: [], healthy: false }; }
-}
-
-function resetEnhanceCache() {
-  try { _enhanceCache.clear(); _enhanceCacheHits = 0; _enhanceCacheMisses = 0; _enhanceCacheWrites.clear(); _enhanceCacheHitCounts.clear(); } catch (e) { }
-}
-
-const PASTE_INDEX_CACHE_MAX = 64;
-const PASTE_INDEX_CACHE_TTL_MS = 5 * 60 * 1000;
-const _pasteIndexCache = new LRUCache({ max: PASTE_INDEX_CACHE_MAX, ttl: PASTE_INDEX_CACHE_TTL_MS });
-
-function _makePasteSignature(items) {
-  try {
-    if (!Array.isArray(items)) return '';
-    const parts = new Array(items.length);
-    for (let i = 0; i < items.length; i++) {
-      const a = items[i] || {};
-      if (a.id !== undefined && a.id !== null) parts[i] = `id:${String(a.id)}`;
-      else if (a.levelID !== undefined && a.levelID !== null) parts[i] = `lvl:${String(a.levelID)}`;
-      else if (a.name) parts[i] = `n:${String(a.name).slice(0, 60)}`;
-      else parts[i] = `idx:${i}`;
-    }
-    return parts.join('|');
-  } catch (e) {
-    return '';
-  }
-}
-
-export { getEnhanceCacheStats, resetEnhanceCache, getEnhanceCachePerIdStats, validateEnhanceCache };
-
-function _makeEnhanceSignature(a) {
-  try {
-    const tags = Array.isArray(a.tags) ? a.tags.slice().sort().join('|') : '';
-    const thumb = sanitizeImageUrl(a && a.thumbnail) || '';
-    const lengthNum = Number(a.length) || 0;
-    const version = a && a.version ? String(a.version) : '';
-    const name = a && a.name ? String(a.name) : '';
-    return `${tags}::${thumb}::${lengthNum}::${version}::${name}`;
-  } catch (e) {
-    return '';
-  }
-}
-
-function normalizeForSearch(input) {
-  if (!input || typeof input !== 'string') return '';
-  let s = input.trim().toLowerCase();
-  try {
-    s = s.normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
-  } catch (e) { }
-  s = s.replace(/[^a-z0-9]+/g, ' ');
-  const alt = {
-    'colour': 'color',
-    'colours': 'colors',
-    'favourite': 'favorite',
-    'centre': 'center',
-    'behaviour': 'behavior',
-    'organisation': 'organization',
-    'organisation': 'organization',
-    'gaol': 'jail'
-  };
-  Object.keys(alt).forEach(k => {
-    s = s.replace(new RegExp('\\b' + k + '\\b', 'g'), alt[k]);
-  });
-  s = s.replace(/\s+/g, ' ').trim();
-  return s;
-}
-
-function _tokensFromNormalized(normalized) {
-  return String(normalized || '').split(' ').filter(Boolean);
-}
-
-function enhanceAchievement(a) {
-  if (!a || typeof a !== 'object') return a;
-  const id = a && a.id ? String(a.id) : null;
-  const sig = _makeEnhanceSignature(a);
-  if (id) {
-    const cached = _enhanceCache.get(id);
-    if (cached && cached.signature === sig) {
-      _enhanceCacheHits++;
-      try { _enhanceCacheHitCounts.set(id, (_enhanceCacheHitCounts.get(id) || 0) + 1); } catch (e) { }
-      try {
-        const merged = Object.assign({}, cached.value, a);
-        try { Object.defineProperty(merged, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) { }
-        return merged;
-      } catch (e) {
-        const out = Object.assign({}, cached.value);
-        try { Object.defineProperty(out, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (ee) { }
-        return out;
-      }
-    }
-  }
-  const base = { ...a };
-  delete base._lengthStr; delete base._thumbnail; delete base._searchable; delete base._searchableNormalized; delete base._tagString;
-  delete base.hasThumb; delete base.autoThumb;
-
-  const tags = Array.isArray(base.tags) ? [...base.tags] : [];
-  const sortedTags = tags.slice().sort((x, y) => (TAG_PRIORITY_ORDER.indexOf(String(x).toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(String(y).toUpperCase())));
-  const isPlatformer = tags.some(t => String(t).toLowerCase() === 'platformer');
-  const lengthNum = Number(base.length) || 0;
-  const lengthStr = (base.length || base.length === 0) ? `${Math.floor(lengthNum / 60)}:${String(lengthNum % 60).padStart(2, '0')}` : null;
-
-  const thumb = sanitizeImageUrl(base && base.thumbnail) || (base && (base.levelID || base.levelID === 0) ? `https://levelthumbs.prevter.me/thumbnail/${base.levelID}` : null);
-  const hasThumb = !!thumb;
-  const autoThumb = !!(!base.thumbnail && (base.levelID || base.levelID === 0));
-
-  const searchableParts = [];
-  if (base && base.name) searchableParts.push(String(base.name));
-  if (base && base.player) searchableParts.push(String(base.player));
-  if (base && base.id) searchableParts.push(String(base.id));
-  if (base && (base.levelID || base.levelID === 0)) searchableParts.push(String(base.levelID));
-  const searchable = searchableParts.join(' ');
-  const searchableNormalized = normalizeForSearch(searchable);
-
-  const tagString = (Array.isArray(sortedTags) && sortedTags.length) ? sortedTags.join(' ') : ((Array.isArray(tags) && tags.length) ? tags.join(' ') : '');
-
-  const enhanced = {
-    ...base,
-    _sortedTags: sortedTags,
-    _isPlatformer: isPlatformer,
-    _lengthStr: lengthStr,
-    _thumbnail: thumb,
-    _searchable: (searchable || '').toLowerCase(),
-    _searchableNormalized: searchableNormalized,
-    _tagString: tagString,
-    hasThumb,
-    autoThumb,
-  };
-  try { Object.defineProperty(enhanced, '_enhanceSig', { value: sig, enumerable: false, configurable: true }); } catch (e) { }
-  if (id) {
-    try {
-      _enhanceCache.set(id, { signature: sig, value: enhanced });
-      _enhanceCacheMisses++;
-      _enhanceCacheWrites.set(id, (_enhanceCacheWrites.get(id) || 0) + 1);
-    } catch (e) { }
-  } else {
-    _enhanceCacheMisses++;
-    if (process && process.env && process.env.NODE_ENV === 'development') {
-      console.warn('enhanceAchievement: achievement has no `id` — caching disabled for this item', a && a.name);
-    }
-  }
-  return enhanced;
-}
-
-function mulberry32(seed) {
-  let t = seed >>> 0;
-  return function () {
-    t += 0x6D2B79F5;
-    let r = Math.imul(t ^ (t >>> 15), t | 1);
-    r ^= r + Math.imul(r ^ (r >>> 7), r | 61);
-    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function mapEnhanceArray(origArr, prevEnhanced) {
-  if (!Array.isArray(origArr)) return origArr;
-  const out = new Array(origArr.length);
-  const prevById = new Map();
-  if (Array.isArray(prevEnhanced)) {
-    for (let i = 0; i < prevEnhanced.length; i++) {
-      const e = prevEnhanced[i];
-      if (e && e.id !== undefined && e.id !== null) prevById.set(String(e.id), e);
-    }
-  }
-
-  for (let i = 0; i < origArr.length; i++) {
-    const a = origArr[i];
-    if (!a) { out[i] = a; continue; }
-    const id = a && a.id ? String(a.id) : null;
-    const sig = _makeEnhanceSignature(a);
-    if (id && prevById.has(id)) {
-      const prev = prevById.get(id);
-      if (prev && prev._enhanceSig === sig) {
-        out[i] = prev;
-        continue;
-      }
-    }
-    out[i] = enhanceAchievement(a);
-  }
-  return out;
-}
-
-
-
-function sanitizeImageUrl(input) {
-  if (!input || typeof input !== 'string') return null;
-  const s = input.trim();
-  if (s.startsWith('data:')) {
-    if (/^data:image\/(png|jpeg|jpg|gif|webp);base64,/i.test(s)) return s;
-    return null;
-  }
-  try {
-    const u = new URL(s.startsWith('http') ? s : `https://${s}`);
-    if (u.protocol !== 'https:') return null;
-    return u.href;
-  } catch (e) {
-    return null;
-  }
-}
-
-function getThumbnailUrl(achievement, isMobile) {
-  try {
-    const idPart = (achievement && (achievement.id !== undefined && achievement.id !== null)) ? `id:${String(achievement.id)}`
-      : (achievement && (achievement.levelID !== undefined && achievement.levelID !== null)) ? `level:${String(achievement.levelID)}`
-        : (achievement && achievement.thumbnail) ? `thumb:${String(achievement.thumbnail)}`
-          : 'default';
-    const key = `${idPart}::${isMobile ? 'm' : 'd'}`;
-    if (getThumbnailUrl._cache && getThumbnailUrl._cache.has(key)) return getThumbnailUrl._cache.get(key);
-
-    let url = '/assets/default-thumbnail.png';
-    if (achievement && achievement.thumbnail) {
-      url = achievement.thumbnail;
-    } else if (achievement && achievement.levelID) {
-      const baseUrl = `https://levelthumbs.prevter.me/thumbnail/${achievement.levelID}`;
-      url = isMobile ? `${baseUrl}/small` : baseUrl;
-    }
-
-    try {
-      if (!getThumbnailUrl._cache) getThumbnailUrl._cache = new Map();
-      getThumbnailUrl._cache.set(key, url);
-    } catch (e) { }
-
-    return url;
-  } catch (e) {
-    return '/assets/default-thumbnail.png';
-  }
-}
+import useSortedList, { mulberry32 } from './useSortedList';
+import { enhanceAchievement, mapEnhanceArray, sanitizeImageUrl, getThumbnailUrl, normalizeForSearch, getEnhanceCacheStats, resetEnhanceCache, getEnhanceCachePerIdStats, validateEnhanceCache, _makePasteSignature, _tokensFromNormalized } from './enhanceAchievement';
+import useTagFilters from './useTagFilters';
+import useSearch from './useSearch';
 
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show }) {
   const tagStates = {};
@@ -900,27 +525,29 @@ export default function SharedList({
       }
     } catch (e) { }
   }, [search]);
-  const [filterTags, setFilterTags] = useState({ include: [], exclude: [] });
+  const tagFilterApi = useTagFilters({ include: [], exclude: [] });
+  const { include: _includeTags, exclude: _excludeTags, setInclude: _setIncludeTags, setExclude: _setExcludeTags, matchesItem: _matchesTagItem, getActiveFilters } = tagFilterApi;
+
+  const filterTags = useMemo(() => ({ include: _includeTags, exclude: _excludeTags }), [_includeTags, _excludeTags]);
+  const setFilterTags = useCallback((next) => {
+    try {
+      _setIncludeTags(next && Array.isArray(next.include) ? next.include : []);
+      _setExcludeTags(next && Array.isArray(next.exclude) ? next.exclude : []);
+    } catch (e) { }
+  }, [_setIncludeTags, _setExcludeTags]);
+
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
+
   const [debouncedFilterTags, setDebouncedFilterTags] = useState(() => filterTags);
   const debouncedFilterTagsRef = useRef(debouncedFilterTags);
   useEffect(() => { debouncedFilterTagsRef.current = debouncedFilterTags; }, [debouncedFilterTags]);
-  const filterTagsDebounceRef = useRef(null);
-  const handleSetFilterTags = useCallback((next) => {
-    try {
-      setFilterTags(next);
-      if (filterTagsDebounceRef.current) clearTimeout(filterTagsDebounceRef.current);
-      filterTagsDebounceRef.current = setTimeout(() => {
-        try { setDebouncedFilterTags(next); } catch (e) { }
-      }, 140);
-    } catch (e) { }
-  }, []);
   useEffect(() => {
-    return () => {
-      try { if (filterTagsDebounceRef.current) clearTimeout(filterTagsDebounceRef.current); } catch (e) { }
-    };
-  }, []);
+    const t = setTimeout(() => {
+      try { setDebouncedFilterTags(getActiveFilters()); } catch (e) { }
+    }, 140);
+    return () => clearTimeout(t);
+  }, [_includeTags, _excludeTags, getActiveFilters]);
 
   const [allTags, setAllTags] = useState([]);
   const [isMobile, setIsMobile] = useState(false);
@@ -936,70 +563,17 @@ export default function SharedList({
 
   const [originalAchievements, setOriginalAchievements] = useState(null);
   const originalSnapshotRef = useRef(null);
-  const [sortKey, setSortKey] = useState(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const v = window.localStorage.getItem(`thal_sort_key_${storageKeySuffix}`);
-        if (v) return v;
-      }
-    } catch (e) { }
-    return 'rank';
-  });
-
-  const [sortDir, setSortDir] = useState(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        const v = window.localStorage.getItem(`thal_sort_dir_${storageKeySuffix}`);
-        if (v) return v;
-      }
-    } catch (e) { }
-    return 'asc';
-  });
-
-  const compareByKey = useCallback((a, b, key) => {
-    if (!a && !b) return 0;
-    if (!a) return -1;
-    if (!b) return 1;
-    const getVal = item => {
-      if (!item) return '';
-      if (key === 'name') return (item.name || '').toString().toLowerCase();
-      if (key === 'length') return Number(item.length) || 0;
-      if (key === 'levelID') return Number(item.levelID) || 0;
-      if (key === 'rank') return Number(item.rank) || 0;
-      if (key === 'date') {
-        if (!item.date) return 0;
-        try {
-          const s = String(item.date).trim();
-          if (/^\d{4}-(?:\d{2}|\?\?)-(?:\d{2}|\?\?)$/.test(s)) {
-            const normalized = s.replace(/\?\?/g, '01');
-            const d = new Date(normalized + 'T00:00:00Z');
-            const t = d.getTime();
-            return Number.isFinite(t) ? t : Infinity;
-          }
-          const parsed = new Date(s);
-          if (Number.isFinite(parsed.getTime())) {
-            const utcMidnight = Date.UTC(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
-            return utcMidnight;
-          }
-          const m = s.match(/\bt=(\d+)\b/);
-          if (m) {
-            const secs = Number(m[1]) || 0;
-            return secs * 1000;
-          }
-          return Infinity;
-        } catch (e) {
-          return Infinity;
-        }
-      }
-      return (item[key] || '').toString().toLowerCase();
-    };
-    const va = getVal(a);
-    const vb = getVal(b);
-    if (typeof va === 'number' && typeof vb === 'number') return va - vb;
-    if (va < vb) return -1;
-    if (va > vb) return 1;
-    return 0;
-  }, []);
+  const {
+    sortList,
+    sortKey,
+    setSortKey,
+    sortDir,
+    setSortDir,
+    randomSeed,
+    setRandomSeed,
+    compareByKey,
+    getListSignature,
+  } = useSortedList({ storageKeySuffix, derivedCacheRef });
 
   const [reordered, setReordered] = useState(null);
   const reorderedRef = sharedListManager.reorderedRef;
@@ -1065,7 +639,7 @@ export default function SharedList({
     } catch (e) { }
   }, []);
   useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
-  const [randomSeed, setRandomSeed] = useState(null);
+  
   const prevSortKeyRef = useRef(null);
 
   useEffect(() => {
@@ -1554,6 +1128,8 @@ export default function SharedList({
 
   const queryTokens = useMemo(() => (searchNormalized || '') ? searchNormalized.split(' ').filter(Boolean) : [], [searchNormalized]);
 
+  const { results: _searchResults, isSearching: _isSearching, noMatches: _noMatches } = useSearch(achievements, debouncedSearch, { include: (debouncedFilterTags && debouncedFilterTags.include) || [], exclude: (debouncedFilterTags && debouncedFilterTags.exclude) || [] }, { debounceMs: 120 });
+
   const _normalizedFilterTags = useMemo(() => {
     const src = debouncedFilterTags || { include: [], exclude: [] };
     const inc = Array.isArray(src.include) ? src.include.slice().map(s => String(s || '').toUpperCase()) : [];
@@ -1583,6 +1159,14 @@ export default function SharedList({
     try { if (ongoingFilterControllerRef.current && typeof ongoingFilterControllerRef.current.abort === 'function') ongoingFilterControllerRef.current.abort(); } catch (e) { }
     const controller = { aborted: false, abort() { this.aborted = true; } };
     ongoingFilterControllerRef.current = controller;
+
+    try {
+      if (debouncedSearch && String(debouncedSearch).trim()) {
+        try { setFiltered(_searchResults || []); } catch (e) { }
+        return () => { try { controller.abort(); } catch (e) { } };
+      }
+
+    } catch (e) { }
 
     try {
       const itemsSigList = Array.isArray(achievements) ? achievements : [];
@@ -1813,45 +1397,9 @@ export default function SharedList({
 
   const devAchievements = useMemo(() => {
     try {
-      if (!baseDev) return baseDev;
-      const sig = `${getListSignature(baseDev)}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
-      const cache = derivedCacheRef.current && derivedCacheRef.current.dev;
-      if (cache && cache.has(sig)) return cache.get(sig);
-
-      let result = baseDev;
-      if (sortKey) {
-        if (sortKey === 'levelID') {
-          const onlyWithLevel = baseDev.filter(a => { const num = Number(a && a.levelID); return !isNaN(num) && num > 0; });
-          const copy = [...onlyWithLevel];
-          copy.sort((x, y) => compareByKey(x, y, 'levelID'));
-          if (sortDir === 'desc') copy.reverse();
-          result = copy;
-        } else if (sortKey === 'random') {
-          const copy = [...baseDev];
-          const keys = copy.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
-          const seed = randomSeed != null ? randomSeed : 1;
-          const rng = mulberry32(seed);
-          for (let i = keys.length - 1; i > 0; i--) {
-            const j = Math.floor(rng() * (i + 1));
-            const t = keys[i]; keys[i] = keys[j]; keys[j] = t;
-          }
-          const map = {};
-          keys.forEach((k, i) => { map[k] = i; });
-          const getKey = item => (item && item.id) ? String(item.id) : `__idx_${baseDev.indexOf(item)}`;
-          copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-          if (sortDir === 'desc') copy.reverse();
-          result = copy;
-        } else {
-          const copy = [...baseDev];
-          copy.sort((x, y) => compareByKey(x, y, sortKey));
-          if (sortDir === 'desc') copy.reverse();
-          result = copy;
-        }
-      }
-      try { if (cache) cache.set(sig, result); } catch (e) { }
-      return result;
+      return (baseDev ? sortList(baseDev) : baseDev);
     } catch (e) { return baseDev; }
-  }, [baseDev, sortKey, sortDir, compareByKey, randomSeed]);
+  }, [baseDev, sortList]);
 
   const visibleList = devMode ? devAchievements : filtered;
 
