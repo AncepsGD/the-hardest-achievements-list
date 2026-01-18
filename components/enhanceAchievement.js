@@ -302,7 +302,7 @@ function getThumbnailUrl(achievement, isMobile) {
     const key = `${idPart}::${isMobile ? 'm' : 'd'}`;
     if (getThumbnailUrl._cache && getThumbnailUrl._cache.has(key)) return getThumbnailUrl._cache.get(key);
 
-    let url = '/assets/default-thumbnail.png';
+    let url = null;
     if (achievement && achievement.thumbnail) {
       url = achievement.thumbnail;
     } else if (achievement && achievement.levelID) {
@@ -317,7 +317,7 @@ function getThumbnailUrl(achievement, isMobile) {
 
     return url;
   } catch (e) {
-    return '/assets/default-thumbnail.png';
+    return null;
   }
 }
 
