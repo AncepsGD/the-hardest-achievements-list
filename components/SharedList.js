@@ -574,6 +574,7 @@ export default function SharedList({
   const [showSidebar, setShowSidebar] = useState(false);
   const mobileBtnRef = useRef();
   const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
+  const debouncedIsPending = useDebouncedValue(isPending, { minDelay: 120, maxDelay: 400, useIdle: false });
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
   useEffect(() => { devModeRef.current = devMode; }, [devMode]);
@@ -2282,10 +2283,6 @@ export default function SharedList({
             >
               {ListRow}
             </ListWindow>
-
-            {isPending && (
-              <div className="no-achievements" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>Loading...</div>
-            )}
 
             {!isPending && (!visibleList || visibleList.length === 0) && (
               <div className="no-achievements" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>No achievements found.</div>
