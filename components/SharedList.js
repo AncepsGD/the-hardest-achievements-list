@@ -466,7 +466,7 @@ function getThumbnailUrl(achievement, isMobile) {
   }
 }
 
-function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
+function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show }) {
   const tagStates = {};
   allTags.forEach(tag => {
     if ((filterTags && filterTags.include || []).includes(tag)) tagStates[tag] = 'include';
@@ -548,7 +548,7 @@ function calculateDaysLasted(currentDate, previousDate) {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onEdit, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
@@ -647,7 +647,7 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onEditHandler, onEditIdx, onHoverEnter, onHoverLeave }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -839,7 +839,7 @@ export default function SharedList({
     }
   });
   const [visibleCount, setVisibleCount] = useState(100);
-  const [searchJumpPending, setSearchJumpPending] = useState(false);
+  const searchJumpPendingRef = useRef(false);
   const listRef = useRef(null);
   function restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive) {
     try {
@@ -944,7 +944,7 @@ export default function SharedList({
 
     setManualSearch(rawQuery);
     setPendingSearchJump(rawQuery);
-    setSearchJumpPending(true);
+    try { searchJumpPendingRef.current = true; } catch (e) {}
     setVisibleCount(0);
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
@@ -1139,36 +1139,40 @@ export default function SharedList({
     } catch (e) { }
 
     startTransition(() => {
+      const applyMutatorToArrayMinimal = (arr) => {
+        const copy = Array.isArray(arr) ? arr.slice() : [];
+        let result;
+        try { result = mutator(copy) || copy; } catch (e) { return arr; }
+        if (!Array.isArray(result)) return arr;
+
+        let needChange = false;
+        if (result.length !== (arr ? arr.length : 0)) needChange = true;
+
+        const out = new Array(result.length);
+        for (let i = 0; i < result.length; i++) {
+          const a = result[i];
+          const expectedRank = i + 1;
+          if (!needChange && arr && arr[i] === a && a && a.rank === expectedRank) {
+            out[i] = a;
+            continue;
+          }
+          if (a && a.rank !== expectedRank) {
+            out[i] = { ...a, rank: expectedRank };
+            needChange = true;
+          } else {
+            out[i] = a;
+            if (arr && arr[i] !== a) needChange = true;
+          }
+        }
+
+        if (!needChange) return arr;
+        return out;
+      };
+
       if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        const applyMutatorToArray = (arr) => {
-          const copy = Array.isArray(arr) ? arr.slice() : [];
-          let result;
-          try { result = mutator(copy) || copy; } catch (e) { return arr; }
-          if (!Array.isArray(result)) return arr;
-          for (let i = 0; i < result.length; i++) {
-            const a = result[i];
-            const expectedRank = i + 1;
-            if (a && a.rank !== expectedRank) result[i] = { ...a, rank: expectedRank };
-          }
-          return result;
-        };
-
-        setStagedReordered(prev => applyMutatorToArray(prev));
+        setStagedReordered(prev => applyMutatorToArrayMinimal(prev));
       } else {
-        const applyMutatorToArray = (arr) => {
-          const copy = Array.isArray(arr) ? arr.slice() : [];
-          let result;
-          try { result = mutator(copy) || copy; } catch (e) { return arr; }
-          if (!Array.isArray(result)) return arr;
-          for (let i = 0; i < result.length; i++) {
-            const a = result[i];
-            const expectedRank = i + 1;
-            if (a && a.rank !== expectedRank) result[i] = { ...a, rank: expectedRank };
-          }
-          return result;
-        };
-
-        setReordered(prev => applyMutatorToArray(prev));
+        setReordered(prev => applyMutatorToArrayMinimal(prev));
       }
       try {
         requestAnimationFrame(() => requestAnimationFrame(() => {
@@ -1333,20 +1337,38 @@ export default function SharedList({
     });
   }
 
-  function handleCheckDuplicateThumbnails() {
-    const items = devMode && reordered ? reordered : achievements;
-    const map = new Map();
-    items.forEach((a, i) => {
-      const thumb = (a && a.thumbnail) ? a.thumbnail : (a && a.levelID) ? `https://levelthumbs.prevter.me/thumbnail/${a.levelID}` : '';
-      const key = String(thumb || '').trim();
-      if (!key) return;
-      map.set(key, (map.get(key) || 0) + 1);
-    });
-    const dupKeys = new Set();
-    map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
-    setDuplicateThumbKeys(dupKeys);
+  const scrollToIdxRef = useRef(null);
+
+  function setScrollToIdx(idx) {
+    try {
+      scrollToIdxRef.current = idx;
+      if (idx === null) return;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        try {
+          const lr = listRef && listRef.current;
+          const isDev = !!devModeRef.current;
+          if (isDev) {
+            const idxClamped = Math.max(0, Math.min(idx, (visibleListRef.current || []).length - 1));
+            if (lr && typeof lr.scrollToItem === 'function') {
+              try { lr.scrollToItem(idxClamped, 'center'); } catch (e) { }
+            } else if (achievementRefs.current && achievementRefs.current[idxClamped]) {
+              try { achievementRefs.current[idxClamped].scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { }
+            }
+            try { if (searchJumpPendingRef && searchJumpPendingRef.current) searchJumpPendingRef.current = false; } catch (e) { }
+          } else {
+            const list = filtered || (achievementsRef.current || []).slice();
+            const idxClamped = Math.max(0, Math.min(idx, (list || []).length - 1));
+            if (lr && typeof lr.scrollToItem === 'function') {
+              try { lr.scrollToItem(idxClamped, 'center'); } catch (e) { }
+            } else if (achievementRefs.current && achievementRefs.current[idxClamped]) {
+              try { achievementRefs.current[idxClamped].scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { }
+            }
+            try { if (searchJumpPendingRef && searchJumpPendingRef.current) searchJumpPendingRef.current = false; } catch (e) { }
+          }
+        } catch (e) { }
+      }));
+    } catch (e) { }
   }
-  const [scrollToIdx, setScrollToIdx] = useState(null);
   const [changelogPreview, setChangelogPreview] = useState(null);
   const [showChangelogPreview, setShowChangelogPreview] = useState(false);
 
@@ -1387,291 +1409,12 @@ export default function SharedList({
     }
   }
 
-  function handleEditFormChange(e) {
-    const { name, value } = e.target;
-    let newVal;
-    if (name === 'id') {
 
-      newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
-    } else {
 
-      if (name === 'video' || name === 'showcaseVideo') {
-        const norm = normalizeYoutubeUrl(value);
-        newVal = devMode ? (norm || String(value || '').trim()) : norm;
-      } else {
-        newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
-      }
-    }
-    setEditForm(f => ({
-      ...f,
-      [name]: newVal
-    }));
-  }
 
-  function handleEditFormTagClick(tag) {
-    setEditFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
-  }
 
-  function handleEditFormCustomTagsChange(e) {
-    setEditFormCustomTags(e.target.value);
-  }
 
-  function handleEditFormSave() {
-    const entry = {};
-    Object.entries(editForm).forEach(([k, v]) => {
-      if (k === 'version') {
-        const num = Number(v);
-        if (!isNaN(num)) {
-          entry[k] = num;
-        }
-        return;
-      }
-      if (k === 'levelID') {
-        const num = Number(v);
-        if (!isNaN(num) && num > 0) {
-          entry[k] = num;
-        }
-        return;
-      }
-      if (typeof v === 'string') {
-        if (v.trim() !== '') entry[k] = v.trim();
-      } else if (v !== undefined && v !== null && v !== '') {
-        entry[k] = v;
-      }
-    });
-    let tags = [...editFormTags];
-    if (typeof editFormCustomTags === 'string' && editFormCustomTags.trim()) {
-      editFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
-        if (!tags.includes(t)) tags.push(t);
-      });
-    }
-    if (tags.length > 0) entry.tags = tags;
 
-    if (entry.video) {
-      const nv = normalizeYoutubeUrl(entry.video);
-      if (nv) entry.video = nv;
-      else if (!devMode) delete entry.video;
-    }
-    if (entry.showcaseVideo) {
-      const nv2 = normalizeYoutubeUrl(entry.showcaseVideo);
-      if (nv2) entry.showcaseVideo = nv2;
-      else if (!devMode) delete entry.showcaseVideo;
-    }
-
-    let anchorId = null;
-    let prevElemTop = null;
-    let prevScrollTop = 0;
-    let prevScrollLeft = 0;
-    let prevActive = null;
-    try {
-      prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
-      const anchorIdx = (typeof getMostVisibleIdx === 'function') ? getMostVisibleIdx() : null;
-      const list = visibleListRef.current || [];
-      const anchorItem = (anchorIdx != null && anchorIdx >= 0 && anchorIdx < list.length) ? list[anchorIdx] : null;
-      if (anchorItem && anchorItem.id) anchorId = String(anchorItem.id);
-      const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
-      prevScrollTop = listOuter ? listOuter.scrollTop : ((typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body).scrollTop : 0);
-      prevScrollLeft = listOuter ? listOuter.scrollLeft : ((typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body).scrollLeft : 0);
-      if (anchorIdx != null && achievementRefs && achievementRefs.current && achievementRefs.current[anchorIdx]) {
-        const node = achievementRefs.current[anchorIdx];
-        if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
-      }
-    } catch (e) { }
-
-    batchUpdateReordered(arr => {
-      if (!arr) return arr;
-      const original = arr[editIdx];
-
-      const newRank = entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' ? Number(entry.rank) : null;
-      const oldRank = original ? Number(original.rank) : null;
-      const rankIsChanging = newRank !== null && !isNaN(newRank) && newRank !== oldRank;
-
-      if (rankIsChanging) {
-        const [removed] = arr.splice(editIdx, 1);
-        const updated = enhanceAchievement({ ...removed, ...entry });
-        const idx = Math.max(0, Math.min(arr.length, newRank - 1));
-        arr.splice(idx, 0, updated);
-      } else {
-        arr[editIdx] = enhanceAchievement({ ...original, ...entry });
-      }
-
-      return arr;
-    });
-
-    try {
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        try {
-          let ok = false;
-          try { if (anchorId && prevElemTop != null) ok = adjustScrollToKeepElementById(anchorId, prevElemTop, prevActive); } catch (e) { ok = false; }
-          if (!ok) {
-            try {
-              const lr = listRef && listRef.current;
-              if (lr && typeof lr.scrollTo === 'function') {
-                try { lr.scrollTo(prevScrollTop); ok = true; } catch (e) {}
-              }
-              if (!ok) {
-                const outer = lr && (lr._outerRef || lr.outerRef || lr._listRef || lr._scrollingContainer) || null;
-                if (outer && typeof outer.scrollTop === 'number') {
-                  try { outer.scrollTop = prevScrollTop; outer.scrollLeft = prevScrollLeft; ok = true; } catch (e) {}
-                }
-              }
-              if (!ok && typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
-                try { window.scrollTo(prevScrollLeft || 0, prevScrollTop || 0); ok = true; } catch (e) {}
-              }
-            } catch (e) { }
-          }
-          if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
-        } catch (e) { }
-      }));
-    } catch (e) { }
-    setEditIdx(null);
-    setEditForm(null);
-    setEditFormTags([]);
-    setEditFormCustomTags('');
-  }
-
-  function handleEditFormCancel() {
-    setEditIdx(null);
-    setEditForm(null);
-    setEditFormTags([]);
-    setEditFormCustomTags('');
-  }
-
-  function generateAndCopyChangelog() {
-    const original = originalAchievements || [];
-    const current = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
-
-    if (dataFileName === 'pending.json') {
-      if (!current || !current.length) {
-        alert('No pending achievements to copy.');
-        return;
-      }
-      const sorted = [...current].sort((a, b) => {
-        try {
-          const da = parseAsLocal(a && a.date);
-          const db = parseAsLocal(b && b.date);
-          const ta = da && !isNaN(da) ? da.getTime() : 0;
-          const tb = db && !isNaN(db) ? db.getTime() : 0;
-          return tb - ta;
-        } catch (e) {
-          return 0;
-        }
-      });
-
-      let formatted = ':clock3: **Achievements in pending...**\n';
-      sorted.forEach(a => {
-        const id = a && a.id ? encodeURIComponent(a.id) : '';
-        const name = a && a.name ? a.name : 'Unknown';
-        formatted += `> [${name}](https://thal.vercel.app/achievement/${id})\n`;
-      });
-
-      if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-        navigator.clipboard.writeText(formatted).then(() => alert('Pending list copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
-      } else {
-        try {
-          const textarea = document.createElement('textarea');
-          textarea.value = formatted;
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-          alert('Pending list copied to clipboard!');
-        } catch (e) {
-          alert('Clipboard API not available');
-        }
-      }
-      return;
-    }
-
-    if (!original || !original.length) {
-      alert('Original JSON not available to diff against.');
-      return;
-    }
-
-    const { formatted, previewEntries, finalChanges, idIndexMap } = generateChangelog(original, current, { mode, contextMap: neighborContextRef.current });
-
-    if (previewEntries) {
-      setChangelogPreview(previewEntries);
-      setShowChangelogPreview(true);
-      return;
-    }
-
-    let out = formatted;
-
-    if (!out || out.trim() === '') {
-      const moveOnly = finalChanges.filter(c => c && (c.type === 'movedUp' || c.type === 'movedDown'));
-      if (moveOnly && moveOnly.length) {
-        const byPair = new Map();
-        moveOnly.forEach(m => {
-          const key = `${Math.min(m.oldRank, m.newRank)}:${Math.max(m.oldRank, m.newRank)}`;
-          if (!byPair.has(key)) byPair.set(key, []);
-          byPair.get(key).push(m);
-        });
-        const chosen = [];
-        for (const arr of byPair.values()) {
-          if (!arr || !arr.length) continue;
-          if (arr.length === 1) chosen.push(arr[0]);
-          else {
-            const up = arr.find(x => x.type === 'movedUp');
-            if (up) chosen.push(up);
-            else chosen.push(arr[0]);
-          }
-        }
-        const alt = chosen.map(c => formatChangelogEntry(c, current, mode, idIndexMap, neighborContextRef.current)).filter(s => s && s.trim()).join('\n\n');
-        if (alt && alt.trim()) out = alt;
-      }
-    }
-
-    if (!out) {
-      alert('No changes detected');
-      return;
-    }
-
-    if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      navigator.clipboard.writeText(out).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
-    } else {
-      try {
-        const textarea = document.createElement('textarea');
-        textarea.value = out;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        alert('Changelog copied to clipboard!');
-      } catch (e) {
-        alert('Clipboard API not available');
-      }
-    }
-  }
-
-  function resetChanges() {
-    if (!originalAchievements || !originalAchievements.length) {
-      alert('No original JSON loaded to reset to.');
-      return;
-    }
-    const ok = typeof window !== 'undefined' ? window.confirm('Are you sure you want to reset all changes and restore the original JSON?') : true;
-    if (!ok) return;
-    try {
-      const restored = Array.isArray(originalAchievements) ? originalAchievements.slice() : [];
-      setReordered(restored);
-      try { setStagedReordered(null); } catch (e) { }
-      try { if (stagedRef) stagedRef.current = null; } catch (e) { }
-      try { if (derivedCacheRef && derivedCacheRef.current && derivedCacheRef.current.dev) derivedCacheRef.current.dev.clear(); } catch (e) { }
-      try { if (derivedCacheRef && derivedCacheRef.current && derivedCacheRef.current.filtered) derivedCacheRef.current.filtered.clear(); } catch (e) { }
-      setDevMode(false);
-      setEditIdx(null);
-      setEditForm(null);
-      setEditFormTags([]);
-      setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
-      setNewFormTags([]);
-      setNewFormCustomTags('');
-      setInsertIdx(null);
-      setScrollToIdx(0);
-    } catch (e) {
-      console.error('Failed to reset changes', e);
-      alert('Failed to reset changes');
-    }
-  }
 
   useEffect(() => {
     let file = dataUrl;
@@ -1722,7 +1465,7 @@ export default function SharedList({
         if (data && Array.isArray(data.tags)) data.tags.forEach(t => tagSet.add(t));
         valid.forEach(a => (a.tags || []).forEach(t => tagSet.add(t)));
         setAllTags(Array.from(tagSet));
-      }).catch(e => {
+      }).catch(() => {
         setAchievements([]);
         setAllTags([]);
       });
@@ -1748,7 +1491,6 @@ export default function SharedList({
     }
   }, [achievements, usePlatformers]);
 
-  const router = useRouter();
 
   const handleKeyDown = useCallback((e) => {
     if (e.shiftKey && (e.key === 'M' || e.key === 'm')) {
@@ -1995,7 +1737,7 @@ export default function SharedList({
 
   useEffect(() => {
     let pref = 100;
-    if (searchJumpPending) return;
+    if (searchJumpPendingRef.current) return;
     try {
       if (typeof window !== 'undefined') {
         const v = localStorage.getItem('itemsPerPage');
@@ -2046,7 +1788,7 @@ export default function SharedList({
     }
     if (manualController.aborted) {
       setPendingSearchJump(null);
-      setSearchJumpPending(false);
+      try { searchJumpPendingRef.current = false; } catch (e) {}
       return;
     }
     const matchingItems = [];
@@ -2057,7 +1799,7 @@ export default function SharedList({
     }
     if (!matchingItems || matchingItems.length === 0) {
       setPendingSearchJump(null);
-      setSearchJumpPending(false);
+      try { searchJumpPendingRef.current = false; } catch (e) {}
       return;
     }
 
@@ -2103,7 +1845,7 @@ export default function SharedList({
     }));
 
     setPendingSearchJump(null);
-    setSearchJumpPending(false);
+    try { searchJumpPendingRef.current = false; } catch (e) {}
   }, [debouncedManualSearch, pendingSearchJump, filtered, searchLower]);
 
 
@@ -2392,14 +2134,13 @@ export default function SharedList({
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
-      filtered, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers,
+      filtered, mode, devMode, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
       onRowHoverEnter, onRowHoverLeave, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
-    const { thumb, isDup, autoThumbAvailable, displayRank } = (data.precomputedVisible && data.precomputedVisible[index]) || {};
-    const isHighlightedLocal = false;
+    const { isDup, autoThumbAvailable } = (data.precomputedVisible && data.precomputedVisible[index]) || {};
 
     return (
       <div data-index={index} data-achievement-id={(a && a.id) ? String(a.id) : ''} ref={el => { try { achievementRefs.current[index] = el; } catch (e) { } }} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
@@ -2501,134 +2242,6 @@ export default function SharedList({
     setShowMobileFilters(v => !v);
   }
 
-  function handleNewFormChange(e) {
-    const { name, value } = e.target;
-    let newVal;
-    if (name === 'id') {
-
-      newVal = String(value || '').trim().toLowerCase().replace(/\s+/g, '-');
-    } else {
-      if (name === 'video' || name === 'showcaseVideo') {
-        const norm = normalizeYoutubeUrl(value);
-        newVal = devMode ? (norm || String(value || '').trim()) : norm;
-      } else {
-        newVal = (['levelID', 'length'].includes(name) ? Number(value) : value);
-      }
-    }
-    setNewForm(f => ({
-      ...f,
-      [name]: newVal
-    }));
-  }
-  function handleNewFormTagClick(tag) {
-    setNewFormTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag]);
-  }
-  function handleNewFormCustomTagsChange(e) {
-    setNewFormCustomTags(e.target.value);
-  }
-  function handleNewFormAdd() {
-    let tags = [...newFormTags];
-    if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
-      newFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
-        if (!tags.includes(t)) tags.push(t);
-      });
-    }
-    const entry = {};
-    Object.entries(newForm).forEach(([k, v]) => {
-      if (k === 'version') {
-        const num = Number(v);
-        if (!isNaN(num)) {
-          entry[k] = num;
-        }
-        return;
-      }
-      if (k === 'rank') {
-        const num = Number(v);
-        if (!isNaN(num)) {
-          entry[k] = num;
-        }
-        return;
-      }
-      if (k === 'levelID') {
-        const num = Number(v);
-        if (!isNaN(num) && num > 0) {
-          entry[k] = num;
-        }
-        return;
-      }
-      if (typeof v === 'string') {
-        if (v.trim() !== '') entry[k] = v.trim();
-      } else if (v !== undefined && v !== null && v !== '') {
-        entry[k] = v;
-      }
-    });
-    if (tags.length > 0) entry.tags = tags;
-    if (entry.video) {
-      const nv = normalizeYoutubeUrl(entry.video);
-      if (nv) entry.video = nv;
-      else if (!devMode) delete entry.video;
-    }
-    if (entry.showcaseVideo) {
-      const nv2 = normalizeYoutubeUrl(entry.showcaseVideo);
-      if (nv2) entry.showcaseVideo = nv2;
-      else if (!devMode) delete entry.showcaseVideo;
-    }
-    const baseBefore = (devMode && reordered) ? reordered : (reordered || achievements) || [];
-    let predictedInsertedIdx = 0;
-    if (!baseBefore || baseBefore.length === 0) {
-      predictedInsertedIdx = 0;
-    } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
-      predictedInsertedIdx = Math.max(0, Math.min(baseBefore.length, Number(entry.rank) - 1));
-    } else if (insertIdx === null || insertIdx < 0 || insertIdx > baseBefore.length - 1) {
-      predictedInsertedIdx = baseBefore.length;
-    } else {
-      predictedInsertedIdx = insertIdx + 1;
-    }
-
-    const before = (stagedRef.current && Array.isArray(stagedRef.current)) ? stagedRef.current : (reorderedRef.current && Array.isArray(reorderedRef.current)) ? reorderedRef.current : (achievementsRef.current || []);
-    let newArr;
-    let insertedIdx = 0;
-    if (!before || before.length === 0) {
-      newArr = [entry];
-      insertedIdx = 0;
-    } else if (entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' && !isNaN(Number(entry.rank))) {
-      const idx = Math.max(0, Math.min(before.length, Number(entry.rank) - 1));
-      newArr = [...before];
-      newArr.splice(idx, 0, entry);
-      insertedIdx = idx;
-    } else if (insertIdx === null || insertIdx < 0 || insertIdx > before.length - 1) {
-      newArr = [...before, entry];
-      insertedIdx = before.length;
-    } else {
-      newArr = [...before];
-      newArr.splice(insertIdx + 1, 0, entry);
-      insertedIdx = insertIdx + 1;
-    }
-
-    for (let i = 0; i < newArr.length; i++) {
-      const a = newArr[i];
-      if (!a) continue;
-      a.rank = i + 1;
-      if (!a.id) {
-        try { a.id = `new-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; } catch (e) { a.id = `new-${Math.random().toString(36).slice(2, 8)}`; }
-      }
-    }
-
-    newArr = mapEnhanceArray(newArr, before);
-    batchUpdateReordered(() => newArr);
-    setScrollToIdx(insertedIdx);
-    setShowNewForm(false);
-    setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
-    setNewFormTags([]);
-    setNewFormCustomTags('');
-    setInsertIdx(null);
-  }
-  function handleNewFormCancel() {
-    setShowNewForm(false);
-    setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
-    setNewFormTags([]);
-    setNewFormCustomTags('');
-  }
 
   function getPasteCandidates() {
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
@@ -2753,257 +2366,9 @@ export default function SharedList({
     setPasteShowResults(false);
   }
 
-  const newFormPreview = useMemo(() => {
-    let tags = [...newFormTags];
-    if (typeof newFormCustomTags === 'string' && newFormCustomTags.trim()) {
-      newFormCustomTags.split(',').map(t => (typeof t === 'string' ? t.trim() : t)).filter(Boolean).forEach(t => {
-        if (!tags.includes(t)) tags.push(t);
-      });
-    }
-    const entry = {};
-    Object.entries(newForm).forEach(([k, v]) => {
-      if (k === 'version') {
-        const num = Number(v);
-        if (!isNaN(num)) entry[k] = num;
-        return;
-      }
-      if (k === 'rank') {
-        const num = Number(v);
-        if (!isNaN(num)) entry[k] = num;
-        return;
-      }
-      if (k === 'levelID') {
-        const num = Number(v);
-        if (!isNaN(num) && num > 0) entry[k] = num;
-        return;
-      }
-      if (typeof v === 'string') {
-        if (v.trim() !== '') entry[k] = v.trim();
-      } else if (v !== undefined && v !== null && v !== '') {
-        entry[k] = v;
-      }
-    });
-    if (tags.length > 0) entry.tags = tags;
-    return entry;
-  }, [newForm, newFormTags, newFormCustomTags]);
 
-  async function handleCopyJson() {
-    const base = (stagedReordered && stagedReordered.length)
-      ? stagedReordered
-      : (reordered && reordered.length)
-        ? reordered
-        : devMode
-          ? (devAchievements && devAchievements.length ? devAchievements : achievements)
-          : achievements;
 
-    if (!base || !base.length) return;
 
-    const cleanse = v => {
-      if (v === null) return;
-      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
-      if (Array.isArray(v)) {
-        const a = [];
-        for (let i = 0; i < v.length; i++) {
-          const x = cleanse(v[i]);
-          if (x !== undefined) a.push(x);
-        }
-        return a;
-      }
-      if (v && typeof v === 'object') {
-        const o = {};
-        for (const k in v) {
-          const x = cleanse(v[k]);
-          if (x !== undefined) o[k] = x;
-        }
-        return o;
-      }
-      return v;
-    };
-
-    let baseForCopy = base;
-    try {
-      if (devMode && dataFileName === 'pending.json') {
-        baseForCopy = [...base].slice().sort((a, b) => {
-          try {
-            const da = parseAsLocal(a && a.date);
-            const db = parseAsLocal(b && b.date);
-            const ta = (da && !isNaN(da)) ? da.getTime() : 0;
-            const tb = (db && !isNaN(db)) ? db.getTime() : 0;
-            return tb - ta;
-          } catch (e) {
-            return 0;
-          }
-        });
-      }
-    } catch (e) { }
-
-    const cleaned = baseForCopy.map(cleanse);
-
-    try {
-      if (devMode && dataFileName === 'pending.json') {
-        for (let i = 0; i < cleaned.length; i++) {
-          const it = cleaned[i];
-          if (it && typeof it === 'object') {
-            it.rank = Number(i + 1);
-          }
-        }
-      }
-    } catch (e) { }
-    const json = JSON.stringify(cleaned, null, 2);
-
-    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-      try {
-        await navigator.clipboard.writeText(json);
-        alert('Copied JSON to clipboard');
-        return;
-      } catch (e) {
-      }
-    }
-
-    try {
-      const t = document.createElement('textarea');
-      t.value = json;
-      document.body.appendChild(t);
-      t.select();
-      document.execCommand('copy');
-      document.body.removeChild(t);
-      alert('Copied JSON to clipboard');
-    } catch (e) {
-      alert('Clipboard API not available');
-    }
-  }
-
-  async function handleDownloadJson() {
-    const base = reordered && reordered.length
-      ? reordered
-      : devMode
-        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
-        : achievements;
-
-    if (!base || !base.length) return;
-
-    const cleanse = v => {
-      if (v === null) return;
-      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
-      if (Array.isArray(v)) {
-        const a = [];
-        for (let i = 0; i < v.length; i++) {
-          const x = cleanse(v[i]);
-          if (x !== undefined) a.push(x);
-        }
-        return a;
-      }
-      if (v && typeof v === 'object') {
-        const o = {};
-        for (const k in v) {
-          const x = cleanse(v[k]);
-          if (x !== undefined) o[k] = x;
-        }
-        return o;
-      }
-      return v;
-    };
-
-    const cleaned = base.map(cleanse);
-
-    const fname = usePlatformers
-      ? dataFileName === 'timeline.json'
-        ? 'platformertimeline.json'
-        : dataFileName === 'achievements.json'
-          ? 'platformers.json'
-          : dataFileName
-      : dataFileName;
-
-    const lower = (dataFileName || '').toLowerCase();
-    const shouldMinify =
-      (Array.isArray(cleaned) &&
-        cleaned.length &&
-        typeof cleaned[0] === 'object' &&
-        (cleaned[0].id || cleaned[0].name) &&
-        (cleaned[0].rank || cleaned[0].levelID)) ||
-      (
-        lower === 'achievements.json' ||
-        lower === 'pending.json' ||
-        lower === 'legacy.json' ||
-        lower === 'platformers.json' ||
-        lower === 'platformertimeline.json' ||
-        lower === 'removed.json' ||
-        lower === 'timeline.json'
-      );
-
-    const json = shouldMinify
-      ? JSON.stringify(cleaned)
-      : JSON.stringify(cleaned, null, 2);
-
-    try {
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fname;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      alert(`Saved ${fname} to disk (uncompressed JSON).`);
-    } catch (e) {
-      alert('Failed to save file locally');
-    }
-  }
-
-  async function handleUploadJson() {
-    const endpoint = (typeof window !== 'undefined' && window.__THAL_SAVE_ENDPOINT__) ? window.__THAL_SAVE_ENDPOINT__ : null;
-    if (!endpoint) {
-      alert('No save endpoint configured (window.__THAL_SAVE_ENDPOINT__)');
-      return;
-    }
-
-    const base = reordered && reordered.length
-      ? reordered
-      : devMode
-        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
-        : achievements;
-
-    if (!base || !base.length) return;
-
-    const cleanse = v => {
-      if (v === null) return;
-      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
-      if (Array.isArray(v)) {
-        const a = [];
-        for (let i = 0; i < v.length; i++) {
-          const x = cleanse(v[i]);
-          if (x !== undefined) a.push(x);
-        }
-        return a;
-      }
-      if (v && typeof v === 'object') {
-        const o = {};
-        for (const k in v) {
-          const x = cleanse(v[k]);
-          if (x !== undefined) o[k] = x;
-        }
-        return o;
-      }
-      return v;
-    };
-
-    const cleaned = base.map(cleanse);
-    const json = JSON.stringify(cleaned);
-
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: json,
-      });
-      if (res.ok) alert('Uploaded JSON to server successfully');
-      else alert(`Upload failed: ${res.status} ${res.statusText}`);
-    } catch (e) {
-      console.error('Upload failed', e);
-      alert('Upload failed');
-    }
-  }
 
   function z85Encode(bytes) {
     const alphabet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#";
@@ -3051,143 +2416,7 @@ export default function SharedList({
     return new Uint8Array(out);
   }
 
-  async function handleCopyCompressedJson() {
-    const base = reordered && reordered.length
-      ? reordered
-      : devMode
-        ? (devAchievements && devAchievements.length ? devAchievements : achievements)
-        : achievements;
 
-    if (!base || !base.length) return;
-
-    const cleanse = v => {
-      if (v === null) return;
-      if (typeof v === 'string' && v.trim().toLowerCase() === 'null') return;
-      if (Array.isArray(v)) {
-        const a = [];
-        for (let i = 0; i < v.length; i++) {
-          const x = cleanse(v[i]);
-          if (x !== undefined) a.push(x);
-        }
-        return a;
-      }
-      if (v && typeof v === 'object') {
-        const o = {};
-        for (const k in v) {
-          const x = cleanse(v[k]);
-          if (x !== undefined) o[k] = x;
-        }
-        return o;
-      }
-      return v;
-    };
-
-    const cleaned = base.map(cleanse);
-    const lower = (dataFileName || '').toLowerCase();
-    const shouldMinify =
-      (Array.isArray(cleaned) &&
-        cleaned.length &&
-        typeof cleaned[0] === 'object' &&
-        (cleaned[0].id || cleaned[0].name) &&
-        (cleaned[0].rank || cleaned[0].levelID)) ||
-      (
-        lower === 'achievements.json' ||
-        lower === 'pending.json' ||
-        lower === 'legacy.json' ||
-        lower === 'platformers.json' ||
-        lower === 'platformertimeline.json' ||
-        lower === 'removed.json' ||
-        lower === 'timeline.json'
-      );
-
-    const json = shouldMinify ? JSON.stringify(cleaned) : JSON.stringify(cleaned, null, 2);
-
-    try {
-      if (typeof CompressionStream === 'undefined') throw new Error('CompressionStream not available');
-      const encoder = new TextEncoder();
-      const rs = new ReadableStream({ start(ctrl) { ctrl.enqueue(encoder.encode(json)); ctrl.close(); } });
-      const cs = rs.pipeThrough(new CompressionStream('gzip'));
-      const reader = cs.getReader();
-      const chunks = [];
-      let total = 0;
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-        total += value.length;
-      }
-      const out = new Uint8Array(total);
-      let offset = 0;
-      for (const c of chunks) { out.set(c, offset); offset += c.length; }
-
-      const encoded = z85Encode(out);
-      const payload = `Z85|gzip|${out.length}|${encoded}`;
-      try {
-        if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
-          await navigator.clipboard.writeText(payload);
-          alert('Copied compressed JSON (Z85|gzip) to clipboard');
-          return;
-        }
-      } catch (e) {
-      }
-      try {
-        const t = document.createElement('textarea');
-        t.value = payload;
-        document.body.appendChild(t);
-        t.select();
-        document.execCommand('copy');
-        document.body.removeChild(t);
-        alert('Copied compressed JSON (Z85|gzip) to clipboard');
-        return;
-      } catch (e) {
-        alert('Failed to copy compressed payload to clipboard');
-      }
-    } catch (e) {
-      alert('Compression not supported in this browser');
-    }
-  }
-
-  async function handlePasteCompressedJson() {
-    const payload = prompt('Paste compressed payload (Z85|alg|len|data)');
-    if (!payload) return;
-    const parts = payload.split('|');
-    if (!parts || parts.length < 4 || parts[0] !== 'Z85') {
-      alert('Invalid payload format');
-      return;
-    }
-    const alg = parts[1] || 'gzip';
-    const data = parts.slice(3).join('|');
-    let compressed;
-    try {
-      compressed = z85Decode(data);
-    } catch (err) {
-      alert('Invalid Z85 payload');
-      return;
-    }
-
-    try {
-      if (typeof DecompressionStream === 'undefined') throw new Error('DecompressionStream not available');
-      const ds = new DecompressionStream(alg);
-      const stream = new Response(compressed).body.pipeThrough(ds);
-      const reader = stream.getReader();
-      const chunks = [];
-      let total = 0;
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        chunks.push(value);
-        total += value.length;
-      }
-      const out = new Uint8Array(total);
-      let offset = 0;
-      for (const c of chunks) { out.set(c, offset); offset += c.length; }
-      const text = new TextDecoder().decode(out);
-      const json = JSON.parse(text);
-      onImportAchievementsJson(json);
-    } catch (err) {
-      alert('Failed to decompress/import compressed payload');
-    }
-  }
 
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
@@ -3197,67 +2426,6 @@ export default function SharedList({
     itemRefs: achievementRefs,
     setScrollToIdx,
   });
-  function handleShowNewForm() {
-    if (showNewForm) {
-      setShowNewForm(false);
-      setInsertIdx(null);
-      setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
-      setNewFormTags([]);
-      setNewFormCustomTags('');
-      return;
-    }
-    setInsertIdx(getMostVisibleIdx());
-    setShowNewForm(true);
-  }
-
-  useEffect(() => {
-    if (scrollToIdx === null) return;
-    try {
-      const idx = Math.max(0, Math.min(scrollToIdx, (visibleListRef.current || []).length - 1));
-      if (listRef && listRef.current && typeof listRef.current.scrollToItem === 'function') {
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          try {
-            listRef.current.scrollToItem(idx, 'center');
-          } catch (e) { }
-          if (searchJumpPending) setSearchJumpPending(false);
-        }));
-      } else if (achievementRefs.current && achievementRefs.current[scrollToIdx]) {
-        try {
-          achievementRefs.current[scrollToIdx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } catch (e) { }
-        if (searchJumpPending) setSearchJumpPending(false);
-      }
-    } catch (e) { }
-    setScrollToIdx(null);
-  }, [scrollToIdx, devAchievements]);
-
-
-
-  useEffect(() => {
-    if (scrollToIdx === null) return;
-    if (devMode) return;
-    try {
-      const idx = Math.max(0, Math.min(scrollToIdx, filtered.length - 1));
-      if (listRef && listRef.current && typeof listRef.current.scrollToItem === 'function') {
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          try {
-            if (typeof listRef.current.scrollToItem === 'function') {
-              listRef.current.scrollToItem(idx, 'center');
-            } else if (typeof listRef.current.scrollTo === 'function') {
-              const offset = idx * 150;
-              listRef.current.scrollTo(offset);
-            }
-            if (searchJumpPending) setSearchJumpPending(false);
-          } catch (e) { }
-        }));
-      } else if (achievementRefs.current && achievementRefs.current[idx]) {
-        achievementRefs.current[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-        if (searchJumpPending) setSearchJumpPending(false);
-      }
-    } catch (e) {
-    }
-    setScrollToIdx(null);
-  }, [scrollToIdx, filtered, devMode]);
 
   function handleRemoveAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
@@ -3279,7 +2447,11 @@ export default function SharedList({
       setStagedReordered(prev => {
         const arr = Array.isArray(prev) ? prev.slice() : [];
         arr.splice(realIdx + 1, 0, enhancedCopy);
-        arr.forEach((a, i) => { if (a) a.rank = i + 1; });
+        for (let i = realIdx + 1; i < arr.length; i++) {
+          const a = arr[i];
+          if (!a) continue;
+          if (a.rank !== i + 1) arr[i] = { ...a, rank: i + 1 };
+        }
         return arr;
       });
     } else {
@@ -3302,20 +2474,7 @@ export default function SharedList({
     } catch (e) { }
   });
 
-  function commitStaged() {
-    try {
-      if (!stagedRef.current || !Array.isArray(stagedRef.current)) return;
-      const copy = Array.isArray(stagedRef.current) ? stagedRef.current.slice() : [];
-      setReordered(copy);
-      setStagedReordered(null);
-    } catch (e) { }
-  }
 
-  function cancelStaged() {
-    try {
-      setStagedReordered(null);
-    } catch (e) { }
-  }
 
   function handleCopyItemJson() {
     try {
