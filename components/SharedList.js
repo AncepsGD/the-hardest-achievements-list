@@ -3528,40 +3528,42 @@ export default function SharedList({
             handlePasteSelect={handlePasteSelect}
             onImportAchievementsJson={onImportAchievementsJson}
           />
-          {isPending ? (
-            <div className="no-achievements">Loading...</div>
-          ) : (
-            (visibleList && visibleList.length === 0) ? (
-              <div className="no-achievements">No achievements found.</div>
-            ) : (
-              <ListWindow
-                ref={listRef}
-                height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
-                itemCount={Math.min(visibleCount, (visibleList || []).length)}
-                itemSize={150}
-                overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
-                width={'100%'}
-                style={{ overflowX: 'hidden' }}
-                itemData={listItemData}
-                onItemsRendered={({ visibleStopIndex }) => {
-                  try {
-                    const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
-                    const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
-                    if (pageSize === 'all') return;
-                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                      setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
-                    }
-                  } catch (err) {
-                    if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
-                      setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
-                    }
+          <div style={{ position: 'relative', width: '100%' }}>
+            <ListWindow
+              ref={listRef}
+              height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
+              itemCount={Math.min(visibleCount, (visibleList || []).length)}
+              itemSize={150}
+              overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
+              width={'100%'}
+              style={{ overflowX: 'hidden' }}
+              itemData={listItemData}
+              onItemsRendered={({ visibleStopIndex }) => {
+                try {
+                  const v = typeof window !== 'undefined' ? localStorage.getItem('itemsPerPage') : null;
+                  const pageSize = v === 'all' ? 'all' : (v ? Number(v) || 100 : 100);
+                  if (pageSize === 'all') return;
+                  if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                    setVisibleCount(prev => Math.min(prev + (Number(pageSize) || 100), (visibleList || []).length));
                   }
-                }}
-              >
-                {ListRow}
-              </ListWindow>
-            )
-          )}
+                } catch (err) {
+                  if (visibleStopIndex >= Math.min(visibleCount, (visibleList || []).length) - 5 && visibleCount < (visibleList || []).length) {
+                    setVisibleCount(prev => Math.min(prev + 100, (visibleList || []).length));
+                  }
+                }
+              }}
+            >
+              {ListRow}
+            </ListWindow>
+
+            {isPending && (
+              <div className="no-achievements" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>Loading...</div>
+            )}
+
+            {!isPending && (!visibleList || visibleList.length === 0) && (
+              <div className="no-achievements" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>No achievements found.</div>
+            )}
+          </div>
         </section>
       </main>
       {devMode && (
