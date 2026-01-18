@@ -868,7 +868,7 @@ export default function SharedList({
     }
 
     setManualSearch(rawQuery);
-    setPendingSearchJump(rawQuery);
+    try { pendingSearchJumpRef.current = rawQuery; } catch (e) { }
     try { searchJumpPendingRef.current = true; } catch (e) { }
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
@@ -1024,6 +1024,46 @@ export default function SharedList({
   }, [stagedReordered]);
   const ongoingFilterControllerRef = useRef(null);
   const manualSearchControllerRef = useRef(null);
+  const workerRef = useRef(null);
+  const pendingWorkerRequestsRef = useRef(new Map());
+  const workerSeqRef = useRef(0);
+
+  function postWorkerMessage(type, payload) {
+    return new Promise((resolve, reject) => {
+      try {
+        const id = (workerSeqRef.current = (workerSeqRef.current || 0) + 1);
+        pendingWorkerRequestsRef.current.set(id, { resolve, reject });
+        const w = workerRef.current;
+        if (!w) return reject(new Error('no-worker'));
+        w.postMessage({ id, type, payload });
+      } catch (e) { reject(e); }
+    });
+  }
+
+  useEffect(() => {
+    try {
+      const workerCode = `self.onmessage = function(e){try{var d=e.data||{};var id=d.id;var type=d.type;var p=d.payload||{};if(type==='fuseSearch'){try{importScripts('https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js');}catch(err){}try{var items=p.items||[];var options=p.options||{};var q=p.query||'';var fuse=new Fuse(items, options);var res=fuse.search(q);var out=res.map(function(r){return (r&&r.item)?r.item:r;});self.postMessage({id:id,type:type,result:out});}catch(err){self.postMessage({id:id,type:type,result:p.items||[]});}}else if(type==='buildPasteIndex'){try{var items=p.items||[];var maxPrefix=p.maxPrefix||20;var idx=new Array(items.length);var prefixMapObj={};for(var i=0;i<items.length;i++){var a=items[i];var searchable=[a&&a.name,a&&a.player,a&&a.id,a&&a.levelID,a&&a.submitter,(a&&a.tags)?(a.tags.join(' ')):''].filter(Boolean).join(' ').toLowerCase();idx[i]={achievement:a,searchable:searchable};var toks=(searchable||'').split(/\s+/).filter(Boolean);toks.forEach(function(tok){var capped=String(tok).slice(0,maxPrefix);for(var pLen=1;pLen<=capped.length;pLen++){var key=capped.slice(0,pLen);if(!prefixMapObj[key]) prefixMapObj[key]=[];prefixMapObj[key].push(i);}});}self.postMessage({id:id,type:type,result:{idx:idx,prefixMap:prefixMapObj}});}catch(err){self.postMessage({id:id,type:type,result:{idx:[],prefixMap:{}}});}}else{self.postMessage({id:id,type:type,result:null});}}catch(e){try{self.postMessage({id:(e&&e.id)||null,type:'error',result:null});}catch(_){} }};`;
+      const blob = new Blob([workerCode], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      const w = new Worker(url);
+      w.onmessage = function (ev) {
+        try {
+          const msg = ev.data || {};
+          const id = msg.id;
+          const entry = pendingWorkerRequestsRef.current.get(id);
+          if (entry) {
+            entry.resolve(msg.result);
+            pendingWorkerRequestsRef.current.delete(id);
+          }
+        } catch (e) { }
+      };
+      workerRef.current = w;
+      return () => {
+        try { if (workerRef.current) { workerRef.current.terminate(); workerRef.current = null; } } catch (e) { }
+        try { URL.revokeObjectURL(url); } catch (e) { }
+      };
+    } catch (e) { }
+  }, []);
   useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
   const [randomSeed, setRandomSeed] = useState(null);
   const prevSortKeyRef = useRef(null);
@@ -1062,7 +1102,7 @@ export default function SharedList({
   const pasteIndexRef = sharedListManager.pasteIndexRef;
   const pastePrefixMapRef = sharedListManager.pastePrefixMapRef;
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, { minDelay: 80, maxDelay: 250, useIdle: true });
-  const [pendingSearchJump, setPendingSearchJump] = useState(null);
+  const pendingSearchJumpRef = useRef(null);
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
@@ -1079,6 +1119,7 @@ export default function SharedList({
   const handleEditRef = useRef(null);
   const handleRemoveRef = useRef(null);
   const handleDuplicateRef = useRef(null);
+  const handleCopyRef = useRef(null);
 
   function batchUpdateReordered(mutator) {
     if (typeof mutator !== 'function') return;
@@ -1152,21 +1193,27 @@ export default function SharedList({
   function resolveRealIdx(displayIdx) {
     try {
       const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
-      if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) return displayIdx;
-      if (currentReordered[displayIdx] && devAchievements && devAchievements[displayIdx] && currentReordered[displayIdx].id && devAchievements[displayIdx].id && currentReordered[displayIdx].id === devAchievements[displayIdx].id) {
-        return displayIdx;
+      if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) {
+        return (typeof displayIdx === 'number') ? displayIdx : -1;
       }
-      if (currentReordered[displayIdx] && (!devAchievements || !devAchievements.length || devAchievements.findIndex(x => x && x.id ? x.id === currentReordered[displayIdx].id : false) === -1)) {
-        return displayIdx;
+
+      if (typeof displayIdx === 'string') {
+        const real = currentReordered.findIndex(x => x && x.id ? String(x.id) === String(displayIdx) : false);
+        return real === -1 ? -1 : real;
       }
-      const displayed = (devAchievements && devAchievements.length) ? devAchievements[displayIdx] : null;
-      if (!displayed) return displayIdx;
+
+      const disp = Number(displayIdx);
+      if (Number.isNaN(disp)) return -1;
+      const displayed = (visibleListRef && visibleListRef.current && Array.isArray(visibleListRef.current)) ? visibleListRef.current[disp] : null;
+      if (!displayed) return disp;
+
       if (displayed.id) {
-        const real = currentReordered.findIndex(x => x && x.id ? x.id === displayed.id : false);
-        return real === -1 ? displayIdx : real;
+        const real = currentReordered.findIndex(x => x && x.id ? String(x.id) === String(displayed.id) : false);
+        return real === -1 ? disp : real;
       }
+
       const realByObj = currentReordered.findIndex(x => x === displayed);
-      return realByObj === -1 ? displayIdx : realByObj;
+      return realByObj === -1 ? disp : realByObj;
     } catch (e) {
       return displayIdx;
     }
@@ -1622,10 +1669,18 @@ export default function SharedList({
                 ignoreLocation: true,
                 minMatchCharLength: 2,
               };
-              const fuse = new Fuse(tagFiltered, fuseOpts);
-              const res = fuse.search(q);
-              const searched = res.map(r => (r && r.item) ? r.item : r);
-              return onProcessingComplete(searched);
+              if (workerRef && workerRef.current) {
+                postWorkerMessage('fuseSearch', { items: tagFiltered, query: q, options: fuseOpts }).then(res => {
+                  try { return onProcessingComplete(res || tagFiltered); } catch (e) { return onProcessingComplete(tagFiltered); }
+                }).catch(() => {
+                  try { const fuse = new Fuse(tagFiltered, fuseOpts); const fres = fuse.search(q); const searched = fres.map(r => (r && r.item) ? r.item : r); return onProcessingComplete(searched); } catch (e) { return onProcessingComplete(tagFiltered); }
+                });
+              } else {
+                const fuse = new Fuse(tagFiltered, fuseOpts);
+                const res = fuse.search(q);
+                const searched = res.map(r => (r && r.item) ? r.item : r);
+                return onProcessingComplete(searched);
+              }
             } catch (e) {
               return onProcessingComplete(tagFiltered);
             }
@@ -1686,14 +1741,14 @@ export default function SharedList({
   }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomSeed, startTransition]);
 
   useEffect(() => {
-    if (!pendingSearchJump) return;
-    if (debouncedManualSearch !== pendingSearchJump) return;
+    if (!pendingSearchJumpRef.current) return;
+    if (debouncedManualSearch !== pendingSearchJumpRef.current) return;
 
     try { if (manualSearchControllerRef && manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { }
     const manualController = { aborted: false, abort() { this.aborted = true; } };
     manualSearchControllerRef.current = manualController;
 
-    const rawQuery = pendingSearchJump;
+    const rawQuery = pendingSearchJumpRef.current;
     const normalizedQuery = normalizeForSearch(rawQuery || '');
     const qTokensManual = (normalizedQuery || '') ? normalizedQuery.split(' ').filter(Boolean) : [];
 
@@ -1723,7 +1778,7 @@ export default function SharedList({
       try { if (respectsTagFilters(a)) preFiltered.push(a); } catch (e) { }
     }
     if (manualController.aborted) {
-      setPendingSearchJump(null);
+      try { pendingSearchJumpRef.current = null; } catch (e) { }
       try { searchJumpPendingRef.current = false; } catch (e) { }
       return;
     }
@@ -1734,7 +1789,7 @@ export default function SharedList({
       try { if (matchesQuery(a)) matchingItems.push(a); } catch (e) { }
     }
     if (!matchingItems || matchingItems.length === 0) {
-      setPendingSearchJump(null);
+      try { pendingSearchJumpRef.current = null; } catch (e) { }
       try { searchJumpPendingRef.current = false; } catch (e) { }
       return;
     }
@@ -1778,9 +1833,9 @@ export default function SharedList({
       }
     }));
 
-    setPendingSearchJump(null);
+    try { pendingSearchJumpRef.current = null; } catch (e) { }
     try { searchJumpPendingRef.current = false; } catch (e) { }
-  }, [debouncedManualSearch, pendingSearchJump, filtered, searchLower]);
+  }, [debouncedManualSearch, filtered, searchLower]);
 
 
 
@@ -2237,45 +2292,65 @@ export default function SharedList({
   }, [pasteShowResults, pasteSearch]);
 
   useEffect(() => {
-    const base = (devMode && reordered) ? reordered || [] : achievements || [];
-    const extras = Object.values(extraLists).flat().filter(Boolean);
-    const items = [...base, ...extras];
-    const sig = _makePasteSignature(items);
-    let idx = null;
-    if (sig && _pasteIndexCache.has(sig)) {
-      idx = _pasteIndexCache.get(sig);
-    } else {
-      idx = new Array(items.length);
-      const prefixMap = new Map();
-      const maxPrefix = 20;
-      for (let i = 0; i < items.length; i++) {
-        const a = items[i];
-        const searchable = [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-          .filter(Boolean).join(' ').toLowerCase();
-        idx[i] = { achievement: a, searchable };
-        const toks = (searchable || '').split(/\s+/).filter(Boolean);
-        toks.forEach(tok => {
-          const capped = String(tok).slice(0, maxPrefix);
-          for (let p = 1; p <= capped.length; p++) {
-            const key = capped.slice(0, p);
-            const arr = prefixMap.get(key) || [];
-            arr.push(i);
-            if (!prefixMap.has(key)) prefixMap.set(key, arr);
+    (async () => {
+      try {
+        const base = (devMode && reordered) ? reordered || [] : achievements || [];
+        const extras = Object.values(extraLists).flat().filter(Boolean);
+        const items = [...base, ...extras];
+        const sig = _makePasteSignature(items);
+        let cached = null;
+        if (sig && _pasteIndexCache.has(sig)) {
+          cached = _pasteIndexCache.get(sig);
+        }
+        if (cached) {
+          pasteIndexRef.current = cached.idx;
+          pastePrefixMapRef.current = cached.prefixMap || new Map();
+          setPasteIndex(pasteIndexRef.current || []);
+          return;
+        }
+
+        if (workerRef && workerRef.current) {
+          try {
+            const res = await postWorkerMessage('buildPasteIndex', { items, maxPrefix: 20 });
+            const idx = (res && res.idx) ? res.idx : [];
+            const prefixMapObj = (res && res.prefixMap) ? res.prefixMap : {};
+            const prefixMap = new Map(Object.entries(prefixMapObj).map(([k, v]) => [k, Array.isArray(v) ? v : []]));
+            try { if (sig) _pasteIndexCache.set(sig, { idx, prefixMap }); } catch (e) { }
+            pasteIndexRef.current = idx;
+            pastePrefixMapRef.current = prefixMap;
+            setPasteIndex(pasteIndexRef.current || []);
+            return;
+          } catch (e) {
           }
-        });
+        }
+
+        const idxLocal = new Array(items.length);
+        const prefixMapLocal = new Map();
+        const maxPrefix = 20;
+        for (let i = 0; i < items.length; i++) {
+          const a = items[i];
+          const searchable = [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+            .filter(Boolean).join(' ').toLowerCase();
+          idxLocal[i] = { achievement: a, searchable };
+          const toks = (searchable || '').split(/\s+/).filter(Boolean);
+          toks.forEach(tok => {
+            const capped = String(tok).slice(0, maxPrefix);
+            for (let p = 1; p <= capped.length; p++) {
+              const key = capped.slice(0, p);
+              const arr = prefixMapLocal.get(key) || [];
+              arr.push(i);
+              if (!prefixMapLocal.has(key)) prefixMapLocal.set(key, arr);
+            }
+          });
+        }
+        try { if (sig) _pasteIndexCache.set(sig, { idx: idxLocal, prefixMap: prefixMapLocal }); } catch (e) { }
+        pasteIndexRef.current = idxLocal;
+        pastePrefixMapRef.current = prefixMapLocal;
+        setPasteIndex(pasteIndexRef.current || []);
+      } catch (e) {
+        try { pasteIndexRef.current = pasteIndexRef.current || []; setPasteIndex(pasteIndexRef.current || []); } catch (ee) { }
       }
-      try { if (sig) _pasteIndexCache.set(sig, { idx, prefixMap }); } catch (e) { }
-      pasteIndexRef.current = idx;
-      pastePrefixMapRef.current = prefixMap;
-    }
-    if (!pasteIndexRef.current || !pasteIndexRef.current.length) {
-      const cached = sig && _pasteIndexCache.has(sig) ? _pasteIndexCache.get(sig) : null;
-      if (cached && cached.idx) {
-        pasteIndexRef.current = cached.idx;
-        pastePrefixMapRef.current = cached.prefixMap || new Map();
-      }
-    }
-    setPasteIndex(pasteIndexRef.current || []);
+    })();
   }, [achievements, extraLists, devMode, reordered, debouncedPasteSearch]);
 
   function handlePasteSelect(item) {
@@ -2319,6 +2394,7 @@ export default function SharedList({
 
   function handleRemoveAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
+    if (realIdx == null || realIdx < 0) return;
     batchUpdateReordered(arr => {
       if (!arr) return arr;
       arr.splice(realIdx, 1);
@@ -2328,6 +2404,7 @@ export default function SharedList({
 
   function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
+    if (realIdx == null || realIdx < 0) return;
     const orig = (stagedRef.current && stagedRef.current[realIdx]) || (reorderedRef.current && reorderedRef.current[realIdx]) || {};
     const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const newId = (orig && orig.id) ? `${orig.id}-copy-${uniqueSuffix}` : `new-${uniqueSuffix}`;
@@ -2361,6 +2438,7 @@ export default function SharedList({
       handleEditRef.current = handleEditAchievement;
       handleRemoveRef.current = handleRemoveAchievement;
       handleDuplicateRef.current = handleDuplicateAchievement;
+      handleCopyRef.current = handleCopyItemJson;
     } catch (e) { }
   });
 
@@ -2712,32 +2790,18 @@ export default function SharedList({
           </div>
         </section>
       </main>
-      {devMode && (
-        <div ref={devPanelRef} className="devmode-hover-panel" style={{ display: 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: 6 }}>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = visibleListRef.current || []; const itm = list[i]; if (itm && itm.id) handleEditAchievement(itm.id); else handleEditAchievement(i); } catch (e) { } }}>
-                <EditIcon width={16} height={16} />
-              </button>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementUp(i); } catch (e) { } }}>
-                <UpIcon width={16} height={16} />
-              </button>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-down" title="Move Down" aria-label="Move Down" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleMoveAchievementDown(i); } catch (e) { } }}>
-                <DownIcon width={16} height={16} />
-              </button>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-duplicate" title="Duplicate" aria-label="Duplicate" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleDuplicateAchievement(i); } catch (e) { } }}>
-                <AddIcon width={16} height={16} />
-              </button>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-delete" title="Delete" aria-label="Delete" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; handleRemoveAchievement(i); } catch (e) { } }} style={{ background: '#dc3545', color: '#fff', borderColor: 'rgba(220,53,69,0.9)' }}>
-                <DeleteIcon width={16} height={16} />
-              </button>
-              <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-copy" title="Copy JSON" aria-label="Copy JSON" onClick={(e) => { try { e.preventDefault(); e.stopPropagation(); handleCopyItemJson(); } catch (e) { } }}>
-                <CopyIcon width={16} height={16} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <DevHoverPanelMemo
+        devMode={devMode}
+        devPanelRef={devPanelRef}
+        hoveredIdxRef={hoveredIdxRef}
+        visibleListRef={visibleListRef}
+        handleEditRef={handleEditRef}
+        handleMoveUpRef={handleMoveUpRef}
+        handleMoveDownRef={handleMoveDownRef}
+        handleDuplicateRef={handleDuplicateRef}
+        handleRemoveRef={handleRemoveRef}
+        handleCopyRef={handleCopyRef}
+      />
 
       {showChangelogPreview && changelogPreview && (
         <div className="changelog-modal" style={{ position: 'fixed', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 10000, background: 'var(--secondary-bg, #121212)', color: 'var(--text-color)', padding: 12, borderRadius: 8, width: '80%', maxWidth: 900, maxHeight: '80vh', boxShadow: '0 8px 32px rgba(0,0,0,0.7)', overflow: 'hidden' }}>
@@ -2778,4 +2842,32 @@ export default function SharedList({
 
 const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
   return prev.allTags === next.allTags && prev.filterTags === next.filterTags && prev.isMobile === next.isMobile && prev.show === next.show;
+});
+
+const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdxRef, visibleListRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
+  const onEdit = (e) => {
+    try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; if (handleEditRef && handleEditRef.current) { if (itm && itm.id) handleEditRef.current(itm.id); else handleEditRef.current(i); } } catch (err) { }
+  };
+  const onMoveUp = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(i); } catch (err) { } };
+  const onMoveDown = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(i); } catch (err) { } };
+  const onDuplicate = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleDuplicateRef && handleDuplicateRef.current) handleDuplicateRef.current(i); } catch (err) { } };
+  const onDelete = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleRemoveRef && handleRemoveRef.current) handleRemoveRef.current(i); } catch (err) { } };
+  const onCopy = (e) => { try { e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
+
+  const baseStyle = { display: devMode ? 'block' : 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' };
+
+  return (
+    <div ref={devPanelRef} className="devmode-hover-panel" style={baseStyle}>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={onEdit}><EditIcon width={16} height={16} /></button>
+          <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={onMoveUp}><UpIcon width={16} height={16} /></button>
+          <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-down" title="Move Down" aria-label="Move Down" onClick={onMoveDown}><DownIcon width={16} height={16} /></button>
+          <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-duplicate" title="Duplicate" aria-label="Duplicate" onClick={onDuplicate}><AddIcon width={16} height={16} /></button>
+          <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-delete" title="Delete" aria-label="Delete" onClick={onDelete} style={{ background: '#dc3545', color: '#fff', borderColor: 'rgba(220,53,69,0.9)' }}><DeleteIcon width={16} height={16} /></button>
+          <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-copy" title="Copy JSON" aria-label="Copy JSON" onClick={onCopy}><CopyIcon width={16} height={16} /></button>
+        </div>
+      </div>
+    </div>
+  );
 });
