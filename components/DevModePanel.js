@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback, useRef, useEffect, useState } from 'react';
 import { FixedSizeList as ListWindow } from 'react-window';
 import { CopyIcon, FileIcon, CheckIcon, NewIcon, ChangelogIcon, ResetIcon, CollapseUpIcon, CollapseDownIcon } from './DevIcons';
+import { generateChangelog } from './changelogHelpers';
 const shallowEqual = (a, b) => {
   if (a === b) return true;
   if (a == null || b == null) return false;
@@ -375,20 +376,13 @@ function DevModePanelInner({
   setPasteShowResults,
   getPasteCandidates,
 
-  getMostVisibleIdx,
-  listRef,
-  visibleListRef,
-  achievementRefs,
   storageKeySuffix,
-  dataFileName,
-  usePlatformers,
   setDuplicateThumbKeys,
   setDevMode,
   setScrollToIdx,
   setInsertIdx,
   insertIdx,
-  devAchievements,
-
+  
   handlePasteSelect,
   onImportAchievementsJson,
 }) {
@@ -442,7 +436,7 @@ function DevModePanelInner({
         delete copy._sortedTags; delete copy._isPlatformer; delete copy._lengthStr; delete copy._thumbnail;
         delete copy._searchable; delete copy._searchableNormalized; delete copy._tagString; delete copy.hasThumb; delete copy.autoThumb;
         return copy;
-      }));
+      }), null, 2);
       if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         await navigator.clipboard.writeText(json);
         alert('Copied achievement JSON to clipboard');
@@ -474,26 +468,13 @@ function DevModePanelInner({
     if (typeof setDuplicateThumbKeys === 'function') setDuplicateThumbKeys(dupKeys);
   }, [achievements, reordered, devMode, setDuplicateThumbKeys]);
 
-  const parseAsLocal = (input) => {
-    if (input instanceof Date) return input;
-    if (typeof input === 'number') return new Date(input);
-    if (typeof input !== 'string') return new Date(input);
-    const m = input.match(/^(\\d{4})-(\\d{2})-(\\d{2})$/);
-    if (m) {
-      const y = Number(m[1]);
-      const mo = Number(m[2]);
-      const d = Number(m[3]);
-      return new Date(y, mo - 1, d);
-    }
-    return new Date(input);
-  };
 
   const ID_INDEX_TTL_MS_LOCAL = 5 * 60 * 1000;
   const _idIndexCache_local = useRef(new Map()).current;
 
   const formatChangelogEntryLocal = (change, achievementsList, mode, idIndexMap, contextMap) => {
     try {
-      const { type, achievement, oldAchievement, oldRank, newRank } = change;
+      const { type, achievement, oldAchievement, oldRank } = change;
       if (!achievement) return '';
       const name = achievement.name || 'Unknown';
       const rank = achievement.rank || '?';
@@ -538,33 +519,11 @@ function DevModePanelInner({
       const original = (originalSnapshotRef && originalSnapshotRef.current) ? originalSnapshotRef.current : (originalAchievements || []);
       const current = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
       if (!original || !original.length) { alert('Original JSON not available to diff against.'); return; }
-      const byIdOriginal = new Map(); original.forEach(a => { if (a && a.id) byIdOriginal.set(a.id, a); });
-      const byIdCurrent = new Map(); current.forEach(a => { if (a && a.id) byIdCurrent.set(a.id, a); });
-      const changes = [];
-      for (const [id, a] of byIdOriginal.entries()) { if (!byIdCurrent.has(id)) changes.push({ type: 'removed', achievement: a, oldAchievement: a, oldRank: a.rank }); }
-      for (const [id, a] of byIdCurrent.entries()) { if (!byIdOriginal.has(id)) changes.push({ type: 'added', achievement: a, newIndex: (a && a.rank) ? a.rank - 1 : null }); }
-      for (const [id, orig] of byIdOriginal.entries()) {
-        if (!byIdCurrent.has(id)) continue;
-        const curr = byIdCurrent.get(id);
-        if (!curr) continue;
-        if ((orig.name || '') !== (curr.name || '')) changes.push({ type: 'renamed', oldAchievement: orig, achievement: curr });
-        const oldRank = Number(orig.rank) || null; const newRank = Number(curr.rank) || null;
-        if (oldRank != null && newRank != null && oldRank !== newRank) changes.push({ type: newRank < oldRank ? 'movedUp' : 'movedDown', achievement: curr, oldRank, newRank });
-      }
-      const now = Date.now();
-      const firstId = (current && current[0] && current[0].id) ? String(current[0].id) : '';
-      const lastId = (current && current[current.length - 1] && current[current.length - 1].id) ? String(current[current.length - 1].id) : '';
-      const cacheKey = `${storageKeySuffix}::${(current || []).length}::${firstId}::${lastId}`;
-      let idIndexMap = null;
-      const cached = _idIndexCache_local.get(cacheKey);
-      if (cached && (now - cached.ts) < ID_INDEX_TTL_MS_LOCAL) idIndexMap = cached.map;
-      else {
-        const map = new Map(); (current || []).forEach((a, i) => { if (a && a.id) map.set(a.id, i); });
-        try { _idIndexCache_local.set(cacheKey, { map, ts: now }); } catch (e) { }
-        idIndexMap = map;
-      }
-      const formatted = changes.map(c => formatChangelogEntryLocal(c, current, 'dev', idIndexMap, new Map())).filter(Boolean).join('\n\n');
-      if (!formatted) { alert('No changes detected'); return; }
+
+      const { formatted } = generateChangelog(original, current, { mode: 'dev' });
+
+      if (!formatted || !formatted.trim()) { alert('No changes detected'); return; }
+
       if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(formatted).then(() => alert('Changelog copied to clipboard!')).catch(() => alert('Failed to copy to clipboard'));
       } else {
