@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import { useState, useEffect } from 'react';
 import { useDateFormat } from '../../components/DateFormatContext';
+import { formatDate } from '../../components/formatDate';
 import Tag, { TAG_PRIORITY_ORDER } from '../../components/Tag';
 
 export async function getStaticPaths() {
@@ -14,7 +15,7 @@ export async function getStaticPaths() {
   const platformersPath = path.join(process.cwd(), 'public', 'platformers.json');
   const platformerTimelinePath = path.join(process.cwd(), 'public', 'platformertimeline.json');
   const pendingPath = path.join(process.cwd(), 'public', 'pending.json');
-  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json'); // added
+  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json');
 
   let achievements = [], timeline = [], platformers = [], platformerTimeline = [], pending = [], legacy = [];
 
@@ -23,7 +24,7 @@ export async function getStaticPaths() {
   try { platformers = JSON.parse(fs.readFileSync(platformersPath, 'utf8')); } catch {}
   try { platformerTimeline = JSON.parse(fs.readFileSync(platformerTimelinePath, 'utf8')); } catch {}
   try { pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8')); } catch {}
-  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {} // added
+  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {}
 
   const combinedData = [...achievements, ...timeline, ...platformers, ...platformerTimeline, ...pending, ...legacy];
   const paths = combinedData
@@ -39,7 +40,7 @@ export async function getStaticProps({ params }) {
   const platformersPath = path.join(process.cwd(), 'public', 'platformers.json');
   const platformerTimelinePath = path.join(process.cwd(), 'public', 'platformertimeline.json');
   const pendingPath = path.join(process.cwd(), 'public', 'pending.json');
-  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json'); // added
+  const legacyPath = path.join(process.cwd(), 'public', 'legacy.json');
 
   let achievements = [], timeline = [], platformers = [], platformerTimeline = [], pending = [], legacy = [];
 
@@ -48,7 +49,7 @@ export async function getStaticProps({ params }) {
   try { platformers = JSON.parse(fs.readFileSync(platformersPath, 'utf8')); } catch {}
   try { platformerTimeline = JSON.parse(fs.readFileSync(platformerTimelinePath, 'utf8')); } catch {}
   try { pending = JSON.parse(fs.readFileSync(pendingPath, 'utf8')); } catch {}
-  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {} // added
+  try { legacy = JSON.parse(fs.readFileSync(legacyPath, 'utf8')); } catch {}
 
   const combinedData = [...achievements, ...timeline, ...platformers, ...platformerTimeline, ...pending, ...legacy]
     .filter(a => a && a.id && a.name);
@@ -82,38 +83,8 @@ export default function AchievementPage({ achievement, placement }) {
     setCopyMsg(text);
     setTimeout(() => setCopyMsg(''), 1800);
   }
-
-  function formatDate(date) {
-    if (!date) return 'N/A';
-    function parseAsLocal(input) {
-      if (input instanceof Date) return input;
-      if (typeof input === 'number') return new Date(input);
-      if (typeof input !== 'string') return new Date(input);
-
-      const m = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      if (m) {
-        const y = Number(m[1]);
-        const mo = Number(m[2]);
-        const d = Number(m[3]);
-        return new Date(y, mo - 1, d);
-      }
-
-      return new Date(input);
-    }
-
-    const d = parseAsLocal(date);
-    if (isNaN(d)) return 'N/A';
-    const yy = String(d.getFullYear()).slice(-2);
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    if (dateFormat === 'YYYY/MM/DD') return `${yyyy}/${mm}/${dd}`;
-    if (dateFormat === 'MM/DD/YY') return `${mm}/${dd}/${yy}`;
-    if (dateFormat === 'DD/MM/YY') return `${dd}/${mm}/${yy}`;
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  }
   function formatLength(length) {
-    // Only treat null / undefined / empty string as "no length"
+
     if (length === null || length === undefined || length === '') return 'N/A';
     const num = Number(length);
     if (isNaN(num)) return 'N/A';
