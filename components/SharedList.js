@@ -1390,6 +1390,23 @@ export default function SharedList({
         try {
           let ok = false;
           try { if (anchorId && prevElemTop != null) ok = adjustScrollToKeepElementById(anchorId, prevElemTop, prevActive); } catch (e) { ok = false; }
+          if (!ok) {
+            try {
+              const lr = listRef && listRef.current;
+              if (lr && typeof lr.scrollTo === 'function') {
+                try { lr.scrollTo(prevScrollTop); ok = true; } catch (e) {}
+              }
+              if (!ok) {
+                const outer = lr && (lr._outerRef || lr.outerRef || lr._listRef || lr._scrollingContainer) || null;
+                if (outer && typeof outer.scrollTop === 'number') {
+                  try { outer.scrollTop = prevScrollTop; outer.scrollLeft = prevScrollLeft; ok = true; } catch (e) {}
+                }
+              }
+              if (!ok && typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+                try { window.scrollTo(prevScrollLeft || 0, prevScrollTop || 0); ok = true; } catch (e) {}
+              }
+            } catch (e) { }
+          }
           if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
         } catch (e) { }
       }));
