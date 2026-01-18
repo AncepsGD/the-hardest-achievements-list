@@ -478,7 +478,7 @@ function calculateDaysLasted(currentDate, previousDate) {
 
 function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(displayRank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const handleClick = e => {
     if (devMode) {
@@ -1151,18 +1151,8 @@ export default function SharedList({
         const out = new Array(result.length);
         for (let i = 0; i < result.length; i++) {
           const a = result[i];
-          const expectedRank = i + 1;
-          if (!needChange && arr && arr[i] === a && a && a.rank === expectedRank) {
-            out[i] = a;
-            continue;
-          }
-          if (a && a.rank !== expectedRank) {
-            out[i] = { ...a, rank: expectedRank };
-            needChange = true;
-          } else {
-            out[i] = a;
-            if (arr && arr[i] !== a) needChange = true;
-          }
+          out[i] = a;
+          if (!needChange && arr && arr[i] !== a) needChange = true;
         }
 
         if (!needChange) return arr;
@@ -1246,8 +1236,6 @@ export default function SharedList({
           arr.splice(realIdx - 1, 0, removed);
           const iA = realIdx - 1;
           const iB = realIdx;
-          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
           try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
         });
       } else {
@@ -1259,8 +1247,6 @@ export default function SharedList({
           arr.splice(realIdx - 1, 0, removed);
           const iA = realIdx - 1;
           const iB = realIdx;
-          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
         }
         try { setStagedReordered(mapEnhanceArray(arr, achievementsRef.current || arr || [])); } catch (e) { setStagedReordered(arr); }
       }
@@ -1301,8 +1287,6 @@ export default function SharedList({
           arr.splice(realIdx + 1, 0, removed);
           const iA = realIdx;
           const iB = realIdx + 1;
-          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
           try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
         });
       } else {
@@ -1314,8 +1298,6 @@ export default function SharedList({
           arr.splice(realIdx + 1, 0, removed);
           const iA = realIdx;
           const iB = realIdx + 1;
-          if (arr[iA] && arr[iA].rank !== iA + 1) arr[iA] = { ...arr[iA], rank: iA + 1 };
-          if (arr[iB] && arr[iB].rank !== iB + 1) arr[iB] = { ...arr[iB], rank: iB + 1 };
         }
         try { setStagedReordered(mapEnhanceArray(arr, achievementsRef.current || arr || [])); } catch (e) { setStagedReordered(arr); }
       }
@@ -1403,13 +1385,6 @@ export default function SharedList({
     }
   }
 
-
-
-
-
-
-
-
   useEffect(() => {
     let file = dataUrl;
     if (usePlatformers) {
@@ -1444,13 +1419,8 @@ export default function SharedList({
         const valid = list.filter(a => a && typeof a.name === 'string' && a.name && a.id);
         let finalOriginal = null;
         let finalEnhanced = [];
-        if (dataFileName === 'pending.json') {
-          finalOriginal = valid.map((a, i) => ({ ...a, rank: i + 1 }));
-          finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
-        } else {
-          finalOriginal = valid.map((a, i) => ({ ...a, rank: i + 1 }));
-          finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
-        }
+        finalOriginal = valid.map(a => ({ ...a }));
+        finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
 
         setAchievements(() => finalEnhanced);
         const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
@@ -2064,7 +2034,7 @@ export default function SharedList({
         const thumb = getThumbnailUrl(a, isMobile);
         const isDup = duplicateThumbKeys.has((thumb || '').trim());
         const autoThumbAvailable = a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false;
-        const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (i + 1);
+        const computed = (i + 1);
         const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
         return { thumb, isDup, autoThumbAvailable, displayRank };
       });
@@ -2152,7 +2122,7 @@ export default function SharedList({
           />
           :
           (() => {
-            const computed = (a && (Number(a.rank) || a.rank)) ? Number(a.rank) : (index + 1);
+            const computed = (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
             return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter(index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave(index, e) : undefined} />;
           })()
@@ -2184,8 +2154,8 @@ export default function SharedList({
     const pAuto = pItem && pItem.levelID ? !!p.autoThumbMap[String(pItem.levelID)] : false;
     const nAuto = nItem && nItem.levelID ? !!n.autoThumbMap[String(nItem.levelID)] : false;
     if (pAuto !== nAuto) return false;
-    const pr = pItem && (Number(pItem.rank) || pItem.rank) ? Number(pItem.rank) : (pi + 1);
-    const nr = nItem && (Number(nItem.rank) || nItem.rank) ? Number(nItem.rank) : (ni + 1);
+    const pr = (pi + 1);
+    const nr = (ni + 1);
     const pDisp = Number.isFinite(Number(pr)) ? Number(pr) + (Number(p.rankOffset) || 0) : pr;
     const nDisp = Number.isFinite(Number(nr)) ? Number(nr) + (Number(n.rankOffset) || 0) : nr;
     if (pDisp !== nDisp) return false;
@@ -2414,11 +2384,6 @@ export default function SharedList({
       setStagedReordered(prev => {
         const arr = Array.isArray(prev) ? prev.slice() : [];
         arr.splice(realIdx + 1, 0, enhancedCopy);
-        for (let i = realIdx + 1; i < arr.length; i++) {
-          const a = arr[i];
-          if (!a) continue;
-          if (a.rank !== i + 1) arr[i] = { ...a, rank: i + 1 };
-        }
         try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
       });
     } else {
@@ -2490,7 +2455,7 @@ export default function SharedList({
       alert(`Invalid ${usePlatformers ? 'platformers.json' : dataFileName} format.`);
       return;
     }
-    imported = imported.map((a, i) => ({ ...a, rank: i + 1 }));
+    imported = imported.map(a => ({ ...a }));
     imported = mapEnhanceArray(imported, achievementsRef.current || []);
     try {
       const idx = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
