@@ -659,7 +659,7 @@ export default function SharedList({
     } catch (e) { }
   }, []);
   useEffect(() => () => { try { if (manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { } }, []);
-  
+
   const prevSortKeyRef = useRef(null);
 
   useEffect(() => {
@@ -714,6 +714,7 @@ export default function SharedList({
   const handleRemoveRef = useRef(null);
   const handleDuplicateRef = useRef(null);
   const handleCopyRef = useRef(null);
+  const realIdxMapRef = useRef(new Map());
 
   function batchUpdateReordered(mutator, opts = {}) {
     if (typeof mutator !== 'function') return;
@@ -783,9 +784,10 @@ export default function SharedList({
       if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) {
         return (typeof displayIdx === 'number') ? displayIdx : -1;
       }
-
       if (typeof displayIdx === 'string') {
-        const real = currentReordered.findIndex(x => x && x.id ? String(x.id) === String(displayIdx) : false);
+        const key = String(displayIdx);
+        if (realIdxMapRef && realIdxMapRef.current && realIdxMapRef.current.has(key)) return realIdxMapRef.current.get(key);
+        const real = currentReordered.findIndex(x => x && x.id ? String(x.id) === key : false);
         return real === -1 ? -1 : real;
       }
 
@@ -795,7 +797,9 @@ export default function SharedList({
       if (!displayed) return disp;
 
       if (displayed.id) {
-        const real = currentReordered.findIndex(x => x && x.id ? String(x.id) === String(displayed.id) : false);
+        const key = String(displayed.id);
+        if (realIdxMapRef && realIdxMapRef.current && realIdxMapRef.current.has(key)) return realIdxMapRef.current.get(key);
+        const real = currentReordered.findIndex(x => x && x.id ? String(x.id) === key : false);
         return real === -1 ? disp : real;
       }
 
@@ -916,7 +920,6 @@ export default function SharedList({
       }
     } catch (e) { }
 
-    // Fallback to existing batch path
     batchUpdateReordered((arr) => {
       const len = Array.isArray(arr) ? arr.length : 0;
       if (realIdx < 0 || realIdx >= len - 1) return arr;
@@ -965,6 +968,19 @@ export default function SharedList({
   useEffect(() => {
     try { if (neighborContextRef && neighborContextRef.current) neighborContextRef.current.clear(); } catch (e) { }
   }, [achievements, reordered]);
+  useEffect(() => {
+    try {
+      const cur = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : (reordered && Array.isArray(reordered) ? reordered : []);
+      const m = new Map();
+      for (let i = 0; i < (cur || []).length; i++) {
+        try {
+          const it = cur[i];
+          if (it && it.id) m.set(String(it.id), i);
+        } catch (e) { }
+      }
+      realIdxMapRef.current = m;
+    } catch (e) { }
+  }, [reordered, stagedReordered]);
   function handleEditAchievement(idxOrId) {
     try {
       const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
@@ -973,8 +989,12 @@ export default function SharedList({
       let realIdx = null;
 
       if (typeof idxOrId === 'string' || (idxOrId && typeof idxOrId === 'object' && idxOrId.id)) {
-        const id = typeof idxOrId === 'string' ? idxOrId : idxOrId.id;
-        realIdx = currentReordered.findIndex(x => x && x.id ? String(x.id) === String(id) : false);
+        const id = typeof idxOrId === 'string' ? String(idxOrId) : String(idxOrId.id);
+        if (realIdxMapRef && realIdxMapRef.current && realIdxMapRef.current.has(id)) {
+          realIdx = realIdxMapRef.current.get(id);
+        } else {
+          realIdx = currentReordered.findIndex(x => x && x.id ? String(x.id) === id : false);
+        }
         if (realIdx === -1) return;
       } else {
         const displayIdx = Number(idxOrId);
@@ -1481,37 +1501,37 @@ export default function SharedList({
       } catch (e) {
       }
 
-        try {
-          let target = null;
-          if (ev && ev.currentTarget) target = ev.currentTarget;
-          else if (ev && ev.target) target = ev.target;
-          else target = document.querySelector(`[data-index="${idx}"]`);
-          const root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
-          if (root && root instanceof HTMLElement) {
-            try {
-              if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
-            } catch (err) { }
+      try {
+        let target = null;
+        if (ev && ev.currentTarget) target = ev.currentTarget;
+        else if (ev && ev.target) target = ev.target;
+        else target = document.querySelector(`[data-index="${idx}"]`);
+        const root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
+        if (root && root instanceof HTMLElement) {
+          try {
+            if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
+          } catch (err) { }
 
-            const rect = root.getBoundingClientRect();
-            panel.style.position = 'fixed';
-            panel.style.left = `${rect.left + (root.clientWidth / 2)}px`;
-            panel.style.top = `${rect.top + (root.clientHeight / 2)}px`;
-            panel.style.transform = 'translate(-50%, -50%)';
-            panel.style.pointerEvents = 'auto';
+          const rect = root.getBoundingClientRect();
+          panel.style.position = 'fixed';
+          panel.style.left = `${rect.left + (root.clientWidth / 2)}px`;
+          panel.style.top = `${rect.top + (root.clientHeight / 2)}px`;
+          panel.style.transform = 'translate(-50%, -50%)';
+          panel.style.pointerEvents = 'auto';
 
-            const pad = 16;
-            const pw = Math.min(360, Math.max(120, Math.floor(root.clientWidth - pad)));
-            panel.style.width = `${pw}px`;
+          const pad = 16;
+          const pw = Math.min(360, Math.max(120, Math.floor(root.clientWidth - pad)));
+          panel.style.width = `${pw}px`;
 
-            const ph = panel.offsetHeight || 200;
-            if (ph > (root.clientHeight - 16)) {
-              panel.style.maxHeight = `${Math.max(80, root.clientHeight - 16)}px`;
-              panel.style.overflowY = 'auto';
-            } else {
-              panel.style.maxHeight = '';
-              panel.style.overflowY = '';
-            }
+          const ph = panel.offsetHeight || 200;
+          if (ph > (root.clientHeight - 16)) {
+            panel.style.maxHeight = `${Math.max(80, root.clientHeight - 16)}px`;
+            panel.style.overflowY = 'auto';
+          } else {
+            panel.style.maxHeight = '';
+            panel.style.overflowY = '';
           }
+        }
       } catch (err) {
       }
     });
@@ -2299,7 +2319,7 @@ export default function SharedList({
               width={'100%'}
               style={{ overflowX: 'hidden' }}
               itemData={listItemData}
-              onItemsRendered={() => {}}
+              onItemsRendered={() => { }}
             >
               {ListRow}
             </ListWindow>
@@ -2368,8 +2388,8 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   const onEdit = (e) => {
     try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; if (handleEditRef && handleEditRef.current) { if (itm && itm.id) handleEditRef.current(itm.id); else handleEditRef.current(i); } } catch (err) { }
   };
-  const onMoveUp = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(i); } catch (err) { } };
-  const onMoveDown = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(i); } catch (err) { } };
+  const onMoveUp = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; const arg = itm && itm.id ? String(itm.id) : i; if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(arg); } catch (err) { } };
+  const onMoveDown = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; const arg = itm && itm.id ? String(itm.id) : i; if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(arg); } catch (err) { } };
   const onDuplicate = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleDuplicateRef && handleDuplicateRef.current) handleDuplicateRef.current(i); } catch (err) { } };
   const onDelete = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleRemoveRef && handleRemoveRef.current) handleRemoveRef.current(i); } catch (err) { } };
   const onCopy = (e) => { try { e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
