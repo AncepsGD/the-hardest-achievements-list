@@ -715,21 +715,24 @@ export default function SharedList({
   const handleDuplicateRef = useRef(null);
   const handleCopyRef = useRef(null);
 
-  function batchUpdateReordered(mutator) {
+  function batchUpdateReordered(mutator, opts = {}) {
     if (typeof mutator !== 'function') return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
-    const prevScrollTop = listOuter ? listOuter.scrollTop : (scrollEl ? scrollEl.scrollTop : 0);
-    const prevScrollLeft = listOuter ? listOuter.scrollLeft : (scrollEl ? scrollEl.scrollLeft : 0);
-    const prevActive = (typeof document !== 'undefined') ? document.activeElement : null;
-    let movedId = null;
-    let prevElemTop = null;
+    const prevScrollTop = (opts && typeof opts.prevScrollTop === 'number') ? opts.prevScrollTop : (listOuter ? listOuter.scrollTop : (scrollEl ? scrollEl.scrollTop : 0));
+    const prevScrollLeft = (opts && typeof opts.prevScrollLeft === 'number') ? opts.prevScrollLeft : (listOuter ? listOuter.scrollLeft : (scrollEl ? scrollEl.scrollLeft : 0));
+    const prevActive = (opts && opts.prevActive !== undefined) ? opts.prevActive : ((typeof document !== 'undefined') ? document.activeElement : null);
+    let movedId = (opts && opts.movedId !== undefined) ? opts.movedId : null;
+    let prevElemTop = (opts && opts.prevElemTop !== undefined) ? opts.prevElemTop : null;
     try {
-      const list = visibleListRef.current || [];
-      const displayed = (list && list.length) ? list[0] : null;
-      if (displayed && displayed.id) movedId = String(displayed.id);
-      const node = achievementRefs && achievementRefs.current ? achievementRefs.current[0] : null;
-      if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
+      if (movedId == null || prevElemTop == null) {
+        const idxForContext = (opts && typeof opts.contextIdx === 'number') ? opts.contextIdx : 0;
+        const list = visibleListRef.current || [];
+        const displayed = (list && list.length) ? list[idxForContext] : null;
+        if ((movedId == null) && displayed && displayed.id) movedId = String(displayed.id);
+        const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idxForContext] : null;
+        if ((prevElemTop == null) && node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
+      }
     } catch (e) { }
 
     startTransition(() => {
@@ -820,40 +823,15 @@ export default function SharedList({
       const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
       if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
     } catch (e) { }
-    startTransition(() => {
-      if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        setStagedReordered(prev => {
-          const arr = Array.isArray(prev) ? prev.slice() : [];
-          const len = arr.length;
-          if (realIdx <= 0 || realIdx >= len) return prev;
-          const [removed] = arr.splice(realIdx, 1);
-          arr.splice(realIdx - 1, 0, removed);
-          const iA = realIdx - 1;
-          const iB = realIdx;
-          try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
-        });
-      } else {
-        const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-        const arr = Array.isArray(base) ? base.slice() : [];
-        const len = arr.length;
-        if (realIdx > 0 && realIdx < len) {
-          const [removed] = arr.splice(realIdx, 1);
-          arr.splice(realIdx - 1, 0, removed);
-          const iA = realIdx - 1;
-          const iB = realIdx;
-        }
-        try { setStagedReordered(mapEnhanceArray(arr, achievementsRef.current || arr || [])); } catch (e) { setStagedReordered(arr); }
-      }
-      try {
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          try {
-            let ok = false;
-            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
-            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
-          } catch (e) { }
-        }));
-      } catch (e) { }
-    });
+
+    batchUpdateReordered((arr) => {
+      const len = Array.isArray(arr) ? arr.length : 0;
+      if (realIdx <= 0 || realIdx >= len) return arr;
+      const out = arr.slice();
+      const [removed] = out.splice(realIdx, 1);
+      out.splice(realIdx - 1, 0, removed);
+      return out;
+    }, { movedId, prevElemTop, prevScrollTop, prevScrollLeft, prevActive, contextIdx: idx });
   }
 
   function handleMoveAchievementDown(idx) {
@@ -871,40 +849,15 @@ export default function SharedList({
       const node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
       if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
     } catch (e) { }
-    startTransition(() => {
-      if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        setStagedReordered(prev => {
-          const arr = Array.isArray(prev) ? prev.slice() : [];
-          const len = arr.length;
-          if (realIdx < 0 || realIdx >= len - 1) return prev;
-          const [removed] = arr.splice(realIdx, 1);
-          arr.splice(realIdx + 1, 0, removed);
-          const iA = realIdx;
-          const iB = realIdx + 1;
-          try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
-        });
-      } else {
-        const base = Array.isArray(stagedRef.current) ? stagedRef.current : (Array.isArray(reorderedRef.current) ? reorderedRef.current : (Array.isArray(achievementsRef.current) ? achievementsRef.current : []));
-        const arr = Array.isArray(base) ? base.slice() : [];
-        const len = arr.length;
-        if (!(realIdx < 0 || realIdx >= len - 1)) {
-          const [removed] = arr.splice(realIdx, 1);
-          arr.splice(realIdx + 1, 0, removed);
-          const iA = realIdx;
-          const iB = realIdx + 1;
-        }
-        try { setStagedReordered(mapEnhanceArray(arr, achievementsRef.current || arr || [])); } catch (e) { setStagedReordered(arr); }
-      }
-      try {
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          try {
-            let ok = false;
-            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
-            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
-          } catch (e) { }
-        }));
-      } catch (e) { }
-    });
+
+    batchUpdateReordered((arr) => {
+      const len = Array.isArray(arr) ? arr.length : 0;
+      if (realIdx < 0 || realIdx >= len - 1) return arr;
+      const out = arr.slice();
+      const [removed] = out.splice(realIdx, 1);
+      out.splice(realIdx + 1, 0, removed);
+      return out;
+    }, { movedId, prevElemTop, prevScrollTop, prevScrollLeft, prevActive, contextIdx: idx });
   }
 
   const scrollToIdxRef = useRef(null);
