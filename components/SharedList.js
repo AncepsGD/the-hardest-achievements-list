@@ -15,7 +15,7 @@ import { EditIcon, UpIcon, CopyIcon, DownIcon, AddIcon, DeleteIcon } from './Dev
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
 import useSortedList, { mulberry32 } from './useSortedList';
-import { enhanceAchievement, mapEnhanceArray, sanitizeImageUrl, getThumbnailUrl, normalizeForSearch, getEnhanceCacheStats, resetEnhanceCache, getEnhanceCachePerIdStats, validateEnhanceCache, _makePasteSignature, _tokensFromNormalized } from './enhanceAchievement';
+import { enhanceAchievement, mapEnhanceArray, getThumbnailUrl, normalizeForSearch, _makePasteSignature, _tokensFromNormalized } from './enhanceAchievement';
 import useTagFilters from './useTagFilters';
 import useSearch from './useSearch';
 
@@ -824,6 +824,39 @@ export default function SharedList({
       if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
     } catch (e) { }
 
+    try {
+      const isStaged = stagedRef.current && Array.isArray(stagedRef.current) && stagedRef.current.length;
+      const src = isStaged ? stagedRef.current : (reordered && Array.isArray(reordered) ? reordered : null);
+      if (src && Array.isArray(src) && realIdx > 0 && realIdx < src.length) {
+        const targetIdx = realIdx - 1;
+        const swapped = src.slice();
+        const tmp = swapped[targetIdx];
+        swapped[targetIdx] = swapped[realIdx];
+        swapped[realIdx] = tmp;
+
+        if (isStaged) {
+          try {
+            stagedRef.current = swapped;
+            setStagedReordered(swapped);
+          } catch (e) { stagedRef.current = src; throw e; }
+        } else {
+          try {
+            reorderedRef.current = swapped;
+            setReordered(swapped);
+          } catch (e) { reorderedRef.current = src; throw e; }
+        }
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try {
+            let ok = false;
+            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
+            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+          } catch (e) { }
+        }));
+        return;
+      }
+    } catch (e) { }
+
     batchUpdateReordered((arr) => {
       const len = Array.isArray(arr) ? arr.length : 0;
       if (realIdx <= 0 || realIdx >= len) return arr;
@@ -850,6 +883,40 @@ export default function SharedList({
       if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
     } catch (e) { }
 
+    try {
+      const isStaged = stagedRef.current && Array.isArray(stagedRef.current) && stagedRef.current.length;
+      const src = isStaged ? stagedRef.current : (reordered && Array.isArray(reordered) ? reordered : null);
+      if (src && Array.isArray(src) && realIdx >= 0 && realIdx < src.length - 1) {
+        const targetIdx = realIdx + 1;
+        const swapped = src.slice();
+        const tmp = swapped[targetIdx];
+        swapped[targetIdx] = swapped[realIdx];
+        swapped[realIdx] = tmp;
+
+        if (isStaged) {
+          try {
+            stagedRef.current = swapped;
+            setStagedReordered(swapped);
+          } catch (e) { stagedRef.current = src; throw e; }
+        } else {
+          try {
+            reorderedRef.current = swapped;
+            setReordered(swapped);
+          } catch (e) { reorderedRef.current = src; throw e; }
+        }
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try {
+            let ok = false;
+            try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
+            if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+          } catch (e) { }
+        }));
+        return;
+      }
+    } catch (e) { }
+
+    // Fallback to existing batch path
     batchUpdateReordered((arr) => {
       const len = Array.isArray(arr) ? arr.length : 0;
       if (realIdx < 0 || realIdx >= len - 1) return arr;
