@@ -76,6 +76,125 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
 
 }
 
+function parseAsLocal(d) {
+  if (!d) return null;
+  const s = String(d).trim();
+  if (s.includes('?')) return null;
+  try {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+      return new Date(s + 'T00:00:00');
+    }
+    const parsed = new Date(s);
+    if (isNaN(parsed)) return null;
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+}
+
+function calculateDaysLasted(currentDate, previousDate) {
+  if (!currentDate || !previousDate) return 'N/A';
+  const current = parseAsLocal(currentDate);
+  const previous = parseAsLocal(previousDate);
+  if (!current || !previous || isNaN(current) || isNaN(previous)) return 'N/A';
+  const diffTime = Math.abs(current - previous);
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+function shouldShowTier(tier, mode, usePlatformers, showTiers) {
+  try {
+    if (!tier) return false;
+    if (showTiers !== true) return false;
+    if (mode === 'timeline') return false;
+    if (usePlatformers) return false;
+    return true;
+  } catch (e) { return false; }
+}
+
+function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+  const { dateFormat } = useDateFormat();
+  const tier = getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
+  const handleClick = e => {
+    if (devMode) {
+      if (e.ctrlKey || e.button === 1) return;
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
+  let lastedLabel;
+  if (previousAchievement && previousAchievement.date && achievement && achievement.date) {
+    const days = calculateDaysLasted(achievement.date, previousAchievement.date);
+    lastedLabel = typeof days === 'number' ? `Lasted ${days} days` : 'Lasted N/A days';
+  } else {
+
+    const today = new Date();
+    const achievementDate = parseAsLocal(achievement && achievement.date);
+    if (!achievement || !achievement.date || !achievementDate || isNaN(achievementDate)) {
+      lastedLabel = 'Lasting N/A days';
+    } else {
+      const diffTime = Math.abs(today - achievementDate);
+      const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+      lastedLabel = `Lasting ${days} days`;
+    }
+  }
+
+  return (
+    <Link href={`/achievement/${achievement.id}`} passHref legacyBehavior>
+      <a
+        style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+        onClick={handleClick}
+        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
+        onMouseDown={handleClick}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
+        tabIndex={devMode ? -1 : 0}
+        aria-disabled={devMode ? 'true' : undefined}
+      >
+        <div
+          className={`achievement-item`}
+          tabIndex={0}
+          style={{ cursor: 'pointer', position: 'relative' }}
+          onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+          onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+        >
+          <div className="rank-date-container">
+            {!isPlatformer && (
+              <div className="achievement-length">
+                {achievement && (achievement._lengthStr || achievement.length === 0) ? (achievement._lengthStr || (achievement.length ? `${Math.floor(achievement.length / 60)}:${(achievement.length % 60).toString().padStart(2, '0')}` : 'N/A')) : 'N/A'}
+              </div>
+            )}
+            <div className="lasted-days">{lastedLabel}</div>
+            <div className="achievement-date"><strong>{achievement.date ? formatDate(achievement.date, dateFormat) : 'N/A'}</strong></div>
+          </div>
+          <div className="tag-container">
+            {(achievement._sortedTags || []).map(tag => (
+              <Tag tag={tag} key={tag} />
+            ))}
+            {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
+            )}
+          </div>
+          <div className="achievement-details">
+            <div className="text">
+              <h2>{achievement.name}</h2>
+              <p>{achievement.player}</p>
+            </div>
+            <div className="thumbnail-container">
+              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+              {autoThumbAvailable && (
+                <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </a>
+    </Link>
+  );
+}
 
 const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
   const pa = prev.achievement || {};
@@ -378,11 +497,6 @@ export default function SharedList({
     setManualSearch(rawQuery);
     try { pendingSearchJumpRef.current = rawQuery; } catch (e) { }
     try { searchJumpPendingRef.current = true; } catch (e) { }
-    try {
-      if (debouncedManualSearch === rawQuery) {
-        try { performManualSearchJump(rawQuery); } catch (e) { }
-      }
-    } catch (e) { }
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
     }
@@ -460,6 +574,7 @@ export default function SharedList({
   const [showSidebar, setShowSidebar] = useState(false);
   const mobileBtnRef = useRef();
   const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
+  const debouncedIsPending = useDebouncedValue(isPending, { minDelay: 120, maxDelay: 400, useIdle: false });
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
   useEffect(() => { devModeRef.current = devMode; }, [devMode]);
@@ -582,105 +697,6 @@ export default function SharedList({
   const pastePrefixMapRef = sharedListManager.pastePrefixMapRef;
   const debouncedPasteSearch = useDebouncedValue(pasteSearch, { minDelay: 80, maxDelay: 250, useIdle: true });
   const pendingSearchJumpRef = useRef(null);
-  const manualSearchCycleRef = useRef({ query: null, ids: [], pos: -1 });
-
-  function performManualSearchJump(rawQuery) {
-    try {
-      if (!rawQuery) return false;
-      const normalizedQuery = normalizeForSearch(rawQuery || '');
-      const qTokensManual = (normalizedQuery || '') ? normalizedQuery.split(' ').filter(Boolean) : [];
-
-      const matchesQuery = a => {
-        if (!a) return false;
-        if (!qTokensManual.length) return false;
-        const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
-        if (!itemTokens || itemTokens.length === 0) return false;
-        return qTokensManual.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)));
-      };
-
-      const respectsTagFilters = a => {
-        const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
-        const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
-        if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-        if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-        return true;
-      };
-
-      const baseList = (devModeRef.current && (stagedRef.current || reorderedRef.current)) ? (stagedRef.current || reorderedRef.current) : (achievementsRef.current || []);
-      const preFiltered = [];
-      for (let i = 0; i < baseList.length; i++) {
-        const a = baseList[i];
-        try { if (respectsTagFilters(a)) preFiltered.push(a); } catch (e) { }
-      }
-
-      const matchingItems = [];
-      for (let i = 0; i < preFiltered.length; i++) {
-        const a = preFiltered[i];
-        try { if (matchesQuery(a)) matchingItems.push(a); } catch (e) { }
-      }
-
-      if (!matchingItems || matchingItems.length === 0) {
-        try { pendingSearchJumpRef.current = null; } catch (e) { }
-        try { searchJumpPendingRef.current = false; } catch (e) { }
-        setNoMatchMessage('No matching achievement is currently visible with the active filters.');
-        window.setTimeout(() => setNoMatchMessage(''), 3000);
-        return false;
-      }
-
-      const ids = matchingItems.map((a, i) => (a && a.id) ? String(a.id) : `__idx_${i}`);
-      const cycle = manualSearchCycleRef.current || { query: null, ids: [], pos: -1 };
-      let pos = 0;
-      if (cycle.query === rawQuery && Array.isArray(cycle.ids) && cycle.ids.length === ids.length && ids.every((v, i) => v === (cycle.ids[i] || null))) {
-        pos = ((cycle.pos || 0) + 1) % ids.length;
-      } else {
-        pos = 0;
-      }
-      manualSearchCycleRef.current = { query: rawQuery, ids, pos };
-
-      const selected = matchingItems[pos];
-
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        try {
-          if (devModeRef.current) {
-            const targetIdxInPreFiltered = preFiltered.findIndex(a => a === selected);
-            setScrollToIdx(targetIdxInPreFiltered);
-          } else {
-            const normalizedQueryLocal = normalizeForSearch(rawQuery || '');
-            let visibleFiltered;
-            if (searchNormalized === normalizedQueryLocal && Array.isArray(filtered)) {
-              visibleFiltered = filtered;
-            } else {
-              visibleFiltered = (achievementsRef.current || []).filter(a => {
-                const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
-                const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
-                if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-                if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-                if (normalizedQueryLocal) {
-                  const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
-                  if (!itemTokens || itemTokens.length === 0) return false;
-                  const qts = (normalizedQueryLocal || '').split(' ').filter(Boolean);
-                  if (!qts.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
-                }
-                return true;
-              });
-            }
-
-            const finalIdx = visibleFiltered.findIndex(a => a === selected);
-            const idxToUse = finalIdx === -1 ? 0 : finalIdx;
-            setScrollToIdx(idxToUse);
-            if (finalIdx === -1) {
-              setNoMatchMessage('No matching achievement is currently visible with the active filters.');
-              window.setTimeout(() => setNoMatchMessage(''), 3000);
-            }
-          }
-        } catch (e) { }
-      }));
-
-      try { pendingSearchJumpRef.current = null; } catch (e) { }
-      try { searchJumpPendingRef.current = false; } catch (e) { }
-      return true;
-    } catch (e) { return false; }
-  }
   const [extraLists, setExtraLists] = useState({});
   const EXTRA_FILES = ['pending.json', 'legacy.json', 'platformers.json', 'platformertimeline.json', 'timeline.json', 'removed.json'];
   const [insertIdx, setInsertIdx] = useState(null);
@@ -1312,7 +1328,98 @@ export default function SharedList({
   useEffect(() => {
     if (!pendingSearchJumpRef.current) return;
     if (debouncedManualSearch !== pendingSearchJumpRef.current) return;
-    try { performManualSearchJump(pendingSearchJumpRef.current); } catch (e) { }
+
+    try { if (manualSearchControllerRef && manualSearchControllerRef.current && typeof manualSearchControllerRef.current.abort === 'function') manualSearchControllerRef.current.abort(); } catch (e) { }
+    const manualController = { aborted: false, abort() { this.aborted = true; } };
+    manualSearchControllerRef.current = manualController;
+
+    const rawQuery = pendingSearchJumpRef.current;
+    const normalizedQuery = normalizeForSearch(rawQuery || '');
+    const qTokensManual = (normalizedQuery || '') ? normalizedQuery.split(' ').filter(Boolean) : [];
+
+    const matchesQuery = a => {
+      if (!a) return false;
+      if (manualController.aborted) return false;
+      if (!qTokensManual.length) return false;
+      const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
+      if (!itemTokens || itemTokens.length === 0) return false;
+      return qTokensManual.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)));
+    };
+
+    const respectsTagFilters = a => {
+      if (manualController.aborted) return false;
+      const tags = (a.tags || []).map(t => t.toUpperCase());
+      const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
+      if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+      if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+      return true;
+    };
+
+    const baseList = (devModeRef.current && (stagedRef.current || reorderedRef.current)) ? (stagedRef.current || reorderedRef.current) : achievementsRef.current || [];
+    const preFiltered = [];
+    for (let i = 0; i < baseList.length; i++) {
+      if (manualController.aborted) break;
+      const a = baseList[i];
+      try { if (respectsTagFilters(a)) preFiltered.push(a); } catch (e) { }
+    }
+    if (manualController.aborted) {
+      try { pendingSearchJumpRef.current = null; } catch (e) { }
+      try { searchJumpPendingRef.current = false; } catch (e) { }
+      return;
+    }
+    const matchingItems = [];
+    for (let i = 0; i < preFiltered.length; i++) {
+      if (manualController.aborted) break;
+      const a = preFiltered[i];
+      try { if (matchesQuery(a)) matchingItems.push(a); } catch (e) { }
+    }
+    if (!matchingItems || matchingItems.length === 0) {
+      try { pendingSearchJumpRef.current = null; } catch (e) { }
+      try { searchJumpPendingRef.current = false; } catch (e) { }
+      return;
+    }
+
+    const firstMatch = matchingItems[0];
+    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+
+      if (devModeRef.current) {
+        setScrollToIdx(targetIdxInPreFiltered);
+      } else {
+        const normalizedQueryLocal = normalizeForSearch(rawQuery || '');
+        let visibleFiltered;
+        if (searchNormalized === normalizedQueryLocal && Array.isArray(filtered)) {
+          visibleFiltered = filtered;
+        } else {
+          visibleFiltered = (achievementsRef.current || []).filter(a => {
+            const tags = (a.tags || []).map(t => t.toUpperCase());
+            const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
+            if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
+            if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
+            if (normalizedQueryLocal) {
+              const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
+              if (!itemTokens || itemTokens.length === 0) return false;
+              const qts = (normalizedQueryLocal || '').split(' ').filter(Boolean);
+              if (!qts.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
+            }
+            return true;
+          });
+        }
+
+        const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
+        const idxToUse = finalIdx === -1 ? 0 : finalIdx;
+        setScrollToIdx(idxToUse);
+        if (finalIdx === -1) {
+          setNoMatchMessage('No matching achievement is currently visible with the active filters.');
+          window.setTimeout(() => setNoMatchMessage(''), 3000);
+        } else {
+        }
+      }
+    }));
+
+    try { pendingSearchJumpRef.current = null; } catch (e) { }
+    try { searchJumpPendingRef.current = false; } catch (e) { }
   }, [debouncedManualSearch, filtered, searchLower]);
 
 
