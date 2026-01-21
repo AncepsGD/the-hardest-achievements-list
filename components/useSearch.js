@@ -2,35 +2,113 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Fuse from 'fuse.js';
 import { normalizeForSearch } from './enhanceAchievement';
 
-export default function useSearch(achievements = [], search = '', filters = null, options = {}) {
-    const { debounceMs = 300, fuseOptions = {} } = options;
+export default function useSearch(
+    achievements = [],
+    search = '',
+    filters = null,
+    options = {}
+) {
+    const {
+        debounceMs = 300,
+        fuseOptions = {},
+        setSearchCallback = null,
+        onEditCommand = null,
+        externalRefs = {},
+    } = options;
 
-    const [debouncedQuery, setDebouncedQuery] = useState(search);
-    const [isSearching, setIsSearching] = useState(false);
+    const searchInputRef = externalRefs.searchInputRef || useRef(null);
+    const inputValueRef = externalRefs.inputValueRef || useRef(search);
+
+    const lastJumpQueryRef = externalRefs.lastJumpQueryRef || useRef(null);
+    const jumpCycleIndexRef = externalRefs.jumpCycleIndexRef || useRef(0);
+    const searchJumpPendingRef = externalRefs.searchJumpPendingRef || useRef(false);
+    const pendingSearchJumpRef = externalRefs.pendingSearchJumpRef || useRef(null);
+
     const debounceRef = useRef(null);
+    const [query, setQuery] = useState(search);
+    const [isSearching, setIsSearching] = useState(false);
 
     useEffect(() => {
-        setIsSearching(true);
         clearTimeout(debounceRef.current);
+        setIsSearching(true);
+
         debounceRef.current = setTimeout(() => {
-            setDebouncedQuery(search || '');
+            setQuery(search.trim().toLowerCase());
             setIsSearching(false);
         }, debounceMs);
+
         return () => clearTimeout(debounceRef.current);
     }, [search, debounceMs]);
 
+    useEffect(() => {
+        const el = searchInputRef.current;
+        if (el && el.value !== search) {
+            el.value = search;
+            inputValueRef.current = search;
+        }
+    }, [search]);
+
+    const handleVisibleInputChange = useCallback(
+        e => {
+            const val = e.target.value;
+            inputValueRef.current = val;
+
+            clearTimeout(debounceRef.current);
+            debounceRef.current = setTimeout(() => {
+                setSearchCallback?.(val);
+            }, 120);
+
+            lastJumpQueryRef.current = null;
+            jumpCycleIndexRef.current = 0;
+        },
+        [setSearchCallback]
+    );
+
+    const handleSearchKeyDown = useCallback(
+        e => {
+            if (e.key !== 'Enter') return;
+            e.preventDefault();
+
+            const raw = e.target.value.trim();
+            if (!raw) return;
+
+            if (raw === 'edit') {
+                onEditCommand?.();
+                setSearchCallback?.('');
+                e.target.blur();
+                return;
+            }
+
+            jumpCycleIndexRef.current =
+                lastJumpQueryRef.current === raw
+                    ? jumpCycleIndexRef.current + 1
+                    : 0;
+
+            lastJumpQueryRef.current = raw;
+            searchJumpPendingRef.current = true;
+            pendingSearchJumpRef.current = raw;
+
+            e.target.blur();
+        },
+        [onEditCommand, setSearchCallback]
+    );
+
     const indexed = useMemo(() => {
         if (!Array.isArray(achievements)) return [];
+
         return achievements.map(a => {
-            const tags = a?.tags || a?.tagList || [];
-            const tagArr = Array.isArray(tags)
-                ? tags
-                : String(tags).split(/,|;/);
+            const rawTags = a.tags || a.tagList || [];
+            const tagArray = Array.isArray(rawTags)
+                ? rawTags
+                : String(rawTags).split(/[,;]/);
+
             const tagSet = new Set(
-                tagArr.map(t => String(t).trim().toLowerCase()).filter(Boolean)
+                tagArray
+                    .map(t => t.trim().toLowerCase())
+                    .filter(Boolean)
             );
 
-            const searchText =
+            const text =
                 normalizeForSearch(a) +
                 ' ' +
                 (a.title || '') +
@@ -39,67 +117,87 @@ export default function useSearch(achievements = [], search = '', filters = null
 
             return {
                 ...a,
-                _searchText: searchText.toLowerCase(),
+                _searchText: text.toLowerCase(),
                 _tagSet: tagSet,
             };
         });
     }, [achievements]);
 
+    const normalizedFilters = useMemo(() => {
+        if (!filters) return null;
+
+        return {
+            include: (filters.include || []).map(t => t.toLowerCase()),
+            exclude: (filters.exclude || []).map(t => t.toLowerCase()),
+            matchesItem: filters.matchesItem || null,
+        };
+    }, [filters]);
+
+    const matchesFilter = useCallback(
+        item => {
+            if (!normalizedFilters) return true;
+
+            if (normalizedFilters.matchesItem) {
+                return normalizedFilters.matchesItem(item);
+            }
+
+            const tags = item._tagSet;
+
+            for (const t of normalizedFilters.exclude) {
+                if (tags.has(t)) return false;
+            }
+
+            for (const t of normalizedFilters.include) {
+                if (!tags.has(t)) return false;
+            }
+
+            return true;
+        },
+        [normalizedFilters]
+    );
+
     const fuse = useMemo(() => {
         if (!indexed.length) return null;
+
         return new Fuse(indexed, {
-            includeScore: false,
             threshold: 0.4,
+            includeScore: false,
             keys: [
                 { name: 'title', weight: 0.7 },
                 { name: 'description', weight: 0.3 },
-                { name: '_searchText', weight: 0.1 },
             ],
             ...fuseOptions,
         });
     }, [indexed, fuseOptions]);
 
-    const matchesFilter = useCallback(
-        item => {
-            if (!filters) return true;
-            if (typeof filters.matchesItem === 'function') {
-                return filters.matchesItem(item);
-            }
-
-            const inc = filters.include || [];
-            const exc = filters.exclude || [];
-            const tagSet = item._tagSet;
-
-            for (let i = 0; i < exc.length; i++) {
-                if (tagSet.has(String(exc[i]).toLowerCase())) return false;
-            }
-            for (let i = 0; i < inc.length; i++) {
-                if (!tagSet.has(String(inc[i]).toLowerCase())) return false;
-            }
-            return true;
-        },
-        [filters]
-    );
-
     const results = useMemo(() => {
-        const q = debouncedQuery.trim().toLowerCase();
-        if (!q) {
+        if (!query) {
             return indexed.filter(matchesFilter);
         }
 
-        if (fuse) {
-            return fuse.search(q).map(r => r.item).filter(matchesFilter);
+        const cheapMatches = indexed.filter(
+            it => it._searchText.includes(query) && matchesFilter(it)
+        );
+
+        if (cheapMatches.length || !fuse) {
+            return cheapMatches;
         }
 
-        return indexed.filter(
-            it => it._searchText.includes(q) && matchesFilter(it)
-        );
-    }, [debouncedQuery, indexed, fuse, matchesFilter]);
+        return fuse.search(query).map(r => r.item).filter(matchesFilter);
+    }, [query, indexed, fuse, matchesFilter]);
 
     return {
         results,
         isSearching,
         noMatches: !isSearching && results.length === 0,
-        query: debouncedQuery,
+        query,
+        searchInputRef,
+        inputValueRef,
+        handleSearchKeyDown,
+        handleVisibleInputChange,
+        searchJumpPendingRef,
+        lastJumpQueryRef,
+        jumpCycleIndexRef,
+        pendingSearchJumpRef,
     };
 }
