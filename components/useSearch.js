@@ -104,18 +104,18 @@ export default function useSearch(
                     .filter(Boolean)
             );
 
-            const text =
-                normalizeForSearch(a) +
-                ' ' +
-                (a.title || '') +
-                ' ' +
-                (a.description || '');
+                const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
+                const player = a && a.player ? String(a.player) : '';
+                const description = a && a.description ? String(a.description) : '';
+                const idStr = a && a.id != null ? String(a.id) : '';
+                const searchableNormalized = (a && a._searchableNormalized) || normalizeForSearch(`${name} ${player} ${description} ${idStr}`);
+                const text = searchableNormalized + ' ' + name + ' ' + player + ' ' + description;
 
-            return {
-                ...a,
-                _searchText: text.toLowerCase(),
-                _tagSet: tagSet,
-            };
+                return {
+                    ...a,
+                    _searchText: (text || '').toLowerCase(),
+                    _tagSet: tagSet,
+                };
         });
     }, [achievements]);
 
@@ -176,13 +176,18 @@ export default function useSearch(
                     .filter(Boolean)
             );
 
-            const text = normalizeForSearch(a) + ' ' + (a.title || '') + ' ' + (a.description || '');
+            const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
+            const player = a && a.player ? String(a.player) : '';
+            const description = a && a.description ? String(a.description) : '';
+            const idStr = a && a.id != null ? String(a.id) : '';
+            const searchableNormalized = (a && a._searchableNormalized) || normalizeForSearch(`${name} ${player} ${description} ${idStr}`);
+            const text = searchableNormalized + ' ' + name + ' ' + player + ' ' + description;
 
             return {
                 id: a && a.id != null ? String(a.id) : undefined,
-                title: (a.title || ''),
-                description: (a.description || ''),
-                _searchText: text.toLowerCase(),
+                title: (name || ''),
+                description: (description || player || ''),
+                _searchText: (text || '').toLowerCase(),
                 _tagSet: tagSet,
             };
         }).filter(item => item.id !== undefined);
