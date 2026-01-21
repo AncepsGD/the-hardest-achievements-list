@@ -719,6 +719,7 @@ export default function SharedList({
   useEffect(() => { try { sharedListManager.editIdxRef.current = editIdx; } catch (e) { } }, [editIdx]);
   useEffect(() => { try { sharedListManager.editFormRef.current = editForm; sharedListManager.editFormTagsRef.current = editFormTags; sharedListManager.editFormCustomTagsRef.current = editFormCustomTags; } catch (e) { } }, [editForm, editFormTags, editFormCustomTags]);
   const achievementRefs = useRef([]);
+  const searchTokensWeakRef = useRef(new WeakMap());
   const handleMoveUpRef = useRef(null);
   const handleMoveDownRef = useRef(null);
   const handleEditRef = useRef(null);
@@ -979,6 +980,36 @@ export default function SharedList({
   useEffect(() => {
     try { if (neighborContextRef && neighborContextRef.current) neighborContextRef.current.clear(); } catch (e) { }
   }, [achievements, reordered]);
+
+  useEffect(() => {
+    try {
+      const map = new WeakMap();
+      const items = Array.isArray(achievements) ? achievements : [];
+      for (let i = 0; i < items.length; i++) {
+        const a = items[i];
+        try {
+          const norm = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
+          const toks = _tokensFromNormalized(norm) || [];
+          map.set(a, toks);
+        } catch (e) {
+          try { map.set(a, []); } catch (ee) { }
+        }
+      }
+      searchTokensWeakRef.current = map;
+    } catch (e) { }
+  }, [achievements]);
+
+  function getItemTokens(a) {
+    try {
+      const map = searchTokensWeakRef.current;
+      if (map && typeof map.get === 'function') {
+        const fromMap = map.get(a);
+        if (Array.isArray(fromMap)) return fromMap;
+      }
+      const norm = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
+      return _tokensFromNormalized(norm) || [];
+    } catch (e) { return []; }
+  }
   useEffect(() => {
     try {
       const cur = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : (reordered && Array.isArray(reordered) ? reordered : []);
@@ -1216,7 +1247,7 @@ export default function SharedList({
       if (include.length && !include.every(tag => tags.includes(tag))) return false;
       if (exclude.length && exclude.some(tag => tags.includes(tag))) return false;
       if (queryTokens && queryTokens.length) {
-        const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' ')));
+        const itemTokens = getItemTokens(a);
         if (!itemTokens || itemTokens.length === 0) return false;
         if (!queryTokens.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
       }
@@ -1352,7 +1383,7 @@ export default function SharedList({
       if (!a) return false;
       if (manualController.aborted) return false;
       if (!qTokensManual.length) return false;
-      const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
+      const itemTokens = getItemTokens(a);
       if (!itemTokens || itemTokens.length === 0) return false;
       return qTokensManual.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)));
     };
@@ -1410,7 +1441,7 @@ export default function SharedList({
             if (ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
             if (ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
             if (normalizedQueryLocal) {
-              const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
+              const itemTokens = getItemTokens(a);
               if (!itemTokens || itemTokens.length === 0) return false;
               const qts = (normalizedQueryLocal || '').split(' ').filter(Boolean);
               if (!qts.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
