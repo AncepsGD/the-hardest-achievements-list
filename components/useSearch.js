@@ -1,93 +1,105 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Fuse from 'fuse.js';
 import { normalizeForSearch } from './enhanceAchievement';
+
 export default function useSearch(achievements = [], search = '', filters = null, options = {}) {
     const { debounceMs = 300, fuseOptions = {} } = options;
 
-    const [debouncedQuery, setDebouncedQuery] = useState(search || '');
+    const [debouncedQuery, setDebouncedQuery] = useState(search);
     const [isSearching, setIsSearching] = useState(false);
+    const debounceRef = useRef(null);
 
     useEffect(() => {
-        let mounted = true;
         setIsSearching(true);
-        const t = setTimeout(() => {
-            if (!mounted) return;
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
             setDebouncedQuery(search || '');
             setIsSearching(false);
         }, debounceMs);
-        return () => {
-            mounted = false;
-            clearTimeout(t);
-        };
+        return () => clearTimeout(debounceRef.current);
     }, [search, debounceMs]);
 
     const indexed = useMemo(() => {
         if (!Array.isArray(achievements)) return [];
-        return achievements.map((a) => {
-            const norm = normalizeForSearch(a) || '';
-            return Object.assign({}, a, { _searchText: norm });
+        return achievements.map(a => {
+            const tags = a?.tags || a?.tagList || [];
+            const tagArr = Array.isArray(tags)
+                ? tags
+                : String(tags).split(/,|;/);
+            const tagSet = new Set(
+                tagArr.map(t => String(t).trim().toLowerCase()).filter(Boolean)
+            );
+
+            const searchText =
+                normalizeForSearch(a) +
+                ' ' +
+                (a.title || '') +
+                ' ' +
+                (a.description || '');
+
+            return {
+                ...a,
+                _searchText: searchText.toLowerCase(),
+                _tagSet: tagSet,
+            };
         });
     }, [achievements]);
 
     const fuse = useMemo(() => {
-        const defaultOpts = {
-            includeScore: true,
+        if (!indexed.length) return null;
+        return new Fuse(indexed, {
+            includeScore: false,
             threshold: 0.4,
             keys: [
                 { name: 'title', weight: 0.7 },
                 { name: 'description', weight: 0.3 },
                 { name: '_searchText', weight: 0.1 },
             ],
-        };
-        try {
-            return new Fuse(indexed, Object.assign({}, defaultOpts, fuseOptions));
-        } catch (e) {
-            return new Fuse(indexed, defaultOpts);
-        }
-    }, [indexed, JSON.stringify(fuseOptions)]);
+            ...fuseOptions,
+        });
+    }, [indexed, fuseOptions]);
 
     const matchesFilter = useCallback(
-        (item) => {
+        item => {
             if (!filters) return true;
-            if (typeof filters.matchesItem === 'function') return filters.matchesItem(item);
+            if (typeof filters.matchesItem === 'function') {
+                return filters.matchesItem(item);
+            }
 
-            const inc = (filters.include || []).map((t) => String(t).toLowerCase());
-            const exc = (filters.exclude || []).map((t) => String(t).toLowerCase());
-            const tags = (item && (item.tags || item.tagList)) || [];
-            const tagSet = new Set((Array.isArray(tags) ? tags : String(tags).split(/,|;/)).map((t) => String(t).trim().toLowerCase()).filter(Boolean));
-            for (const e of exc) if (tagSet.has(e)) return false;
-            for (const i of inc) if (!tagSet.has(i)) return false;
+            const inc = filters.include || [];
+            const exc = filters.exclude || [];
+            const tagSet = item._tagSet;
+
+            for (let i = 0; i < exc.length; i++) {
+                if (tagSet.has(String(exc[i]).toLowerCase())) return false;
+            }
+            for (let i = 0; i < inc.length; i++) {
+                if (!tagSet.has(String(inc[i]).toLowerCase())) return false;
+            }
             return true;
         },
         [filters]
     );
 
     const results = useMemo(() => {
-        const q = (debouncedQuery || '').trim();
+        const q = debouncedQuery.trim().toLowerCase();
         if (!q) {
-            return (achievements || []).filter(matchesFilter);
+            return indexed.filter(matchesFilter);
         }
 
-        try {
-            const fuseRes = fuse.search(q);
-            const items = fuseRes.map((r) => (r && r.item) || r);
-            return items.filter(matchesFilter);
-        } catch (e) {
-
-            const qn = q.toLowerCase();
-            return (indexed || []).filter((it) => {
-                const t = String(it._searchText || '') + ' ' + String(it.title || '') + ' ' + String(it.description || '');
-                return t.toLowerCase().includes(qn) && matchesFilter(it);
-            });
+        if (fuse) {
+            return fuse.search(q).map(r => r.item).filter(matchesFilter);
         }
-    }, [debouncedQuery, fuse, indexed, achievements, matchesFilter]);
 
-    const noMatches = !isSearching && Array.isArray(results) && results.length === 0;
+        return indexed.filter(
+            it => it._searchText.includes(q) && matchesFilter(it)
+        );
+    }, [debouncedQuery, indexed, fuse, matchesFilter]);
 
     return {
         results,
         isSearching,
-        noMatches,
+        noMatches: !isSearching && results.length === 0,
         query: debouncedQuery,
     };
 }
