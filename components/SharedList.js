@@ -464,80 +464,8 @@ export default function SharedList({
   }
   const derivedCacheRef = sharedListManager.derivedCacheRef;
   const [search, setSearch] = useState('');
-  const searchInputRef = useRef(null);
-  const inputValueRef = useRef(search);
-  const setSearchDebounceRef = useRef(null);
-  const [manualSearch, setManualSearch] = useState('');
-
   const [noMatchMessage, setNoMatchMessage] = useState('');
   const debouncedSearch = useDebouncedValue(search, { minDelay: 120, maxDelay: 400, useIdle: true });
-  const debouncedManualSearch = useDebouncedValue(manualSearch, { minDelay: 100, maxDelay: 300, useIdle: false });
-
-  const handleSearchKeyDown = useCallback((e) => {
-    if (e.key !== 'Enter') return;
-    e.preventDefault();
-    const rawQuery = (e.target && typeof e.target.value === 'string') ? (e.target.value || '').trim() : (search || '').trim();
-    const query = rawQuery.toLowerCase();
-    if (!query) return;
-    if (query === 'edit') {
-      if (!devModeRef.current) {
-        devModeRef.current = true;
-        setDevMode(true);
-      }
-      if (!reorderedRef.current) {
-        const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
-        reorderedRef.current = copy;
-        setReordered(copy);
-      }
-      setSearch('');
-      if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
-        document.activeElement.blur();
-      }
-      return;
-    }
-    try {
-      if (String(lastJumpQueryRef.current || '') === String(rawQuery)) {
-        jumpCycleIndexRef.current = (Number(jumpCycleIndexRef.current || 0) + 1);
-      } else {
-        jumpCycleIndexRef.current = 0;
-      }
-      lastJumpQueryRef.current = rawQuery;
-    } catch (e) { }
-
-    setManualSearch(rawQuery);
-    try { pendingSearchJumpRef.current = rawQuery; } catch (e) { }
-    try { searchJumpPendingRef.current = true; } catch (e) { }
-    if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
-      document.activeElement.blur();
-    }
-  }, []);
-
-  const handleVisibleInputChange = useCallback((e) => {
-    try { inputValueRef.current = e.target.value; } catch (err) { inputValueRef.current = ''; }
-    try { setManualSearch(''); } catch (err) { }
-    try { lastJumpQueryRef.current = null; jumpCycleIndexRef.current = 0; } catch (err) { }
-    if (setSearchDebounceRef.current) clearTimeout(setSearchDebounceRef.current);
-    setSearchDebounceRef.current = setTimeout(() => {
-      try { setSearch(inputValueRef.current || ''); } catch (err) { }
-      setSearchDebounceRef.current = null;
-    }, 120);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      try { if (setSearchDebounceRef.current) clearTimeout(setSearchDebounceRef.current); } catch (e) { }
-    };
-  }, []);
-
-  useEffect(() => {
-    try {
-      const el = searchInputRef.current;
-      if (el && typeof el.value === 'string' && el.value !== (search || '')) {
-        el.value = search || '';
-        inputValueRef.current = el.value;
-      }
-    } catch (e) { }
-  }, [search]);
   const tagFilterApi = useTagFilters({ include: [], exclude: [] });
   const { include: _includeTags, exclude: _excludeTags, setInclude: _setIncludeTags, setExclude: _setExcludeTags, matchesItem: _matchesTagItem, getActiveFilters } = tagFilterApi;
 
@@ -1230,7 +1158,39 @@ export default function SharedList({
 
   const queryTokens = useMemo(() => (searchNormalized || '') ? searchNormalized.split(' ').filter(Boolean) : [], [searchNormalized]);
 
-  const { results: _searchResults, isSearching: _isSearching, noMatches: _noMatches } = useSearch(achievements, debouncedSearch, { include: (debouncedFilterTags && debouncedFilterTags.include) || [], exclude: (debouncedFilterTags && debouncedFilterTags.exclude) || [] }, { debounceMs: 120 });
+  const handleOnEditCommand = useCallback(() => {
+    try {
+      if (!devModeRef.current) {
+        devModeRef.current = true;
+        setDevMode(true);
+      }
+      if (!reorderedRef.current) {
+        const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
+        reorderedRef.current = copy;
+        setReordered(copy);
+      }
+      try { setSearch(''); } catch (e) { }
+      try { if (document && document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur(); } catch (e) { }
+    } catch (e) { }
+  }, []);
+
+  const {
+    results: _searchResults,
+    isSearching: _isSearching,
+    noMatches: _noMatches,
+    searchInputRef,
+    inputValueRef,
+    handleSearchKeyDown,
+    handleVisibleInputChange,
+    manualSearch,
+    setManualSearch,
+    debouncedManualSearch,
+  } = useSearch(
+    achievements,
+    debouncedSearch,
+    { include: (debouncedFilterTags && debouncedFilterTags.include) || [], exclude: (debouncedFilterTags && debouncedFilterTags.exclude) || [] },
+    { debounceMs: 120, setSearchCallback: setSearch, onEditCommand: handleOnEditCommand, externalRefs: { searchJumpPendingRef, lastJumpQueryRef, jumpCycleIndexRef, pendingSearchJumpRef } }
+  );
 
   const _normalizedFilterTags = useMemo(() => {
     const src = debouncedFilterTags || { include: [], exclude: [] };
