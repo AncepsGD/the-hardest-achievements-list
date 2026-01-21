@@ -402,9 +402,8 @@ export default function SharedList({
     }
   });
   const searchJumpPendingRef = useRef(false);
-  const manualSearchQueryRef = useRef('');
-  const manualSearchMatchesRef = useRef([]);
-  const manualSearchCycleIndexRef = useRef(0);
+  const lastJumpQueryRef = useRef(null);
+  const jumpCycleIndexRef = useRef(0);
   const listRef = useRef(null);
   function restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive) {
     try {
@@ -496,97 +495,18 @@ export default function SharedList({
       }
       return;
     }
-
-    const isCycle = String(rawQuery) === String(manualSearchQueryRef.current) && Array.isArray(manualSearchMatchesRef.current) && manualSearchMatchesRef.current.length > 0;
-
-    try { setManualSearch(rawQuery); } catch (e) { }
-
     try {
-      const normalizedQuery = normalizeForSearch(rawQuery || '');
-      const qTokensManual = (normalizedQuery || '') ? normalizedQuery.split(' ').filter(Boolean) : [];
-
-      const baseList = (devModeRef.current && (stagedRef.current || reorderedRef.current)) ? (stagedRef.current || reorderedRef.current) : (achievementsRef.current || []);
-      const preFiltered = [];
-      const ft = debouncedFilterTagsRef.current || { include: [], exclude: [] };
-      for (let i = 0; i < baseList.length; i++) {
-        const a = baseList[i];
-        try {
-          const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
-          if (ft.include && ft.include.length && !ft.include.every(tag => tags.includes(tag.toUpperCase()))) continue;
-          if (ft.exclude && ft.exclude.length && ft.exclude.some(tag => tags.includes(tag.toUpperCase()))) continue;
-          preFiltered.push(a);
-        } catch (err) { }
-      }
-
-      const matchingItems = [];
-      for (let i = 0; i < preFiltered.length; i++) {
-        const a = preFiltered[i];
-        try {
-          if (!qTokensManual.length) continue;
-          const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
-          if (!itemTokens || itemTokens.length === 0) continue;
-          if (qTokensManual.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) matchingItems.push(a);
-        } catch (err) { }
-      }
-
-      if (!matchingItems || matchingItems.length === 0) {
-        manualSearchMatchesRef.current = [];
-        manualSearchQueryRef.current = rawQuery;
-        manualSearchCycleIndexRef.current = 0;
-        setNoMatchMessage('No matching achievement is currently visible with the active filters.');
-        window.setTimeout(() => setNoMatchMessage(''), 2500);
+      if (String(lastJumpQueryRef.current || '') === String(rawQuery)) {
+        jumpCycleIndexRef.current = (Number(jumpCycleIndexRef.current || 0) + 1);
       } else {
-        manualSearchMatchesRef.current = matchingItems;
-        manualSearchQueryRef.current = rawQuery;
-        if (isCycle) {
-          manualSearchCycleIndexRef.current = (Number(manualSearchCycleIndexRef.current || 0) + 1) % matchingItems.length;
-        } else {
-          manualSearchCycleIndexRef.current = 0;
-        }
-
-        const target = matchingItems[manualSearchCycleIndexRef.current] || matchingItems[0];
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          try {
-            if (devModeRef.current) {
-              const targetIdxInPreFiltered = preFiltered.findIndex(a => a === target);
-              setScrollToIdx(targetIdxInPreFiltered === -1 ? 0 : targetIdxInPreFiltered);
-            } else {
-              const normalizedQueryLocal = normalizeForSearch(rawQuery || '');
-              let visibleFiltered;
-              if (searchNormalized === normalizedQueryLocal && Array.isArray(filtered)) {
-                visibleFiltered = filtered;
-              } else {
-                visibleFiltered = (achievementsRef.current || []).filter(a => {
-                  const tags = (a.tags || []).map(t => t.toUpperCase());
-                  const ftLocal = debouncedFilterTagsRef.current || { include: [], exclude: [] };
-                  if (ftLocal.include.length && !ftLocal.include.every(tag => tags.includes(tag.toUpperCase()))) return false;
-                  if (ftLocal.exclude.length && ftLocal.exclude.some(tag => tags.includes(tag.toUpperCase()))) return false;
-                  if (normalizedQueryLocal) {
-                    const itemTokens = (a && a._searchableNormalized) ? _tokensFromNormalized(a._searchableNormalized) : _tokensFromNormalized(normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter].filter(Boolean).join(' ')));
-                    if (!itemTokens || itemTokens.length === 0) return false;
-                    const qts = (normalizedQueryLocal || '').split(' ').filter(Boolean);
-                    if (!qts.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
-                  }
-                  return true;
-                });
-              }
-
-              const finalIdx = visibleFiltered.findIndex(a => a === target);
-              const idxToUse = finalIdx === -1 ? 0 : finalIdx;
-              setScrollToIdx(idxToUse);
-              if (finalIdx === -1) {
-                setNoMatchMessage('No matching achievement is currently visible with the active filters.');
-                window.setTimeout(() => setNoMatchMessage(''), 2500);
-              }
-            }
-          } catch (err) { }
-        }));
+        jumpCycleIndexRef.current = 0;
       }
-    } catch (err) { }
+      lastJumpQueryRef.current = rawQuery;
+    } catch (e) { }
 
+    setManualSearch(rawQuery);
     try { pendingSearchJumpRef.current = rawQuery; } catch (e) { }
     try { searchJumpPendingRef.current = true; } catch (e) { }
-
     if (document && document.activeElement && typeof document.activeElement.blur === 'function') {
       document.activeElement.blur();
     }
@@ -595,6 +515,7 @@ export default function SharedList({
   const handleVisibleInputChange = useCallback((e) => {
     try { inputValueRef.current = e.target.value; } catch (err) { inputValueRef.current = ''; }
     try { setManualSearch(''); } catch (err) { }
+    try { lastJumpQueryRef.current = null; jumpCycleIndexRef.current = 0; } catch (err) { }
     if (setSearchDebounceRef.current) clearTimeout(setSearchDebounceRef.current);
     setSearchDebounceRef.current = setTimeout(() => {
       try { setSearch(inputValueRef.current || ''); } catch (err) { }
@@ -1469,8 +1390,9 @@ export default function SharedList({
       return;
     }
 
-    const firstMatch = matchingItems[0];
-    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === firstMatch);
+    const cycleIdx = Math.max(0, Number(jumpCycleIndexRef.current || 0));
+    const chosen = matchingItems[cycleIdx % matchingItems.length];
+    const targetIdxInPreFiltered = preFiltered.findIndex(a => a === chosen);
 
     requestAnimationFrame(() => requestAnimationFrame(() => {
 
@@ -1497,7 +1419,7 @@ export default function SharedList({
           });
         }
 
-        const finalIdx = visibleFiltered.findIndex(a => a === firstMatch);
+        const finalIdx = visibleFiltered.findIndex(a => a === chosen);
         const idxToUse = finalIdx === -1 ? 0 : finalIdx;
         setScrollToIdx(idxToUse);
         if (finalIdx === -1) {
