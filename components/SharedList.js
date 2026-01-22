@@ -513,7 +513,6 @@ export default function SharedList({
   const [showSidebar, setShowSidebar] = useState(false);
   const mobileBtnRef = useRef();
   const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
-  const debouncedIsPending = useDebouncedValue(isPending, { minDelay: 120, maxDelay: 400, useIdle: false });
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
   useEffect(() => { devModeRef.current = devMode; }, [devMode]);
@@ -1179,14 +1178,29 @@ export default function SharedList({
     isSearching: _isSearching,
     noMatches: _noMatches,
     searchInputRef,
-    inputValueRef,
     handleSearchKeyDown,
     handleVisibleInputChange,
-    manualSearch,
-    setManualSearch,
     debouncedManualSearch,
   } = useSearch(
-    achievements,
+    useMemo(() => {
+      try {
+        if (!Array.isArray(achievements)) return [];
+        return achievements.map(a => {
+          if (!a || typeof a !== 'object') return a;
+          if (a._searchableNormalized) return a;
+          const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
+          const player = a && a.player ? String(a.player) : '';
+          const description = a && a.description ? String(a.description) : '';
+          const idStr = a && a.id != null ? String(a.id) : '';
+          const searchable = `${name} ${player} ${description} ${idStr}`;
+          try {
+            return { ...a, _searchableNormalized: normalizeForSearch(searchable) };
+          } catch (e) {
+            return { ...a, _searchableNormalized: '' };
+          }
+        });
+      } catch (e) { return achievements; }
+    }, [getListSignature(achievements)]),
     debouncedSearch,
     { include: (debouncedFilterTags && debouncedFilterTags.include) || [], exclude: (debouncedFilterTags && debouncedFilterTags.exclude) || [] },
     { debounceMs: 120, setSearchCallback: setSearch, onEditCommand: handleOnEditCommand, externalRefs: { searchJumpPendingRef, lastJumpQueryRef, jumpCycleIndexRef, pendingSearchJumpRef } }
@@ -1217,6 +1231,7 @@ export default function SharedList({
   );
 
   const [filtered, setFiltered] = useState([]);
+  const prevFilterSigRef = useRef(null);
   useEffect(() => {
     try { if (ongoingFilterControllerRef.current && typeof ongoingFilterControllerRef.current.abort === 'function') ongoingFilterControllerRef.current.abort(); } catch (e) { }
     const controller = { aborted: false, abort() { this.aborted = true; } };
@@ -1235,6 +1250,13 @@ export default function SharedList({
       const filterTagSig = `${(_normalizedFilterTags && _normalizedFilterTags.include) ? _normalizedFilterTags.include.join(',') : ''}|${(_normalizedFilterTags && _normalizedFilterTags.exclude) ? _normalizedFilterTags.exclude.join(',') : ''}`;
       const qSig = (queryTokens && queryTokens.length) ? queryTokens.join(',') : '';
       const filterSig = `${getListSignature(itemsSigList)}|${filterTagSig}|${qSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
+
+      if (prevFilterSigRef.current && prevFilterSigRef.current === filterSig) {
+        return () => { try { controller.abort(); } catch (e) { } };
+      }
+
+      prevFilterSigRef.current = filterSig;
+
       const cache = derivedCacheRef.current && derivedCacheRef.current.filtered;
       if (cache && cache.has(filterSig)) {
         try { setFiltered(cache.get(filterSig)); } catch (e) { }
@@ -2322,6 +2344,12 @@ export default function SharedList({
               width={'100%'}
               style={{ overflowX: 'hidden' }}
               itemData={listItemData}
+              itemKey={(index, data) => {
+                try {
+                  const it = (data && data.filtered && data.filtered[index]) || null;
+                  return (it && it.id != null) ? String(it.id) : index;
+                } catch (e) { return index; }
+              }}
               onItemsRendered={() => { }}
             >
               {ListRow}
