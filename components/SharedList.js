@@ -1025,6 +1025,7 @@ export default React.memo(function SharedList({
         finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
 
         setAchievements(() => finalEnhanced);
+        try { setFiltered(() => finalEnhanced); } catch (e) { }
         const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
         setOriginalAchievements(snap);
         try { originalSnapshotRef.current = snap; } catch (e) { }
