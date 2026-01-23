@@ -49,10 +49,16 @@ export default function useSearch(
             inputValueRef.current = val;
             setSearchCallback?.(val);
 
+            if (!setSearchCallback) {
+                const normalizedVal = (val || '').trim().toLowerCase();
+                setQuery(normalizedVal);
+                setIsSearching(false);
+            }
+
             lastJumpQueryRef.current = null;
             jumpCycleIndexRef.current = 0;
         },
-        [setSearchCallback]
+        [setSearchCallback, setQuery, setIsSearching]
     );
 
     const handleSearchKeyDown = useCallback(
