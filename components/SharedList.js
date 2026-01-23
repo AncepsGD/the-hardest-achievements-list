@@ -2346,7 +2346,17 @@ export default React.memo(function SharedList({
 
   return (
     <>
-      <style>{`.achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; } .hover-menu{ will-change: opacity; } .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }`}</style>
+      <style>{`
+        /* Prefer CSS-first visuals for non-interactive hints. */
+        .achievement-item:hover .hover-hint{ opacity: 1 !important; transform: translateY(0) !important; }
+        .hover-hint{ opacity: 0; transition: opacity 140ms ease, transform 160ms ease; transform: translateY(-4px); pointer-events: none; }
+
+        /* Keep existing hover-menu compatibility (if present) but avoid JS-only dependency
+           for purely visual hints. JS will still control interactive menus. */
+        .achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; }
+        .hover-menu{ will-change: opacity; }
+        .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }
+      `}</style>
       <Head>
         <title>The Hardest Achievements List</title>
         <meta charSet="UTF-8" />
@@ -2717,12 +2727,12 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onCopy = (e) => { try { e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
 
-  const baseStyle = { display: devMode ? 'block' : 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' };
+  const baseStyle = { display: devMode ? 'block' : 'none', position: 'absolute', left: -9999, top: -9999, width: 'auto', minWidth: 360, maxWidth: 720, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)', boxSizing: 'border-box', whiteSpace: 'nowrap' };
 
   const panelEl = (
     <div ref={devPanelRef} className="devmode-hover-panel" style={baseStyle}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: 6 }}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'nowrap', alignItems: 'center' }}>
           <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={onEdit}><EditIcon width={16} height={16} /></button>
           <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-up" title="Move Up" aria-label="Move Up" onClick={onMoveUp}><UpIcon width={16} height={16} /></button>
           <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-move-down" title="Move Down" aria-label="Move Down" onClick={onMoveDown}><DownIcon width={16} height={16} /></button>
