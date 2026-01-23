@@ -573,7 +573,72 @@ export default React.memo(function SharedList({
 
   useEffect(() => {
     try {
-      const workerCode = `self.onmessage = function(e){try{var d=e.data||{};var id=d.id;var type=d.type;var p=d.payload||{};if(type==='fuseSearch'){try{importScripts('https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js');}catch(err){}try{var items=p.items||[];var options=p.options||{};var q=p.query||'';var fuse=new Fuse(items, options);var res=fuse.search(q);var out=res.map(function(r){return (r&&r.item)?r.item:r;});self.postMessage({id:id,type:type,result:out});}catch(err){self.postMessage({id:id,type:type,result:p.items||[]});}}else if(type==='buildPasteIndex'){try{var items=p.items||[];var maxPrefix=p.maxPrefix||20;var idx=new Array(items.length);var prefixMapObj={};for(var i=0;i<items.length;i++){var a=items[i];var searchable=[a&&a.name,a&&a.player,a&&a.id,a&&a.levelID,a&&a.submitter,(a&&a.tags)?(a.tags.join(' ')):''].filter(Boolean).join(' ').toLowerCase();idx[i]={achievement:a,searchable:searchable};var toks=(searchable||'').split(/\s+/).filter(Boolean);toks.forEach(function(tok){var capped=String(tok).slice(0,maxPrefix);for(var pLen=1;pLen<=capped.length;pLen++){var key=capped.slice(0,pLen);if(!prefixMapObj[key]) prefixMapObj[key]=[];prefixMapObj[key].push(i);}});}self.postMessage({id:id,type:type,result:{idx:idx,prefixMap:prefixMapObj}});}catch(err){self.postMessage({id:id,type:type,result:{idx:[],prefixMap:{}}});}}else{self.postMessage({id:id,type:type,result:null});}}catch(e){try{self.postMessage({id:(e&&e.id)||null,type:'error',result:null});}catch(_){} }};`;
+        const workerCode = `self.onmessage = function(e){
+          try {
+            var d = e.data || {};
+            var id = d.id;
+            var type = d.type;
+            var p = d.payload || {};
+            if (type === 'search') {
+              var items = p.items || [];
+              var q = p.query || '';
+              var include = p.include || [];
+              var exclude = p.exclude || [];
+              var pool = (items || []).filter(function(item) {
+                var tags = item._tagSet || new Set();
+                for (var ti = 0; ti < exclude.length; ti++) if (tags.has(exclude[ti])) return false;
+                for (var ti2 = 0; ti2 < include.length; ti2++) if (!tags.has(include[ti2])) return false;
+                return true;
+              });
+              if (!q) {
+                var ids0 = pool.map(function(it) { return it.id; }).filter(Boolean);
+                self.postMessage({ id: id, type: type, result: ids0 });
+              } else {
+                var cheap = pool.filter(function(it) { return (it._searchText || '').includes(q); }).map(function(it) { return it.id; });
+                if (cheap.length) {
+                  self.postMessage({ id: id, type: type, result: cheap });
+                } else {
+                  var tokens = (q || '').split(/\s+/).filter(Boolean);
+                  var matches = pool.filter(function(item) {
+                    var text = item._searchText || '';
+                    for (var tk = 0; tk < tokens.length; tk++) if (!text.includes(tokens[tk])) return false;
+                    return true;
+                  }).map(function(it) { return it.id; });
+                  self.postMessage({ id: id, type: type, result: matches });
+                }
+              }
+            } else if (type === 'buildPasteIndex') {
+              try {
+                var items2 = p.items || [];
+                var maxPrefix = p.maxPrefix || 20;
+                var idx = new Array(items2.length);
+                var prefixMapObj = {};
+                for (var i = 0; i < items2.length; i++) {
+                  var a = items2[i];
+                  var searchable = [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
+                    .filter(Boolean).join(' ').toLowerCase();
+                  idx[i] = { achievement: a, searchable: searchable };
+                  var toks = (searchable || '').split(/\s+/).filter(Boolean);
+                  toks.forEach(function(tok) {
+                    var capped = String(tok).slice(0, maxPrefix);
+                    for (var pLen = 1; pLen <= capped.length; pLen++) {
+                      var key = capped.slice(0, pLen);
+                      if (!prefixMapObj[key]) prefixMapObj[key] = [];
+                      prefixMapObj[key].push(i);
+                    }
+                  });
+                }
+                self.postMessage({ id: id, type: type, result: { idx: idx, prefixMap: prefixMapObj } });
+              } catch (err) {
+                self.postMessage({ id: id, type: type, result: { idx: [], prefixMap: {} } });
+              }
+            } else {
+              self.postMessage({ id: id, type: type, result: null });
+            }
+          } catch (e) {
+            try { self.postMessage({ id: (e && e.id) || null, type: 'error', result: null }); } catch (_) {}
+          }
+        };`;
       const blob = new Blob([workerCode], { type: 'application/javascript' });
       const url = URL.createObjectURL(blob);
       const w = new Worker(url);
