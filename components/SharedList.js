@@ -20,46 +20,6 @@ import { enhanceAchievement, mapEnhanceArray, getThumbnailUrl, normalizeForSearc
 import useTagFilters from './useTagFilters';
 import useSearch from './useSearch';
 
-function LazyImage({ src, alt, width, height, className, style }) {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(false);
-  const [loadedSrc, setLoadedSrc] = useState(null);
-
-  useEffect(() => {
-    if (!ref.current) return;
-    if (typeof IntersectionObserver === 'undefined') {
-      setVisible(true);
-      return;
-    }
-    let cancelled = false;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          if (!cancelled) setVisible(true);
-        }
-      });
-    }, { rootMargin: '200px' });
-    io.observe(ref.current);
-    return () => { cancelled = true; try { io.disconnect(); } catch (e) { } };
-  }, [ref]);
-
-  useEffect(() => {
-    if (visible && src) {
-      setLoadedSrc(src);
-    }
-  }, [visible, src]);
-
-  return (
-    <div ref={ref} style={{ width: width || '100%', height: height || '100%', overflow: 'hidden' }} className={className}>
-      {loadedSrc ? (
-        <img src={loadedSrc} alt={alt} loading="lazy" decoding="async" width={width || undefined} height={height || undefined} style={style} />
-      ) : (
-        <div style={{ width: '100%', height: '100%', backgroundColor: '#222' }} />
-      )}
-    </div>
-  );
-}
-
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show }) {
   const tagStates = {};
   allTags.forEach(tag => {
@@ -237,8 +197,8 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
               <h2>{achievement.name}</h2>
               <p>{achievement.player}</p>
             </div>
-            <div className="thumbnail-container" style={{ contentVisibility: 'auto' }}>
-              <LazyImage src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} width={320} height={180} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--border-radius)' }} />
+            <div className="thumbnail-container">
+              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
               {autoThumbAvailable && (
                 <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
               )}
@@ -329,8 +289,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               <h2>{achievement.name}</h2>
               <p>{achievement.player}</p>
             </div>
-            <div className="thumbnail-container" style={{ contentVisibility: 'auto' }}>
-              <LazyImage src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} width={320} height={180} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--border-radius)' }} />
+            <div className="thumbnail-container">
+              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
               {autoThumbAvailable && (
                 <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
               )}
@@ -1086,7 +1046,7 @@ export default React.memo(function SharedList({
                 const normalized = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
                 const searchText = ((normalized || '') + ' ' + (a && a._tagString ? a._tagString : '')).trim().toLowerCase();
                 const tags = Array.isArray(a && a._sortedTags) && a._sortedTags.length ? a._sortedTags : (Array.isArray(a && a.tags) ? a.tags : []);
-                const tagArr = (Array.isArray(tags) ? tags.slice() : []).map(function (t) { return String(t || '').toUpperCase(); }).filter(Boolean);
+                const tagArr = (Array.isArray(tags) ? tags.slice() : []).map(function(t){ return String(t || '').toUpperCase(); }).filter(Boolean);
                 const toks = _tokensFromNormalized(normalized || '');
                 try { finalEnhanced[i]._searchText = searchText; } catch (e) { }
                 try { finalEnhanced[i]._tagSet = new Set(tagArr); } catch (e) { }
@@ -1095,10 +1055,10 @@ export default React.memo(function SharedList({
             }
           }
 
-          const lite = (Array.isArray(finalEnhanced) ? finalEnhanced : []).map(function (a) {
+          const lite = (Array.isArray(finalEnhanced) ? finalEnhanced : []).map(function(a) {
             try {
               const id = a && a.id != null ? String(a.id) : undefined;
-              return { id: id, _searchText: String(a && a._searchText || ''), _tags: (Array.isArray(a && a._sortedTags) ? a._sortedTags.map(function (t) { return String(t || '').toUpperCase(); }) : (Array.isArray(a && a.tags) ? a.tags.map(function (t) { return String(t || '').toUpperCase(); }) : [])), _tokens: Array.isArray(a && a._tokens) ? a._tokens : [] };
+              return { id: id, _searchText: String(a && a._searchText || ''), _tags: (Array.isArray(a && a._sortedTags) ? a._sortedTags.map(function(t){ return String(t || '').toUpperCase(); }) : (Array.isArray(a && a.tags) ? a.tags.map(function(t){ return String(t || '').toUpperCase(); }) : [])), _tokens: Array.isArray(a && a._tokens) ? a._tokens : [] };
             } catch (e) { return null; }
           }).filter(Boolean);
 
@@ -2165,7 +2125,7 @@ export default React.memo(function SharedList({
 
         if (workerRef && workerRef.current) {
           try {
-            const minimalItems = (Array.isArray(items) ? items : []).map(function (a) {
+            const minimalItems = (Array.isArray(items) ? items : []).map(function(a){
               try { return { searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : ''].filter(Boolean).join(' ').toLowerCase() }; } catch (e) { return { searchable: '' }; }
             });
             const res = await postWorkerMessage('buildPasteIndex', { items: minimalItems, maxPrefix: 20 });
