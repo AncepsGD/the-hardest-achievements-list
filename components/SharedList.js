@@ -1946,7 +1946,18 @@ export default React.memo(function SharedList({
     const { isDup, autoThumbAvailable } = (data.precomputedVisible && data.precomputedVisible[index]) || {};
 
     return (
-      <div data-index={index} data-achievement-id={(a && a.id) ? String(a.id) : ''} ref={el => { try { if (devMode) { achievementRefs.current[index] = el; } else if (achievementRefs && achievementRefs.current) { achievementRefs.current[index] = null; } } catch (e) { } }} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
+      <div
+        data-index={index}
+        data-achievement-id={(a && a.id) ? String(a.id) : ''}
+        ref={el => { try { if (devMode) { achievementRefs.current[index] = el; } else if (achievementRefs && achievementRefs.current) { achievementRefs.current[index] = null; } } catch (e) { } }}
+        style={itemStyle}
+        key={a && a.id ? a.id : index}
+        className={`${isDup ? 'duplicate-thumb-item' : ''}`}
+        onPointerEnter={(e) => { try { if (typeof onRowHoverEnter === 'function') onRowHoverEnter((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
+        onPointerLeave={(e) => { try { if (typeof onRowHoverLeave === 'function') onRowHoverLeave((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
+        onFocus={(e) => { try { if (typeof onRowHoverEnter === 'function') onRowHoverEnter((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
+        onBlur={(e) => { try { if (typeof onRowHoverLeave === 'function') onRowHoverLeave((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
+      >
         {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
