@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import Fuse from 'fuse.js';
 import { normalizeForSearch } from './enhanceAchievement';
 
 export default function useSearch(
@@ -10,7 +9,6 @@ export default function useSearch(
 ) {
     const {
         debounceMs = 300,
-        fuseOptions = {},
         setSearchCallback = null,
         onEditCommand = null,
         externalRefs = {},
@@ -192,26 +190,10 @@ export default function useSearch(
             };
         }).filter(item => item.id !== undefined);
     }, [achievements]);
-    const fuseOptsStable = useMemo(() => ({
-        threshold: 0.4,
-        includeScore: false,
-        keys: [
-            { name: 'title', weight: 0.7 },
-            { name: 'description', weight: 0.3 },
-        ],
-        ...fuseOptions,
-    }), [JSON.stringify(fuseOptions || {})]);
     const filteredIndexed = useMemo(() => {
         if (!searchIndex.length) return [];
         return searchIndex.filter(matchesFilter);
     }, [searchIndex, matchesFilter]);
-
-    const fuseForFiltered = useMemo(() => {
-        if (!filteredIndexed.length) return null;
-
-        if (filteredIndexed.length < SMALL_LIST_THRESHOLD) return null;
-        return new Fuse(filteredIndexed, fuseOptsStable);
-    }, [filteredIndexed, fuseOptsStable]);
     const workerRef = useRef(null);
     const workerAvailableRef = useRef(false);
     const workerRequestSeq = useRef(0);
@@ -226,21 +208,6 @@ export default function useSearch(
                     const msg = e.data;
                     if (msg && msg.type === 'index') {
                         self._items = msg.items || [];
-                        self._opts = msg.fuseOpts || {};
-                        if (typeof importScripts === 'function' && !self.Fuse) {
-                            try {
-                                importScripts('https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js');
-                            } catch (err) {
-
-                            }
-                        }
-                        if (typeof self.Fuse !== 'undefined' && self._items) {
-                            try {
-                                self._fuse = new self.Fuse(self._items, self._opts);
-                            } catch (err) {
-                                self._fuse = null;
-                            }
-                        }
                     } else if (msg && msg.type === 'search') {
                         const q = msg.query || '';
                         const include = msg.include || [];
@@ -262,28 +229,14 @@ export default function useSearch(
                             postMessage({ type: 'results', requestId: reqId, ids: cheap });
                             return;
                         }
-                        if (pool.length < ${SMALL_LIST_THRESHOLD}) {
-                            const tokens = (q || '').split(/\s+/).filter(Boolean);
-                            const matches = pool.filter(item => {
-                                const text = item._searchText || '';
-                                for (const t of tokens) if (!text.includes(t)) return false;
-                                return true;
-                            }).map(it => it.id);
-                            postMessage({ type: 'results', requestId: reqId, ids: matches });
-                            return;
-                        }
-                        if (self._fuse) {
-                            try {
-                                const res = self._fuse.search(q).map(r => r.item && r.item.id).filter(Boolean);
-                                postMessage({ type: 'results', requestId: reqId, ids: res });
-                                return;
-                            } catch (err) {
-                                postMessage({ type: 'results', requestId: reqId, ids: [] });
-                                return;
-                            }
-                        }
-
-                        postMessage({ type: 'results', requestId: reqId, ids: [] });
+                        const tokens = (q || '').split(/\s+/).filter(Boolean);
+                        const matches = pool.filter(item => {
+                            const text = item._searchText || '';
+                            for (const t of tokens) if (!text.includes(t)) return false;
+                            return true;
+                        }).map(it => it.id);
+                        postMessage({ type: 'results', requestId: reqId, ids: matches });
+                        return;
                     }
                 } catch (e) {
 
@@ -326,9 +279,9 @@ export default function useSearch(
     useEffect(() => {
         const w = workerRef.current;
         if (w && workerAvailableRef.current) {
-            w.postMessage({ type: 'index', items: searchIndex, fuseOpts: fuseOptsStable });
+            w.postMessage({ type: 'index', items: searchIndex });
         }
-    }, [searchIndex, fuseOptsStable]);
+    }, [searchIndex]);
     useEffect(() => {
         let cancelled = false;
         const w = workerRef.current;
@@ -359,19 +312,13 @@ export default function useSearch(
                     if (!cancelled) { setWorkerResultIds(cheapMatchesIds); setIsSearching(false); }
                     return;
                 }
-                if (filteredIndexed.length < SMALL_LIST_THRESHOLD) {
-                    const tokens = (query || '').split(/\s+/).filter(Boolean);
-                    const tokenMatches = filteredIndexed.filter(item => {
-                        const text = item._searchText || '';
-                        for (const t of tokens) if (!text.includes(t)) return false;
-                        return true;
-                    }).map(it => it.id);
-                    if (!cancelled) { setWorkerResultIds(tokenMatches); setIsSearching(false); }
-                    return;
-                }
-
-                const resIds = fuseForFiltered.search(query).map(r => r.item && r.item.id).filter(Boolean);
-                if (!cancelled) { setWorkerResultIds(resIds); setIsSearching(false); }
+                const tokens = (query || '').split(/\s+/).filter(Boolean);
+                const tokenMatches = filteredIndexed.filter(item => {
+                    const text = item._searchText || '';
+                    for (const t of tokens) if (!text.includes(t)) return false;
+                    return true;
+                }).map(it => it.id);
+                if (!cancelled) { setWorkerResultIds(tokenMatches); setIsSearching(false); }
             })();
         }
 
