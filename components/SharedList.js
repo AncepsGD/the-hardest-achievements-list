@@ -573,7 +573,7 @@ export default React.memo(function SharedList({
 
   useEffect(() => {
     try {
-        const workerCode = `self.onmessage = function(e){
+      const workerCode = `self.onmessage = function(e){
           try {
             var d = e.data || {};
             var id = d.id;
@@ -1574,26 +1574,48 @@ export default React.memo(function SharedList({
         if (ev && ev.currentTarget) target = ev.currentTarget;
         else if (ev && ev.target) target = ev.target;
         else target = document.querySelector(`[data-index="${idx}"]`);
-        const root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
+
+        let root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
+        if (!root || !(root instanceof HTMLElement)) {
+          try {
+            const refEl = (achievementRefs && achievementRefs.current && achievementRefs.current[idx]) ? achievementRefs.current[idx] : null;
+            if (refEl && refEl instanceof HTMLElement) root = refEl;
+          } catch (e) { }
+        }
+
         if (root && root instanceof HTMLElement) {
           try {
             if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
           } catch (err) { }
 
+          try {
+            if (panel.parentElement !== document.body) document.body.appendChild(panel);
+          } catch (e) { }
+
           const rect = root.getBoundingClientRect();
+          const rw = Number(rect.width) || Number(root.clientWidth) || 0;
+          const rh = Number(rect.height) || Number(root.clientHeight) || 0;
+          let left = (Number(rect.left) || 0) + (rw / 2);
+          let top = (Number(rect.top) || 0) + (rh / 2);
+
+          try {
+            if ((!isFinite(left) || isNaN(left) || left === 0) && ev && ev.clientX) left = ev.clientX;
+            if ((!isFinite(top) || isNaN(top) || top === 0) && ev && ev.clientY) top = ev.clientY;
+          } catch (e) { }
+
           panel.style.position = 'fixed';
-          panel.style.left = `${rect.left + (root.clientWidth / 2)}px`;
-          panel.style.top = `${rect.top + (root.clientHeight / 2)}px`;
+          panel.style.left = `${Math.round(left)}px`;
+          panel.style.top = `${Math.round(top)}px`;
           panel.style.transform = 'translate(-50%, -50%)';
           panel.style.pointerEvents = 'auto';
 
           const pad = 16;
-          const pw = Math.min(360, Math.max(120, Math.floor(root.clientWidth - pad)));
+          const pw = Math.min(360, Math.max(120, Math.floor(rw - pad)));
           panel.style.width = `${pw}px`;
 
           const ph = panel.offsetHeight || 200;
-          if (ph > (root.clientHeight - 16)) {
-            panel.style.maxHeight = `${Math.max(80, root.clientHeight - 16)}px`;
+          if (ph > (rh - 16)) {
+            panel.style.maxHeight = `${Math.max(80, rh - 16)}px`;
             panel.style.overflowY = 'auto';
           } else {
             panel.style.maxHeight = '';
