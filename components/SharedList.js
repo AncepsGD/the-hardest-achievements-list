@@ -20,6 +20,46 @@ import { enhanceAchievement, mapEnhanceArray, getThumbnailUrl, normalizeForSearc
 import useTagFilters from './useTagFilters';
 import useSearch from './useSearch';
 
+function LazyImage({ src, alt, width, height, className, style }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  const [loadedSrc, setLoadedSrc] = useState(null);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setVisible(true);
+      return;
+    }
+    let cancelled = false;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          if (!cancelled) setVisible(true);
+        }
+      });
+    }, { rootMargin: '200px' });
+    io.observe(ref.current);
+    return () => { cancelled = true; try { io.disconnect(); } catch (e) { } };
+  }, [ref]);
+
+  useEffect(() => {
+    if (visible && src) {
+      setLoadedSrc(src);
+    }
+  }, [visible, src]);
+
+  return (
+    <div ref={ref} style={{ width: width || '100%', height: height || '100%', overflow: 'hidden' }} className={className}>
+      {loadedSrc ? (
+        <img src={loadedSrc} alt={alt} loading="lazy" decoding="async" width={width || undefined} height={height || undefined} style={style} />
+      ) : (
+        <div style={{ width: '100%', height: '100%', backgroundColor: '#222' }} />
+      )}
+    </div>
+  );
+}
+
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show }) {
   const tagStates = {};
   allTags.forEach(tag => {
@@ -197,8 +237,8 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
               <h2>{achievement.name}</h2>
               <p>{achievement.player}</p>
             </div>
-            <div className="thumbnail-container">
-              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+            <div className="thumbnail-container" style={{ contentVisibility: 'auto' }}>
+              <LazyImage src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} width={320} height={180} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--border-radius)' }} />
               {autoThumbAvailable && (
                 <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
               )}
@@ -289,8 +329,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
               <h2>{achievement.name}</h2>
               <p>{achievement.player}</p>
             </div>
-            <div className="thumbnail-container">
-              <img src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} loading="lazy" />
+            <div className="thumbnail-container" style={{ contentVisibility: 'auto' }}>
+              <LazyImage src={(achievement && achievement._thumbnail) || getThumbnailUrl(achievement, false)} alt={achievement.name} width={320} height={180} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--border-radius)' }} />
               {autoThumbAvailable && (
                 <div style={{ fontSize: 12, color: '#aaa', marginTop: 6 }}>Automatic thumbnail applied</div>
               )}
@@ -521,35 +561,55 @@ export default React.memo(function SharedList({
             var id = d.id;
             var type = d.type;
             var p = d.payload || {};
+            if (type === 'initIndex' || type === 'index') {
+              try {
+                var raw = p.items || [];
+                self._items = (Array.isArray(raw) ? raw : []).map(function(it){
+                  return {
+                    id: it && it.id != null ? String(it.id) : undefined,
+                    _searchText: String(it && it._searchText || ''),
+                    _tagSetArr: Array.isArray(it && it._tags) ? it._tags : [],
+                    _tokens: Array.isArray(it && it._tokens) ? it._tokens : [],
+                  };
+                }).filter(function(x){ return x && x.id !== undefined; });
+                self.postMessage({ id: id || null, type: type, result: true });
+              } catch (err) { self.postMessage({ id: id || null, type: type, result: false }); }
+              return;
+            }
             if (type === 'search') {
-              var items = p.items || [];
-              var q = p.query || '';
-              var include = p.include || [];
-              var exclude = p.exclude || [];
-              var pool = (items || []).filter(function(item) {
-                var tags = item._tagSet || new Set();
-                for (var ti = 0; ti < exclude.length; ti++) if (tags.has(exclude[ti])) return false;
-                for (var ti2 = 0; ti2 < include.length; ti2++) if (!tags.has(include[ti2])) return false;
+              var q = (p && p.query) || '';
+              var include = (p && p.include) || [];
+              var exclude = (p && p.exclude) || [];
+              var idsFilter = Array.isArray(p && p.ids) ? p.ids : null;
+              var pool = (self._items || []).slice();
+              if (idsFilter) {
+                var idSet = {};
+                for (var ii=0; ii<idsFilter.length; ii++) idSet[String(idsFilter[ii])] = true;
+                pool = pool.filter(function(it){ return idSet[String(it.id)]; });
+              }
+              pool = pool.filter(function(item) {
+                var tags = item._tagSetArr || [];
+                for (var ti = 0; ti < exclude.length; ti++) if (tags.indexOf(String(exclude[ti]).toUpperCase()) !== -1) return false;
+                for (var ti2 = 0; ti2 < include.length; ti2++) if (tags.indexOf(String(include[ti2]).toUpperCase()) === -1) return false;
                 return true;
               });
               if (!q) {
                 var ids0 = pool.map(function(it) { return it.id; }).filter(Boolean);
                 self.postMessage({ id: id, type: type, result: ids0 });
-              } else {
-                var cheap = pool.filter(function(it) { return (it._searchText || '').includes(q); }).map(function(it) { return it.id; });
-                if (cheap.length) {
-                  self.postMessage({ id: id, type: type, result: cheap });
-                } else {
-                  var tokens = (q || '').split(/\s+/).filter(Boolean);
-                  var matches = pool.filter(function(item) {
-                    var text = item._searchText || '';
-                    for (var tk = 0; tk < tokens.length; tk++) if (!text.includes(tokens[tk])) return false;
-                    return true;
-                  }).map(function(it) { return it.id; });
-                  self.postMessage({ id: id, type: type, result: matches });
-                }
+                return;
               }
-            } else if (type === 'buildPasteIndex') {
+              var cheap = pool.filter(function(it) { return (it._searchText || '').indexOf(q) !== -1; }).map(function(it) { return it.id; });
+              if (cheap && cheap.length) { self.postMessage({ id: id, type: type, result: cheap }); return; }
+              var tokens = (q || '').split(/\s+/).filter(Boolean);
+              var matches = pool.filter(function(item) {
+                var text = item._searchText || '';
+                for (var tk = 0; tk < tokens.length; tk++) if (text.indexOf(tokens[tk]) === -1) return false;
+                return true;
+              }).map(function(it) { return it.id; });
+              self.postMessage({ id: id, type: type, result: matches });
+              return;
+            }
+            if (type === 'buildPasteIndex') {
               try {
                 var items2 = p.items || [];
                 var maxPrefix = p.maxPrefix || 20;
@@ -557,9 +617,8 @@ export default React.memo(function SharedList({
                 var prefixMapObj = {};
                 for (var i = 0; i < items2.length; i++) {
                   var a = items2[i];
-                  var searchable = [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : '']
-                    .filter(Boolean).join(' ').toLowerCase();
-                  idx[i] = { achievement: a, searchable: searchable };
+                  var searchable = (a && a.searchable) ? String(a.searchable) : '';
+                  idx[i] = { achievement: null, searchable: searchable };
                   var toks = (searchable || '').split(/\s+/).filter(Boolean);
                   toks.forEach(function(tok) {
                     var capped = String(tok).slice(0, maxPrefix);
@@ -574,9 +633,9 @@ export default React.memo(function SharedList({
               } catch (err) {
                 self.postMessage({ id: id, type: type, result: { idx: [], prefixMap: {} } });
               }
-            } else {
-              self.postMessage({ id: id, type: type, result: null });
+              return;
             }
+            self.postMessage({ id: id, type: type, result: null });
           } catch (e) {
             try { self.postMessage({ id: (e && e.id) || null, type: 'error', result: null }); } catch (_) {}
           }
@@ -1014,16 +1073,47 @@ export default React.memo(function SharedList({
         finalOriginal = valid.map(a => ({ ...a }));
         finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
 
-        setAchievements(() => finalEnhanced);
-        try { setFilteredIds(toIds(finalEnhanced)); } catch (e) { }
-        const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
-        setOriginalAchievements(snap);
-        try { originalSnapshotRef.current = snap; } catch (e) { }
+        try {
+          const tagSet = new Set();
+          if (data && Array.isArray(data.tags)) data.tags.forEach(t => tagSet.add(t));
+          valid.forEach(a => (a.tags || []).forEach(t => tagSet.add(t)));
+          setAllTags(Array.from(tagSet));
 
-        const tagSet = new Set();
-        if (data && Array.isArray(data.tags)) data.tags.forEach(t => tagSet.add(t));
-        valid.forEach(a => (a.tags || []).forEach(t => tagSet.add(t)));
-        setAllTags(Array.from(tagSet));
+          if (Array.isArray(finalEnhanced)) {
+            for (let i = 0; i < finalEnhanced.length; i++) {
+              try {
+                const a = finalEnhanced[i] || {};
+                const normalized = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
+                const searchText = ((normalized || '') + ' ' + (a && a._tagString ? a._tagString : '')).trim().toLowerCase();
+                const tags = Array.isArray(a && a._sortedTags) && a._sortedTags.length ? a._sortedTags : (Array.isArray(a && a.tags) ? a.tags : []);
+                const tagArr = (Array.isArray(tags) ? tags.slice() : []).map(function (t) { return String(t || '').toUpperCase(); }).filter(Boolean);
+                const toks = _tokensFromNormalized(normalized || '');
+                try { finalEnhanced[i]._searchText = searchText; } catch (e) { }
+                try { finalEnhanced[i]._tagSet = new Set(tagArr); } catch (e) { }
+                try { finalEnhanced[i]._tokens = Array.isArray(toks) ? toks : []; } catch (e) { }
+              } catch (e) { }
+            }
+          }
+
+          const lite = (Array.isArray(finalEnhanced) ? finalEnhanced : []).map(function (a) {
+            try {
+              const id = a && a.id != null ? String(a.id) : undefined;
+              return { id: id, _searchText: String(a && a._searchText || ''), _tags: (Array.isArray(a && a._sortedTags) ? a._sortedTags.map(function (t) { return String(t || '').toUpperCase(); }) : (Array.isArray(a && a.tags) ? a.tags.map(function (t) { return String(t || '').toUpperCase(); }) : [])), _tokens: Array.isArray(a && a._tokens) ? a._tokens : [] };
+            } catch (e) { return null; }
+          }).filter(Boolean);
+
+          setAchievements(() => finalEnhanced);
+          try { setFilteredIds(toIds(finalEnhanced)); } catch (e) { }
+          const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
+          setOriginalAchievements(snap);
+          try { originalSnapshotRef.current = snap; } catch (e) { }
+
+          try {
+            if (workerRef && workerRef.current && typeof workerRef.current.postMessage === 'function') {
+              try { workerRef.current.postMessage({ type: 'initIndex', payload: { items: lite } }); } catch (e) { }
+            }
+          } catch (e) { }
+        } catch (e) { }
       })
       .catch(() => { });
   }, [dataUrl, dataFileName, usePlatformers]);
@@ -1547,14 +1637,14 @@ export default React.memo(function SharedList({
 
   useEffect(() => {
     try {
-      const disabled = !!isPending || !!(reordered && Array.isArray(reordered));
+      const disabled = !!isPending || (!!(reordered && Array.isArray(reordered)) && !devMode);
       hoverDisabledRef.current = disabled;
       if (disabled) {
         try { hoveredIdRef.current = null; } catch (e) { }
         try { if (devPanelRef.current) devPanelRef.current.style.display = 'none'; } catch (e) { }
       }
     } catch (e) { }
-  }, [isPending, reordered]);
+  }, [isPending, reordered, devMode]);
 
   const _onRowHoverEnter = useCallback((id, ev) => {
     try { hoveredIdRef.current = id == null ? null : String(id); } catch (e) { hoveredIdRef.current = id; }
@@ -2075,7 +2165,10 @@ export default React.memo(function SharedList({
 
         if (workerRef && workerRef.current) {
           try {
-            const res = await postWorkerMessage('buildPasteIndex', { items, maxPrefix: 20 });
+            const minimalItems = (Array.isArray(items) ? items : []).map(function (a) {
+              try { return { searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : ''].filter(Boolean).join(' ').toLowerCase() }; } catch (e) { return { searchable: '' }; }
+            });
+            const res = await postWorkerMessage('buildPasteIndex', { items: minimalItems, maxPrefix: 20 });
             const idx = (res && res.idx) ? res.idx : [];
             const prefixMapObj = (res && res.prefixMap) ? res.prefixMap : {};
             const prefixMap = new Map(Object.entries(prefixMapObj).map(([k, v]) => [k, Array.isArray(v) ? v : []]));
