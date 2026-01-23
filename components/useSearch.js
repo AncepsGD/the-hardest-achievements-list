@@ -8,7 +8,6 @@ export default function useSearch(
     options = {}
 ) {
     const {
-        debounceMs = 300,
         setSearchCallback = null,
         onEditCommand = null,
         externalRefs = {},
@@ -27,7 +26,6 @@ export default function useSearch(
     const [isSearching, setIsSearching] = useState(false);
     const [manualSearch, setManualSearch] = useState('');
     const [debouncedManualSearch, setDebouncedManualSearch] = useState('');
-    const SMALL_LIST_THRESHOLD = 200;
     useEffect(() => {
         setQuery(normalizedSearch);
 
@@ -87,35 +85,6 @@ export default function useSearch(
         [onEditCommand, setSearchCallback]
     );
 
-    const indexed = useMemo(() => {
-        if (!Array.isArray(achievements)) return [];
-
-        return achievements.map(a => {
-            const rawTags = a.tags || a.tagList || [];
-            const tagArray = Array.isArray(rawTags)
-                ? rawTags
-                : String(rawTags).split(/[,;]/);
-
-            const tagSet = new Set(
-                tagArray
-                    .map(t => t.trim().toLowerCase())
-                    .filter(Boolean)
-            );
-
-                const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
-                const player = a && a.player ? String(a.player) : '';
-                const description = a && a.description ? String(a.description) : '';
-                const idStr = a && a.id != null ? String(a.id) : '';
-                const searchableNormalized = (a && a._searchableNormalized) || normalizeForSearch(`${name} ${player} ${description} ${idStr}`);
-                const text = searchableNormalized + ' ' + name + ' ' + player + ' ' + description;
-
-                return {
-                    ...a,
-                    _searchText: (text || '').toLowerCase(),
-                    _tagSet: tagSet,
-                };
-        });
-    }, [achievements]);
 
     const normalizedFilters = useMemo(() => {
         if (!filters) return null;
@@ -301,7 +270,6 @@ export default function useSearch(
         } else {
 
             (async () => {
-                const toOrig = idxItem => originalMap.get(idxItem.id) || null;
                 if (!query) {
                     const resIds = filteredIndexed.map(it => it.id).filter(Boolean);
                     if (!cancelled) { setWorkerResultIds(resIds); setIsSearching(false); }
@@ -323,7 +291,7 @@ export default function useSearch(
         }
 
         return () => { cancelled = true; };
-    }, [query, filteredIndexed, fuseForFiltered, originalMap, normalizedFilters]);
+    }, [query, filteredIndexed, originalMap, normalizedFilters]);
     const results = useMemo(() => {
         const ids = workerResultIds || [];
         return ids.map(id => originalMap.get(id)).filter(Boolean);
