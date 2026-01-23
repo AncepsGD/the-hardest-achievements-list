@@ -672,7 +672,7 @@ export default React.memo(function SharedList({
   }, [sortKey]);
   const [bgImage, setBgImage] = useState(null);
   const [showNewForm, setShowNewForm] = useState(false);
-  const hoveredIdxRef = useRef(null);
+  const hoveredIdRef = useRef(null);
   const neighborContextRef = useRef(new Map());
   const [duplicateThumbKeys, setDuplicateThumbKeys] = useState(new Set());
   const [autoThumbMap, setAutoThumbMap] = useState(() => {
@@ -1507,7 +1507,7 @@ export default React.memo(function SharedList({
   const devPanelRef = useRef(null);
   const devPanelOriginalParentRef = useRef(null);
   const hoverRafRef = useRef(null);
-  const lastHoverIdxRef = useRef(null);
+  const lastHoverIdRef = useRef(null);
 
   useEffect(() => {
     try { if (devPanelRef.current && !devPanelOriginalParentRef.current) devPanelOriginalParentRef.current = devPanelRef.current.parentElement; } catch (e) { }
@@ -1519,10 +1519,10 @@ export default React.memo(function SharedList({
     };
   }, []);
 
-  const _onRowHoverEnter = useCallback((idx, ev) => {
-    hoveredIdxRef.current = idx;
-    if (lastHoverIdxRef.current === idx) return;
-    lastHoverIdxRef.current = idx;
+  const _onRowHoverEnter = useCallback((id, ev) => {
+    try { hoveredIdRef.current = id == null ? null : String(id); } catch (e) { hoveredIdRef.current = id; }
+    if (lastHoverIdRef.current === hoveredIdRef.current) return;
+    lastHoverIdRef.current = hoveredIdRef.current;
 
     if (hoverRafRef.current) {
       cancelAnimationFrame(hoverRafRef.current);
@@ -1538,8 +1538,9 @@ export default React.memo(function SharedList({
         return;
       }
       const list = visibleListRef.current || [];
-      const item = list[idx];
-      if (!item || hoveredIdxRef.current !== idx) {
+      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      const item = (idx === -1) ? null : list[idx];
+      if (!item || hoveredIdRef.current !== String(id)) {
         panel.style.display = 'none';
         return;
       }
@@ -1573,7 +1574,7 @@ export default React.memo(function SharedList({
         let target = null;
         if (ev && ev.currentTarget) target = ev.currentTarget;
         else if (ev && ev.target) target = ev.target;
-        else target = document.querySelector(`[data-index="${idx}"]`);
+        else target = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
 
         let root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
         if (!root || !(root instanceof HTMLElement)) {
@@ -1627,14 +1628,14 @@ export default React.memo(function SharedList({
     });
   }, []);
 
-  const _onRowHoverLeave = useCallback((idxOrEv, maybeEv) => {
-    let idx = null;
+  const _onRowHoverLeave = useCallback((idOrEv, maybeEv) => {
+    let id = null;
     let ev = null;
-    if (typeof idxOrEv === 'number') {
-      idx = idxOrEv;
+    if (typeof idOrEv === 'string' || typeof idOrEv === 'number') {
+      id = idOrEv;
       ev = maybeEv;
     } else {
-      ev = idxOrEv;
+      ev = idOrEv;
     }
 
     try {
@@ -1644,14 +1645,14 @@ export default React.memo(function SharedList({
         if (panel && panel.contains(related)) return;
         let root = null;
         if (ev && ev.currentTarget) root = (typeof ev.currentTarget.closest === 'function') ? (ev.currentTarget.closest('.achievement-item') || ev.currentTarget) : ev.currentTarget;
-        else if (typeof idx === 'number') root = document.querySelector(`[data-index="${idx}"]`);
+        else if (id != null) root = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
         if (root && root instanceof HTMLElement && root.contains(related)) return;
       }
     } catch (e) {
     }
 
-    hoveredIdxRef.current = null;
-    lastHoverIdxRef.current = null;
+    hoveredIdRef.current = null;
+    lastHoverIdRef.current = null;
     if (hoverRafRef.current) {
       cancelAnimationFrame(hoverRafRef.current);
       hoverRafRef.current = null;
@@ -1678,21 +1679,21 @@ export default React.memo(function SharedList({
   }, []);
 
   const _lastHoverTimeRef = useRef(0);
-  const onRowHoverEnterCb = useCallback((idx, ev) => {
+  const onRowHoverEnterCb = useCallback((id, ev) => {
     try {
       if (!devModeRef.current) return;
       const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
       const THROTTLE_MS = 40;
       if (now - (_lastHoverTimeRef.current || 0) < THROTTLE_MS) return;
       _lastHoverTimeRef.current = now;
-      _onRowHoverEnter(idx, ev);
+      _onRowHoverEnter(id, ev);
     } catch (e) { }
   }, []);
 
-  const onRowHoverLeaveCb = useCallback((idxOrEv, maybeEv) => {
+  const onRowHoverLeaveCb = useCallback((idOrEv, maybeEv) => {
     try {
       if (!devModeRef.current) return;
-      _onRowHoverLeave(idxOrEv, maybeEv);
+      _onRowHoverLeave(idOrEv, maybeEv);
     } catch (e) { }
   }, []);
 
@@ -1777,8 +1778,8 @@ export default React.memo(function SharedList({
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
             onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter(index, e) : undefined}
-            onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave(index, e) : undefined}
+            onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined}
+            onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined}
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
@@ -1793,7 +1794,7 @@ export default React.memo(function SharedList({
           (() => {
             const computed = (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter(index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave(index, e) : undefined} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined} />;
           })()
         }
       </div>
@@ -2080,8 +2081,10 @@ export default React.memo(function SharedList({
 
   function handleCopyItemJson() {
     try {
-      const idx = hoveredIdxRef.current;
+      const id = hoveredIdRef.current;
       const list = visibleListRef.current || [];
+      if (id == null) return;
+      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
       if (idx == null || idx < 0 || idx >= list.length) return;
       const item = list[idx];
       if (!item) return;
@@ -2429,7 +2432,7 @@ export default React.memo(function SharedList({
       <DevHoverPanelMemo
         devMode={devMode}
         devPanelRef={devPanelRef}
-        hoveredIdxRef={hoveredIdxRef}
+        hoveredIdRef={hoveredIdRef}
         visibleListRef={visibleListRef}
         handleEditRef={handleEditRef}
         handleMoveUpRef={handleMoveUpRef}
@@ -2480,14 +2483,61 @@ const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
   return prev.allTags === next.allTags && prev.filterTags === next.filterTags && prev.isMobile === next.isMobile && prev.show === next.show;
 });
 
-const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdxRef, visibleListRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
+const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, visibleListRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
   const onEdit = (e) => {
-    try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; if (handleEditRef && handleEditRef.current) { if (itm && itm.id) handleEditRef.current(itm.id); else handleEditRef.current(i); } } catch (err) { }
+    try {
+      e.preventDefault(); e.stopPropagation();
+      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+      if (id == null) return;
+      const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : [];
+      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      const itm = idx === -1 ? null : list[idx];
+      if (handleEditRef && handleEditRef.current) {
+        if (itm && itm.id) handleEditRef.current(itm.id);
+        else handleEditRef.current(id);
+      }
+    } catch (err) { }
   };
-  const onMoveUp = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; const arg = itm && itm.id ? String(itm.id) : i; if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(arg); } catch (err) { } };
-  const onMoveDown = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : []; const itm = list[i]; const arg = itm && itm.id ? String(itm.id) : i; if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(arg); } catch (err) { } };
-  const onDuplicate = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleDuplicateRef && handleDuplicateRef.current) handleDuplicateRef.current(i); } catch (err) { } };
-  const onDelete = (e) => { try { e.preventDefault(); e.stopPropagation(); const i = hoveredIdxRef.current; if (i == null) return; if (handleRemoveRef && handleRemoveRef.current) handleRemoveRef.current(i); } catch (err) { } };
+  const onMoveUp = (e) => {
+    try {
+      e.preventDefault(); e.stopPropagation();
+      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+      if (id == null) return;
+      const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : [];
+      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      const itm = idx === -1 ? null : list[idx];
+      const arg = itm && itm.id ? String(itm.id) : id;
+      if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(arg);
+    } catch (err) { }
+  };
+  const onMoveDown = (e) => {
+    try {
+      e.preventDefault(); e.stopPropagation();
+      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+      if (id == null) return;
+      const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : [];
+      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      const itm = idx === -1 ? null : list[idx];
+      const arg = itm && itm.id ? String(itm.id) : id;
+      if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(arg);
+    } catch (err) { }
+  };
+  const onDuplicate = (e) => {
+    try {
+      e.preventDefault(); e.stopPropagation();
+      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+      if (id == null) return;
+      if (handleDuplicateRef && handleDuplicateRef.current) handleDuplicateRef.current(id);
+    } catch (err) { }
+  };
+  const onDelete = (e) => {
+    try {
+      e.preventDefault(); e.stopPropagation();
+      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+      if (id == null) return;
+      if (handleRemoveRef && handleRemoveRef.current) handleRemoveRef.current(id);
+    } catch (err) { }
+  };
   const onCopy = (e) => { try { e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
 
   const baseStyle = { display: devMode ? 'block' : 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' };
