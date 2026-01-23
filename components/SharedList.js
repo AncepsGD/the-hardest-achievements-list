@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
+import ReactDOM from 'react-dom';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 
@@ -154,8 +155,8 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
           className={`achievement-item`}
           tabIndex={0}
           style={{ cursor: 'pointer', position: 'relative' }}
-          onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
-          onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+          onPointerEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onPointerLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
           onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
           onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
@@ -241,8 +242,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           className="achievement-item"
           tabIndex={0}
           style={{ cursor: devMode ? 'not-allowed' : 'pointer', transition: 'opacity 0.1s', position: 'relative' }}
-          onMouseEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
-          onMouseLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
+          onPointerEnter={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
+          onPointerLeave={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
           onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
           onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
@@ -720,6 +721,7 @@ export default React.memo(function SharedList({
   const realIdxMapRef = useRef(new Map());
 
   function batchUpdateReordered(mutator, opts = {}) {
+    try { hoverDisabledRef.current = true; } catch (e) { }
     if (typeof mutator !== 'function') return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
@@ -775,6 +777,7 @@ export default React.memo(function SharedList({
             let ok = false;
             try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
             if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+            try { hoverDisabledRef.current = false; } catch (e) { }
           } catch (e) { }
         }));
       } catch (e) { }
@@ -814,6 +817,7 @@ export default React.memo(function SharedList({
   }
 
   function handleMoveAchievementUp(idx) {
+    try { hoverDisabledRef.current = true; } catch (e) { }
     const realIdx = resolveRealIdx(idx);
     if (realIdx <= 0) return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
@@ -858,6 +862,7 @@ export default React.memo(function SharedList({
             let ok = false;
             try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
             if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+            try { hoverDisabledRef.current = false; } catch (e) { }
           } catch (e) { }
         }));
         return;
@@ -875,6 +880,7 @@ export default React.memo(function SharedList({
   }
 
   function handleMoveAchievementDown(idx) {
+    try { hoverDisabledRef.current = true; } catch (e) { }
     const realIdx = resolveRealIdx(idx);
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
@@ -917,6 +923,7 @@ export default React.memo(function SharedList({
             let ok = false;
             try { if (movedId && prevElemTop != null) ok = adjustScrollToKeepElementById(movedId, prevElemTop, prevActive); } catch (e) { ok = false; }
             if (!ok) restorePrevScroll(prevScrollTop, prevScrollLeft, prevActive);
+            try { hoverDisabledRef.current = false; } catch (e) { }
           } catch (e) { }
         }));
         return;
@@ -1506,8 +1513,11 @@ export default React.memo(function SharedList({
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
   const devPanelRef = useRef(null);
   const devPanelOriginalParentRef = useRef(null);
+  const hoverDisabledRef = useRef(false);
   const hoverRafRef = useRef(null);
   const lastHoverIdRef = useRef(null);
+  const rectsRef = useRef(new Map());
+  const resizeObserverRef = useRef(null);
 
   useEffect(() => {
     try { if (devPanelRef.current && !devPanelOriginalParentRef.current) devPanelOriginalParentRef.current = devPanelRef.current.parentElement; } catch (e) { }
@@ -1518,6 +1528,72 @@ export default React.memo(function SharedList({
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (typeof ResizeObserver === 'undefined') {
+        try {
+          const refs = achievementRefs && achievementRefs.current ? achievementRefs.current : [];
+          for (let i = 0; i < refs.length; i++) {
+            const el = refs[i];
+            try {
+              if (!el) continue;
+              const id = (el.dataset && el.dataset.achievementId) ? String(el.dataset.achievementId) : (el.getAttribute ? el.getAttribute('data-achievement-id') : null);
+              if (!id) continue;
+              const r = el.getBoundingClientRect();
+              rectsRef.current.set(String(id), { left: r.left, top: r.top, width: r.width, height: r.height, right: r.right, bottom: r.bottom });
+            } catch (e) { }
+          }
+        } catch (e) { }
+        return;
+      }
+
+      const obs = new ResizeObserver((entries) => {
+        try {
+          for (let i = 0; i < entries.length; i++) {
+            try {
+              const en = entries[i];
+              const el = en.target;
+              if (!el) continue;
+              const id = (el.dataset && el.dataset.achievementId) ? String(el.dataset.achievementId) : (el.getAttribute ? el.getAttribute('data-achievement-id') : null);
+              if (!id) continue;
+              const r = el.getBoundingClientRect();
+              rectsRef.current.set(String(id), { left: r.left, top: r.top, width: r.width, height: r.height, right: r.right, bottom: r.bottom });
+            } catch (e) { }
+          }
+        } catch (e) { }
+      });
+      resizeObserverRef.current = obs;
+
+      const attach = () => {
+        try {
+          const refs = achievementRefs && achievementRefs.current ? achievementRefs.current : [];
+          for (let i = 0; i < refs.length; i++) {
+            const el = refs[i];
+            try { if (el && el instanceof HTMLElement) obs.observe(el); } catch (e) { }
+          }
+        } catch (e) { }
+      };
+
+      attach();
+
+      return () => {
+        try { if (resizeObserverRef.current) { resizeObserverRef.current.disconnect(); resizeObserverRef.current = null; } } catch (e) { }
+      };
+    } catch (e) { }
+  }, [visibleList]);
+
+  useEffect(() => {
+    try {
+      const disabled = !!isPending || !!(stagedReordered && Array.isArray(stagedReordered));
+      hoverDisabledRef.current = disabled;
+      if (disabled) {
+        try { hoveredIdRef.current = null; } catch (e) { }
+        try { if (devPanelRef.current) devPanelRef.current.style.display = 'none'; } catch (e) { }
+      }
+    } catch (e) { }
+  }, [isPending, stagedReordered]);
 
   const _onRowHoverEnter = useCallback((id, ev) => {
     try { hoveredIdRef.current = id == null ? null : String(id); } catch (e) { hoveredIdRef.current = id; }
@@ -1533,6 +1609,7 @@ export default React.memo(function SharedList({
       hoverRafRef.current = null;
       const panel = devPanelRef.current;
       if (!panel) return;
+      if (hoverDisabledRef.current) { panel.style.display = 'none'; return; }
       if (!devModeRef.current) {
         panel.style.display = 'none';
         return;
@@ -1585,14 +1662,6 @@ export default React.memo(function SharedList({
         }
 
         if (root && root instanceof HTMLElement) {
-          try {
-            if (!devPanelOriginalParentRef.current && panel.parentElement) devPanelOriginalParentRef.current = panel.parentElement;
-          } catch (err) { }
-
-          try {
-            if (panel.parentElement !== document.body) document.body.appendChild(panel);
-          } catch (e) { }
-
           const rect = root.getBoundingClientRect();
           const rw = Number(rect.width) || Number(root.clientWidth) || 0;
           const rh = Number(rect.height) || Number(root.clientHeight) || 0;
@@ -1662,40 +1731,130 @@ export default React.memo(function SharedList({
       panel.style.display = 'none';
       try { panel.style.transform = ''; panel.style.left = '-9999px'; panel.style.top = '-9999px'; panel.style.position = 'absolute'; } catch (e) { }
       try {
-        const orig = devPanelOriginalParentRef.current;
-        if (orig && panel.parentElement && panel.parentElement !== orig) {
-          orig.appendChild(panel);
-          panel.style.position = 'absolute';
-          panel.style.left = '-9999px';
-          panel.style.top = '-9999px';
-          panel.style.width = '360px';
-          panel.style.transform = '';
-          panel.style.pointerEvents = '';
-          panel.style.maxHeight = '';
-          panel.style.overflowY = '';
-        }
       } catch (err) { }
     }
   }, []);
 
   const _lastHoverTimeRef = useRef(0);
+  const hoverShowTimerRef = useRef(null);
+  const HOVER_SHOW_DELAY = 60;
+
   const onRowHoverEnterCb = useCallback((id, ev) => {
     try {
       if (!devModeRef.current) return;
+      if (hoverDisabledRef.current) return;
       const now = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
       const THROTTLE_MS = 40;
       if (now - (_lastHoverTimeRef.current || 0) < THROTTLE_MS) return;
       _lastHoverTimeRef.current = now;
-      _onRowHoverEnter(id, ev);
+
+      const evObj = ev && typeof ev === 'object' ? {
+        clientX: ev.clientX, clientY: ev.clientY,
+        currentTarget: ev.currentTarget || null,
+        target: ev.target || null
+      } : null;
+
+      if (hoverShowTimerRef.current) {
+        clearTimeout(hoverShowTimerRef.current);
+        hoverShowTimerRef.current = null;
+      }
+
+      hoverShowTimerRef.current = setTimeout(() => {
+        hoverShowTimerRef.current = null;
+        try { _onRowHoverEnter(id, evObj); } catch (e) { }
+      }, HOVER_SHOW_DELAY);
     } catch (e) { }
   }, []);
 
   const onRowHoverLeaveCb = useCallback((idOrEv, maybeEv) => {
     try {
       if (!devModeRef.current) return;
+      if (hoverShowTimerRef.current) {
+        clearTimeout(hoverShowTimerRef.current);
+        hoverShowTimerRef.current = null;
+        return;
+      }
       _onRowHoverLeave(idOrEv, maybeEv);
     } catch (e) { }
   }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    let raf = null;
+    const updatePos = () => {
+      try {
+        const id = hoveredIdRef.current;
+        const panel = devPanelRef.current;
+        if (!panel) return;
+        if (!id) { panel.style.display = 'none'; return; }
+
+        let root = null;
+        try {
+          root = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
+        } catch (e) { root = null; }
+
+        if (!root) {
+          try {
+            const refs = achievementRefs && achievementRefs.current ? achievementRefs.current : [];
+            for (let i = 0; i < refs.length; i++) {
+              const r = refs[i];
+              if (!r) continue;
+              try {
+                if (r.dataset && String(r.dataset.achievementId) === String(id)) { root = r; break; }
+                if (r.getAttribute && r.getAttribute('data-achievement-id') === String(id)) { root = r; break; }
+              } catch (e) { }
+            }
+          } catch (e) { }
+        }
+
+        if (!root || !(root instanceof HTMLElement)) { panel.style.display = 'none'; return; }
+
+        const rect = root.getBoundingClientRect();
+        const rw = Number(rect.width) || Number(root.clientWidth) || 0;
+        const rh = Number(rect.height) || Number(root.clientHeight) || 0;
+        let left = (Number(rect.left) || 0) + (rw / 2);
+        let top = (Number(rect.top) || 0) + (rh / 2);
+
+        if ((!isFinite(left) || isNaN(left) || left === 0) && typeof window !== 'undefined') left = (window.innerWidth / 2) || 0;
+        if ((!isFinite(top) || isNaN(top) || top === 0) && typeof window !== 'undefined') top = (window.innerHeight / 2) || 0;
+
+        panel.style.position = 'fixed';
+        panel.style.left = `${Math.round(left)}px`;
+        panel.style.top = `${Math.round(top)}px`;
+        panel.style.transform = 'translate(-50%, -50%)';
+        panel.style.pointerEvents = 'auto';
+
+        const pad = 16;
+        const pw = Math.min(360, Math.max(120, Math.floor(rw - pad)));
+        panel.style.width = `${pw}px`;
+
+        const ph = panel.offsetHeight || 200;
+        if (ph > (rh - 16)) {
+          panel.style.maxHeight = `${Math.max(80, rh - 16)}px`;
+          panel.style.overflowY = 'auto';
+        } else {
+          panel.style.maxHeight = '';
+          panel.style.overflowY = '';
+        }
+      } catch (e) { }
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => { raf = null; updatePos(); });
+    };
+
+    window.addEventListener('scroll', onScroll, true);
+    window.addEventListener('resize', onScroll);
+
+    updatePos();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [devMode]);
 
   const precomputedVisible = useMemo(() => {
     try {
@@ -2068,25 +2227,57 @@ export default React.memo(function SharedList({
 
   useEffect(() => {
     try {
-      handleMoveUpRef.current = handleMoveAchievementUp;
-      handleMoveDownRef.current = handleMoveAchievementDown;
-      handleEditRef.current = handleEditAchievement;
-      handleRemoveRef.current = handleRemoveAchievement;
-      handleDuplicateRef.current = handleDuplicateAchievement;
-      handleCopyRef.current = handleCopyItemJson;
+      handleMoveUpRef.current = (idOrIdx) => {
+        try {
+          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
+          return handleMoveAchievementUp(arg);
+        } catch (e) { }
+      };
+      handleMoveDownRef.current = (idOrIdx) => {
+        try {
+          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
+          return handleMoveAchievementDown(arg);
+        } catch (e) { }
+      };
+      handleEditRef.current = (idOrIdx) => {
+        try {
+          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
+          return handleEditAchievement(arg);
+        } catch (e) { }
+      };
+      handleRemoveRef.current = (idOrIdx) => {
+        try {
+          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
+          return handleRemoveAchievement(arg);
+        } catch (e) { }
+      };
+      handleDuplicateRef.current = (idOrIdx) => {
+        try {
+          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
+          return handleDuplicateAchievement(arg);
+        } catch (e) { }
+      };
+      handleCopyRef.current = (id) => {
+        try { return handleCopyItemJson(id); } catch (e) { }
+      };
     } catch (e) { }
   });
 
 
 
-  function handleCopyItemJson() {
+  function handleCopyItemJson(idParam) {
     try {
-      const id = hoveredIdRef.current;
-      const list = visibleListRef.current || [];
+      const id = (idParam != null) ? String(idParam) : hoveredIdRef.current;
       if (id == null) return;
-      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
-      if (idx == null || idx < 0 || idx >= list.length) return;
-      const item = list[idx];
+      const list = visibleListRef.current || [];
+      let idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      let item = (idx === -1) ? null : list[idx];
+      if (!item) {
+        const src = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : (reordered && Array.isArray(reordered) ? reordered : (achievementsRef.current || []));
+        const realIdx = src.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+        if (realIdx == null || realIdx < 0) return;
+        item = src[realIdx];
+      }
       if (!item) return;
       const sanitized = JSON.parse(JSON.stringify(item));
       const json = JSON.stringify(sanitized, null, 2);
@@ -2489,13 +2680,7 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
-      const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : [];
-      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
-      const itm = idx === -1 ? null : list[idx];
-      if (handleEditRef && handleEditRef.current) {
-        if (itm && itm.id) handleEditRef.current(itm.id);
-        else handleEditRef.current(id);
-      }
+      if (handleEditRef && handleEditRef.current) handleEditRef.current(id);
     } catch (err) { }
   };
   const onMoveUp = (e) => {
@@ -2503,11 +2688,7 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
-      const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : [];
-      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
-      const itm = idx === -1 ? null : list[idx];
-      const arg = itm && itm.id ? String(itm.id) : id;
-      if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(arg);
+      if (handleMoveUpRef && handleMoveUpRef.current) handleMoveUpRef.current(id);
     } catch (err) { }
   };
   const onMoveDown = (e) => {
@@ -2515,11 +2696,7 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
-      const list = (visibleListRef && visibleListRef.current) ? visibleListRef.current : [];
-      const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
-      const itm = idx === -1 ? null : list[idx];
-      const arg = itm && itm.id ? String(itm.id) : id;
-      if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(arg);
+      if (handleMoveDownRef && handleMoveDownRef.current) handleMoveDownRef.current(id);
     } catch (err) { }
   };
   const onDuplicate = (e) => {
@@ -2542,7 +2719,7 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
 
   const baseStyle = { display: devMode ? 'block' : 'none', position: 'absolute', left: -9999, top: -9999, width: 360, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)' };
 
-  return (
+  const panelEl = (
     <div ref={devPanelRef} className="devmode-hover-panel" style={baseStyle}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 6 }}>
@@ -2556,4 +2733,11 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
       </div>
     </div>
   );
+
+  if (typeof document === 'undefined') return panelEl;
+  try {
+    return ReactDOM.createPortal(panelEl, document.body);
+  } catch (e) {
+    return panelEl;
+  }
 });
