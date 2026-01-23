@@ -48,8 +48,10 @@ export default function useSearch(
             const val = e.target.value;
             inputValueRef.current = val;
             setSearchCallback?.(val);
-
-            if (!setSearchCallback) {
+            if (!val || !(String(val || '').trim())) {
+                setQuery('');
+                setIsSearching(false);
+            } else if (!setSearchCallback) {
                 const normalizedVal = (val || '').trim().toLowerCase();
                 setQuery(normalizedVal);
                 setIsSearching(false);
@@ -90,8 +92,6 @@ export default function useSearch(
         },
         [onEditCommand, setSearchCallback]
     );
-
-
     const normalizedFilters = useMemo(() => {
         if (!filters) return null;
 
