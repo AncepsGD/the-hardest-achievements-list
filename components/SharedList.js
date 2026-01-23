@@ -111,9 +111,9 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
   } catch (e) { return false; }
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main', tier: tierProp }) {
   const { dateFormat } = useDateFormat();
-  const tier = getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = (typeof tierProp !== 'undefined') ? tierProp : getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const handleClick = e => {
     if (devMode) {
@@ -174,7 +174,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
               <Tag tag={tag} key={tag} />
             ))}
             {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
+              <TierTag tier={tier} totalAchievements={totalAchievements} />
             )}
           </div>
           <div className="achievement-details">
@@ -205,15 +205,14 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.autoThumbAvailable === next.autoThumbAvailable
     && prev.showTiers === next.showTiers
     && prev.totalAchievements === next.totalAchievements
-    && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', modeTimeline = false, usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave, tier: tierProp }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
-  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = (typeof tierProp !== 'undefined') ? tierProp : getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
 
 
   const handleClick = e => {
@@ -265,8 +264,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {(achievement._sortedTags || []).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
-            {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
+            {shouldShowTier(tier, (modeTimeline || mode), usePlatformers, showTiers) && (
+              <TierTag tier={tier} totalAchievements={totalAchievements} />
             )}
           </div>
           <div className="achievement-details">
@@ -296,7 +295,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     && prev.displayRank === next.displayRank
     && prev.showRank === next.showRank
     && prev.totalAchievements === next.totalAchievements
-    && prev.mode === next.mode
+    && prev.modeTimeline === next.modeTimeline
     && prev.usePlatformers === next.usePlatformers
     && prev.showTiers === next.showTiers
     && prev.listType === next.listType
@@ -1451,9 +1450,27 @@ export default React.memo(function SharedList({
   }, [baseDev, sortList]);
 
   const visibleList = devMode ? devAchievements : filtered;
-
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
+
+  const tierMap = useMemo(() => {
+    const m = new Map();
+    try {
+      if (!showTiers) return m;
+      const list = Array.isArray(visibleList) ? visibleList : [];
+      const total = list.length;
+      const listTypeForTier = (storageKeySuffix === 'legacy' || dataFileName === 'legacy.json') ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main');
+      for (let i = 0; i < list.length; i++) {
+        try {
+          const it = list[i];
+          if (!it) continue;
+          const t = getTierByRank(it && it.rank, total, list, { enable: true, listType: listTypeForTier });
+          if (it && it.id != null) m.set(String(it.id), t);
+        } catch (e) { }
+      }
+    } catch (e) { }
+    return m;
+  }, [visibleList, showTiers, mode, storageKeySuffix, dataFileName]);
   const devPanelRef = useRef(null);
   const devPanelOriginalParentRef = useRef(null);
   const hoverDisabledRef = useRef(false);
@@ -1849,17 +1866,18 @@ export default React.memo(function SharedList({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
-    mode,
+    isTimeline: mode === 'timeline',
     devMode,
     autoThumbMap,
     showTiers: showTiers === true,
-    usePlatformers,
-    extraLists,
+    usePlatformers: !!usePlatformers,
+    hasExtraLists: !!(extraLists && Object.keys(extraLists).length),
     rankOffset,
     hideRank,
-    achievements,
     storageKeySuffix,
     dataFileName,
+    tierMap,
+    totalVisible: (visibleList || []).length,
     handleMoveAchievementUp: handleMoveAchievementUpCb,
     handleMoveAchievementDown: handleMoveAchievementDownCb,
     handleEditAchievement: handleEditAchievementCb,
@@ -1868,21 +1886,23 @@ export default React.memo(function SharedList({
     onRowHoverEnter: onRowHoverEnterCb,
     onRowHoverLeave: onRowHoverLeaveCb,
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible, tierMap]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
-      filtered, mode, devMode, showTiers,
-      usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
-      onRowHoverEnter, onRowHoverLeave, handleEditAchievement,
+      filtered, isMobile, devMode, showTiers,
+      usePlatformers, rankOffset, hideRank, storageKeySuffix, dataFileName,
+      onRowHoverEnter, onRowHoverLeave, handleEditAchievement, tierMap, totalVisible, isTimeline,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
     const { isDup, autoThumbAvailable } = (data.precomputedVisible && data.precomputedVisible[index]) || {};
 
+    const tier = (a && a.id != null && tierMap && typeof tierMap.get === 'function') ? tierMap.get(String(a.id)) : undefined;
+
     return (
       <div data-index={index} data-achievement-id={(a && a.id) ? String(a.id) : ''} ref={el => { try { if (devMode) { achievementRefs.current[index] = el; } else if (achievementRefs && achievementRefs.current) { achievementRefs.current[index] = null; } } catch (e) { } }} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
-        {mode === 'timeline' ?
+        {isTimeline ?
           <TimelineAchievementCard
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
@@ -1892,18 +1912,16 @@ export default React.memo(function SharedList({
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
-            achievements={filtered}
             showTiers={showTiers}
-            mode={mode}
-            usePlatformers={usePlatformers}
-            extraLists={extraLists}
-            listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')}
+            usePlatformers={!!usePlatformers}
+            listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (isTimeline ? 'timeline' : 'main')}
+            tier={tier}
           />
           :
           (() => {
             const computed = (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={totalVisible} modeTimeline={isTimeline} usePlatformers={!!usePlatformers} showTiers={showTiers} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (isTimeline ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined} tier={tier} />;
           })()
         }
       </div>
