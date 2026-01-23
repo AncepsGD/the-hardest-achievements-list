@@ -45,6 +45,21 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
     setFilterTags({ include, exclude });
   }
 
+  const sortedTags = useMemo(() => {
+    try {
+      const copy = Array.isArray(allTags) ? allTags.slice() : [];
+      copy.sort((a, b) => {
+        const ia = TAG_PRIORITY_ORDER.indexOf(String(a || '').toUpperCase());
+        const ib = TAG_PRIORITY_ORDER.indexOf(String(b || '').toUpperCase());
+        if (ia === ib) return String(a || '').localeCompare(String(b || ''));
+        if (ia === -1) return 1;
+        if (ib === -1) return -1;
+        return ia - ib;
+      });
+      return copy;
+    } catch (e) { return Array.isArray(allTags) ? allTags.slice() : []; }
+  }, [allTags]);
+
   return (
     <div
       className="tag-filter-pills"
@@ -61,7 +76,7 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       {allTags.length === 0 ? (
         <span style={{ color: '#aaa', fontSize: 13 }}>Loading tags...</span>
       ) : (
-        allTags.sort((a, b) => (TAG_PRIORITY_ORDER.indexOf(a.toUpperCase()) - TAG_PRIORITY_ORDER.indexOf(b.toUpperCase()))).map(tag => (
+        sortedTags.map(tag => (
           <Tag
             key={tag}
             tag={tag}
@@ -111,9 +126,9 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
   } catch (e) { return false; }
 }
 
-function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main', tier: tierProp }) {
+function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
-  const tier = (typeof tierProp !== 'undefined') ? tierProp : getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const handleClick = e => {
     if (devMode) {
@@ -174,7 +189,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
               <Tag tag={tag} key={tag} />
             ))}
             {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} />
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
             )}
           </div>
           <div className="achievement-details">
@@ -205,14 +220,15 @@ const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) 
     && prev.autoThumbAvailable === next.autoThumbAvailable
     && prev.showTiers === next.showTiers
     && prev.totalAchievements === next.totalAchievements
+    && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
     && prev.listType === next.listType;
 });
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', modeTimeline = false, usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave, tier: tierProp }) {
+const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
-  const tier = (typeof tierProp !== 'undefined') ? tierProp : getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
+  const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
 
 
   const handleClick = e => {
@@ -264,8 +280,8 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
             {(achievement._sortedTags || []).map(tag => (
               <Tag tag={tag} key={tag} />
             ))}
-            {shouldShowTier(tier, (modeTimeline || mode), usePlatformers, showTiers) && (
-              <TierTag tier={tier} totalAchievements={totalAchievements} />
+            {shouldShowTier(tier, mode, usePlatformers, showTiers) && (
+              <TierTag tier={tier} totalAchievements={totalAchievements} achievements={achievements} extraLists={extraLists} />
             )}
           </div>
           <div className="achievement-details">
@@ -295,7 +311,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     && prev.displayRank === next.displayRank
     && prev.showRank === next.showRank
     && prev.totalAchievements === next.totalAchievements
-    && prev.modeTimeline === next.modeTimeline
+    && prev.mode === next.mode
     && prev.usePlatformers === next.usePlatformers
     && prev.showTiers === next.showTiers
     && prev.listType === next.listType
@@ -479,24 +495,6 @@ export default React.memo(function SharedList({
   const [reordered, setReordered] = useState(null);
   const reorderedRef = sharedListManager.reorderedRef;
   useEffect(() => { try { sharedListManager.reorderedRef.current = reordered; } catch (e) { } }, [reordered]);
-  const [stagedReordered, setStagedReordered] = useState(null);
-  const stagedRef = sharedListManager.stagedRef;
-  useEffect(() => { try { sharedListManager.stagedRef.current = stagedReordered; } catch (e) { } }, [stagedReordered]);
-  const stagedApplyTimerRef = useRef(null);
-  useEffect(() => {
-    try {
-      if (stagedApplyTimerRef.current) clearTimeout(stagedApplyTimerRef.current);
-      if (!Array.isArray(stagedReordered) || stagedReordered.length === 0) return;
-      stagedApplyTimerRef.current = setTimeout(() => {
-        try {
-          setReordered(prev => {
-            try { return mapEnhanceArray(stagedReordered, achievementsRef.current || prev || []); } catch (e) { return stagedReordered; }
-          });
-        } catch (e) { }
-      }, 180);
-    } catch (e) { }
-    return () => { try { if (stagedApplyTimerRef.current) { clearTimeout(stagedApplyTimerRef.current); stagedApplyTimerRef.current = null; } } catch (e) { } };
-  }, [stagedReordered]);
   const ongoingFilterControllerRef = useRef(null);
   const manualSearchControllerRef = useRef(null);
   const workerRef = useRef(null);
@@ -705,15 +703,9 @@ export default React.memo(function SharedList({
         return out;
       };
 
-      if (stagedRef.current && Array.isArray(stagedRef.current)) {
-        setStagedReordered(prev => {
-          try { return mapEnhanceArray(applyMutatorToArrayMinimal(prev), achievementsRef.current || prev || []); } catch (e) { return applyMutatorToArrayMinimal(prev); }
-        });
-      } else {
-        setReordered(prev => {
-          try { return mapEnhanceArray(applyMutatorToArrayMinimal(prev), achievementsRef.current || prev || []); } catch (e) { return applyMutatorToArrayMinimal(prev); }
-        });
-      }
+      setReordered(prev => {
+        try { return mapEnhanceArray(applyMutatorToArrayMinimal(prev), achievementsRef.current || prev || []); } catch (e) { return applyMutatorToArrayMinimal(prev); }
+      });
       try {
         requestAnimationFrame(() => {
           try {
@@ -731,7 +723,7 @@ export default React.memo(function SharedList({
 
   function resolveRealIdx(displayIdx) {
     try {
-      const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
+      const currentReordered = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : (achievementsRef.current || []);
       if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) {
         return (typeof displayIdx === 'number') ? displayIdx : -1;
       }
@@ -784,8 +776,7 @@ export default React.memo(function SharedList({
     } catch (e) { }
 
     try {
-      const isStaged = stagedRef.current && Array.isArray(stagedRef.current) && stagedRef.current.length;
-      const src = isStaged ? stagedRef.current : (reordered && Array.isArray(reordered) ? reordered : null);
+      const src = (reordered && Array.isArray(reordered) ? reordered : null);
       if (src && Array.isArray(src) && realIdx > 0 && realIdx < src.length) {
         const targetIdx = realIdx - 1;
         const swapped = src.slice();
@@ -793,17 +784,10 @@ export default React.memo(function SharedList({
         swapped[targetIdx] = swapped[realIdx];
         swapped[realIdx] = tmp;
 
-        if (isStaged) {
-          try {
-            stagedRef.current = swapped;
-            setStagedReordered(swapped);
-          } catch (e) { stagedRef.current = src; throw e; }
-        } else {
-          try {
-            reorderedRef.current = swapped;
-            setReordered(swapped);
-          } catch (e) { reorderedRef.current = src; throw e; }
-        }
+        try {
+          reorderedRef.current = swapped;
+          setReordered(swapped);
+        } catch (e) { reorderedRef.current = src; throw e; }
 
         requestAnimationFrame(() => {
           try {
@@ -850,8 +834,7 @@ export default React.memo(function SharedList({
     } catch (e) { }
 
     try {
-      const isStaged = stagedRef.current && Array.isArray(stagedRef.current) && stagedRef.current.length;
-      const src = isStaged ? stagedRef.current : (reordered && Array.isArray(reordered) ? reordered : null);
+      const src = (reordered && Array.isArray(reordered) ? reordered : null);
       if (src && Array.isArray(src) && realIdx >= 0 && realIdx < src.length - 1) {
         const targetIdx = realIdx + 1;
         const swapped = src.slice();
@@ -859,17 +842,10 @@ export default React.memo(function SharedList({
         swapped[targetIdx] = swapped[realIdx];
         swapped[realIdx] = tmp;
 
-        if (isStaged) {
-          try {
-            stagedRef.current = swapped;
-            setStagedReordered(swapped);
-          } catch (e) { stagedRef.current = src; throw e; }
-        } else {
-          try {
-            reorderedRef.current = swapped;
-            setReordered(swapped);
-          } catch (e) { reorderedRef.current = src; throw e; }
-        }
+        try {
+          reorderedRef.current = swapped;
+          setReordered(swapped);
+        } catch (e) { reorderedRef.current = src; throw e; }
 
         requestAnimationFrame(() => {
           try {
@@ -952,7 +928,7 @@ export default React.memo(function SharedList({
   }
   useEffect(() => {
     try {
-      const cur = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : (reordered && Array.isArray(reordered) ? reordered : []);
+      const cur = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : (achievementsRef.current || []);
       const m = new Map();
       for (let i = 0; i < (cur || []).length; i++) {
         try {
@@ -962,10 +938,10 @@ export default React.memo(function SharedList({
       }
       realIdxMapRef.current = m;
     } catch (e) { }
-  }, [reordered, stagedReordered]);
+  }, [reordered]);
   function handleEditAchievement(idxOrId) {
     try {
-      const currentReordered = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : reordered;
+      const currentReordered = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : (achievementsRef.current || []);
       if (!currentReordered || !Array.isArray(currentReordered) || currentReordered.length === 0) return;
 
       let realIdx = null;
@@ -1039,7 +1015,7 @@ export default React.memo(function SharedList({
         finalEnhanced = mapEnhanceArray(finalOriginal, achievementsRef.current || []);
 
         setAchievements(() => finalEnhanced);
-        try { setFiltered(() => finalEnhanced); } catch (e) { }
+        try { setFilteredIds(toIds(finalEnhanced)); } catch (e) { }
         const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
         setOriginalAchievements(snap);
         try { originalSnapshotRef.current = snap; } catch (e) { }
@@ -1058,13 +1034,8 @@ export default React.memo(function SharedList({
       setDevMode(v => {
         const next = !v;
         if (!next) {
-          if (stagedRef.current && Array.isArray(stagedRef.current)) {
-            try { setReordered(mapEnhanceArray(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : [], achievementsRef.current || stagedRef.current || [])); } catch (e) { setReordered(Array.isArray(stagedRef.current) ? stagedRef.current.slice() : []); }
-            setStagedReordered(null);
-          } else {
-            setReordered(null);
-            reorderedRef.current = null;
-          }
+          setReordered(null);
+          reorderedRef.current = null;
         } else {
           try { setReordered(mapEnhanceArray(achievementsRef.current || [], achievementsRef.current || [])); } catch (e) { setReordered(achievementsRef.current); }
           reorderedRef.current = achievementsRef.current;
@@ -1222,7 +1193,36 @@ export default React.memo(function SharedList({
     [_normalizedFilterTags, queryTokens]
   );
 
-  const [filtered, setFiltered] = useState([]);
+  const [filteredIds, setFilteredIds] = useState([]);
+  const toIds = useCallback((arr) => {
+    try {
+      if (!Array.isArray(arr)) return [];
+      return arr.map(a => {
+        if (a == null) return null;
+        if (typeof a === 'string' || typeof a === 'number') return String(a);
+        if (a && (a.id != null)) return String(a.id);
+        return null;
+      }).filter(Boolean);
+    } catch (e) { return []; }
+  }, []);
+
+  const achievementsMap = useMemo(() => {
+    try {
+      const m = new Map();
+      const items = Array.isArray(achievements) ? achievements : [];
+      for (let i = 0; i < items.length; i++) {
+        const a = items[i];
+        try { if (a && a.id != null) m.set(String(a.id), a); } catch (e) { }
+      }
+      return m;
+    } catch (e) { return new Map(); }
+  }, [achievements]);
+
+  const filtered = useMemo(() => {
+    try {
+      return (Array.isArray(filteredIds) ? filteredIds.map(id => achievementsMap.get(String(id))).filter(Boolean) : []);
+    } catch (e) { return []; }
+  }, [filteredIds, achievementsMap]);
   const prevFilterSigRef = useRef(null);
   useEffect(() => {
     try { if (ongoingFilterControllerRef.current && typeof ongoingFilterControllerRef.current.abort === 'function') ongoingFilterControllerRef.current.abort(); } catch (e) { }
@@ -1231,7 +1231,7 @@ export default React.memo(function SharedList({
 
     try {
       if (debouncedSearch && String(debouncedSearch).trim()) {
-        try { setFiltered(_searchResults || []); } catch (e) { }
+        try { setFilteredIds(toIds(_searchResults || [])); } catch (e) { }
         return () => { try { controller.abort(); } catch (e) { } };
       }
 
@@ -1251,7 +1251,7 @@ export default React.memo(function SharedList({
 
       const cache = derivedCacheRef.current && derivedCacheRef.current.filtered;
       if (cache && cache.has(filterSig)) {
-        try { setFiltered(cache.get(filterSig)); } catch (e) { }
+        try { setFilteredIds(toIds(cache.get(filterSig) || [])); } catch (e) { }
         return () => { try { controller.abort(); } catch (e) { } };
       }
     } catch (e) { }
@@ -1301,7 +1301,11 @@ export default React.memo(function SharedList({
               const copy = [...onlyWithLevel];
               copy.sort((x, y) => compareByKey(x, y, 'levelID'));
               if (sortDir === 'desc') copy.reverse();
-              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) { } setFiltered(copy); } catch (e) { }
+              try {
+                const ids = toIds(copy);
+                try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, ids); } catch (ee) { }
+                setFilteredIds(ids);
+              } catch (e) { }
               return;
             }
             if (sortKey === 'random') {
@@ -1319,17 +1323,29 @@ export default React.memo(function SharedList({
               keys.forEach((k, i) => { map[k] = i; });
               const getKey = item => (item && item.id) ? String(item.id) : `__idx_${result.indexOf(item)}`;
               copy.sort((x, y) => ((map[getKey(x)] || 0) - (map[getKey(y)] || 0)));
-              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) { } setFiltered(copy); } catch (e) { }
+              try {
+                const ids = toIds(copy);
+                try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, ids); } catch (ee) { }
+                setFilteredIds(ids);
+              } catch (e) { }
               return;
             }
             if (sortKey) {
               const copy = [...result];
               copy.sort((x, y) => compareByKey(x, y, sortKey));
               if (sortDir === 'desc') copy.reverse();
-              try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, copy); } catch (ee) { } setFiltered(copy); } catch (e) { }
+              try {
+                const ids = toIds(copy);
+                try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, ids); } catch (ee) { }
+                setFilteredIds(ids);
+              } catch (e) { }
               return;
             }
-            try { try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, result); } catch (ee) { } setFiltered(result); } catch (e) { }
+            try {
+              const ids = toIds(result);
+              try { const cache = derivedCacheRef.current && derivedCacheRef.current.filtered; if (cache) cache.set(filterSig, ids); } catch (ee) { }
+              setFilteredIds(ids);
+            } catch (e) { }
           } catch (e) { }
         }
 
@@ -1371,7 +1387,7 @@ export default React.memo(function SharedList({
       return true;
     };
 
-    const baseList = (devModeRef.current && (stagedRef.current || reorderedRef.current)) ? (stagedRef.current || reorderedRef.current) : achievementsRef.current || [];
+    const baseList = (devModeRef.current && reorderedRef.current) ? reorderedRef.current : (achievementsRef.current || []);
     const preFiltered = [];
     for (let i = 0; i < baseList.length; i++) {
       if (manualController.aborted) break;
@@ -1441,7 +1457,7 @@ export default React.memo(function SharedList({
 
 
 
-  const baseDev = devMode && (stagedReordered || reordered) ? (stagedReordered || reordered) : achievements;
+  const baseDev = devMode && reordered ? reordered : achievements;
 
   const devAchievements = useMemo(() => {
     try {
@@ -1450,27 +1466,9 @@ export default React.memo(function SharedList({
   }, [baseDev, sortList]);
 
   const visibleList = devMode ? devAchievements : filtered;
+
   const visibleListRef = useRef(visibleList);
   useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
-
-  const tierMap = useMemo(() => {
-    const m = new Map();
-    try {
-      if (!showTiers) return m;
-      const list = Array.isArray(visibleList) ? visibleList : [];
-      const total = list.length;
-      const listTypeForTier = (storageKeySuffix === 'legacy' || dataFileName === 'legacy.json') ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main');
-      for (let i = 0; i < list.length; i++) {
-        try {
-          const it = list[i];
-          if (!it) continue;
-          const t = getTierByRank(it && it.rank, total, list, { enable: true, listType: listTypeForTier });
-          if (it && it.id != null) m.set(String(it.id), t);
-        } catch (e) { }
-      }
-    } catch (e) { }
-    return m;
-  }, [visibleList, showTiers, mode, storageKeySuffix, dataFileName]);
   const devPanelRef = useRef(null);
   const devPanelOriginalParentRef = useRef(null);
   const hoverDisabledRef = useRef(false);
@@ -1549,14 +1547,14 @@ export default React.memo(function SharedList({
 
   useEffect(() => {
     try {
-      const disabled = !!isPending || !!(stagedReordered && Array.isArray(stagedReordered));
+      const disabled = !!isPending || !!(reordered && Array.isArray(reordered));
       hoverDisabledRef.current = disabled;
       if (disabled) {
         try { hoveredIdRef.current = null; } catch (e) { }
         try { if (devPanelRef.current) devPanelRef.current.style.display = 'none'; } catch (e) { }
       }
     } catch (e) { }
-  }, [isPending, stagedReordered]);
+  }, [isPending, reordered]);
 
   const _onRowHoverEnter = useCallback((id, ev) => {
     try { hoveredIdRef.current = id == null ? null : String(id); } catch (e) { hoveredIdRef.current = id; }
@@ -1866,18 +1864,17 @@ export default React.memo(function SharedList({
     filtered: visibleList,
     isMobile,
     duplicateThumbKeys,
-    isTimeline: mode === 'timeline',
+    mode,
     devMode,
     autoThumbMap,
     showTiers: showTiers === true,
-    usePlatformers: !!usePlatformers,
-    hasExtraLists: !!(extraLists && Object.keys(extraLists).length),
+    usePlatformers,
+    extraLists,
     rankOffset,
     hideRank,
+    achievements,
     storageKeySuffix,
     dataFileName,
-    tierMap,
-    totalVisible: (visibleList || []).length,
     handleMoveAchievementUp: handleMoveAchievementUpCb,
     handleMoveAchievementDown: handleMoveAchievementDownCb,
     handleEditAchievement: handleEditAchievementCb,
@@ -1886,23 +1883,21 @@ export default React.memo(function SharedList({
     onRowHoverEnter: onRowHoverEnterCb,
     onRowHoverLeave: onRowHoverLeaveCb,
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible, tierMap]);
+  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
-      filtered, isMobile, devMode, showTiers,
-      usePlatformers, rankOffset, hideRank, storageKeySuffix, dataFileName,
-      onRowHoverEnter, onRowHoverLeave, handleEditAchievement, tierMap, totalVisible, isTimeline,
+      filtered, mode, devMode, showTiers,
+      usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
+      onRowHoverEnter, onRowHoverLeave, handleEditAchievement,
     } = data;
     const a = filtered[index];
     const itemStyle = { ...style, padding: 8, boxSizing: 'border-box' };
     const { isDup, autoThumbAvailable } = (data.precomputedVisible && data.precomputedVisible[index]) || {};
 
-    const tier = (a && a.id != null && tierMap && typeof tierMap.get === 'function') ? tierMap.get(String(a.id)) : undefined;
-
     return (
       <div data-index={index} data-achievement-id={(a && a.id) ? String(a.id) : ''} ref={el => { try { if (devMode) { achievementRefs.current[index] = el; } else if (achievementRefs && achievementRefs.current) { achievementRefs.current[index] = null; } } catch (e) { } }} style={itemStyle} key={a && a.id ? a.id : index} className={`${isDup ? 'duplicate-thumb-item' : ''}`}>
-        {isTimeline ?
+        {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
@@ -1912,16 +1907,18 @@ export default React.memo(function SharedList({
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
+            achievements={filtered}
             showTiers={showTiers}
-            usePlatformers={!!usePlatformers}
-            listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (isTimeline ? 'timeline' : 'main')}
-            tier={tier}
+            mode={mode}
+            usePlatformers={usePlatformers}
+            extraLists={extraLists}
+            listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')}
           />
           :
           (() => {
             const computed = (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={totalVisible} modeTimeline={isTimeline} usePlatformers={!!usePlatformers} showTiers={showTiers} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (isTimeline ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined} tier={tier} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined} />;
           })()
         }
       </div>
@@ -2172,24 +2169,16 @@ export default React.memo(function SharedList({
   function handleDuplicateAchievement(idx) {
     const realIdx = resolveRealIdx(idx);
     if (realIdx == null || realIdx < 0) return;
-    const orig = (stagedRef.current && stagedRef.current[realIdx]) || (reorderedRef.current && reorderedRef.current[realIdx]) || {};
+    const orig = (reorderedRef.current && reorderedRef.current[realIdx]) || {};
     const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const newId = (orig && orig.id) ? `${orig.id}-copy-${uniqueSuffix}` : `new-${uniqueSuffix}`;
     const copy = { ...orig, id: newId };
     const enhancedCopy = enhanceAchievement(copy);
-    if (stagedRef.current) {
-      setStagedReordered(prev => {
-        const arr = Array.isArray(prev) ? prev.slice() : [];
-        arr.splice(realIdx + 1, 0, enhancedCopy);
-        try { return mapEnhanceArray(arr, achievementsRef.current || prev || []); } catch (e) { return arr; }
-      });
-    } else {
-      batchUpdateReordered(arr => {
-        if (!arr) return arr;
-        arr.splice(realIdx + 1, 0, enhancedCopy);
-        return arr;
-      });
-    }
+    batchUpdateReordered(arr => {
+      if (!arr) return arr;
+      arr.splice(realIdx + 1, 0, enhancedCopy);
+      return arr;
+    });
     setScrollToIdx(realIdx + 1);
   }
 
@@ -2241,7 +2230,7 @@ export default React.memo(function SharedList({
       let idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
       let item = (idx === -1) ? null : list[idx];
       if (!item) {
-        const src = (stagedReordered && Array.isArray(stagedReordered) && stagedReordered.length) ? stagedReordered : (reordered && Array.isArray(reordered) ? reordered : (achievementsRef.current || []));
+        const src = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : (achievementsRef.current || []);
         const realIdx = src.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
         if (realIdx == null || realIdx < 0) return;
         item = src[realIdx];
@@ -2527,12 +2516,10 @@ export default React.memo(function SharedList({
             devMode={devMode}
             achievements={achievements}
             reordered={reordered}
-            stagedReordered={stagedReordered}
             originalAchievements={originalAchievements}
             originalSnapshotRef={originalSnapshotRef}
             batchUpdateReordered={batchUpdateReordered}
             setReordered={setReordered}
-            setStagedReordered={setStagedReordered}
             setEditIdx={setEditIdx}
             editIdx={editIdx}
             editForm={editForm}
