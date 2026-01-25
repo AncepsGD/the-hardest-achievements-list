@@ -480,6 +480,31 @@ export default React.memo(function SharedList({
   const devModeRef = useRef(devMode);
   useEffect(() => { devModeRef.current = devMode; }, [devMode]);
 
+  const [devPanelVisible, setDevPanelVisible] = useState(true);
+  const isScrollingRef = useRef(false);
+  const _scrollTimerRef = useRef(null);
+  useEffect(() => {
+    const onScroll = () => {
+      try {
+        if (_scrollTimerRef.current) clearTimeout(_scrollTimerRef.current);
+        if (!isScrollingRef.current) {
+          isScrollingRef.current = true;
+          try { setDevPanelVisible(false); } catch (e) { }
+        }
+        _scrollTimerRef.current = setTimeout(() => {
+          isScrollingRef.current = false;
+          try { setDevPanelVisible(true); } catch (e) { }
+          _scrollTimerRef.current = null;
+        }, 160);
+      } catch (e) { }
+    };
+    try { window.addEventListener('scroll', onScroll, { passive: true }); } catch (e) { }
+    return () => {
+      try { window.removeEventListener('scroll', onScroll); } catch (e) { }
+      try { if (_scrollTimerRef.current) { clearTimeout(_scrollTimerRef.current); _scrollTimerRef.current = null; } } catch (e) { }
+    };
+  }, []);
+
   function maybeStartTransition(fn) {
     try {
       if (devModeRef && devModeRef.current) {
@@ -1597,6 +1622,11 @@ export default React.memo(function SharedList({
         top = (typeof window !== 'undefined' ? window.innerHeight / 2 : 0);
       }
       panel.style.position = 'fixed';
+      try {
+        const menuWidth = (panel && typeof panel.offsetWidth === 'number' && panel.offsetWidth > 0) ? panel.offsetWidth : 360;
+        const half = menuWidth / 2;
+        if (typeof window !== 'undefined') left = Math.min(window.innerWidth - half, Math.max(half, left));
+      } catch (e) { }
       panel.style.left = `${Math.round(left)}px`;
       panel.style.top = `${Math.round(top)}px`;
       panel.style.transform = 'translate(-50%, -50%)';
@@ -1777,6 +1807,11 @@ export default React.memo(function SharedList({
           let top = (Number(rect.top) || 0) + (rh / 2);
 
           panel.style.position = 'fixed';
+          try {
+            const menuWidth = (panel && typeof panel.offsetWidth === 'number' && panel.offsetWidth > 0) ? panel.offsetWidth : 360;
+            const half = menuWidth / 2;
+            if (typeof window !== 'undefined') left = Math.min(window.innerWidth - half, Math.max(half, left));
+          } catch (e) { }
           panel.style.left = `${Math.round(left)}px`;
           panel.style.top = `${Math.round(top)}px`;
           panel.style.transform = 'translate(-50%, -50%)';
@@ -1824,6 +1859,11 @@ export default React.memo(function SharedList({
             } catch (e) { }
 
             panel.style.position = 'fixed';
+            try {
+              const menuWidth = (panel && typeof panel.offsetWidth === 'number' && panel.offsetWidth > 0) ? panel.offsetWidth : 360;
+              const half = menuWidth / 2;
+              if (typeof window !== 'undefined') left = Math.min(window.innerWidth - half, Math.max(half, left));
+            } catch (e) { }
             panel.style.left = `${Math.round(left)}px`;
             panel.style.top = `${Math.round(top)}px`;
             panel.style.transform = 'translate(-50%, -50%)';
@@ -2528,8 +2568,9 @@ export default React.memo(function SharedList({
         .achievement-item:hover .hover-hint{ opacity: 1 !important; transform: translateY(0) !important; }
           .hover-hint{ opacity: 0; transition: opacity 140ms ease, transform 160ms ease; transform: translateY(-4px); pointer-events: none; position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 8px; border-radius: 8px; font-size: 12px; z-index: 2; }
           .achievement-item .hover-hint .icon{ margin-right:6px; vertical-align:middle; }
+          .achievement-item{ pointer-events: auto; }
           .achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; }
-          .hover-menu{ will-change: opacity; position: absolute; right: 8px; bottom: 8px; display:flex; gap:6px; z-index:2; opacity: 0; pointer-events: none; }
+          .hover-menu{ will-change: opacity; position: absolute; right: 8px; bottom: 8px; display:flex; gap:6px; z-index:2; opacity: 0; pointer-events: auto; }
           .hover-menu a, .hover-menu button{ background: rgba(0,0,0,0.6); color: #fff; padding: 6px 8px; border-radius: 6px; text-decoration: none; font-size: 12px; border: none; cursor: pointer; }
           .hover-menu:hover{ opacity: 1 !important; }
           .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }
@@ -2776,6 +2817,7 @@ export default React.memo(function SharedList({
             devAchievements={devAchievements}
             handlePasteSelect={handlePasteSelect}
             onImportAchievementsJson={onImportAchievementsJson}
+            visible={devPanelVisible}
           />
           <div style={{ position: 'relative', width: '100%' }}>
             <ListWindow
