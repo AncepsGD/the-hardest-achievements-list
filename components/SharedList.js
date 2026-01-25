@@ -126,6 +126,17 @@ function shouldShowTier(tier, mode, usePlatformers, showTiers) {
   } catch (e) { return false; }
 }
 
+function shouldBypassStop(e) {
+  try {
+    const t = e && (e.target || e.srcElement);
+    if (!t) return false;
+    if (typeof t.closest !== 'function') return false;
+    return !!t.closest('.hover-menu, .hover-panel, .hover-overlay, .dev-hover-panel, [data-bypass-stop]');
+  } catch (err) {
+    return false;
+  }
+}
+
 function TimelineAchievementCardInner({ achievement, previousAchievement, onHoverEnter, onHoverLeave, devMode, autoThumbAvailable, totalAchievements, achievements = [], showTiers = false, mode = '', usePlatformers = false, extraLists = {}, listType = 'main' }) {
   const { dateFormat } = useDateFormat();
   const tier = getTierByRank(achievement && achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -133,6 +144,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault();
       e.stopPropagation();
     }
@@ -160,9 +172,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
       <a
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
         onClick={handleClick}
-        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
+        onClickCapture={(e) => { if (devMode) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
         onMouseDown={handleClick}
-        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
         tabIndex={devMode ? -1 : 0}
         aria-disabled={devMode ? 'true' : undefined}
       >
@@ -236,6 +248,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault();
       e.stopPropagation();
     }
@@ -249,9 +262,9 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           cursor: devMode ? 'not-allowed' : 'pointer',
         }}
         onClick={handleClick}
-        onClickCapture={(e) => { if (devMode) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
+        onClickCapture={(e) => { if (devMode) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
         onMouseDown={handleClick}
-        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { e.preventDefault(); e.stopPropagation(); } catch (err) { } } }}
+        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
         tabIndex={devMode ? -1 : 0}
         aria-disabled={devMode ? 'true' : undefined}
       >
@@ -479,6 +492,67 @@ export default React.memo(function SharedList({
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
   useEffect(() => { devModeRef.current = devMode; }, [devMode]);
+
+  const _origPreventRef = useRef(null);
+  const _origStopRef = useRef(null);
+  const _origStopImmediateRef = useRef(null);
+  useEffect(() => {
+    try {
+      if (typeof window === 'undefined' || typeof Event === 'undefined') return;
+
+      if (devMode) {
+        if (!_origPreventRef.current) _origPreventRef.current = Event.prototype.preventDefault;
+        if (!_origStopRef.current) _origStopRef.current = Event.prototype.stopPropagation;
+        if (!_origStopImmediateRef.current) _origStopImmediateRef.current = Event.prototype.stopImmediatePropagation;
+
+        const shouldNoop = (type) => {
+          try {
+            if (!type) return false;
+            return /^(click$|mouse|pointer|touch|contextmenu|dblclick|keydown$|keyup$)/i.test(type);
+          } catch (e) { return false; }
+        };
+
+        Event.prototype.preventDefault = function () {
+          try {
+            if (shouldNoop(this && this.type)) return;
+          } catch (e) { }
+          return _origPreventRef.current && _origPreventRef.current.call(this);
+        };
+
+        Event.prototype.stopPropagation = function () {
+          try {
+            if (shouldNoop(this && this.type)) return;
+          } catch (e) { }
+          return _origStopRef.current && _origStopRef.current.call(this);
+        };
+
+        Event.prototype.stopImmediatePropagation = function () {
+          try {
+            if (shouldNoop(this && this.type)) return;
+          } catch (e) { }
+          return _origStopImmediateRef.current && _origStopImmediateRef.current.call(this);
+        };
+      } else {
+
+        if (_origPreventRef.current) Event.prototype.preventDefault = _origPreventRef.current;
+        if (_origStopRef.current) Event.prototype.stopPropagation = _origStopRef.current;
+        if (_origStopImmediateRef.current) Event.prototype.stopImmediatePropagation = _origStopImmediateRef.current;
+        _origPreventRef.current = null;
+        _origStopRef.current = null;
+        _origStopImmediateRef.current = null;
+      }
+    } catch (e) { }
+    return () => {
+      try {
+        if (_origPreventRef.current) Event.prototype.preventDefault = _origPreventRef.current;
+        if (_origStopRef.current) Event.prototype.stopPropagation = _origStopRef.current;
+        if (_origStopImmediateRef.current) Event.prototype.stopImmediatePropagation = _origStopImmediateRef.current;
+        _origPreventRef.current = null;
+        _origStopRef.current = null;
+        _origStopImmediateRef.current = null;
+      } catch (e) { }
+    };
+  }, [devMode]);
 
   const [devPanelVisible, setDevPanelVisible] = useState(true);
   const isScrollingRef = useRef(false);
@@ -1634,8 +1708,22 @@ export default React.memo(function SharedList({
 
       try { panel.style.width = panel.style.width || '180px'; } catch (e) { }
       try {
-        const btns = panel.querySelectorAll('button, a');
-        for (let i = 0; i < btns.length; i++) btns[i].disabled = true;
+        const list = visibleListRef && visibleListRef.current ? visibleListRef.current : [];
+        const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+        const item = (idx === -1) ? null : list[idx];
+        const btnEdit = panel.querySelector('.devmode-btn-edit');
+        const btnMoveUp = panel.querySelector('.devmode-btn-move-up');
+        const btnMoveDown = panel.querySelector('.devmode-btn-move-down');
+        const btnDup = panel.querySelector('.devmode-btn-duplicate');
+        const btnDel = panel.querySelector('.devmode-btn-delete');
+        const btnCopy = panel.querySelector('.devmode-btn-copy');
+
+        if (btnEdit) btnEdit.disabled = !item;
+        if (btnDup) btnDup.disabled = !item;
+        if (btnDel) btnDel.disabled = !item;
+        if (btnMoveUp) btnMoveUp.disabled = !item || idx <= 0;
+        if (btnMoveDown) btnMoveDown.disabled = !item || idx >= (list.length - 1);
+        if (btnCopy) btnCopy.disabled = !item;
       } catch (e) { }
     } catch (e) { }
   }
