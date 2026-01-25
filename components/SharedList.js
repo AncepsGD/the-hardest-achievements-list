@@ -175,6 +175,10 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
           onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
           onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
+          <div className="hover-hint" aria-hidden="true">View</div>
+          <div className="hover-menu hover-menu--disabled" aria-hidden="true">
+            <span>View</span>
+          </div>
           <div className="rank-date-container">
             {!isPlatformer && (
               <div className="achievement-length">
@@ -260,6 +264,10 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           onFocus={(e) => { if (typeof onHoverEnter === 'function') onHoverEnter(e); }}
           onBlur={(e) => { if (typeof onHoverLeave === 'function') onHoverLeave(e); }}
         >
+          <div className="hover-hint" aria-hidden="true">View</div>
+          <div className="hover-menu hover-menu--disabled" aria-hidden="true">
+            <span>View</span>
+          </div>
           <div className="rank-date-container">
             {!isPlatformer && (
               <div className="achievement-length">
@@ -470,7 +478,18 @@ export default React.memo(function SharedList({
   const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
-  useEffect(() => { devModeRef.current = devMode; try { console.debug && console.debug('[SHAREDLIST_DEBUG] devMode state updated', devMode, 'devModeRef.current=', devModeRef.current); } catch (e) {} }, [devMode]);
+  useEffect(() => { devModeRef.current = devMode; }, [devMode]);
+
+  function maybeStartTransition(fn) {
+    try {
+      if (devModeRef && devModeRef.current) {
+
+        try { fn(); } catch (e) { }
+      } else {
+        try { startTransition(fn); } catch (e) { try { fn(); } catch (ee) { } }
+      }
+    } catch (e) { try { fn(); } catch (ee) { } }
+  }
 
   const hideRank = storageKeySuffix === 'pending' || dataFileName === 'pending.json';
 
@@ -677,7 +696,7 @@ export default React.memo(function SharedList({
   const realIdxMapRef = useRef(new Map());
 
   function batchUpdateReordered(mutator, opts = {}) {
-    try { hoverDisabledRef.current = true; } catch (e) { }
+    try { disableHoverWithFallback(); } catch (e) { }
     if (typeof mutator !== 'function') return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
@@ -697,7 +716,7 @@ export default React.memo(function SharedList({
       }
     } catch (e) { }
 
-    startTransition(() => {
+    maybeStartTransition(() => {
       const applyMutatorToArrayMinimal = (arr) => {
         const copy = Array.isArray(arr) ? arr.slice() : [];
         let result;
@@ -729,7 +748,7 @@ export default React.memo(function SharedList({
             if (lr && typeof lr.scrollToItem === 'function') {
               try { lr.scrollToItem(Math.max(0, idxToScroll), 'center'); } catch (e) { }
             }
-            try { hoverDisabledRef.current = false; } catch (e) { }
+            try { enableHoverNow(); } catch (e) { }
           } catch (e) { }
         });
       } catch (e) { }
@@ -769,7 +788,7 @@ export default React.memo(function SharedList({
   }
 
   function handleMoveAchievementUp(idx) {
-    try { hoverDisabledRef.current = true; } catch (e) { }
+    try { disableHoverWithFallback(); } catch (e) { }
     const realIdx = resolveRealIdx(idx);
     if (realIdx <= 0) return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
@@ -811,7 +830,7 @@ export default React.memo(function SharedList({
             if (lr && typeof lr.scrollToItem === 'function') {
               try { lr.scrollToItem(Math.max(0, idxToScroll), 'center'); } catch (e) { }
             }
-            try { hoverDisabledRef.current = false; } catch (e) { }
+            try { enableHoverNow(); } catch (e) { }
           } catch (e) { }
         });
         return;
@@ -829,7 +848,7 @@ export default React.memo(function SharedList({
   }
 
   function handleMoveAchievementDown(idx) {
-    try { hoverDisabledRef.current = true; } catch (e) { }
+    try { disableHoverWithFallback(); } catch (e) { }
     const realIdx = resolveRealIdx(idx);
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
@@ -869,7 +888,7 @@ export default React.memo(function SharedList({
             if (lr && typeof lr.scrollToItem === 'function') {
               try { lr.scrollToItem(Math.max(0, idxToScroll), 'center'); } catch (e) { }
             }
-            try { hoverDisabledRef.current = false; } catch (e) { }
+            try { enableHoverNow(); } catch (e) { }
           } catch (e) { }
         });
         return;
@@ -1075,7 +1094,6 @@ export default React.memo(function SharedList({
   }, [dataUrl, dataFileName, usePlatformers]);
   const handleKeyDown = useCallback((e) => {
     if (e.shiftKey && (e.key === 'M' || e.key === 'm')) {
-      try { console.debug && console.debug('[SHAREDLIST_DEBUG] devMode toggle keybind pressed; devModeRef.current (before)=', devModeRef.current); } catch (e) {}
       setDevMode(v => {
         const next = !v;
         if (!next) {
@@ -1085,7 +1103,6 @@ export default React.memo(function SharedList({
           try { setReordered(mapEnhanceArray(achievementsRef.current || [], achievementsRef.current || [])); } catch (e) { setReordered(achievementsRef.current); }
           reorderedRef.current = achievementsRef.current;
         }
-        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] devMode toggle keybind - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
         return next;
       });
     }
@@ -1169,10 +1186,8 @@ export default React.memo(function SharedList({
   const handleOnEditCommand = useCallback(() => {
     try {
       if (!devModeRef.current) {
-        try { console.debug && console.debug('[SHAREDLIST_DEBUG] handleOnEditCommand calling setDevMode(true) - before, devModeRef.current=', devModeRef.current); } catch (e) {}
         devModeRef.current = true;
         setDevMode(true);
-        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] handleOnEditCommand - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
       }
       if (!reorderedRef.current) {
         const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
@@ -1304,7 +1319,7 @@ export default React.memo(function SharedList({
       }
     } catch (e) { }
 
-    startTransition(() => {
+    maybeStartTransition(() => {
       setTimeout(() => {
         if (controller.aborted) return;
         const items = Array.isArray(achievements) ? achievements : [];
@@ -1518,9 +1533,68 @@ export default React.memo(function SharedList({
   const devPanelOriginalParentRef = useRef(null);
   const hoverDisabledRef = useRef(false);
   const hoverRafRef = useRef(null);
+  const hoverShowRafRef = useRef(null);
   const lastHoverIdRef = useRef(null);
   const rectsRef = useRef(new Map());
   const resizeObserverRef = useRef(null);
+  const hoverDisableTokenRef = useRef(0);
+  const hoverDisableFallbackRef = useRef(null);
+
+  function disableHoverWithFallback(timeoutMs = 120) {
+    try {
+      hoverDisabledRef.current = true;
+      hoverDisableTokenRef.current = (hoverDisableTokenRef.current || 0) + 1;
+      if (hoverDisableFallbackRef.current) {
+        try { clearTimeout(hoverDisableFallbackRef.current); } catch (e) { }
+        hoverDisableFallbackRef.current = null;
+      }
+      const token = hoverDisableTokenRef.current;
+      hoverDisableFallbackRef.current = setTimeout(() => {
+        try {
+          if (hoverDisableTokenRef.current === token) hoverDisabledRef.current = false;
+        } catch (e) { }
+        hoverDisableFallbackRef.current = null;
+      }, timeoutMs);
+    } catch (e) { }
+  }
+
+  function enableHoverNow() {
+    try {
+      hoverDisabledRef.current = false;
+      hoverDisableTokenRef.current = (hoverDisableTokenRef.current || 0) + 1;
+      if (hoverDisableFallbackRef.current) {
+        try { clearTimeout(hoverDisableFallbackRef.current); } catch (e) { }
+        hoverDisableFallbackRef.current = null;
+      }
+    } catch (e) { }
+  }
+
+  function showDevPanelImmediate(id, evObj) {
+    try {
+      const panel = devPanelRef.current;
+      if (!panel) return;
+      if (hoverDisabledRef.current) { panel.style.display = 'none'; return; }
+      if (!devModeRef.current) { panel.style.display = 'none'; return; }
+
+      try { hoveredIdRef.current = id == null ? null : String(id); } catch (e) { hoveredIdRef.current = id; }
+      lastHoverIdRef.current = hoveredIdRef.current;
+
+      panel.style.display = 'block';
+      const left = evObj && typeof evObj.clientX === 'number' ? evObj.clientX : (typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
+      const top = evObj && typeof evObj.clientY === 'number' ? evObj.clientY : (typeof window !== 'undefined' ? window.innerHeight / 2 : 0);
+      panel.style.position = 'fixed';
+      panel.style.left = `${Math.round(left)}px`;
+      panel.style.top = `${Math.round(top)}px`;
+      panel.style.transform = 'translate(-50%, -50%)';
+      panel.style.pointerEvents = 'auto';
+
+      try { panel.style.width = panel.style.width || '180px'; } catch (e) { }
+      try {
+        const btns = panel.querySelectorAll('button, a');
+        for (let i = 0; i < btns.length; i++) btns[i].disabled = true;
+      } catch (e) { }
+    } catch (e) { }
+  }
 
   useEffect(() => {
     try { if (devPanelRef.current && !devPanelOriginalParentRef.current) devPanelOriginalParentRef.current = devPanelRef.current.parentElement; } catch (e) { }
@@ -1745,7 +1819,7 @@ export default React.memo(function SharedList({
 
   const _lastHoverTimeRef = useRef(0);
   const hoverShowTimerRef = useRef(null);
-  const HOVER_SHOW_DELAY = 60;
+  const hoverShowDelayMs = 60;
 
   const onRowHoverEnterCb = useCallback((id, ev) => {
     try {
@@ -1762,24 +1836,28 @@ export default React.memo(function SharedList({
         target: ev.target || null
       } : null;
 
-      if (hoverShowTimerRef.current) {
-        clearTimeout(hoverShowTimerRef.current);
-        hoverShowTimerRef.current = null;
+      if (evObj && typeof evObj.clientX === 'number' && typeof evObj.clientY === 'number') {
+
+        try { showDevPanelImmediate(id, evObj); } catch (e) { }
       }
 
-      hoverShowTimerRef.current = setTimeout(() => {
-        hoverShowTimerRef.current = null;
+      if (hoverShowRafRef.current) {
+        try { cancelAnimationFrame(hoverShowRafRef.current); } catch (e) { }
+        hoverShowRafRef.current = null;
+      }
+      hoverShowRafRef.current = requestAnimationFrame(() => {
+        hoverShowRafRef.current = null;
         try { _onRowHoverEnter(id, evObj); } catch (e) { }
-      }, HOVER_SHOW_DELAY);
+      });
     } catch (e) { }
   }, []);
 
   const onRowHoverLeaveCb = useCallback((idOrEv, maybeEv) => {
     try {
       if (!devModeRef.current) return;
-      if (hoverShowTimerRef.current) {
-        clearTimeout(hoverShowTimerRef.current);
-        hoverShowTimerRef.current = null;
+      if (hoverShowRafRef.current) {
+        try { cancelAnimationFrame(hoverShowRafRef.current); } catch (e) { }
+        hoverShowRafRef.current = null;
         return;
       }
       _onRowHoverLeave(idOrEv, maybeEv);
@@ -2327,10 +2405,8 @@ export default React.memo(function SharedList({
       reorderedRef.current = imported;
       batchUpdateReordered(() => imported);
       if (!devModeRef.current) {
-        try { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson calling setDevMode(true) - before, devModeRef.current=', devModeRef.current); } catch (e) {}
         devModeRef.current = true;
         setDevMode(true);
-        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
       }
       if (idx !== null && typeof setScrollToIdx === 'function') {
         requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
@@ -2339,10 +2415,8 @@ export default React.memo(function SharedList({
       reorderedRef.current = imported;
       batchUpdateReordered(() => imported);
       if (!devModeRef.current) {
-        try { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson (catch) calling setDevMode(true) - before, devModeRef.current=', devModeRef.current); } catch (e) {}
         devModeRef.current = true;
         setDevMode(true);
-        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson (catch) - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
       }
     }
     alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
@@ -2352,10 +2426,13 @@ export default React.memo(function SharedList({
       <style>{`
 
         .achievement-item:hover .hover-hint{ opacity: 1 !important; transform: translateY(0) !important; }
-        .hover-hint{ opacity: 0; transition: opacity 140ms ease, transform 160ms ease; transform: translateY(-4px); pointer-events: none; }
-        .achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; }
-        .hover-menu{ will-change: opacity; }
-        .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }
+          .hover-hint{ opacity: 0; transition: opacity 140ms ease, transform 160ms ease; transform: translateY(-4px); pointer-events: none; position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 8px; border-radius: 8px; font-size: 12px; z-index: 2; }
+          .achievement-item .hover-hint .icon{ margin-right:6px; vertical-align:middle; }
+          .achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; }
+          .hover-menu{ will-change: opacity; position: absolute; right: 8px; bottom: 8px; display:flex; gap:6px; z-index:2; opacity: 0; pointer-events: none; }
+          .hover-menu a, .hover-menu button{ background: rgba(0,0,0,0.6); color: #fff; padding: 6px 8px; border-radius: 6px; text-decoration: none; font-size: 12px; border: none; cursor: pointer; }
+          .hover-menu:hover{ opacity: 1 !important; }
+          .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }
       `}</style>
       <Head>
         <title>The Hardest Achievements List</title>
