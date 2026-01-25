@@ -229,8 +229,6 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
-
-
   const handleClick = e => {
     if (devMode) {
       if (e.ctrlKey || e.button === 1) return;
@@ -318,8 +316,6 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     && prev.onEditHandler === next.onEditHandler
     && prev.onEditIdx === next.onEditIdx;
 });
-
-
 function useDebouncedValue(value, opt) {
   const [debounced, setDebounced] = useState(value);
   const lastChangeRef = useRef(Date.now());
@@ -474,7 +470,7 @@ export default React.memo(function SharedList({
   const [isPending, startTransition] = typeof useTransition === 'function' ? useTransition() : [false, fn => fn()];
   const [devMode, setDevMode] = useState(false);
   const devModeRef = useRef(devMode);
-  useEffect(() => { devModeRef.current = devMode; }, [devMode]);
+  useEffect(() => { devModeRef.current = devMode; try { console.debug && console.debug('[SHAREDLIST_DEBUG] devMode state updated', devMode, 'devModeRef.current=', devModeRef.current); } catch (e) {} }, [devMode]);
 
   const hideRank = storageKeySuffix === 'pending' || dataFileName === 'pending.json';
 
@@ -1046,7 +1042,7 @@ export default React.memo(function SharedList({
                 const normalized = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
                 const searchText = ((normalized || '') + ' ' + (a && a._tagString ? a._tagString : '')).trim().toLowerCase();
                 const tags = Array.isArray(a && a._sortedTags) && a._sortedTags.length ? a._sortedTags : (Array.isArray(a && a.tags) ? a.tags : []);
-                const tagArr = (Array.isArray(tags) ? tags.slice() : []).map(function(t){ return String(t || '').toUpperCase(); }).filter(Boolean);
+                const tagArr = (Array.isArray(tags) ? tags.slice() : []).map(function (t) { return String(t || '').toUpperCase(); }).filter(Boolean);
                 const toks = _tokensFromNormalized(normalized || '');
                 try { finalEnhanced[i]._searchText = searchText; } catch (e) { }
                 try { finalEnhanced[i]._tagSet = new Set(tagArr); } catch (e) { }
@@ -1055,10 +1051,10 @@ export default React.memo(function SharedList({
             }
           }
 
-          const lite = (Array.isArray(finalEnhanced) ? finalEnhanced : []).map(function(a) {
+          const lite = (Array.isArray(finalEnhanced) ? finalEnhanced : []).map(function (a) {
             try {
               const id = a && a.id != null ? String(a.id) : undefined;
-              return { id: id, _searchText: String(a && a._searchText || ''), _tags: (Array.isArray(a && a._sortedTags) ? a._sortedTags.map(function(t){ return String(t || '').toUpperCase(); }) : (Array.isArray(a && a.tags) ? a.tags.map(function(t){ return String(t || '').toUpperCase(); }) : [])), _tokens: Array.isArray(a && a._tokens) ? a._tokens : [] };
+              return { id: id, _searchText: String(a && a._searchText || ''), _tags: (Array.isArray(a && a._sortedTags) ? a._sortedTags.map(function (t) { return String(t || '').toUpperCase(); }) : (Array.isArray(a && a.tags) ? a.tags.map(function (t) { return String(t || '').toUpperCase(); }) : [])), _tokens: Array.isArray(a && a._tokens) ? a._tokens : [] };
             } catch (e) { return null; }
           }).filter(Boolean);
 
@@ -1077,10 +1073,9 @@ export default React.memo(function SharedList({
       })
       .catch(() => { });
   }, [dataUrl, dataFileName, usePlatformers]);
-
-
   const handleKeyDown = useCallback((e) => {
     if (e.shiftKey && (e.key === 'M' || e.key === 'm')) {
+      try { console.debug && console.debug('[SHAREDLIST_DEBUG] devMode toggle keybind pressed; devModeRef.current (before)=', devModeRef.current); } catch (e) {}
       setDevMode(v => {
         const next = !v;
         if (!next) {
@@ -1090,6 +1085,7 @@ export default React.memo(function SharedList({
           try { setReordered(mapEnhanceArray(achievementsRef.current || [], achievementsRef.current || [])); } catch (e) { setReordered(achievementsRef.current); }
           reorderedRef.current = achievementsRef.current;
         }
+        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] devMode toggle keybind - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
         return next;
       });
     }
@@ -1173,8 +1169,10 @@ export default React.memo(function SharedList({
   const handleOnEditCommand = useCallback(() => {
     try {
       if (!devModeRef.current) {
+        try { console.debug && console.debug('[SHAREDLIST_DEBUG] handleOnEditCommand calling setDevMode(true) - before, devModeRef.current=', devModeRef.current); } catch (e) {}
         devModeRef.current = true;
         setDevMode(true);
+        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] handleOnEditCommand - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
       }
       if (!reorderedRef.current) {
         const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
@@ -1504,9 +1502,6 @@ export default React.memo(function SharedList({
     try { pendingSearchJumpRef.current = null; } catch (e) { }
     try { searchJumpPendingRef.current = false; } catch (e) { }
   }, [debouncedManualSearch, filtered, searchLower]);
-
-
-
   const baseDev = devMode && reordered ? reordered : achievements;
 
   const devAchievements = useMemo(() => {
@@ -2055,8 +2050,6 @@ export default React.memo(function SharedList({
   function handleMobileToggle() {
     setShowMobileFilters(v => !v);
   }
-
-
   function getPasteCandidates() {
     const q = (debouncedPasteSearch || '').trim().toLowerCase();
     if (!q) return [];
@@ -2136,7 +2129,7 @@ export default React.memo(function SharedList({
 
         if (workerRef && workerRef.current) {
           try {
-            const minimalItems = (Array.isArray(items) ? items : []).map(function(a){
+            const minimalItems = (Array.isArray(items) ? items : []).map(function (a) {
               try { return { searchable: [a && a.name, a && a.player, a && a.id, a && a.levelID, a && a.submitter, (a && a.tags) ? (a.tags.join(' ')) : ''].filter(Boolean).join(' ').toLowerCase() }; } catch (e) { return { searchable: '' }; }
             });
             const res = await postWorkerMessage('buildPasteIndex', { items: minimalItems, maxPrefix: 20 });
@@ -2202,15 +2195,6 @@ export default React.memo(function SharedList({
     setPasteSearch('');
     setPasteShowResults(false);
   }
-
-
-
-
-
-
-
-
-
   const { getMostVisibleIdx } = useScrollPersistence({
     storageKey: `thal_scroll_index_${storageKeySuffix}`,
     items: achievements,
@@ -2283,9 +2267,6 @@ export default React.memo(function SharedList({
       };
     } catch (e) { }
   });
-
-
-
   function handleCopyItemJson(idParam) {
     try {
       const id = (idParam != null) ? String(idParam) : hoveredIdRef.current;
@@ -2346,8 +2327,10 @@ export default React.memo(function SharedList({
       reorderedRef.current = imported;
       batchUpdateReordered(() => imported);
       if (!devModeRef.current) {
+        try { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson calling setDevMode(true) - before, devModeRef.current=', devModeRef.current); } catch (e) {}
         devModeRef.current = true;
         setDevMode(true);
+        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
       }
       if (idx !== null && typeof setScrollToIdx === 'function') {
         requestAnimationFrame(() => requestAnimationFrame(() => setScrollToIdx(idx)));
@@ -2356,24 +2339,20 @@ export default React.memo(function SharedList({
       reorderedRef.current = imported;
       batchUpdateReordered(() => imported);
       if (!devModeRef.current) {
+        try { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson (catch) calling setDevMode(true) - before, devModeRef.current=', devModeRef.current); } catch (e) {}
         devModeRef.current = true;
         setDevMode(true);
+        try { setTimeout(() => { console.debug && console.debug('[SHAREDLIST_DEBUG] onImportAchievementsJson (catch) - devModeRef.current (after)=', devModeRef.current); }, 0); } catch (e) {}
       }
     }
     alert(`Imported ${usePlatformers ? 'platformers.json' : dataFileName}!`);
   }, [getMostVisibleIdx, setScrollToIdx, usePlatformers, dataFileName]);
-
-
-
   return (
     <>
       <style>{`
-        /* Prefer CSS-first visuals for non-interactive hints. */
+
         .achievement-item:hover .hover-hint{ opacity: 1 !important; transform: translateY(0) !important; }
         .hover-hint{ opacity: 0; transition: opacity 140ms ease, transform 160ms ease; transform: translateY(-4px); pointer-events: none; }
-
-        /* Keep existing hover-menu compatibility (if present) but avoid JS-only dependency
-           for purely visual hints. JS will still control interactive menus. */
         .achievement-item:hover .hover-menu{ opacity: 1 !important; pointer-events: auto !important; }
         .hover-menu{ will-change: opacity; }
         .hover-menu.hover-menu--disabled{ opacity: 0 !important; pointer-events: none !important; }
