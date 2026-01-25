@@ -1536,6 +1536,8 @@ export default React.memo(function SharedList({
   const hoverShowRafRef = useRef(null);
   const lastHoverIdRef = useRef(null);
   const rectsRef = useRef(new Map());
+  const [hoveredIdState, setHoveredIdState] = useState(null);
+  const [hoverAnchor, setHoverAnchor] = useState(null);
   const resizeObserverRef = useRef(null);
   const hoverDisableTokenRef = useRef(0);
   const hoverDisableFallbackRef = useRef(null);
@@ -1580,8 +1582,20 @@ export default React.memo(function SharedList({
       lastHoverIdRef.current = hoveredIdRef.current;
 
       panel.style.display = 'block';
-      const left = evObj && typeof evObj.clientX === 'number' ? evObj.clientX : (typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
-      const top = evObj && typeof evObj.clientY === 'number' ? evObj.clientY : (typeof window !== 'undefined' ? window.innerHeight / 2 : 0);
+
+      const saved = rectsRef && rectsRef.current ? rectsRef.current.get(String(id)) : null;
+      let left = 0;
+      let top = 0;
+      if (saved && typeof saved === 'object') {
+        try {
+          left = (Number(saved.left) || 0) + ((Number(saved.width) || 0) / 2);
+          top = (Number(saved.top) || 0) + ((Number(saved.height) || 0) / 2);
+        } catch (e) { left = 0; top = 0; }
+      } else {
+
+        left = (typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
+        top = (typeof window !== 'undefined' ? window.innerHeight / 2 : 0);
+      }
       panel.style.position = 'fixed';
       panel.style.left = `${Math.round(left)}px`;
       panel.style.top = `${Math.round(top)}px`;
@@ -1605,6 +1619,31 @@ export default React.memo(function SharedList({
       }
     };
   }, []);
+
+  useEffect(() => {
+
+    try {
+      if (typeof window === 'undefined') return;
+      let mounted = true;
+      const recompute = () => {
+        try {
+          const id = hoveredIdState;
+          if (!id) return;
+          const el = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
+          if (!el || typeof el.getBoundingClientRect !== 'function') return;
+          const r = el.getBoundingClientRect();
+          const entry = { left: r.left, top: r.top, width: r.width, height: r.height, right: r.right, bottom: r.bottom };
+          rectsRef.current.set(String(id), entry);
+          if (mounted) setHoverAnchor({ top: entry.top, left: entry.left, width: entry.width, height: entry.height });
+        } catch (e) { }
+      };
+
+      recompute();
+      window.addEventListener('resize', recompute);
+      window.addEventListener('scroll', recompute, true);
+      return () => { mounted = false; window.removeEventListener('resize', recompute); window.removeEventListener('scroll', recompute, true); };
+    } catch (e) { }
+  }, [hoveredIdState]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -1728,32 +1767,14 @@ export default React.memo(function SharedList({
       }
 
       try {
-        let target = null;
-        if (ev && ev.currentTarget) target = ev.currentTarget;
-        else if (ev && ev.target) target = ev.target;
-        else target = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
 
-        let root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
-        if (!root || !(root instanceof HTMLElement)) {
-          try {
-            if (devModeRef && devModeRef.current) {
-              const refEl = (achievementRefs && achievementRefs.current && achievementRefs.current[idx]) ? achievementRefs.current[idx] : null;
-              if (refEl && refEl instanceof HTMLElement) root = refEl;
-            }
-          } catch (e) { }
-        }
-
-        if (root && root instanceof HTMLElement) {
-          const rect = root.getBoundingClientRect();
-          const rw = Number(rect.width) || Number(root.clientWidth) || 0;
-          const rh = Number(rect.height) || Number(root.clientHeight) || 0;
+        const cached = rectsRef && rectsRef.current ? rectsRef.current.get(String(id)) : null;
+        if (cached && typeof cached === 'object') {
+          const rect = cached;
+          const rw = Number(rect.width) || 0;
+          const rh = Number(rect.height) || 0;
           let left = (Number(rect.left) || 0) + (rw / 2);
           let top = (Number(rect.top) || 0) + (rh / 2);
-
-          try {
-            if ((!isFinite(left) || isNaN(left) || left === 0) && ev && ev.clientX) left = ev.clientX;
-            if ((!isFinite(top) || isNaN(top) || top === 0) && ev && ev.clientY) top = ev.clientY;
-          } catch (e) { }
 
           panel.style.position = 'fixed';
           panel.style.left = `${Math.round(left)}px`;
@@ -1772,6 +1793,54 @@ export default React.memo(function SharedList({
           } else {
             panel.style.maxHeight = '';
             panel.style.overflowY = '';
+          }
+        } else {
+
+          let target = null;
+          if (ev && ev.currentTarget) target = ev.currentTarget;
+          else if (ev && ev.target) target = ev.target;
+          else target = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
+
+          let root = target && typeof target.closest === 'function' ? target.closest('.achievement-item') || target : target;
+          if (!root || !(root instanceof HTMLElement)) {
+            try {
+              if (devModeRef && devModeRef.current) {
+                const refEl = (achievementRefs && achievementRefs.current && achievementRefs.current[idx]) ? achievementRefs.current[idx] : null;
+                if (refEl && refEl instanceof HTMLElement) root = refEl;
+              }
+            } catch (e) { }
+          }
+
+          if (root && root instanceof HTMLElement) {
+            const rect = root.getBoundingClientRect();
+            const rw = Number(rect.width) || Number(root.clientWidth) || 0;
+            const rh = Number(rect.height) || Number(root.clientHeight) || 0;
+            let left = (Number(rect.left) || 0) + (rw / 2);
+            let top = (Number(rect.top) || 0) + (rh / 2);
+
+            try {
+              if ((!isFinite(left) || isNaN(left) || left === 0)) left = (typeof window !== 'undefined' ? window.innerWidth / 2 : 0);
+              if ((!isFinite(top) || isNaN(top) || top === 0)) top = (typeof window !== 'undefined' ? window.innerHeight / 2 : 0);
+            } catch (e) { }
+
+            panel.style.position = 'fixed';
+            panel.style.left = `${Math.round(left)}px`;
+            panel.style.top = `${Math.round(top)}px`;
+            panel.style.transform = 'translate(-50%, -50%)';
+            panel.style.pointerEvents = 'auto';
+
+            const pad = 16;
+            const pw = Math.min(360, Math.max(120, Math.floor(rw - pad)));
+            panel.style.width = `${pw}px`;
+
+            const ph = panel.offsetHeight || 200;
+            if (ph > (rh - 16)) {
+              panel.style.maxHeight = `${Math.max(80, rh - 16)}px`;
+              panel.style.overflowY = 'auto';
+            } else {
+              panel.style.maxHeight = '';
+              panel.style.overflowY = '';
+            }
           }
         }
       } catch (err) {
@@ -1804,6 +1873,7 @@ export default React.memo(function SharedList({
 
     hoveredIdRef.current = null;
     lastHoverIdRef.current = null;
+    try { setHoveredIdState(null); } catch (e) { }
     if (hoverRafRef.current) {
       cancelAnimationFrame(hoverRafRef.current);
       hoverRafRef.current = null;
@@ -1815,6 +1885,7 @@ export default React.memo(function SharedList({
       try {
       } catch (err) { }
     }
+    try { setHoverAnchor(null); } catch (e) { }
   }, []);
 
   const _lastHoverTimeRef = useRef(0);
@@ -1829,17 +1900,19 @@ export default React.memo(function SharedList({
       const THROTTLE_MS = 40;
       if (now - (_lastHoverTimeRef.current || 0) < THROTTLE_MS) return;
       _lastHoverTimeRef.current = now;
+      try {
+        if (ev && ev.currentTarget && typeof ev.currentTarget.getBoundingClientRect === 'function') {
+          try {
+            const r = ev.currentTarget.getBoundingClientRect();
+            const entry = { left: r.left, top: r.top, width: r.width, height: r.height, right: r.right, bottom: r.bottom };
+            rectsRef.current.set(String(id), entry);
+            try { setHoverAnchor({ top: entry.top, left: entry.left, width: entry.width, height: entry.height }); } catch (e) { }
+          } catch (e) { }
+        }
+      } catch (e) { }
 
-      const evObj = ev && typeof ev === 'object' ? {
-        clientX: ev.clientX, clientY: ev.clientY,
-        currentTarget: ev.currentTarget || null,
-        target: ev.target || null
-      } : null;
-
-      if (evObj && typeof evObj.clientX === 'number' && typeof evObj.clientY === 'number') {
-
-        try { showDevPanelImmediate(id, evObj); } catch (e) { }
-      }
+      try { hoveredIdRef.current = id == null ? null : String(id); setHoveredIdState(hoveredIdRef.current); } catch (e) { }
+      try { showDevPanelImmediate(id); } catch (e) { }
 
       if (hoverShowRafRef.current) {
         try { cancelAnimationFrame(hoverShowRafRef.current); } catch (e) { }
@@ -1847,7 +1920,7 @@ export default React.memo(function SharedList({
       }
       hoverShowRafRef.current = requestAnimationFrame(() => {
         hoverShowRafRef.current = null;
-        try { _onRowHoverEnter(id, evObj); } catch (e) { }
+        try { _onRowHoverEnter(id, null); } catch (e) { }
       });
     } catch (e) { }
   }, []);
@@ -1873,56 +1946,83 @@ export default React.memo(function SharedList({
         const panel = devPanelRef.current;
         if (!panel) return;
         if (!id) { panel.style.display = 'none'; return; }
-
-        let root = null;
-        try {
-          root = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
-        } catch (e) { root = null; }
-
-        if (!root) {
+        const cached = rectsRef && rectsRef.current ? rectsRef.current.get(String(id)) : null;
+        if (!cached) {
+          let root = null;
           try {
-            if (devModeRef && devModeRef.current) {
-              const refs = achievementRefs && achievementRefs.current ? achievementRefs.current : [];
-              for (let i = 0; i < refs.length; i++) {
-                const r = refs[i];
-                if (!r) continue;
-                try {
-                  if (r.dataset && String(r.dataset.achievementId) === String(id)) { root = r; break; }
-                  if (r.getAttribute && r.getAttribute('data-achievement-id') === String(id)) { root = r; break; }
-                } catch (e) { }
+            root = document.querySelector(`[data-achievement-id="${String(id).replace(/"/g, '\\"')}"]`);
+          } catch (e) { root = null; }
+
+          if (!root) {
+            try {
+              if (devModeRef && devModeRef.current) {
+                const refs = achievementRefs && achievementRefs.current ? achievementRefs.current : [];
+                for (let i = 0; i < refs.length; i++) {
+                  const r = refs[i];
+                  if (!r) continue;
+                  try {
+                    if (r.dataset && String(r.dataset.achievementId) === String(id)) { root = r; break; }
+                    if (r.getAttribute && r.getAttribute('data-achievement-id') === String(id)) { root = r; break; }
+                  } catch (e) { }
+                }
               }
-            }
-          } catch (e) { }
-        }
+            } catch (e) { }
+          }
 
-        if (!root || !(root instanceof HTMLElement)) { panel.style.display = 'none'; return; }
+          if (!root || !(root instanceof HTMLElement)) { panel.style.display = 'none'; return; }
 
-        const rect = root.getBoundingClientRect();
-        const rw = Number(rect.width) || Number(root.clientWidth) || 0;
-        const rh = Number(rect.height) || Number(root.clientHeight) || 0;
-        let left = (Number(rect.left) || 0) + (rw / 2);
-        let top = (Number(rect.top) || 0) + (rh / 2);
+          const rect = root.getBoundingClientRect();
+          const rw = Number(rect.width) || Number(root.clientWidth) || 0;
+          const rh = Number(rect.height) || Number(root.clientHeight) || 0;
+          let left = (Number(rect.left) || 0) + (rw / 2);
+          let top = (Number(rect.top) || 0) + (rh / 2);
 
-        if ((!isFinite(left) || isNaN(left) || left === 0) && typeof window !== 'undefined') left = (window.innerWidth / 2) || 0;
-        if ((!isFinite(top) || isNaN(top) || top === 0) && typeof window !== 'undefined') top = (window.innerHeight / 2) || 0;
+          if ((!isFinite(left) || isNaN(left) || left === 0) && typeof window !== 'undefined') left = (window.innerWidth / 2) || 0;
+          if ((!isFinite(top) || isNaN(top) || top === 0) && typeof window !== 'undefined') top = (window.innerHeight / 2) || 0;
 
-        panel.style.position = 'fixed';
-        panel.style.left = `${Math.round(left)}px`;
-        panel.style.top = `${Math.round(top)}px`;
-        panel.style.transform = 'translate(-50%, -50%)';
-        panel.style.pointerEvents = 'auto';
+          panel.style.position = 'fixed';
+          panel.style.left = `${Math.round(left)}px`;
+          panel.style.top = `${Math.round(top)}px`;
+          panel.style.transform = 'translate(-50%, -50%)';
+          panel.style.pointerEvents = 'auto';
 
-        const pad = 16;
-        const pw = Math.min(360, Math.max(120, Math.floor(rw - pad)));
-        panel.style.width = `${pw}px`;
+          const pad = 16;
+          const pw = Math.min(360, Math.max(120, Math.floor(rw - pad)));
+          panel.style.width = `${pw}px`;
 
-        const ph = panel.offsetHeight || 200;
-        if (ph > (rh - 16)) {
-          panel.style.maxHeight = `${Math.max(80, rh - 16)}px`;
-          panel.style.overflowY = 'auto';
+          const ph = panel.offsetHeight || 200;
+          if (ph > (rh - 16)) {
+            panel.style.maxHeight = `${Math.max(80, rh - 16)}px`;
+            panel.style.overflowY = 'auto';
+          } else {
+            panel.style.maxHeight = '';
+            panel.style.overflowY = '';
+          }
         } else {
-          panel.style.maxHeight = '';
-          panel.style.overflowY = '';
+          const rect = cached;
+          const rw = Number(rect.width) || 0;
+          const rh = Number(rect.height) || 0;
+          let left = (Number(rect.left) || 0) + (rw / 2);
+          let top = (Number(rect.top) || 0) + (rh / 2);
+
+          panel.style.position = 'fixed';
+          panel.style.left = `${Math.round(left)}px`;
+          panel.style.top = `${Math.round(top)}px`;
+          panel.style.transform = 'translate(-50%, -50%)';
+          panel.style.pointerEvents = 'auto';
+
+          const pad = 16;
+          const pw = Math.min(360, Math.max(120, Math.floor(rw - pad)));
+          panel.style.width = `${pw}px`;
+
+          const ph = panel.offsetHeight || 200;
+          if (ph > (rh - 16)) {
+            panel.style.maxHeight = `${Math.max(80, rh - 16)}px`;
+            panel.style.overflowY = 'auto';
+          } else {
+            panel.style.maxHeight = '';
+            panel.style.overflowY = '';
+          }
         }
       } catch (e) { }
     };
@@ -2708,6 +2808,7 @@ export default React.memo(function SharedList({
         devMode={devMode}
         devPanelRef={devPanelRef}
         hoveredIdRef={hoveredIdRef}
+        hoverAnchor={hoverAnchor}
         visibleListRef={visibleListRef}
         handleEditRef={handleEditRef}
         handleMoveUpRef={handleMoveUpRef}
@@ -2758,7 +2859,7 @@ const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
   return prev.allTags === next.allTags && prev.filterTags === next.filterTags && prev.isMobile === next.isMobile && prev.show === next.show;
 });
 
-const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
+const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
   const onEdit = (e) => {
     try {
       e.preventDefault(); e.stopPropagation();
@@ -2801,10 +2902,21 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onCopy = (e) => { try { e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
 
-  const baseStyle = { display: devMode ? 'block' : 'none', position: 'absolute', left: -9999, top: -9999, width: 'auto', minWidth: 360, maxWidth: 720, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)', boxSizing: 'border-box', whiteSpace: 'nowrap' };
+  const baseStyle = { display: devMode ? 'block' : 'none', width: 'auto', minWidth: 360, maxWidth: 720, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)', boxSizing: 'border-box', whiteSpace: 'nowrap' };
+  let anchoredStyle = {};
+  try {
+    const anchor = hoverAnchor;
+    if (anchor && typeof anchor === 'object') {
+      const left = (Number(anchor.left) || 0) + ((Number(anchor.width) || 0) / 2);
+      const top = (Number(anchor.top) || 0) + ((Number(anchor.height) || 0) / 2);
+      anchoredStyle = { position: 'fixed', left: `${Math.round(left)}px`, top: `${Math.round(top)}px`, transform: 'translate(-50%, -50%)', pointerEvents: 'auto' };
+    } else {
+      anchoredStyle = { position: 'absolute', left: -9999, top: -9999 };
+    }
+  } catch (e) { anchoredStyle = { position: 'absolute', left: -9999, top: -9999 }; }
 
   const panelEl = (
-    <div ref={devPanelRef} className="devmode-hover-panel" style={baseStyle}>
+    <div ref={devPanelRef} className="devmode-hover-panel" style={{ ...baseStyle, ...anchoredStyle }}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'nowrap', alignItems: 'center' }}>
           <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={onEdit}><EditIcon width={16} height={16} /></button>
