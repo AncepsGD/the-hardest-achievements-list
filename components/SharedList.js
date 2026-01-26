@@ -636,7 +636,8 @@ export default React.memo(function SharedList({
       if (typeof nextOrFn === 'function') {
         setReordered(prev => {
           try {
-            const next = nextOrFn(prev);
+            const safePrev = Array.isArray(prev) ? prev.slice() : prev;
+            const next = nextOrFn(safePrev);
             try { reorderedRef.current = next; } catch (e) { }
             try { setMutationVersion(v => v + 1); } catch (e) { }
             return next;
@@ -644,7 +645,7 @@ export default React.memo(function SharedList({
         });
       } else {
         try { reorderedRef.current = nextOrFn; } catch (e) { }
-        setReordered(nextOrFn);
+        setReordered(Array.isArray(nextOrFn) ? (nextOrFn.slice()) : nextOrFn);
         try { setMutationVersion(v => v + 1); } catch (e) { }
       }
     } catch (e) { }
@@ -1321,7 +1322,7 @@ export default React.memo(function SharedList({
         devModeRef.current = true;
         setDevMode(true);
       }
-        if (!reorderedRef.current) {
+      if (!reorderedRef.current) {
         const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
         reorderedRef.current = copy;
         updateReordered(copy);
