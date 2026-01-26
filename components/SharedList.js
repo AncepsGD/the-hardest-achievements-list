@@ -422,6 +422,15 @@ export default React.memo(function SharedList({
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
   const [exportAchievements, setExportAchievements] = useState([]);
+  const [mutationVersion, setMutationVersion] = useState(0);
+
+  const exportedJson = useMemo(() => {
+    try {
+      return JSON.stringify(Array.isArray(achievements) ? achievements : exportAchievements || [], null, 2);
+    } catch (e) {
+      try { return JSON.stringify(exportAchievements || [], null, 2); } catch (ee) { return '[]'; }
+    }
+  }, [mutationVersion, achievements, exportAchievements]);
 
   const applyMutation = useCallback((mutator) => {
     try {
@@ -434,8 +443,9 @@ export default React.memo(function SharedList({
           return out;
         } catch (e) { return prev; }
       });
+      try { setMutationVersion(v => v + 1); } catch (e) { }
     } catch (e) { }
-  }, [setAchievements, setExportAchievements]);
+  }, [setAchievements, setExportAchievements, setMutationVersion]);
 
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
@@ -621,6 +631,24 @@ export default React.memo(function SharedList({
   const [reordered, setReordered] = useState(null);
   const reorderedRef = sharedListManager.reorderedRef;
   useEffect(() => { try { sharedListManager.reorderedRef.current = reordered; } catch (e) { } }, [reordered]);
+  const updateReordered = useCallback((nextOrFn) => {
+    try {
+      if (typeof nextOrFn === 'function') {
+        setReordered(prev => {
+          try {
+            const next = nextOrFn(prev);
+            try { reorderedRef.current = next; } catch (e) { }
+            try { setMutationVersion(v => v + 1); } catch (e) { }
+            return next;
+          } catch (e) { return prev; }
+        });
+      } else {
+        try { reorderedRef.current = nextOrFn; } catch (e) { }
+        setReordered(nextOrFn);
+        try { setMutationVersion(v => v + 1); } catch (e) { }
+      }
+    } catch (e) { }
+  }, [setReordered, setMutationVersion]);
   const ongoingFilterControllerRef = useRef(null);
   const manualSearchControllerRef = useRef(null);
   const workerRef = useRef(null);
@@ -1201,10 +1229,10 @@ export default React.memo(function SharedList({
       setDevMode(v => {
         const next = !v;
         if (!next) {
-          setReordered(null);
+          updateReordered(null);
           reorderedRef.current = null;
         } else {
-          try { setReordered(mapEnhanceArray(achievementsRef.current || [], achievementsRef.current || [])); } catch (e) { setReordered(achievementsRef.current); }
+          try { updateReordered(mapEnhanceArray(achievementsRef.current || [], achievementsRef.current || [])); } catch (e) { updateReordered(achievementsRef.current); }
           reorderedRef.current = achievementsRef.current;
         }
         return next;
@@ -1293,10 +1321,10 @@ export default React.memo(function SharedList({
         devModeRef.current = true;
         setDevMode(true);
       }
-      if (!reorderedRef.current) {
+        if (!reorderedRef.current) {
         const copy = Array.isArray(achievementsRef.current) ? achievementsRef.current.slice() : [];
         reorderedRef.current = copy;
-        setReordered(copy);
+        updateReordered(copy);
       }
       try { setSearch(''); } catch (e) { }
       try { if (document && document.activeElement && typeof document.activeElement.blur === 'function') document.activeElement.blur(); } catch (e) { }
