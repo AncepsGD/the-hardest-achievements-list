@@ -20,7 +20,7 @@ import { enhanceAchievement, mapEnhanceArray, getThumbnailUrl, normalizeForSearc
 import useTagFilters from './useTagFilters';
 import useSearch from './useSearch';
 
-function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show }) {
+function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
   const tagStates = {};
   allTags.forEach(tag => {
     if ((filterTags && filterTags.include || []).includes(tag)) tagStates[tag] = 'include';
@@ -43,6 +43,9 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
     }
 
     setFilterTags({ include, exclude });
+    try {
+      if (isMobile && typeof setShow === 'function') setShow(false);
+    } catch (e) { }
   }
 
   const sortedTags = useMemo(() => {
@@ -469,10 +472,8 @@ export default React.memo(function SharedList({
 
   const filterTags = useMemo(() => ({ include: _includeTags, exclude: _excludeTags }), [_includeTags, _excludeTags]);
   const setFilterTags = useCallback((next) => {
-    try {
-      _setIncludeTags(next && Array.isArray(next.include) ? next.include : []);
-      _setExcludeTags(next && Array.isArray(next.exclude) ? next.exclude : []);
-    } catch (e) { }
+    _setIncludeTags(next?.include || []);
+    _setExcludeTags(next?.exclude || []);
   }, [_setIncludeTags, _setExcludeTags]);
 
   const handleSetFilterTags = useCallback((next) => {
@@ -3071,7 +3072,27 @@ export default React.memo(function SharedList({
 });
 
 const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
-  return prev.allTags === next.allTags && prev.filterTags === next.filterTags && prev.isMobile === next.isMobile && prev.show === next.show;
+  const arraysEqual = (a, b) => {
+    if (a === b) return true;
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (String(a[i]) !== String(b[i])) return false;
+    }
+    return true;
+  };
+
+  const filterTagsEqual = (fa, fb) => {
+    if (fa === fb) return true;
+    if (!fa || !fb) return false;
+    return arraysEqual(fa.include || [], fb.include || []) && arraysEqual(fa.exclude || [], fb.exclude || []);
+  };
+
+  return arraysEqual(prev.allTags, next.allTags)
+    && filterTagsEqual(prev.filterTags, next.filterTags)
+    && prev.isMobile === next.isMobile
+    && prev.show === next.show
+    && prev.setShow === next.setShow;
 });
 
 const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
