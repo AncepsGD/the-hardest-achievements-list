@@ -2547,9 +2547,10 @@ export default React.memo(function SharedList({
     const realIdx = resolveRealIdx(idx);
     if (realIdx == null || realIdx < 0) return;
     batchUpdateReordered(arr => {
-      if (!arr) return arr;
-      arr.splice(realIdx, 1);
-      return arr;
+      if (!Array.isArray(arr)) return arr;
+      const next = arr.slice();
+      next.splice(realIdx, 1);
+      return next;
     });
   }
 
@@ -2562,9 +2563,9 @@ export default React.memo(function SharedList({
     const copy = { ...orig, id: newId };
     const enhancedCopy = enhanceAchievement(copy);
     batchUpdateReordered(arr => {
-      if (!arr) return arr;
-      arr.splice(realIdx + 1, 0, enhancedCopy);
-      return arr;
+      const next = Array.isArray(arr) ? arr.slice() : [];
+      next.splice(realIdx + 1, 0, enhancedCopy);
+      return next;
     });
     setScrollToIdx(realIdx + 1);
   }
@@ -2924,10 +2925,12 @@ export default React.memo(function SharedList({
             devMode={devMode}
             achievements={achievements}
             reordered={reordered}
+            stagedReordered={reordered}
             originalAchievements={originalAchievements}
             originalSnapshotRef={originalSnapshotRef}
             batchUpdateReordered={batchUpdateReordered}
             setReordered={setReordered}
+            setStagedReordered={updateReordered}
             setEditIdx={setEditIdx}
             editIdx={editIdx}
             editForm={editForm}
