@@ -122,14 +122,14 @@ export default function useSearch(
                 return normalizedFilters.matchesItem(orig || item);
             }
 
-            const tags = item._tagSet;
+            const tagsArr = item._tags || [];
 
             for (const t of normalizedFilters.exclude) {
-                if (tags.has(t)) return false;
+                if (tagsArr.indexOf(t) !== -1) return false;
             }
 
             for (const t of normalizedFilters.include) {
-                if (!tags.has(t)) return false;
+                if (tagsArr.indexOf(t) === -1) return false;
             }
 
             return true;
@@ -143,11 +143,9 @@ export default function useSearch(
             const rawTags = a.tags || a.tagList || [];
             const tagArray = Array.isArray(rawTags) ? rawTags : String(rawTags).split(/[,;]/);
 
-            const tagSet = new Set(
-                tagArray
-                    .map(t => t.trim().toLowerCase())
-                    .filter(Boolean)
-            );
+            const tagArrayNormalized = tagArray
+                .map(t => t.trim().toLowerCase())
+                .filter(Boolean);
 
             const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
             const player = a && a.player ? String(a.player) : '';
@@ -161,7 +159,7 @@ export default function useSearch(
                 title: (name || ''),
                 description: (description || player || ''),
                 _searchText: (text || '').toLowerCase(),
-                _tagSet: tagSet,
+                _tags: tagArrayNormalized,
             };
         }).filter(item => item.id !== undefined);
     }, [achievements]);
@@ -189,9 +187,9 @@ export default function useSearch(
                         const exclude = msg.exclude || [];
                         const reqId = msg.requestId;
                         let pool = (self._items || []).filter(item => {
-                            const tags = item._tagSet || new Set();
-                            for (const t of exclude) if (tags.has(t)) return false;
-                            for (const t of include) if (!tags.has(t)) return false;
+                            const tags = item._tags || [];
+                            for (const t of exclude) if (tags.indexOf(t) !== -1) return false;
+                            for (const t of include) if (tags.indexOf(t) === -1) return false;
                             return true;
                         });
                         if (!q) {
