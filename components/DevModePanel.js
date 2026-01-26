@@ -382,7 +382,7 @@ function DevModePanelInner({
   setScrollToIdx,
   setInsertIdx,
   insertIdx,
-  
+
   handlePasteSelect,
   onImportAchievementsJson,
   visible,
@@ -433,12 +433,19 @@ function DevModePanelInner({
   }, [newForm, newFormTags, newFormCustomTags]);
   const handleCopyJson = useCallback(async () => {
     try {
-      const arr = Array.isArray(achievements) ? achievements : [];
+      const arr =
+        Array.isArray(stagedReordered) && stagedReordered.length
+          ? stagedReordered
+          : Array.isArray(reordered) && reordered.length
+            ? reordered
+            : Array.isArray(achievements)
+              ? achievements
+              : [];
       function toBase64(s) {
         try {
           if (typeof btoa === 'function') return btoa(unescape(encodeURIComponent(String(s || ''))));
           if (typeof Buffer !== 'undefined') return Buffer.from(String(s || ''), 'utf8').toString('base64');
-        } catch (e) {}
+        } catch (e) { }
         return String(s || '');
       }
       const json = JSON.stringify(arr.map(a => {
@@ -446,10 +453,10 @@ function DevModePanelInner({
         delete copy._sortedTags; delete copy._isPlatformer; delete copy._lengthStr; delete copy._thumbnail;
         delete copy._searchable; delete copy._searchableNormalized; delete copy._tagString; delete copy.hasThumb; delete copy.autoThumb;
         if (Array.isArray(copy._tokens)) {
-          try { copy._tokens = copy._tokens.join(' '); } catch (e) {}
+          try { copy._tokens = copy._tokens.join(' '); } catch (e) { }
         }
         if (copy._searchText) {
-          try { copy._searchText = toBase64(copy._searchText); } catch (e) {}
+          try { copy._searchText = toBase64(copy._searchText); } catch (e) { }
         }
         return copy;
       }), null, 2);
@@ -483,8 +490,6 @@ function DevModePanelInner({
     map.forEach((count, key) => { if (count > 1) dupKeys.add(key); });
     if (typeof setDuplicateThumbKeys === 'function') setDuplicateThumbKeys(dupKeys);
   }, [achievements, reordered, devMode, setDuplicateThumbKeys]);
-
-
   const ID_INDEX_TTL_MS_LOCAL = 5 * 60 * 1000;
   const _idIndexCache_local = useRef(new Map()).current;
 
