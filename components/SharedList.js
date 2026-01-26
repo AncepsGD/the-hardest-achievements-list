@@ -614,6 +614,53 @@ export default React.memo(function SharedList({
 
   const hideRank = storageKeySuffix === 'pending' || dataFileName === 'pending.json';
 
+  const [useOriginalRanks, setUseOriginalRanks] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return false;
+      return localStorage.getItem('useOriginalRanks') === 'true';
+    } catch (e) {
+      return false;
+    }
+  });
+  useEffect(() => {
+    const handler = (ev) => {
+      try {
+        const v = ev && ev.detail && typeof ev.detail.value !== 'undefined' ? !!ev.detail.value : (localStorage.getItem('useOriginalRanks') === 'true');
+        setUseOriginalRanks(v);
+      } catch (e) { }
+    };
+    try { window.addEventListener('useOriginalRanksChanged', handler); } catch (e) { }
+    return () => { try { window.removeEventListener('useOriginalRanksChanged', handler); } catch (e) { } };
+  }, []);
+
+  const [smoothScrolling, setSmoothScrolling] = useState(() => {
+    try {
+      if (typeof window === 'undefined') return true;
+      const v = localStorage.getItem('smoothScrolling');
+      return v == null ? true : v === 'true';
+    } catch (e) { return true; }
+  });
+  useEffect(() => {
+    const handler = (ev) => {
+      try {
+        const v = ev && ev.detail && typeof ev.detail.value !== 'undefined' ? !!ev.detail.value : (localStorage.getItem('smoothScrolling') !== 'false');
+        setSmoothScrolling(v);
+      } catch (e) { }
+    };
+    try { window.addEventListener('smoothScrollingChanged', handler); } catch (e) { }
+    return () => { try { window.removeEventListener('smoothScrollingChanged', handler); } catch (e) { } };
+  }, []);
+
+  useEffect(() => {
+    try {
+      const behavior = smoothScrolling ? 'smooth' : '';
+      if (document && document.documentElement) document.documentElement.style.scrollBehavior = behavior;
+      if (document && document.body) document.body.style.scrollBehavior = behavior;
+      const el = document.scrollingElement || document.documentElement || document.body;
+      if (el) el.style.scrollBehavior = behavior;
+    } catch (e) { }
+  }, [smoothScrolling]);
+
   const [originalAchievements, setOriginalAchievements] = useState(null);
   const originalSnapshotRef = useRef(null);
   const {
@@ -2213,7 +2260,9 @@ export default React.memo(function SharedList({
         const isDup = duplicateThumbKeys.has((thumb || '').trim());
         const autoThumbAvailable = a && a.levelID ? !!autoThumbMap[String(a.levelID)] : false;
         const computed = (i + 1);
-        const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+        const displayRank = (useOriginalRanks && a && a.rank != null)
+          ? Number(a.rank)
+          : (Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed);
         return { thumb, isDup, autoThumbAvailable, displayRank };
       });
     } catch (e) { return []; }
@@ -2312,7 +2361,9 @@ export default React.memo(function SharedList({
           :
           (() => {
             const computed = (index + 1);
-            const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
+            const displayRank = (useOriginalRanks && a && a.rank != null)
+              ? Number(a.rank)
+              : (Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed);
             return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={typeof handleEditAchievement === 'function' && a && a.id ? () => handleEditAchievement(String(a.id)) : undefined} onHoverEnter={typeof onRowHoverEnter === 'function' && a && a.id ? (e) => onRowHoverEnter(String(a.id), e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' && a && a.id ? (e) => onRowHoverLeave(String(a.id), e) : undefined} />;
           })()
         }
