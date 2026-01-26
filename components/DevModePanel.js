@@ -433,7 +433,7 @@ function DevModePanelInner({
   }, [newForm, newFormTags, newFormCustomTags]);
   const handleCopyJson = useCallback(async () => {
     try {
-      const arr = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
+      const arr = Array.isArray(achievements) ? achievements : [];
       function toBase64(s) {
         try {
           if (typeof btoa === 'function') return btoa(unescape(encodeURIComponent(String(s || ''))));
