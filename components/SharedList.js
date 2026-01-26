@@ -847,7 +847,13 @@ export default React.memo(function SharedList({
       };
 
       setReordered(prev => {
-        try { return mapEnhanceArray(applyMutatorToArrayMinimal(prev), achievementsRef.current || prev || []); } catch (e) { return applyMutatorToArrayMinimal(prev); }
+        try {
+          const newArr = applyMutatorToArrayMinimal(prev);
+          if (!Array.isArray(newArr)) return prev;
+          const enhanced = mapEnhanceArray(newArr, achievementsRef.current || newArr);
+          try { applyMutation(() => enhanced); } catch (e) { }
+          return enhanced;
+        } catch (e) { return applyMutatorToArrayMinimal(prev); }
       });
       try {
         requestAnimationFrame(() => {
@@ -1161,7 +1167,6 @@ export default React.memo(function SharedList({
                 const a = finalEnhanced[i] || {};
                 const normalized = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
                 const searchText = ((normalized || '') + ' ' + (a && a._tagString ? a._tagString : '')).trim().toLowerCase();
-                const tags = Array.isArray(a && a._sortedTags) && a._sortedTags.length ? a._sortedTags : (Array.isArray(a && a.tags) ? a.tags : []);
                 const toks = _tokensFromNormalized(normalized || '');
                 try { finalEnhanced[i]._searchText = searchText; } catch (e) { }
                 try { finalEnhanced[i]._tokens = Array.isArray(toks) ? toks : []; } catch (e) { }
