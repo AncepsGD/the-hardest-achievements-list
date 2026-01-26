@@ -909,30 +909,24 @@ export default React.memo(function SharedList({
     } catch (e) { }
 
     try {
-      const src = (reordered && Array.isArray(reordered) ? reordered : null);
-      if (src && Array.isArray(src) && realIdx > 0 && realIdx < src.length) {
-        const targetIdx = realIdx - 1;
-        const swapped = src.slice();
-        const tmp = swapped[targetIdx];
-        swapped[targetIdx] = swapped[realIdx];
-        swapped[realIdx] = tmp;
 
-        try {
-          reorderedRef.current = swapped;
-          setReordered(swapped);
-        } catch (e) { reorderedRef.current = src; throw e; }
-
-        requestAnimationFrame(() => {
+      const idStr = String(id);
+      const achs = achievementsRef.current || [];
+      const achIdx = achs.findIndex(x => x && x.id ? String(x.id) === idStr : false);
+      if (achIdx > 0) {
+        setAchievements(prev => {
           try {
-            const lr = listRef && listRef.current;
-            const list = visibleListRef.current || [];
-            const idxToScroll = Math.max(0, list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false));
-            if (lr && typeof lr.scrollToItem === 'function') {
-              try { lr.scrollToItem(idxToScroll, 'center'); } catch (e) { }
-            }
-            try { enableHoverNow(); } catch (e) { }
-          } catch (e) { }
+            const idx = prev.findIndex(x => x && x.id ? String(x.id) === idStr : false);
+            if (idx <= 0) return prev;
+            const next = prev.slice();
+            const tmp = next[idx - 1];
+            next[idx - 1] = next[idx];
+            next[idx] = tmp;
+            try { reorderedRef.current = next; setReordered(next); } catch (e) { }
+            return next;
+          } catch (e) { return prev; }
         });
+        requestAnimationFrame(() => { try { enableHoverNow(); } catch (e) { } });
         return;
       }
     } catch (e) { }
@@ -969,30 +963,24 @@ export default React.memo(function SharedList({
     } catch (e) { }
 
     try {
-      const src = (reordered && Array.isArray(reordered) ? reordered : null);
-      if (src && Array.isArray(src) && realIdx >= 0 && realIdx < src.length - 1) {
-        const targetIdx = realIdx + 1;
-        const swapped = src.slice();
-        const tmp = swapped[targetIdx];
-        swapped[targetIdx] = swapped[realIdx];
-        swapped[realIdx] = tmp;
 
-        try {
-          reorderedRef.current = swapped;
-          setReordered(swapped);
-        } catch (e) { reorderedRef.current = src; throw e; }
-
-        requestAnimationFrame(() => {
+      const idStr = String(id);
+      const achs = achievementsRef.current || [];
+      const achIdx = achs.findIndex(x => x && x.id ? String(x.id) === idStr : false);
+      if (achIdx !== -1 && achIdx < achs.length - 1) {
+        setAchievements(prev => {
           try {
-            const lr = listRef && listRef.current;
-            const list = visibleListRef.current || [];
-            const idxToScroll = Math.max(0, list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false));
-            if (lr && typeof lr.scrollToItem === 'function') {
-              try { lr.scrollToItem(idxToScroll, 'center'); } catch (e) { }
-            }
-            try { enableHoverNow(); } catch (e) { }
-          } catch (e) { }
+            const idx = prev.findIndex(x => x && x.id ? String(x.id) === idStr : false);
+            if (idx < 0 || idx >= prev.length - 1) return prev;
+            const next = prev.slice();
+            const tmp = next[idx + 1];
+            next[idx + 1] = next[idx];
+            next[idx] = tmp;
+            try { reorderedRef.current = next; setReordered(next); } catch (e) { }
+            return next;
+          } catch (e) { return prev; }
         });
+        requestAnimationFrame(() => { try { enableHoverNow(); } catch (e) { } });
         return;
       }
     } catch (e) { }
@@ -1623,9 +1611,10 @@ export default React.memo(function SharedList({
 
   const devAchievements = useMemo(() => {
     try {
+      if (devMode && reordered && Array.isArray(reordered)) return reordered;
       return (baseDev ? sortList(baseDev) : baseDev);
     } catch (e) { return baseDev; }
-  }, [baseDev, sortList]);
+  }, [baseDev, sortList, devMode, reordered]);
 
   const visibleList = devMode ? devAchievements : filtered;
 
