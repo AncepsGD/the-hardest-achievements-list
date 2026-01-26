@@ -375,6 +375,7 @@ function DevModePanelInner({
   pasteShowResults,
   setPasteShowResults,
   getPasteCandidates,
+  getMostVisibleIdx,
 
   storageKeySuffix,
   setDuplicateThumbKeys,
@@ -639,6 +640,7 @@ function DevModePanelInner({
 
   const handleEditFormSave = useCallback(() => {
     if (!batchUpdateReordered) return;
+    const currentIndex = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
     const entry = {};
     if (!editForm) return;
     Object.entries(editForm).forEach(([k, v]) => {
@@ -676,7 +678,7 @@ function DevModePanelInner({
         next[editIdx] = { ...next[editIdx], ...entry };
       }
       return next;
-    });
+    }, { contextIdx: currentIndex });
     if (typeof setEditIdx === 'function') setEditIdx(null);
     if (typeof setEditForm === 'function') setEditForm(null);
     if (typeof setEditFormTags === 'function') setEditFormTags([]);
@@ -722,6 +724,7 @@ function DevModePanelInner({
 
   const handleNewFormAdd = useCallback(() => {
     if (!batchUpdateReordered) return;
+    const currentIndex = typeof getMostVisibleIdx === 'function' ? getMostVisibleIdx() : null;
     const entry = {};
     Object.entries(newForm || {}).forEach(([k, v]) => {
       if (k === 'version') { const num = Number(v); if (!isNaN(num)) entry[k] = num; return; }
@@ -741,7 +744,7 @@ function DevModePanelInner({
       copy.rank = idx + 1; target.splice(idx, 0, copy);
       for (let i = 0; i < target.length; i++) { if (target[i]) target[i].rank = i + 1; }
       return target;
-    });
+    }, { contextIdx: currentIndex });
     if (typeof setNewForm === 'function') setNewForm({ name: '', id: '', player: '', length: 0, version: 2, video: '', showcaseVideo: '', date: '', submitter: '', levelID: 0, thumbnail: '', tags: [] });
     if (typeof setNewFormTags === 'function') setNewFormTags([]);
     if (typeof setNewFormCustomTags === 'function') setNewFormCustomTags('');
