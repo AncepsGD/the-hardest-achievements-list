@@ -421,6 +421,21 @@ export default React.memo(function SharedList({
   const [achievements, setAchievements] = useState([]);
   const achievementsRef = useRef(achievements);
   useEffect(() => { achievementsRef.current = achievements; }, [achievements]);
+  const [exportAchievements, setExportAchievements] = useState([]);
+
+  const applyMutation = useCallback((mutator) => {
+    try {
+      setAchievements(prev => {
+        try {
+          const base = Array.isArray(prev) ? prev.slice() : prev;
+          const next = (typeof mutator === 'function') ? mutator(base) : base;
+          const out = Array.isArray(next) ? next : base;
+          try { setExportAchievements(Array.isArray(out) ? out.slice() : out); } catch (e) { }
+          return out;
+        } catch (e) { return prev; }
+      });
+    } catch (e) { }
+  }, [setAchievements, setExportAchievements]);
 
   const [usePlatformers, setUsePlatformers] = useState(() => {
     try {
@@ -910,7 +925,7 @@ export default React.memo(function SharedList({
       const achs = achievementsRef.current || [];
       const achIdx = achs.findIndex(x => x && x.id ? String(x.id) === idStr : false);
       if (achIdx > 0) {
-        setAchievements(prev => {
+        applyMutation(prev => {
           try {
             const idx = prev.findIndex(x => x && x.id ? String(x.id) === idStr : false);
             if (idx <= 0) return prev;
@@ -964,7 +979,7 @@ export default React.memo(function SharedList({
       const achs = achievementsRef.current || [];
       const achIdx = achs.findIndex(x => x && x.id ? String(x.id) === idStr : false);
       if (achIdx !== -1 && achIdx < achs.length - 1) {
-        setAchievements(prev => {
+        applyMutation(prev => {
           try {
             const idx = prev.findIndex(x => x && x.id ? String(x.id) === idStr : false);
             if (idx < 0 || idx >= prev.length - 1) return prev;
@@ -1161,7 +1176,7 @@ export default React.memo(function SharedList({
             } catch (e) { return null; }
           }).filter(Boolean);
 
-          setAchievements(() => finalEnhanced);
+          applyMutation(() => finalEnhanced);
           try { setFilteredIds(toIds(finalEnhanced)); } catch (e) { }
           const snap = Array.isArray(finalOriginal) ? finalOriginal.slice() : [];
           setOriginalAchievements(snap);
