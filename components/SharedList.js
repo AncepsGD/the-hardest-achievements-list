@@ -334,8 +334,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
     && prev.usePlatformers === next.usePlatformers
     && prev.showTiers === next.showTiers
     && prev.listType === next.listType
-    && prev.onEditHandler === next.onEditHandler
-    && prev.onEditIdx === next.onEditIdx;
+    && prev.onEditHandler === next.onEditHandler;
 });
 function useDebouncedValue(value, opt) {
   const [debounced, setDebounced] = useState(value);
@@ -886,9 +885,9 @@ export default React.memo(function SharedList({
     }
   }
 
-  function handleMoveAchievementUp(idx) {
+  function handleMoveAchievementUp(id) {
     try { disableHoverWithFallback(); } catch (e) { }
-    const realIdx = resolveRealIdx(idx);
+    const realIdx = resolveRealIdx(String(id));
     if (realIdx <= 0) return;
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
@@ -899,11 +898,12 @@ export default React.memo(function SharedList({
     let prevElemTop = null;
     try {
       const list = visibleListRef.current || [];
-      const displayed = (list && list.length) ? list[idx] : null;
+      const displayIdx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      const displayed = (displayIdx === -1) ? null : list[displayIdx];
       if (displayed && displayed.id) movedId = String(displayed.id);
       let node = null;
       try {
-        if (devModeRef && devModeRef.current) node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
+        if (devModeRef && devModeRef.current) node = achievementRefs && achievementRefs.current ? achievementRefs.current[displayIdx] : null;
         if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
       } catch (e) { node = null; }
     } catch (e) { }
@@ -925,9 +925,10 @@ export default React.memo(function SharedList({
         requestAnimationFrame(() => {
           try {
             const lr = listRef && listRef.current;
-            const idxToScroll = idx || 0;
+            const list = visibleListRef.current || [];
+            const idxToScroll = Math.max(0, list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false));
             if (lr && typeof lr.scrollToItem === 'function') {
-              try { lr.scrollToItem(Math.max(0, idxToScroll), 'center'); } catch (e) { }
+              try { lr.scrollToItem(idxToScroll, 'center'); } catch (e) { }
             }
             try { enableHoverNow(); } catch (e) { }
           } catch (e) { }
@@ -943,12 +944,12 @@ export default React.memo(function SharedList({
       const [removed] = out.splice(realIdx, 1);
       out.splice(realIdx - 1, 0, removed);
       return out;
-    }, { movedId, prevElemTop, prevScrollTop, prevScrollLeft, prevActive, contextIdx: idx });
+    }, { movedId, prevElemTop, prevScrollTop, prevScrollLeft, prevActive, contextIdx: (visibleListRef.current || []).findIndex(x => (x && x.id) ? String(x.id) === String(id) : false) });
   }
 
-  function handleMoveAchievementDown(idx) {
+  function handleMoveAchievementDown(id) {
     try { disableHoverWithFallback(); } catch (e) { }
-    const realIdx = resolveRealIdx(idx);
+    const realIdx = resolveRealIdx(String(id));
     const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
     const prevScrollTop = scrollEl ? scrollEl.scrollTop : 0;
     const prevScrollLeft = scrollEl ? scrollEl.scrollLeft : 0;
@@ -957,11 +958,12 @@ export default React.memo(function SharedList({
     let prevElemTop = null;
     try {
       const list = visibleListRef.current || [];
-      const displayed = (list && list.length) ? list[idx] : null;
+      const displayIdx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+      const displayed = (displayIdx === -1) ? null : list[displayIdx];
       if (displayed && displayed.id) movedId = String(displayed.id);
       let node = null;
       try {
-        if (devModeRef && devModeRef.current) node = achievementRefs && achievementRefs.current ? achievementRefs.current[idx] : null;
+        if (devModeRef && devModeRef.current) node = achievementRefs && achievementRefs.current ? achievementRefs.current[displayIdx] : null;
         if (node && typeof node.getBoundingClientRect === 'function') prevElemTop = node.getBoundingClientRect().top;
       } catch (e) { node = null; }
     } catch (e) { }
@@ -983,9 +985,10 @@ export default React.memo(function SharedList({
         requestAnimationFrame(() => {
           try {
             const lr = listRef && listRef.current;
-            const idxToScroll = idx || 0;
+            const list = visibleListRef.current || [];
+            const idxToScroll = Math.max(0, list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false));
             if (lr && typeof lr.scrollToItem === 'function') {
-              try { lr.scrollToItem(Math.max(0, idxToScroll), 'center'); } catch (e) { }
+              try { lr.scrollToItem(idxToScroll, 'center'); } catch (e) { }
             }
             try { enableHoverNow(); } catch (e) { }
           } catch (e) { }
@@ -1001,7 +1004,7 @@ export default React.memo(function SharedList({
       const [removed] = out.splice(realIdx, 1);
       out.splice(realIdx + 1, 0, removed);
       return out;
-    }, { movedId, prevElemTop, prevScrollTop, prevScrollLeft, prevActive, contextIdx: idx });
+    }, { movedId, prevElemTop, prevScrollTop, prevScrollLeft, prevActive, contextIdx: (visibleListRef.current || []).findIndex(x => (x && x.id) ? String(x.id) === String(id) : false) });
   }
 
   const scrollToIdxRef = useRef(null);
@@ -2186,29 +2189,29 @@ export default React.memo(function SharedList({
     } catch (e) { return []; }
   }, [visibleList, isMobile, duplicateThumbKeys, autoThumbMap, rankOffset]);
 
-  const handleMoveAchievementUpCb = useCallback((idx, ...args) => {
+  const handleMoveAchievementUpCb = useCallback((id, ...args) => {
     const fn = handleMoveUpRef.current;
-    if (typeof fn === 'function') return fn(idx, ...args);
+    if (typeof fn === 'function') return fn(id, ...args);
   }, []);
 
-  const handleMoveAchievementDownCb = useCallback((idx, ...args) => {
+  const handleMoveAchievementDownCb = useCallback((id, ...args) => {
     const fn = handleMoveDownRef.current;
-    if (typeof fn === 'function') return fn(idx, ...args);
+    if (typeof fn === 'function') return fn(id, ...args);
   }, []);
 
-  const handleEditAchievementCb = useCallback((idx, ...args) => {
+  const handleEditAchievementCb = useCallback((id, ...args) => {
     const fn = handleEditRef.current;
-    if (typeof fn === 'function') return fn(idx, ...args);
+    if (typeof fn === 'function') return fn(id, ...args);
   }, []);
 
-  const handleRemoveAchievementCb = useCallback((idx, ...args) => {
+  const handleRemoveAchievementCb = useCallback((id, ...args) => {
     const fn = handleRemoveRef.current;
-    if (typeof fn === 'function') return fn(idx, ...args);
+    if (typeof fn === 'function') return fn(id, ...args);
   }, []);
 
-  const handleDuplicateAchievementCb = useCallback((idx, ...args) => {
+  const handleDuplicateAchievementCb = useCallback((id, ...args) => {
     const fn = handleDuplicateRef.current;
-    if (typeof fn === 'function') return fn(idx, ...args);
+    if (typeof fn === 'function') return fn(id, ...args);
   }, []);
 
   const listItemData = useMemo(() => ({
@@ -2254,18 +2257,18 @@ export default React.memo(function SharedList({
         style={itemStyle}
         key={a && a.id ? a.id : index}
         className={`${isDup ? 'duplicate-thumb-item' : ''}`}
-        onPointerEnter={(e) => { try { if (typeof onRowHoverEnter === 'function') onRowHoverEnter((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
-        onPointerLeave={(e) => { try { if (typeof onRowHoverLeave === 'function') onRowHoverLeave((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
-        onFocus={(e) => { try { if (typeof onRowHoverEnter === 'function') onRowHoverEnter((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
-        onBlur={(e) => { try { if (typeof onRowHoverLeave === 'function') onRowHoverLeave((a && a.id) ? String(a.id) : index, e); } catch (err) { } }}
+        onPointerEnter={(e) => { try { if (typeof onRowHoverEnter === 'function' && a && a.id) onRowHoverEnter(String(a.id), e); } catch (err) { } }}
+        onPointerLeave={(e) => { try { if (typeof onRowHoverLeave === 'function' && a && a.id) onRowHoverLeave(String(a.id), e); } catch (err) { } }}
+        onFocus={(e) => { try { if (typeof onRowHoverEnter === 'function' && a && a.id) onRowHoverEnter(String(a.id), e); } catch (err) { } }}
+        onBlur={(e) => { try { if (typeof onRowHoverLeave === 'function' && a && a.id) onRowHoverLeave(String(a.id), e); } catch (err) { } }}
       >
         {mode === 'timeline' ?
           <TimelineAchievementCard
             achievement={a}
             previousAchievement={index > 0 ? filtered[index - 1] : null}
-            onEdit={typeof handleEditAchievement === 'function' ? () => handleEditAchievement(index) : null}
-            onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined}
-            onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined}
+            onEdit={typeof handleEditAchievement === 'function' && a && a.id ? () => handleEditAchievement(String(a.id)) : null}
+            onHoverEnter={typeof onRowHoverEnter === 'function' && a && a.id ? (e) => onRowHoverEnter(String(a.id), e) : undefined}
+            onHoverLeave={typeof onRowHoverLeave === 'function' && a && a.id ? (e) => onRowHoverLeave(String(a.id), e) : undefined}
             devMode={devMode}
             autoThumbAvailable={autoThumbAvailable}
             totalAchievements={filtered.length}
@@ -2280,7 +2283,7 @@ export default React.memo(function SharedList({
           (() => {
             const computed = (index + 1);
             const displayRank = Number.isFinite(Number(computed)) ? Number(computed) + (Number(rankOffset) || 0) : computed;
-            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={handleEditAchievement} onEditIdx={index} onHoverEnter={typeof onRowHoverEnter === 'function' ? (e) => onRowHoverEnter((a && a.id) ? String(a.id) : index, e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' ? (e) => onRowHoverLeave((a && a.id) ? String(a.id) : index, e) : undefined} />;
+            return <AchievementCard achievement={a} devMode={devMode} autoThumbAvailable={autoThumbAvailable} displayRank={displayRank} showRank={!hideRank} totalAchievements={achievements.length} achievements={achievements} mode={mode} usePlatformers={usePlatformers} showTiers={showTiers} extraLists={extraLists} listType={storageKeySuffix === 'legacy' || dataFileName === 'legacy.json' ? 'legacy' : (mode === 'timeline' || dataFileName === 'timeline.json' ? 'timeline' : 'main')} onEditHandler={typeof handleEditAchievement === 'function' && a && a.id ? () => handleEditAchievement(String(a.id)) : undefined} onHoverEnter={typeof onRowHoverEnter === 'function' && a && a.id ? (e) => onRowHoverEnter(String(a.id), e) : undefined} onHoverLeave={typeof onRowHoverLeave === 'function' && a && a.id ? (e) => onRowHoverLeave(String(a.id), e) : undefined} />;
           })()
         }
       </div>
@@ -2540,14 +2543,34 @@ export default React.memo(function SharedList({
     try {
       handleMoveUpRef.current = (idOrIdx) => {
         try {
-          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
-          return handleMoveAchievementUp(arg);
+          let id = null;
+          if (typeof idOrIdx === 'string') id = idOrIdx;
+          else if (idOrIdx && typeof idOrIdx === 'object' && idOrIdx.id) id = String(idOrIdx.id);
+          else if (typeof idOrIdx === 'number') {
+            const v = (visibleListRef.current || [])[idOrIdx];
+            if (v && v.id) id = String(v.id);
+            else {
+              const r = (reorderedRef.current || [])[idOrIdx];
+              if (r && r.id) id = String(r.id);
+            }
+          }
+          return handleMoveAchievementUp(id);
         } catch (e) { }
       };
       handleMoveDownRef.current = (idOrIdx) => {
         try {
-          const arg = (typeof idOrIdx === 'string') ? resolveRealIdx(idOrIdx) : idOrIdx;
-          return handleMoveAchievementDown(arg);
+          let id = null;
+          if (typeof idOrIdx === 'string') id = idOrIdx;
+          else if (idOrIdx && typeof idOrIdx === 'object' && idOrIdx.id) id = String(idOrIdx.id);
+          else if (typeof idOrIdx === 'number') {
+            const v = (visibleListRef.current || [])[idOrIdx];
+            if (v && v.id) id = String(v.id);
+            else {
+              const r = (reorderedRef.current || [])[idOrIdx];
+              if (r && r.id) id = String(r.id);
+            }
+          }
+          return handleMoveAchievementDown(id);
         } catch (e) { }
       };
       handleEditRef.current = (idOrIdx) => {
