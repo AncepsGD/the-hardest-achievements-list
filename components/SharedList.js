@@ -633,54 +633,6 @@ export default React.memo(function SharedList({
     return () => { try { window.removeEventListener('useOriginalRanksChanged', handler); } catch (e) { } };
   }, []);
 
-  const [smoothScrolling, setSmoothScrolling] = useState(() => {
-    try {
-      if (typeof window === 'undefined') return true;
-      const v = localStorage.getItem('smoothScrolling');
-      return v == null ? true : v === 'true';
-    } catch (e) { return true; }
-  });
-  useEffect(() => {
-    const handler = (ev) => {
-      try {
-        const v = ev && ev.detail && typeof ev.detail.value !== 'undefined' ? !!ev.detail.value : (localStorage.getItem('smoothScrolling') !== 'false');
-        setSmoothScrolling(v);
-      } catch (e) { }
-    };
-    try { window.addEventListener('smoothScrollingChanged', handler); } catch (e) { }
-    return () => { try { window.removeEventListener('smoothScrollingChanged', handler); } catch (e) { } };
-  }, []);
-
-  useEffect(() => {
-    try {
-      const behavior = smoothScrolling ? 'smooth' : '';
-
-      const selectors = [
-        '.achievements',
-        '.achievements-main',
-        '.achievements-section',
-        '.achievements-container',
-        '.sidebar',
-        '.settings-modal',
-        '.devmode-form-panel',
-      ];
-      selectors.forEach(sel => {
-        try {
-          const nodes = Array.from(document.querySelectorAll(sel));
-          nodes.forEach(n => { try { n.style.scrollBehavior = behavior; } catch (_) { } });
-        } catch (_) { }
-      });
-
-      try {
-        const listEls = Array.from(document.querySelectorAll('[role="list"], .ReactVirtualized__List, .ReactWindow__List'));
-        listEls.forEach(n => { try { n.style.scrollBehavior = behavior; } catch (_) { } });
-      } catch (_) { }
-
-      const el = document.scrollingElement || document.documentElement || document.body;
-      if (el) el.style.scrollBehavior = behavior;
-    } catch (e) { }
-  }, [smoothScrolling]);
-
   const [originalAchievements, setOriginalAchievements] = useState(null);
   const originalSnapshotRef = useRef(null);
   const {
