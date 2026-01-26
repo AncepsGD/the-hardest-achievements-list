@@ -2581,15 +2581,8 @@ export default React.memo(function SharedList({
     try {
       const id = (idParam != null) ? String(idParam) : hoveredIdRef.current;
       if (id == null) return;
-      const list = visibleListRef.current || [];
-      let idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
-      let item = (idx === -1) ? null : list[idx];
-      if (!item) {
-        const src = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : (achievementsRef.current || []);
-        const realIdx = src.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
-        if (realIdx == null || realIdx < 0) return;
-        item = src[realIdx];
-      }
+      const src = Array.isArray(achievements) ? achievements : [];
+      const item = src.find(a => a && a.id != null ? String(a.id) === String(id) : false);
       if (!item) return;
       function toBase64(s) {
         try {
