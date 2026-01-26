@@ -385,7 +385,10 @@ function DevModePanelInner({
   
   handlePasteSelect,
   onImportAchievementsJson,
+  visible,
 }) {
+  if (!devMode) return null;
+  if (typeof visible === 'boolean' && !visible) return null;
   const getPasteCandidatesRef = useRef(getPasteCandidates);
   useEffect(() => { getPasteCandidatesRef.current = getPasteCandidates; }, [getPasteCandidates]);
 
@@ -431,10 +434,23 @@ function DevModePanelInner({
   const handleCopyJson = useCallback(async () => {
     try {
       const arr = (stagedReordered && stagedReordered.length) ? stagedReordered : (reordered && reordered.length) ? reordered : achievements || [];
+      function toBase64(s) {
+        try {
+          if (typeof btoa === 'function') return btoa(unescape(encodeURIComponent(String(s || ''))));
+          if (typeof Buffer !== 'undefined') return Buffer.from(String(s || ''), 'utf8').toString('base64');
+        } catch (e) {}
+        return String(s || '');
+      }
       const json = JSON.stringify(arr.map(a => {
         const copy = { ...a };
         delete copy._sortedTags; delete copy._isPlatformer; delete copy._lengthStr; delete copy._thumbnail;
         delete copy._searchable; delete copy._searchableNormalized; delete copy._tagString; delete copy.hasThumb; delete copy.autoThumb;
+        if (Array.isArray(copy._tokens)) {
+          try { copy._tokens = copy._tokens.join(' '); } catch (e) {}
+        }
+        if (copy._searchText) {
+          try { copy._searchText = toBase64(copy._searchText); } catch (e) {}
+        }
         return copy;
       }), null, 2);
       if (navigator && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
@@ -785,6 +801,7 @@ function DevModePanelInner({
 
 const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
   return prev.devMode === next.devMode
+    && prev.visible === next.visible
     && prev.editIdx === next.editIdx
     && prev.showNewForm === next.showNewForm
     && shallowEqual(prev.editForm, next.editForm)
