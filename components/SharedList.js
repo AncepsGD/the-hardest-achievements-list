@@ -654,8 +654,28 @@ export default React.memo(function SharedList({
   useEffect(() => {
     try {
       const behavior = smoothScrolling ? 'smooth' : '';
-      if (document && document.documentElement) document.documentElement.style.scrollBehavior = behavior;
-      if (document && document.body) document.body.style.scrollBehavior = behavior;
+
+      const selectors = [
+        '.achievements',
+        '.achievements-main',
+        '.achievements-section',
+        '.achievements-container',
+        '.sidebar',
+        '.settings-modal',
+        '.devmode-form-panel',
+      ];
+      selectors.forEach(sel => {
+        try {
+          const nodes = Array.from(document.querySelectorAll(sel));
+          nodes.forEach(n => { try { n.style.scrollBehavior = behavior; } catch (_) { } });
+        } catch (_) { }
+      });
+
+      try {
+        const listEls = Array.from(document.querySelectorAll('[role="list"], .ReactVirtualized__List, .ReactWindow__List'));
+        listEls.forEach(n => { try { n.style.scrollBehavior = behavior; } catch (_) { } });
+      } catch (_) { }
+
       const el = document.scrollingElement || document.documentElement || document.body;
       if (el) el.style.scrollBehavior = behavior;
     } catch (e) { }
