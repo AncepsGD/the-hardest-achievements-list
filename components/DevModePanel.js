@@ -448,8 +448,9 @@ function DevModePanelInner({
         } catch (e) { }
         return String(s || '');
       }
-      const json = JSON.stringify(arr.map(a => {
+      const json = JSON.stringify(arr.map((a, idx) => {
         const copy = { ...a };
+        try { copy.rank = idx + 1; } catch (e) { }
         delete copy._sortedTags; delete copy._isPlatformer; delete copy._lengthStr; delete copy._thumbnail;
         delete copy._searchable; delete copy._searchableNormalized; delete copy._tagString; delete copy.hasThumb; delete copy.autoThumb;
         if (Array.isArray(copy._tokens)) {
