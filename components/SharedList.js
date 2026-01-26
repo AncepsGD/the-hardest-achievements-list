@@ -796,8 +796,6 @@ export default React.memo(function SharedList({
   function batchUpdateReordered(mutator, opts = {}) {
     try { disableHoverWithFallback(); } catch (e) { }
     if (typeof mutator !== 'function') return;
-    const scrollEl = (typeof document !== 'undefined') ? (document.scrollingElement || document.documentElement || document.body) : null;
-    const listOuter = (listRef && listRef.current && listRef.current._outerRef) ? listRef.current._outerRef : null;
     let movedId = (opts && opts.movedId !== undefined) ? opts.movedId : null;
     let prevElemTop = (opts && opts.prevElemTop !== undefined) ? opts.prevElemTop : null;
     try {
@@ -1151,10 +1149,8 @@ export default React.memo(function SharedList({
                 const normalized = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
                 const searchText = ((normalized || '') + ' ' + (a && a._tagString ? a._tagString : '')).trim().toLowerCase();
                 const tags = Array.isArray(a && a._sortedTags) && a._sortedTags.length ? a._sortedTags : (Array.isArray(a && a.tags) ? a.tags : []);
-                const tagArr = (Array.isArray(tags) ? tags.slice() : []).map(function (t) { return String(t || '').toUpperCase(); }).filter(Boolean);
                 const toks = _tokensFromNormalized(normalized || '');
                 try { finalEnhanced[i]._searchText = searchText; } catch (e) { }
-                try { finalEnhanced[i]._tagSet = new Set(tagArr); } catch (e) { }
                 try { finalEnhanced[i]._tokens = Array.isArray(toks) ? toks : []; } catch (e) { }
               } catch (e) { }
             }
@@ -1662,7 +1658,7 @@ export default React.memo(function SharedList({
     } catch (e) { }
   }
 
-  function showDevPanelImmediate(id, evObj) {
+  function showDevPanelImmediate(id) {
     try {
       const panel = devPanelRef.current;
       if (!panel) return;
@@ -2009,8 +2005,6 @@ export default React.memo(function SharedList({
   }, []);
 
   const _lastHoverTimeRef = useRef(0);
-  const hoverShowTimerRef = useRef(null);
-  const hoverShowDelayMs = 60;
 
   const onRowHoverEnterCb = useCallback((id, ev) => {
     try {
@@ -2599,7 +2593,20 @@ export default React.memo(function SharedList({
         item = src[realIdx];
       }
       if (!item) return;
+      function toBase64(s) {
+        try {
+          if (typeof btoa === 'function') return btoa(unescape(encodeURIComponent(String(s || ''))));
+          if (typeof Buffer !== 'undefined') return Buffer.from(String(s || ''), 'utf8').toString('base64');
+        } catch (e) {}
+        return String(s || '');
+      }
       const sanitized = JSON.parse(JSON.stringify(item));
+      if (Array.isArray(sanitized._tokens)) {
+        try { sanitized._tokens = sanitized._tokens.join(' '); } catch (e) { }
+      }
+      if (sanitized._searchText) {
+        try { sanitized._searchText = toBase64(sanitized._searchText); } catch (e) { }
+      }
       const json = JSON.stringify(sanitized, null, 2);
       if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
         navigator.clipboard.writeText(json).then(() => {
