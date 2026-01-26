@@ -660,20 +660,21 @@ function DevModePanelInner({
       if (nv2) entry.showcaseVideo = nv2; else if (!devMode) delete entry.showcaseVideo;
     }
     batchUpdateReordered(arr => {
-      if (!arr) return arr;
-      const original = arr[editIdx];
+      if (!Array.isArray(arr)) return arr;
+      const next = arr.slice();
+      const original = next[editIdx];
       const newRank = entry && entry.rank !== undefined && entry.rank !== null && entry.rank !== '' ? Number(entry.rank) : null;
       const oldRank = original ? Number(original.rank) : null;
       const rankIsChanging = newRank !== null && !isNaN(newRank) && newRank !== oldRank;
       if (rankIsChanging) {
-        const [removed] = arr.splice(editIdx, 1);
+        const [removed] = next.splice(editIdx, 1);
         const updated = { ...removed, ...entry };
-        const idx = Math.max(0, Math.min(arr.length, newRank - 1));
-        arr.splice(idx, 0, updated);
+        const idx = Math.max(0, Math.min(next.length, newRank - 1));
+        next.splice(idx, 0, updated);
       } else {
-        arr[editIdx] = { ...arr[editIdx], ...entry };
+        next[editIdx] = { ...next[editIdx], ...entry };
       }
-      return arr;
+      return next;
     });
     if (typeof setEditIdx === 'function') setEditIdx(null);
     if (typeof setEditForm === 'function') setEditForm(null);
@@ -813,7 +814,10 @@ const DevModePanel = React.memo(DevModePanelInner, (prev, next) => {
     && shallowEqual(prev.newForm, next.newForm)
     && shallowEqual(prev.newFormTags, next.newFormTags)
     && prev.pasteSearch === next.pasteSearch
-    && prev.pasteShowResults === next.pasteShowResults;
+    && prev.pasteShowResults === next.pasteShowResults
+    && prev.reordered === next.reordered
+    && prev.stagedReordered === next.stagedReordered
+    && prev.achievements === next.achievements;
 });
 
 export default DevModePanel;
