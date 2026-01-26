@@ -502,34 +502,6 @@ useEffect(() => {
                   </label>
                 </div>
               </div>
-              <div style={{ width: '100%', marginTop: 18 }}>
-                <label
-                  style={{
-                    color: '#DFE3F5',
-                    fontWeight: 600,
-                    fontSize: 16,
-                    marginBottom: 8,
-                    display: 'block',
-                  }}
-                >
-                  Scrolling
-                </label>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <label style={{ color: '#DFE3F5', fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <input
-                      type="checkbox"
-                      checked={(() => { try { const v = localStorage.getItem('smoothScrolling'); return v == null ? true : v === 'true'; } catch (e) { return true; } })()}
-                      onChange={(e) => {
-                        const v = !!e.target.checked;
-                        try { localStorage.setItem('smoothScrolling', v ? 'true' : 'false'); } catch (err) {}
-                        try { window.dispatchEvent(new CustomEvent('smoothScrollingChanged', { detail: { value: v } })); } catch (err) {}
-                      }}
-                      style={{ marginRight: 8 }}
-                    />
-                    Enable smooth scrolling (global)
-                  </label>
-                </div>
-              </div>
             </div>
           </div>,
           document.body
