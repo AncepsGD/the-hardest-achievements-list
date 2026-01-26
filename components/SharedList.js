@@ -415,8 +415,6 @@ export default React.memo(function SharedList({
     const _suppress = ['legacy.json', 'pending.json', 'legacy.js', 'pending.js'];
     const shouldLog = !_suppress.some(n => n === _dataFileLower || _fileLower.includes(n));
     if (shouldLog) {
-      console.warn('[SHAREDLIST_DEBUG]', { showTiers, file, env: typeof window !== 'undefined' ? 'client' : 'server' });
-      console.trace('[SHAREDLIST_DEBUG_TRACE]');
     }
   } catch (e) {
   }
@@ -2597,7 +2595,7 @@ export default React.memo(function SharedList({
         try {
           if (typeof btoa === 'function') return btoa(unescape(encodeURIComponent(String(s || ''))));
           if (typeof Buffer !== 'undefined') return Buffer.from(String(s || ''), 'utf8').toString('base64');
-        } catch (e) {}
+        } catch (e) { }
         return String(s || '');
       }
       const sanitized = JSON.parse(JSON.stringify(item));
@@ -3011,6 +3009,8 @@ const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
 const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
   const onEdit = (e) => {
     try {
+      if (!devMode) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
@@ -3019,6 +3019,8 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onMoveUp = (e) => {
     try {
+      if (!devMode) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
@@ -3027,6 +3029,8 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onMoveDown = (e) => {
     try {
+      if (!devMode) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
@@ -3035,6 +3039,8 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onDuplicate = (e) => {
     try {
+      if (!devMode) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
@@ -3043,13 +3049,15 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onDelete = (e) => {
     try {
+      if (!devMode) return;
+      if (shouldBypassStop(e)) return;
       e.preventDefault(); e.stopPropagation();
       const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
       if (id == null) return;
       if (handleRemoveRef && handleRemoveRef.current) handleRemoveRef.current(id);
     } catch (err) { }
   };
-  const onCopy = (e) => { try { e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
+  const onCopy = (e) => { try { if (!devMode) return; if (shouldBypassStop(e)) return; e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
 
   const baseStyle = { display: devMode ? 'block' : 'none', width: 'auto', minWidth: 360, maxWidth: 720, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)', boxSizing: 'border-box', whiteSpace: 'nowrap' };
   let anchoredStyle = {};
