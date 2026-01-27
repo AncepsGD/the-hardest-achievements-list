@@ -18,165 +18,130 @@ function SidebarInner() {
       return true
     }
   })
+  const sources = useMemo(() => [
+    '/achievements.json',
+    '/legacy.json',
+    '/pending.json',
+    '/platformers.json',
+    '/platformertimeline.json',
+    '/timeline.json',
+  ], []);
 
-  const [itemsPerPage, setItemsPerPage] = useState(() => {
+  const randomPoolRef = useRef(null);
+  const [, setRandomPoolReady] = useState(false);
+  const randomPoolFetchInFlightRef = useRef(false);
+  const safeFetchJsonIds = async (src) => {
     try {
-      if (typeof window === 'undefined') return 100;
-      const v = localStorage.getItem('itemsPerPage');
-      if (!v) return 100;
-      return v === 'all' ? 'all' : Number(v) || 100;
-    } catch (e) {
-      return 100;
-    }
-  });
-
-const sources = useMemo(() => [
-  '/achievements.json',
-  '/legacy.json',
-  '/pending.json',
-  '/platformers.json',
-  '/platformertimeline.json',
-  '/timeline.json',
-], []);
-
-const randomPoolRef = useRef(null);
-const [randomPoolReady, setRandomPoolReady] = useState(false);
-const randomPoolFetchInFlightRef = useRef(false);
-
-const safeFetchJson = async (src) => {
-  try {
-    const res = await fetch(src);
-    const text = await res.text();
-    try {
-      return JSON.parse(text);
-    } catch (err) {
-
+      const res = await fetch(src);
+      const text = await res.text();
       try {
-        const clean = text.replace(/[\u0000-\u001F]+/g, '');
-        return JSON.parse(clean);
-      } catch (err2) {
-        console.warn('Failed to parse JSON from', src, err2);
-        return [];
-      }
-    }
-  } catch (err) {
-    console.warn('Failed to fetch', src, err);
-    return [];
-  }
-};
-
-const safeFetchJsonIds = async (src) => {
-  try {
-    const res = await fetch(src);
-    const text = await res.text();
-    try {
-      const parsed = JSON.parse(text);
-      if (!Array.isArray(parsed)) return [];
-      return parsed.map((x) => x && x.id).filter(Boolean);
-    } catch (err) {
-      try {
-        const clean = text.replace(/[\u0000-\u001F]+/g, '');
-        const parsed = JSON.parse(clean);
+        const parsed = JSON.parse(text);
         if (!Array.isArray(parsed)) return [];
         return parsed.map((x) => x && x.id).filter(Boolean);
-      } catch (err2) {
-        console.warn('Failed to parse JSON ids from', src, err2);
-        return [];
-      }
-    }
-  } catch (err) {
-    console.warn('Failed to fetch', src, err);
-    return [];
-  }
-};
-
-const handleRandomClick = useCallback(
-  async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      if (randomPoolRef.current && randomPoolRef.current.length > 0) {
-        const ids = randomPoolRef.current;
-        const id = ids[Math.floor(Math.random() * ids.length)];
-        if (id) {
-          router.push(`/achievement/${id}`);
-          return;
-        }
-      }
-
-      if (randomPoolFetchInFlightRef.current) return;
-      randomPoolFetchInFlightRef.current = true;
-
-      const results = await Promise.all(sources.map((s) => safeFetchJsonIds(s)));
-      const ids = results.flat().filter(Boolean);
-      if (ids.length === 0) {
-        randomPoolFetchInFlightRef.current = false;
-        return;
-      }
-
-      randomPoolRef.current = ids;
-      try {
-        sessionStorage.setItem('randomPoolIds', JSON.stringify(ids));
-      } catch (e) {}
-      setRandomPoolReady(true);
-
-      const id = ids[Math.floor(Math.random() * ids.length)];
-      if (id) router.push(`/achievement/${id}`);
-      randomPoolFetchInFlightRef.current = false;
-    } catch (err) {
-      randomPoolFetchInFlightRef.current = false;
-      console.error('Random selection failed', err);
-    }
-  },
-  [router]
-);
-
-useEffect(() => {
-  if (typeof window === 'undefined') return;
-  try {
-    const cached = sessionStorage.getItem('randomPoolIds');
-    if (cached) {
-      try {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          randomPoolRef.current = parsed;
-          setRandomPoolReady(true);
-          return;
-        }
-      } catch (parseErr) {
-
+      } catch (err) {
         try {
-          sessionStorage.removeItem('randomPoolIds');
-        } catch (e) {}
-        console.warn('Cleared corrupted randomPoolIds cache', parseErr);
+          const clean = text.replace(/[\u0000-\u001F]+/g, '');
+          const parsed = JSON.parse(clean);
+          if (!Array.isArray(parsed)) return [];
+          return parsed.map((x) => x && x.id).filter(Boolean);
+        } catch (err2) {
+          console.warn('Failed to parse JSON ids from', src, err2);
+          return [];
+        }
       }
+    } catch (err) {
+      console.warn('Failed to fetch', src, err);
+      return [];
     }
-  } catch (e) {
+  };
 
-  }
+  const handleRandomClick = useCallback(
+    async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        if (randomPoolRef.current && randomPoolRef.current.length > 0) {
+          const ids = randomPoolRef.current;
+          const id = ids[Math.floor(Math.random() * ids.length)];
+          if (id) {
+            router.push(`/achievement/${id}`);
+            return;
+          }
+        }
 
-  let cancelled = false;
-  (async () => {
-    try {
-      const results = await Promise.all(sources.map((s) => safeFetchJsonIds(s)));
-      const ids = results.flat().filter(Boolean);
-      if (cancelled) return;
-      if (ids.length > 0) {
+        if (randomPoolFetchInFlightRef.current) return;
+        randomPoolFetchInFlightRef.current = true;
+
+        const results = await Promise.all(sources.map((s) => safeFetchJsonIds(s)));
+        const ids = results.flat().filter(Boolean);
+        if (ids.length === 0) {
+          randomPoolFetchInFlightRef.current = false;
+          return;
+        }
+
         randomPoolRef.current = ids;
         try {
           sessionStorage.setItem('randomPoolIds', JSON.stringify(ids));
-        } catch (e) {}
+        } catch (e) { }
         setRandomPoolReady(true);
-      }
-    } catch (err) {
-      console.error('Prefetch random pool failed', err);
-    }
-  })();
 
-  return () => {
-    cancelled = true;
-  };
-}, []);
+        const id = ids[Math.floor(Math.random() * ids.length)];
+        if (id) router.push(`/achievement/${id}`);
+        randomPoolFetchInFlightRef.current = false;
+      } catch (err) {
+        randomPoolFetchInFlightRef.current = false;
+        console.error('Random selection failed', err);
+      }
+    },
+    [router]
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const cached = sessionStorage.getItem('randomPoolIds');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            randomPoolRef.current = parsed;
+            setRandomPoolReady(true);
+            return;
+          }
+        } catch (parseErr) {
+
+          try {
+            sessionStorage.removeItem('randomPoolIds');
+          } catch (e) { }
+          console.warn('Cleared corrupted randomPoolIds cache', parseErr);
+        }
+      }
+    } catch (e) {
+
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const results = await Promise.all(sources.map((s) => safeFetchJsonIds(s)));
+        const ids = results.flat().filter(Boolean);
+        if (cancelled) return;
+        if (ids.length > 0) {
+          randomPoolRef.current = ids;
+          try {
+            sessionStorage.setItem('randomPoolIds', JSON.stringify(ids));
+          } catch (e) { }
+          setRandomPoolReady(true);
+        }
+      } catch (err) {
+        console.error('Prefetch random pool failed', err);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -208,7 +173,7 @@ useEffect(() => {
         WebkitOverflowScrolling: 'touch',
       }}
     >
-            <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+      <div style={{ flex: '1 1 auto', minHeight: 0 }}>
         <Link href="/list" className="sidebar-link" style={{ color: '#DFE3F5' }}>
           Main List
         </Link>
@@ -357,89 +322,7 @@ useEffect(() => {
                 </div>
               </div>
 
-              <div style={{ width: '100%', marginTop: 12 }}>
-                <label
-                  style={{
-                    color: '#DFE3F5',
-                    fontWeight: 600,
-                    fontSize: 16,
-                    marginBottom: 8,
-                    display: 'block',
-                  }}
-                >
-                  Items Rendered
-                </label>
-                <div
-                  style={{
-                    display: 'flex',
-                    gap: 8,
-                    alignItems: 'center',
-                  }}
-                >
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    placeholder="100"
-                    value={itemsPerPage === 'all' ? '' : String(itemsPerPage)}
-                    onChange={(e) => {
-                      const raw = e.target.value.replace(/[^0-9]/g, '');
-                      const n = raw === '' ? '' : Number(raw);
-                      setItemsPerPage(n === '' ? '' : n);
-                      try {
-                        if (raw !== '') localStorage.setItem('itemsPerPage', String(n));
-                      } catch { }
-                    }}
-                    onBlur={() => {
-                      if (itemsPerPage === '' || itemsPerPage === 0) {
-                        setItemsPerPage(100);
-                        try {
-                          localStorage.setItem('itemsPerPage', '100');
-                        } catch { }
-                      }
-                    }}
-                    style={{
-                      padding: 8,
-                      background: '#2a2f44',
-                      color: '#DFE3F5',
-                      borderRadius: 6,
-                      border: '1px solid #3b4058',
-                      width: 90,
-                    }}
-                  />
-                  <label
-                    style={{
-                      color: '#DFE3F5',
-                      fontSize: 14,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8,
-                    }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={itemsPerPage === 'all'}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setItemsPerPage('all');
-                          try {
-                            localStorage.setItem('itemsPerPage', 'all');
-                          } catch { }
-                        } else {
-                          setItemsPerPage(100);
-                          try {
-                            localStorage.setItem('itemsPerPage', '100');
-                          } catch { }
-                        }
-                      }}
-                    />
-                    All
-                  </label>
-                  <div style={{ color: '#DFE3F5', fontSize: 13 }}>
-                    Enter a number (default 100) or check All to render everything
-                  </div>
-                </div>
-              </div>
+              {}
 
               <div style={{ width: '100%', marginTop: 18 }}>
                 <label
@@ -463,10 +346,10 @@ useEffect(() => {
                         setTiersUseRoman(v)
                         try {
                           localStorage.setItem('tiersUseRoman', v ? 'true' : 'false')
-                        } catch (err) {}
+                        } catch (err) { }
                         try {
                           window.dispatchEvent(new CustomEvent('tiersUseRomanChanged', { detail: { value: v ? 'true' : 'false' } }))
-                        } catch (err) {}
+                        } catch (err) { }
                       }}
                       style={{ marginRight: 8 }}
                     />
@@ -493,8 +376,8 @@ useEffect(() => {
                       checked={(() => { try { return (localStorage.getItem('useOriginalRanks') === 'true'); } catch (e) { return false; } })()}
                       onChange={(e) => {
                         const v = !!e.target.checked;
-                        try { localStorage.setItem('useOriginalRanks', v ? 'true' : 'false'); } catch (err) {}
-                        try { window.dispatchEvent(new CustomEvent('useOriginalRanksChanged', { detail: { value: v } })); } catch (err) {}
+                        try { localStorage.setItem('useOriginalRanks', v ? 'true' : 'false'); } catch (err) { }
+                        try { window.dispatchEvent(new CustomEvent('useOriginalRanksChanged', { detail: { value: v } })); } catch (err) { }
                       }}
                       style={{ marginRight: 8 }}
                     />
