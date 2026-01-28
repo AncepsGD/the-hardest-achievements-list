@@ -2159,6 +2159,17 @@ export default React.memo(function SharedList({
       try { hoveredIdRef.current = id == null ? null : String(id); setHoveredIdState(hoveredIdRef.current); } catch (e) { }
       try { showDevPanelImmediate(id); } catch (e) { }
 
+      try {
+        const panel = devPanelRef && devPanelRef.current;
+        const list = visibleListRef && visibleListRef.current ? visibleListRef.current : [];
+        const idx = list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false);
+        const item = (idx === -1) ? null : list[idx];
+        if (!panel || !item) {
+          if (panel) panel.style.display = 'none';
+          return;
+        }
+      } catch (e) { }
+
       if (hoverShowRafRef.current) {
         try { cancelAnimationFrame(hoverShowRafRef.current); } catch (e) { }
         hoverShowRafRef.current = null;
@@ -2287,7 +2298,7 @@ export default React.memo(function SharedList({
       window.removeEventListener('resize', onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [devMode]);
+  }, [devMode, hoveredIdState]);
 
   const precomputedVisible = useMemo(() => {
     try {
@@ -3212,6 +3223,18 @@ const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
 });
 
 const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
+  React.useEffect(() => {
+    try {
+      const panel = devPanelRef && devPanelRef.current;
+      if (!panel) return;
+      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+      if (!devMode || !id) {
+        try { panel.style.display = 'none'; panel.style.left = '-9999px'; panel.style.top = '-9999px'; } catch (e) { }
+      } else {
+        try { if (panel.style.display !== 'block') panel.style.display = 'block'; } catch (e) { }
+      }
+    } catch (e) { }
+  }, [devMode, hoverAnchor, devPanelRef, hoveredIdRef]);
   const onEdit = (e) => {
     try {
       if (!devMode) return;
