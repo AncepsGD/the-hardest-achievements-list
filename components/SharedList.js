@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
-import ReactDOM from 'react-dom';
+import { createPortal } from 'react-dom';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
 
@@ -3222,19 +3222,7 @@ const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
     && prev.setShow === next.setShow;
 });
 
-const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
-  React.useEffect(() => {
-    try {
-      const panel = devPanelRef && devPanelRef.current;
-      if (!panel) return;
-      const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
-      if (!devMode || !id) {
-        try { panel.style.display = 'none'; panel.style.left = '-9999px'; panel.style.top = '-9999px'; } catch (e) { }
-      } else {
-        try { if (panel.style.display !== 'block') panel.style.display = 'block'; } catch (e) { }
-      }
-    } catch (e) { }
-  }, [devMode, hoverAnchor, devPanelRef, hoveredIdRef]);
+const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, visibleListRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
   const onEdit = (e) => {
     try {
       if (!devMode) return;
@@ -3287,21 +3275,59 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   };
   const onCopy = (e) => { try { if (!devMode) return; if (shouldBypassStop(e)) return; e.preventDefault(); e.stopPropagation(); if (handleCopyRef && handleCopyRef.current) handleCopyRef.current(); } catch (err) { } };
 
-  const baseStyle = { display: devMode ? 'block' : 'none', width: 'auto', minWidth: 360, maxWidth: 720, maxHeight: '60vh', overflow: 'auto', background: 'var(--secondary-bg, #1a1a1a)', color: 'var(--text-color, #fff)', padding: 12, borderRadius: 8, zIndex: 9999, boxShadow: '0 4px 16px rgba(0,0,0,0.6)', boxSizing: 'border-box', whiteSpace: 'nowrap' };
-  let anchoredStyle = {};
+  const baseStyle = {
+    display: 'none',
+    position: 'fixed',
+    width: 'auto',
+    minWidth: 360,
+    maxWidth: 720,
+    maxHeight: '60vh',
+    overflow: 'auto',
+    background: 'var(--secondary-bg, #1a1a1a)',
+    color: 'var(--text-color, #fff)',
+    padding: 12,
+    borderRadius: 8,
+    zIndex: 9999,
+    boxShadow: '0 4px 16px rgba(0,0,0,0.6)',
+    boxSizing: 'border-box',
+    whiteSpace: 'nowrap',
+    left: '-9999px',
+    top: '-9999px',
+  };
+
+  let anchoredStyle = { left: '-9999px', top: '-9999px' };
+  let shouldDisplay = false;
   try {
-    const anchor = hoverAnchor;
-    if (anchor && typeof anchor === 'object') {
-      const left = (Number(anchor.left) || 0) + ((Number(anchor.width) || 0) / 2);
-      const top = (Number(anchor.top) || 0) + ((Number(anchor.height) || 0) / 2);
-      anchoredStyle = { position: 'fixed', left: `${Math.round(left)}px`, top: `${Math.round(top)}px`, transform: 'translate(-50%, -50%)', pointerEvents: 'auto' };
+    const id = hoveredIdRef && hoveredIdRef.current ? hoveredIdRef.current : null;
+    const list = visibleListRef && visibleListRef.current ? visibleListRef.current : [];
+    const idx = id ? list.findIndex(x => (x && x.id) ? String(x.id) === String(id) : false) : -1;
+    const itemExists = idx !== -1;
+
+    if (devMode && id && itemExists) {
+      const anchor = hoverAnchor;
+      if (anchor && typeof anchor === 'object') {
+        const left = (Number(anchor.left) || 0) + ((Number(anchor.width) || 0) / 2);
+        const top = (Number(anchor.top) || 0) + ((Number(anchor.height) || 0) / 2);
+        anchoredStyle = { left: `${Math.round(left)}px`, top: `${Math.round(top)}px`, transform: 'translate(-50%, -50%)', pointerEvents: 'auto' };
+        shouldDisplay = true;
+      } else {
+        anchoredStyle = { left: '-9999px', top: '-9999px' };
+        shouldDisplay = false;
+      }
     } else {
-      anchoredStyle = { position: 'absolute', left: -9999, top: -9999 };
+      anchoredStyle = { left: '-9999px', top: '-9999px' };
+      shouldDisplay = false;
     }
-  } catch (e) { anchoredStyle = { position: 'absolute', left: -9999, top: -9999 }; }
+  } catch (e) {
+    anchoredStyle = { left: '-9999px', top: '-9999px' };
+    shouldDisplay = false;
+  }
+
+  const finalStyle = { ...baseStyle, ...anchoredStyle };
+  finalStyle.display = shouldDisplay ? 'block' : 'none';
 
   const panelEl = (
-    <div ref={devPanelRef} className="devmode-hover-panel" style={{ ...baseStyle, ...anchoredStyle }}>
+    <div ref={devPanelRef} className="devmode-hover-panel" style={finalStyle}>
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, alignItems: 'center' }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'nowrap', alignItems: 'center' }}>
           <button type="button" className="devmode-btn devmode-hover-btn devmode-btn-edit" title="Edit" aria-label="Edit" onClick={onEdit}><EditIcon width={16} height={16} /></button>
@@ -3315,10 +3341,10 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
     </div>
   );
 
-  if (typeof document === 'undefined') return panelEl;
+  if (typeof document === 'undefined') return null;
   try {
-    return ReactDOM.createPortal(panelEl, document.body);
+    return createPortal(panelEl, document.body);
   } catch (e) {
-    return panelEl;
+    try { return panelEl; } catch (err) { return null; }
   }
 });
