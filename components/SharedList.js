@@ -11,7 +11,8 @@ import { formatDate } from './formatDate';
 import sharedListManager from './sharedListManager';
 import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
 import TierTag, { getTierByRank } from '../components/TierSystem';
-import DevModePanel from '../components/DevModePanel';
+
+const DevModePanel = React.lazy(() => import('../components/DevModePanel'));
 import { EditIcon, UpIcon, CopyIcon, DownIcon, AddIcon, DeleteIcon } from './DevIcons';
 import MobileSidebarOverlay from '../components/MobileSidebarOverlay';
 import { useScrollPersistence } from '../hooks/useScrollPersistence';
@@ -846,7 +847,8 @@ export default React.memo(function SharedList({
   useEffect(() => { try { sharedListManager.editIdxRef.current = editIdx; } catch (e) { } }, [editIdx]);
   useEffect(() => { try { sharedListManager.editFormRef.current = editForm; sharedListManager.editFormTagsRef.current = editFormTags; sharedListManager.editFormCustomTagsRef.current = editFormCustomTags; } catch (e) { } }, [editForm, editFormTags, editFormCustomTags]);
   const achievementRefs = useRef([]);
-  const searchTokensWeakRef = useRef(new WeakMap());
+  const searchTokensIdRef = useRef(new Map());
+  const searchTokensObjWeakRef = useRef(new WeakMap());
   const handleMoveUpRef = useRef(null);
   const handleMoveDownRef = useRef(null);
   const handleEditRef = useRef(null);
@@ -1089,31 +1091,61 @@ export default React.memo(function SharedList({
 
   useEffect(() => {
     try {
-      const map = new WeakMap();
+      const idMap = searchTokensIdRef.current || new Map();
+      const objMap = searchTokensObjWeakRef.current || new WeakMap();
       const items = Array.isArray(achievements) ? achievements : [];
+
+      const newIdMap = new Map();
       for (let i = 0; i < items.length; i++) {
         const a = items[i];
+        if (!a) continue;
         try {
-          const norm = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
-          const toks = _tokensFromNormalized(norm) || [];
-          map.set(a, toks);
-        } catch (e) {
-          try { map.set(a, []); } catch (ee) { }
-        }
+          const normalized = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
+          const id = (a && a.id != null) ? String(a.id) : null;
+          if (id != null) {
+            const prevEntry = idMap.get(id);
+            if (prevEntry && prevEntry._norm === normalized && Array.isArray(prevEntry.tokens)) {
+              newIdMap.set(id, prevEntry);
+            } else {
+              const toks = _tokensFromNormalized(normalized) || [];
+              newIdMap.set(id, { _norm: normalized, tokens: toks });
+            }
+          } else {
+            const prevEntry = objMap.get(a);
+            if (prevEntry && prevEntry._norm === normalized && Array.isArray(prevEntry.tokens)) {
+              objMap.set(a, prevEntry);
+            } else {
+              const toks = _tokensFromNormalized(normalized) || [];
+              try { objMap.set(a, { _norm: normalized, tokens: toks }); } catch (e) { }
+            }
+          }
+        } catch (e) { }
       }
-      searchTokensWeakRef.current = map;
+      searchTokensIdRef.current = newIdMap;
+      searchTokensObjWeakRef.current = objMap;
     } catch (e) { }
   }, [achievements]);
 
   function getItemTokens(a) {
     try {
-      const map = searchTokensWeakRef.current;
-      if (map && typeof map.get === 'function') {
-        const fromMap = map.get(a);
-        if (Array.isArray(fromMap)) return fromMap;
+      if (!a) return [];
+
+      if (Array.isArray(a._tokens) && a._tokens.length) return a._tokens;
+      const id = (a && a.id != null) ? String(a.id) : null;
+      if (id != null) {
+        const entry = searchTokensIdRef.current && searchTokensIdRef.current.get(id);
+        if (entry && Array.isArray(entry.tokens) && entry.tokens.length) return entry.tokens;
+      } else {
+        const entry = searchTokensObjWeakRef.current && searchTokensObjWeakRef.current.get(a);
+        if (entry && Array.isArray(entry.tokens) && entry.tokens.length) return entry.tokens;
       }
-      const norm = (a && a._searchableNormalized) ? a._searchableNormalized : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
-      return _tokensFromNormalized(norm) || [];
+      const norm = (a && a._searchableNormalized) ? a._searchableNormalized : (a && a._searchText) ? a._searchText : normalizeForSearch([a && a.name, a && a.player, a && a.id, a && a.levelID].filter(Boolean).join(' '));
+      const toks = Array.isArray(a._tokens) ? a._tokens : (_tokensFromNormalized(norm) || []);
+      try {
+        if (id != null) searchTokensIdRef.current.set(id, { _norm: norm, tokens: toks });
+        else searchTokensObjWeakRef.current.set(a, { _norm: norm, tokens: toks });
+      } catch (e) { }
+      return toks;
     } catch (e) { return []; }
   }
   useEffect(() => {
@@ -1352,6 +1384,28 @@ export default React.memo(function SharedList({
     } catch (e) { }
   }, []);
 
+  const achievementsSig = useMemo(() => getListSignature(achievements), [achievements, getListSignature]);
+
+  const searchInputList = useMemo(() => {
+    try {
+      if (!Array.isArray(achievements)) return [];
+      return achievements.map(a => {
+        if (!a || typeof a !== 'object') return a;
+        if (a._searchableNormalized) return a;
+        const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
+        const player = a && a.player ? String(a.player) : '';
+        const description = a && a.description ? String(a.description) : '';
+        const idStr = a && a.id != null ? String(a.id) : '';
+        const searchable = `${name} ${player} ${description} ${idStr}`;
+        try {
+          return { ...a, _searchableNormalized: normalizeForSearch(searchable) };
+        } catch (e) {
+          return { ...a, _searchableNormalized: '' };
+        }
+      });
+    } catch (e) { return achievements; }
+  }, [achievementsSig]);
+
   const {
     results: _searchResults,
     isSearching: _isSearching,
@@ -1361,25 +1415,7 @@ export default React.memo(function SharedList({
     handleVisibleInputChange,
     debouncedManualSearch,
   } = useSearch(
-    useMemo(() => {
-      try {
-        if (!Array.isArray(achievements)) return [];
-        return achievements.map(a => {
-          if (!a || typeof a !== 'object') return a;
-          if (a._searchableNormalized) return a;
-          const name = a && (a.name || a.title) ? String(a.name || a.title) : '';
-          const player = a && a.player ? String(a.player) : '';
-          const description = a && a.description ? String(a.description) : '';
-          const idStr = a && a.id != null ? String(a.id) : '';
-          const searchable = `${name} ${player} ${description} ${idStr}`;
-          try {
-            return { ...a, _searchableNormalized: normalizeForSearch(searchable) };
-          } catch (e) {
-            return { ...a, _searchableNormalized: '' };
-          }
-        });
-      } catch (e) { return achievements; }
-    }, [getListSignature(achievements)]),
+    searchInputList,
     debouncedSearch,
     { include: (debouncedFilterTags && debouncedFilterTags.include) || [], exclude: (debouncedFilterTags && debouncedFilterTags.exclude) || [] },
     { debounceMs: 120, setSearchCallback: setSearch, onEditCommand: handleOnEditCommand, externalRefs: { searchJumpPendingRef, lastJumpQueryRef, jumpCycleIndexRef, pendingSearchJumpRef } }
@@ -1440,6 +1476,22 @@ export default React.memo(function SharedList({
     } catch (e) { return []; }
   }, [filteredIds, achievementsMap]);
   const prevFilterSigRef = useRef(null);
+  const itemsSignature = useMemo(() => {
+    try {
+      const itemsSigList = Array.isArray(achievements) ? achievements : [];
+      return getListSignature(itemsSigList);
+    } catch (e) { return ''; }
+  }, [achievements, getListSignature]);
+
+  const filterSigRaw = useMemo(() => {
+    try {
+      const filterTagSig = `${(_normalizedFilterTags && _normalizedFilterTags.include) ? _normalizedFilterTags.include.join(',') : ''}|${(_normalizedFilterTags && _normalizedFilterTags.exclude) ? _normalizedFilterTags.exclude.join(',') : ''}`;
+      const qSig = (queryTokens && queryTokens.length) ? queryTokens.join(',') : '';
+      return `${itemsSignature}|${filterTagSig}|${qSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
+    } catch (e) { return '' + (itemsSignature || ''); }
+  }, [itemsSignature, _normalizedFilterTags, queryTokens, sortKey, sortDir, randomSeed]);
+
+  const debouncedFilterSig = useDebouncedValue(filterSigRaw, { minDelay: 120, maxDelay: 400, useIdle: true });
   useEffect(() => {
     try { if (ongoingFilterControllerRef.current && typeof ongoingFilterControllerRef.current.abort === 'function') ongoingFilterControllerRef.current.abort(); } catch (e) { }
     const controller = { aborted: false, abort() { this.aborted = true; } };
@@ -1454,10 +1506,7 @@ export default React.memo(function SharedList({
     } catch (e) { }
 
     try {
-      const itemsSigList = Array.isArray(achievements) ? achievements : [];
-      const filterTagSig = `${(_normalizedFilterTags && _normalizedFilterTags.include) ? _normalizedFilterTags.include.join(',') : ''}|${(_normalizedFilterTags && _normalizedFilterTags.exclude) ? _normalizedFilterTags.exclude.join(',') : ''}`;
-      const qSig = (queryTokens && queryTokens.length) ? queryTokens.join(',') : '';
-      const filterSig = `${getListSignature(itemsSigList)}|${filterTagSig}|${qSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
+      const filterSig = debouncedFilterSig;
 
       if (prevFilterSigRef.current && prevFilterSigRef.current === filterSig) {
         return () => { try { controller.abort(); } catch (e) { } };
@@ -1467,7 +1516,11 @@ export default React.memo(function SharedList({
 
       const cache = derivedCacheRef.current && derivedCacheRef.current.filtered;
       if (cache && cache.has(filterSig)) {
-        try { setFilteredIds(toIds(cache.get(filterSig) || [])); } catch (e) { }
+        try {
+
+          const cachedIds = cache.get(filterSig) || [];
+          setFilteredIds(cachedIds);
+        } catch (e) { }
         return () => { try { controller.abort(); } catch (e) { } };
       }
     } catch (e) { }
@@ -1571,7 +1624,7 @@ export default React.memo(function SharedList({
     });
 
     return () => { try { controller.abort(); } catch (e) { } };
-  }, [achievements, filterFn, sortKey, sortDir, compareByKey, randomSeed, startTransition, debouncedSearch, _searchResults]);
+  }, [debouncedFilterSig, achievements, compareByKey, randomSeed, startTransition, debouncedSearch, _searchResults]);
 
   useEffect(() => {
     if (!pendingSearchJumpRef.current) return;
@@ -1680,9 +1733,11 @@ export default React.memo(function SharedList({
   }, [baseDev, sortList, devMode, reordered]);
 
   const visibleList = devMode ? devAchievements : filtered;
+  const visibleListSignature = useMemo(() => toIds(visibleList).join('|'), [visibleList]);
+  const stableVisibleList = useMemo(() => visibleList, [visibleListSignature]);
 
-  const visibleListRef = useRef(visibleList);
-  useEffect(() => { visibleListRef.current = visibleList; }, [visibleList]);
+  const visibleListRef = useRef(stableVisibleList);
+  useEffect(() => { visibleListRef.current = stableVisibleList; }, [stableVisibleList]);
   const devPanelRef = useRef(null);
   const devPanelOriginalParentRef = useRef(null);
   const hoverDisabledRef = useRef(false);
@@ -2265,31 +2320,63 @@ export default React.memo(function SharedList({
     const fn = handleDuplicateRef.current;
     if (typeof fn === 'function') return fn(id, ...args);
   }, []);
+  function useStableCallback(fn) {
+    const ref = useRef(fn);
+    useEffect(() => { ref.current = fn; }, [fn]);
+    return useCallback((...args) => {
+      try { const f = ref.current; if (typeof f === 'function') return f(...args); } catch (e) { }
+    }, []);
+  }
+  const duplicateThumbKeysSig = useMemo(() => Array.from(duplicateThumbKeys || []).sort().join('|'), [duplicateThumbKeys]);
+  const stableDuplicateThumbKeys = useMemo(() => duplicateThumbKeys, [duplicateThumbKeysSig]);
+
+  const autoThumbMapSig = useMemo(() => {
+    try {
+      const keys = Object.keys(autoThumbMap || {}).sort();
+      return keys.map(k => `${k}:${String(autoThumbMap[k])}`).join('|');
+    } catch (e) { return '' + (autoThumbMap || ''); }
+  }, [autoThumbMap]);
+  const stableAutoThumbMap = useMemo(() => autoThumbMap, [autoThumbMapSig]);
+
+  const extraListsSig = useMemo(() => {
+    try {
+      const keys = Object.keys(extraLists || {}).sort();
+      return keys.map(k => `${k}:${(Array.isArray(extraLists[k]) ? extraLists[k].length : String(extraLists[k] || ''))}`).join('|');
+    } catch (e) { return '' + (extraLists || ''); }
+  }, [extraLists]);
+  const stableExtraLists = useMemo(() => extraLists, [extraListsSig]);
+  const handleMoveAchievementUpStable = useStableCallback(handleMoveAchievementUpCb);
+  const handleMoveAchievementDownStable = useStableCallback(handleMoveAchievementDownCb);
+  const handleEditAchievementStable = useStableCallback(handleEditAchievementCb);
+  const handleDuplicateAchievementStable = useStableCallback(handleDuplicateAchievementCb);
+  const handleRemoveAchievementStable = useStableCallback(handleRemoveAchievementCb);
+  const onRowHoverEnterStable = useStableCallback(onRowHoverEnterCb);
+  const onRowHoverLeaveStable = useStableCallback(onRowHoverLeaveCb);
 
   const listItemData = useMemo(() => ({
-    filtered: visibleList,
+    filtered: stableVisibleList,
     isMobile,
-    duplicateThumbKeys,
+    duplicateThumbKeys: stableDuplicateThumbKeys,
     mode,
     devMode,
-    autoThumbMap,
+    autoThumbMap: stableAutoThumbMap,
     showTiers: showTiers === true,
     usePlatformers,
-    extraLists,
+    extraLists: stableExtraLists,
     rankOffset,
     hideRank,
     achievements,
     storageKeySuffix,
     dataFileName,
-    handleMoveAchievementUp: handleMoveAchievementUpCb,
-    handleMoveAchievementDown: handleMoveAchievementDownCb,
-    handleEditAchievement: handleEditAchievementCb,
-    handleDuplicateAchievement: handleDuplicateAchievementCb,
-    handleRemoveAchievement: handleRemoveAchievementCb,
-    onRowHoverEnter: onRowHoverEnterCb,
-    onRowHoverLeave: onRowHoverLeaveCb,
+    handleMoveAchievementUp: handleMoveAchievementUpStable,
+    handleMoveAchievementDown: handleMoveAchievementDownStable,
+    handleEditAchievement: handleEditAchievementStable,
+    handleDuplicateAchievement: handleDuplicateAchievementStable,
+    handleRemoveAchievement: handleRemoveAchievementStable,
+    onRowHoverEnter: onRowHoverEnterStable,
+    onRowHoverLeave: onRowHoverLeaveStable,
     precomputedVisible,
-  }), [visibleList, isMobile, duplicateThumbKeys, mode, devMode, autoThumbMap, showTiers, usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible]);
+  }), [stableVisibleList, isMobile, stableDuplicateThumbKeys, mode, devMode, stableAutoThumbMap, showTiers, usePlatformers, stableExtraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible]);
 
   const ListRow = React.memo(function ListRow({ index, style, data }) {
     const {
@@ -2343,35 +2430,51 @@ export default React.memo(function SharedList({
       </div>
     );
   }, (prev, next) => {
+
     if (prev.index !== next.index) return false;
+
     const p = prev.data;
     const n = next.data;
     const pi = prev.index;
     const ni = next.index;
+
     const pItem = (p.filtered || [])[pi] || null;
     const nItem = (n.filtered || [])[ni] || null;
+
     const pId = pItem && pItem.id;
     const nId = nItem && nItem.id;
     if (String(pId) !== String(nId)) return false;
-
     if (p.devMode !== n.devMode) return false;
     if (p.showTiers !== n.showTiers) return false;
     if (p.usePlatformers !== n.usePlatformers) return false;
     if (p.mode !== n.mode) return false;
     if (p.hideRank !== n.hideRank) return false;
-    const pThumb = getThumbnailUrl(pItem, p.isMobile);
-    const nThumb = getThumbnailUrl(nItem, n.isMobile);
-    const pDup = p.duplicateThumbKeys && p.duplicateThumbKeys.has((pThumb || '').trim());
-    const nDup = n.duplicateThumbKeys && n.duplicateThumbKeys.has((nThumb || '').trim());
-    if (pDup !== nDup) return false;
-    const pAuto = pItem && pItem.levelID ? !!p.autoThumbMap[String(pItem.levelID)] : false;
-    const nAuto = nItem && nItem.levelID ? !!n.autoThumbMap[String(nItem.levelID)] : false;
-    if (pAuto !== nAuto) return false;
-    const pr = (pi + 1);
-    const nr = (ni + 1);
-    const pDisp = Number.isFinite(Number(pr)) ? Number(pr) + (Number(p.rankOffset) || 0) : pr;
-    const nDisp = Number.isFinite(Number(nr)) ? Number(nr) + (Number(n.rankOffset) || 0) : nr;
-    if (pDisp !== nDisp) return false;
+    if (p.isMobile !== n.isMobile) return false;
+    try {
+      const pPre = (p.precomputedVisible && (p.precomputedVisible[pi] || {})) || {};
+      const nPre = (n.precomputedVisible && (n.precomputedVisible[ni] || {})) || {};
+      if (!!pPre.isDup !== !!nPre.isDup) return false;
+      if (!!pPre.autoThumbAvailable !== !!nPre.autoThumbAvailable) return false;
+      if ((pPre.displayRank || 0) !== (nPre.displayRank || 0)) return false;
+    } catch (e) { }
+    try {
+      const pThumb = getThumbnailUrl(pItem, p.isMobile);
+      const nThumb = getThumbnailUrl(nItem, n.isMobile);
+      if (String((pThumb || '').trim()) !== String((nThumb || '').trim())) return false;
+    } catch (e) { }
+    if (pItem === nItem) return true;
+    try {
+      const fields = ['name', 'player', '_thumbnail', 'rank', 'date', 'length', '_lengthStr'];
+      for (const f of fields) {
+        const pv = pItem ? pItem[f] : undefined;
+        const nv = nItem ? nItem[f] : undefined;
+        if (pv !== nv) return false;
+      }
+      const pTags = Array.isArray(pItem && pItem._sortedTags) ? pItem._sortedTags : Array.isArray(pItem && pItem.tags) ? pItem.tags : [];
+      const nTags = Array.isArray(nItem && nItem._sortedTags) ? nItem._sortedTags : Array.isArray(nItem && nItem.tags) ? nItem.tags : [];
+      if (pTags.length !== nTags.length) return false;
+      if (pTags.join('|') !== nTags.join('|')) return false;
+    } catch (e) { }
     return true;
   });
 
@@ -2945,54 +3048,58 @@ export default React.memo(function SharedList({
             </div>
           </div>
 
-          <DevModePanel
-            devMode={devMode}
-            achievements={achievements}
-            reordered={reordered}
-            stagedReordered={reordered}
-            originalAchievements={originalAchievements}
-            originalSnapshotRef={originalSnapshotRef}
-            batchUpdateReordered={batchUpdateReordered}
-            setReordered={setReordered}
-            setStagedReordered={updateReordered}
-            setEditIdx={setEditIdx}
-            editIdx={editIdx}
-            editForm={editForm}
-            setEditForm={setEditForm}
-            editFormTags={editFormTags}
-            setEditFormTags={setEditFormTags}
-            editFormCustomTags={editFormCustomTags}
-            setEditFormCustomTags={setEditFormCustomTags}
-            AVAILABLE_TAGS={AVAILABLE_TAGS}
-            showNewForm={showNewForm}
-            newForm={newForm}
-            setNewForm={setNewForm}
-            newFormTags={newFormTags}
-            setNewFormTags={setNewFormTags}
-            newFormCustomTags={newFormCustomTags}
-            setNewFormCustomTags={setNewFormCustomTags}
-            setShowNewForm={setShowNewForm}
-            pasteSearch={pasteSearch}
-            setPasteSearch={setPasteSearch}
-            pasteShowResults={pasteShowResults}
-            setPasteShowResults={setPasteShowResults}
-            getPasteCandidates={getPasteCandidates}
-            getMostVisibleIdx={getMostVisibleIdx}
-            listRef={listRef}
-            visibleListRef={visibleListRef}
-            storageKeySuffix={storageKeySuffix}
-            dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
-            usePlatformers={usePlatformers}
-            setDuplicateThumbKeys={setDuplicateThumbKeys}
-            setDevMode={setDevMode}
-            setScrollToIdx={setScrollToIdx}
-            setInsertIdx={setInsertIdx}
-            insertIdx={insertIdx}
-            devAchievements={devAchievements}
-            handlePasteSelect={handlePasteSelect}
-            onImportAchievementsJson={onImportAchievementsJson}
-            visible={devPanelVisible}
-          />
+          {devMode && (
+            <React.Suspense fallback={null}>
+              <DevModePanel
+                devMode={devMode}
+                achievements={achievements}
+                reordered={reordered}
+                stagedReordered={reordered}
+                originalAchievements={originalAchievements}
+                originalSnapshotRef={originalSnapshotRef}
+                batchUpdateReordered={batchUpdateReordered}
+                setReordered={setReordered}
+                setStagedReordered={updateReordered}
+                setEditIdx={setEditIdx}
+                editIdx={editIdx}
+                editForm={editForm}
+                setEditForm={setEditForm}
+                editFormTags={editFormTags}
+                setEditFormTags={setEditFormTags}
+                editFormCustomTags={editFormCustomTags}
+                setEditFormCustomTags={setEditFormCustomTags}
+                AVAILABLE_TAGS={AVAILABLE_TAGS}
+                showNewForm={showNewForm}
+                newForm={newForm}
+                setNewForm={setNewForm}
+                newFormTags={newFormTags}
+                setNewFormTags={setNewFormTags}
+                newFormCustomTags={newFormCustomTags}
+                setNewFormCustomTags={setNewFormCustomTags}
+                setShowNewForm={setShowNewForm}
+                pasteSearch={pasteSearch}
+                setPasteSearch={setPasteSearch}
+                pasteShowResults={pasteShowResults}
+                setPasteShowResults={setPasteShowResults}
+                getPasteCandidates={getPasteCandidates}
+                getMostVisibleIdx={getMostVisibleIdx}
+                listRef={listRef}
+                visibleListRef={visibleListRef}
+                storageKeySuffix={storageKeySuffix}
+                dataFileName={usePlatformers ? (dataFileName.includes('timeline') ? 'platformertimeline.json' : 'platformers.json') : dataFileName}
+                usePlatformers={usePlatformers}
+                setDuplicateThumbKeys={setDuplicateThumbKeys}
+                setDevMode={setDevMode}
+                setScrollToIdx={setScrollToIdx}
+                setInsertIdx={setInsertIdx}
+                insertIdx={insertIdx}
+                devAchievements={devAchievements}
+                handlePasteSelect={handlePasteSelect}
+                onImportAchievementsJson={onImportAchievementsJson}
+                visible={devPanelVisible}
+              />
+            </React.Suspense>
+          )}
           <div style={{ position: 'relative', width: '100%' }}>
             <ListWindow
               ref={listRef}
