@@ -2098,7 +2098,16 @@ export default React.memo(function SharedList({
 
     try {
       const panel = devPanelRef.current;
-      const related = ev && (ev.relatedTarget || ev.toElement || (ev.nativeEvent && ev.nativeEvent.relatedTarget));
+      let related = ev && (ev.relatedTarget || ev.toElement || (ev.nativeEvent && ev.nativeEvent.relatedTarget));
+      if (!related && ev) {
+        try {
+          const cx = ev.clientX || (ev.nativeEvent && ev.nativeEvent.clientX) || 0;
+          const cy = ev.clientY || (ev.nativeEvent && ev.nativeEvent.clientY) || 0;
+          if (typeof document !== 'undefined' && typeof document.elementFromPoint === 'function') {
+            related = document.elementFromPoint(cx, cy) || null;
+          }
+        } catch (e) { related = null; }
+      }
       if (related) {
         if (panel && panel.contains(related)) return;
         let root = null;
