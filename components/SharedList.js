@@ -622,6 +622,32 @@ export default React.memo(function SharedList({
       try { if (_scrollTimerRef.current) { clearTimeout(_scrollTimerRef.current); _scrollTimerRef.current = null; } } catch (e) { }
     };
   }, []);
+  useEffect(() => {
+    try {
+      if (typeof document === 'undefined') return;
+      const handler = (e) => {
+        try {
+          if (devModeRef && devModeRef.current) return;
+          if (!e) return;
+          if (shouldBypassStop(e)) return;
+          if (e.ctrlKey || e.metaKey) return;
+          const btn = (typeof e.button === 'number') ? e.button : (e.nativeEvent && e.nativeEvent.button);
+          if (btn === 1) return;
+          const target = e.target || e.srcElement;
+          if (!target || typeof target.closest !== 'function') return;
+          const anchor = target.closest('a[href]');
+          if (!anchor) return;
+          const href = anchor.getAttribute('href') || anchor.href;
+          if (!href || typeof href !== 'string') return;
+          if (!href.includes('/achievement/')) return;
+          try { e.preventDefault(); } catch (err) { }
+          try { window.location.href = href; } catch (err) { }
+        } catch (err) { }
+      };
+      document.addEventListener('click', handler, true);
+      return () => { try { document.removeEventListener('click', handler, true); } catch (e) { } };
+    } catch (e) { }
+  }, []);
 
   function maybeStartTransition(fn) {
     try {
