@@ -176,12 +176,6 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
       <a
         href={`/achievement/${encodeURIComponent(achievement.id)}`}
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
-        onClick={handleClick}
-        onClickCapture={(e) => { if (devMode) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
-        onMouseDown={handleClick}
-        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
-        tabIndex={devMode ? -1 : 0}
-        aria-disabled={devMode ? 'true' : undefined}
       >
         <div
           className={`achievement-item`}
@@ -267,12 +261,6 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           color: 'inherit',
           cursor: devMode ? 'not-allowed' : 'pointer',
         }}
-        onClick={handleClick}
-        onClickCapture={(e) => { if (devMode) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
-        onMouseDown={handleClick}
-        onKeyDown={(e) => { if (devMode && (e.key === 'Enter' || e.key === ' ')) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
-        tabIndex={devMode ? -1 : 0}
-        aria-disabled={devMode ? 'true' : undefined}
       >
         <div
           className="achievement-item"
