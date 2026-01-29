@@ -176,6 +176,21 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
       <a
         href={`/achievement/${encodeURIComponent(achievement.id)}`}
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+        onClickCapture={(e) => {
+          try {
+            const btn = e && e.nativeEvent && typeof e.nativeEvent.button === 'number' ? e.nativeEvent.button : null;
+            if (e.ctrlKey || e.metaKey || btn === 1) return;
+            if (devMode) {
+              try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { }
+              return;
+            }
+            const href = (e && e.currentTarget && typeof e.currentTarget.getAttribute === 'function') ? e.currentTarget.getAttribute('href') : null;
+            if (href) {
+              try { e.preventDefault(); e.stopPropagation(); } catch (err) { }
+              window.location.href = href;
+            }
+          } catch (err) { }
+        }}
       >
         <div
           className={`achievement-item`}
@@ -260,6 +275,21 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
           textDecoration: 'none',
           color: 'inherit',
           cursor: devMode ? 'not-allowed' : 'pointer',
+        }}
+        onClickCapture={(e) => {
+          try {
+            const btn = e && e.nativeEvent && typeof e.nativeEvent.button === 'number' ? e.nativeEvent.button : null;
+            if (e.ctrlKey || e.metaKey || btn === 1) return;
+            if (devMode) {
+              try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { }
+              return;
+            }
+            const href = (e && e.currentTarget && typeof e.currentTarget.getAttribute === 'function') ? e.currentTarget.getAttribute('href') : null;
+            if (href) {
+              try { e.preventDefault(); e.stopPropagation(); } catch (err) { }
+              window.location.href = href;
+            }
+          } catch (err) { }
         }}
       >
         <div
