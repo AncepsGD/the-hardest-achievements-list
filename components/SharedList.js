@@ -174,6 +174,7 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
   return (
     <Link href={`/achievement/${achievement.id}`} passHref legacyBehavior>
       <a
+        href={`/achievement/${encodeURIComponent(achievement.id)}`}
         style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
         onClick={handleClick}
         onClickCapture={(e) => { if (devMode) { try { if (!shouldBypassStop(e)) { e.preventDefault(); e.stopPropagation(); } } catch (err) { } } }}
@@ -260,6 +261,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
   return (
     <Link href={`/achievement/${encodeURIComponent(achievement.id)}`} passHref legacyBehavior>
       <a
+        href={`/achievement/${encodeURIComponent(achievement.id)}`}
         style={{
           textDecoration: 'none',
           color: 'inherit',
