@@ -41,25 +41,39 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
 
   const handlePillClick = useCallback((tag) => {
     const current = filterTagsRef.current || { include: [], exclude: [] };
-    const state = (current && (Array.isArray(current.include) ? current.include : []).includes(tag)) ? 'include' : ((current && (Array.isArray(current.exclude) ? current.exclude : []).includes(tag)) ? 'exclude' : 'neutral');
+    const tagNorm = String(tag || '').toUpperCase();
+    const curInc = Array.isArray(current.include) ? current.include : [];
+    const curExc = Array.isArray(current.exclude) ? current.exclude : [];
+    const state = curInc.map(s => String(s || '').toUpperCase()).includes(tagNorm) ? 'include' : (curExc.map(s => String(s || '').toUpperCase()).includes(tagNorm) ? 'exclude' : 'neutral');
     try { console.log && console.log('handlePillClick', { tag, state }); } catch (e) { }
 
-    const include = Array.isArray(current.include) ? current.include.slice() : [];
-    const exclude = Array.isArray(current.exclude) ? current.exclude.slice() : [];
+    const include = curInc.slice();
+    const exclude = curExc.slice();
+
+    const removeCaseInsensitive = (arr, val) => {
+      const v = String(val || '').toUpperCase();
+      const idx = arr.findIndex(x => String(x || '').toUpperCase() === v);
+      if (idx !== -1) arr.splice(idx, 1);
+    };
 
     if (state === 'neutral') {
-      if (!include.includes(tag)) include.push(tag);
+
+      removeCaseInsensitive(include, tag);
+      removeCaseInsensitive(exclude, tag);
+      include.push(tag);
     } else if (state === 'include') {
-      const idx = include.indexOf(tag); if (idx !== -1) include.splice(idx, 1);
-      if (!exclude.includes(tag)) exclude.push(tag);
+
+      removeCaseInsensitive(include, tag);
+      removeCaseInsensitive(exclude, tag);
+      exclude.push(tag);
     } else if (state === 'exclude') {
-      const idx = exclude.indexOf(tag); if (idx !== -1) exclude.splice(idx, 1);
+
+      removeCaseInsensitive(exclude, tag);
     }
 
     try {
       const next = { include: include.slice(), exclude: exclude.slice() };
       try { setFilterTags(next); } catch (e) { }
-      try { if (typeof immediateApplyFilters === 'function') immediateApplyFilters(next); } catch (e) { }
     } catch (e) { }
     try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) { }
   }, [setFilterTags, isMobile, setShow]);
