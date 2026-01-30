@@ -116,8 +116,29 @@ const TAG_DEFINITIONS = {
   },
 };
 
-const TagComponent = function Tag({ tag, onClick, tabIndex, clickable, state }) {
-  const def = TAG_DEFINITIONS[tag.toUpperCase()] || {};
+const TAG_PRIORITY_INDEX = TAG_PRIORITY_ORDER.reduce((m, v, i) => {
+  m[v] = i;
+  return m;
+}, {});
+
+const TagComponent = function Tag({ tag, onClick, tabIndex, clickable, state, ...rest }) {
+  const defKey = String(tag || '').toUpperCase();
+  const def = TAG_DEFINITIONS[defKey] || {};
+  const labelText = def.tooltip || (def.text || tag);
+
+  const handleClick = React.useCallback((e) => {
+    if (!clickable) return;
+    onClick && onClick(e);
+  }, [onClick, clickable]);
+
+  const handleKeyDown = React.useCallback((e) => {
+    if (!clickable) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick && onClick(e);
+    }
+  }, [onClick, clickable]);
+
   const classNames = [
     'tag',
     def.className,
@@ -126,22 +147,19 @@ const TagComponent = function Tag({ tag, onClick, tabIndex, clickable, state }) 
     state === 'exclude' ? 'tag-exclude' : '',
     state === 'neutral' ? 'tag-neutral' : ''
   ].filter(Boolean).join(' ');
+
   return (
     <>
       <span
+        {...rest}
         className={classNames}
-        title={def.tooltip || (def.text || tag)}
-        aria-label={def.tooltip || (def.text || tag)}
-        onClick={clickable ? onClick : undefined}
+        title={labelText}
+        aria-label={labelText}
+        onClick={clickable ? handleClick : undefined}
         tabIndex={clickable ? (tabIndex ?? 0) : undefined}
         role={clickable ? 'button' : undefined}
         aria-pressed={clickable ? (state === 'include' ? 'true' : 'false') : undefined}
-        onKeyDown={clickable ? (e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            onClick && onClick(e);
-          }
-        }) : undefined}
+        onKeyDown={clickable ? handleKeyDown : undefined}
       >
         {def.icon && (
           <img src={def.icon} alt={def.text} />
@@ -158,7 +176,7 @@ const TagComponent = function Tag({ tag, onClick, tabIndex, clickable, state }) 
           padding: 4px 10px;
           border-radius: 8px;
           margin-right: 4px;
-          box-shadow: 0 2px 8px #00000038, 0 4px 16px #0000001A; /* Enhanced drop shadow */
+          box-shadow: 0 2px 8px #00000038, 0 4px 16px #0000001A;
           color: #FFFFFF;
           background: linear-gradient(135deg, #23283E 0%, #2E3451 100%);
           text-transform: uppercase;
@@ -280,3 +298,22 @@ const Tag = React.memo(TagComponent, (prev, next) => {
 export default Tag;
 
 export { TAG_DEFINITIONS, TAG_PRIORITY_ORDER };
+
+export function sortTags(tags) {
+  try {
+    const arr = Array.isArray(tags) ? tags.slice() : [];
+    arr.sort((a, b) => {
+      const A = String(a || '').toUpperCase();
+      const B = String(b || '').toUpperCase();
+      const ia = TAG_PRIORITY_INDEX[A] ?? -1;
+      const ib = TAG_PRIORITY_INDEX[B] ?? -1;
+      if (ia === ib) return A.localeCompare(B);
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+    return arr;
+  } catch (e) {
+    return Array.isArray(tags) ? tags.slice() : [];
+  }
+}
