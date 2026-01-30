@@ -35,14 +35,14 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
         else if (exc.includes(tag)) states[tag] = 'exclude';
         else states[tag] = 'neutral';
       });
-    } catch (e) {}
+    } catch (e) { }
     return states;
   }, [allTags, filterTags]);
 
   const handlePillClick = useCallback((tag) => {
     const current = filterTagsRef.current || { include: [], exclude: [] };
     const state = (current && (Array.isArray(current.include) ? current.include : []).includes(tag)) ? 'include' : ((current && (Array.isArray(current.exclude) ? current.exclude : []).includes(tag)) ? 'exclude' : 'neutral');
-    try { console.log && console.log('handlePillClick', { tag, state }); } catch (e) {}
+    try { console.log && console.log('handlePillClick', { tag, state }); } catch (e) { }
 
     const include = Array.isArray(current.include) ? current.include.slice() : [];
     const exclude = Array.isArray(current.exclude) ? current.exclude.slice() : [];
@@ -56,20 +56,10 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       const idx = exclude.indexOf(tag); if (idx !== -1) exclude.splice(idx, 1);
     }
 
-    try { setFilterTags({ include, exclude }); } catch (e) {}
-    try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) {}
+    try { setFilterTags({ include, exclude }); } catch (e) { }
+    try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) { }
   }, [setFilterTags, isMobile, setShow]);
   const sortedTags = useMemo(() => sortTags(allTags), [allTags]);
-  const onContainerClick = useCallback((e) => {
-    try {
-      const t = e && e.target && typeof e.target.closest === 'function' ? e.target.closest('.tag') : null;
-      if (!t) return;
-      const tag = t.getAttribute && t.getAttribute('data-tag');
-      if (!tag) return;
-      handlePillClick(tag);
-    } catch (err) {}
-  }, [handlePillClick]);
-
   const sortedTagsMemo = sortedTags;
   const tagElements = useMemo(() => {
     try {
@@ -81,12 +71,13 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
           data-tag={tag}
           tabIndex={0}
           clickable={true}
-          onClick={(e) => { try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); handlePillClick(tag); } catch (err) {} }}
+          onClick={(e) => { try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); handlePillClick(tag); } catch (err) { } }}
         />
       ));
-    } catch (e) { return [];
+    } catch (e) {
+      return [];
     }
-  }, [sortedTagsMemo, tagStates]);
+  }, [sortedTagsMemo, tagStates, handlePillClick]);
 
   return (
     <div
@@ -104,7 +95,7 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       {allTags.length === 0 ? (
         <span style={{ color: '#aaa', fontSize: 13 }}>Loading tags...</span>
       ) : (
-        <div onClick={onContainerClick} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           {tagElements}
         </div>
       )}
@@ -510,8 +501,19 @@ export default React.memo(function SharedList({
 
   const filterTags = useMemo(() => ({ include: _includeTags, exclude: _excludeTags }), [_includeTags, _excludeTags]);
   const setFilterTags = useCallback((next) => {
-    _setIncludeTags(next?.include || []);
-    _setExcludeTags(next?.exclude || []);
+    try {
+      const srcInc = next && Array.isArray(next.include) ? next.include : [];
+      const srcExc = next && Array.isArray(next.exclude) ? next.exclude : [];
+      _setIncludeTags(srcInc.slice());
+      _setExcludeTags(srcExc.slice());
+      try {
+        const incClone = srcInc.slice();
+        const excClone = srcExc.slice();
+        setDebouncedFilterTags && typeof setDebouncedFilterTags === 'function' && setDebouncedFilterTags({ include: incClone, exclude: excClone });
+      } catch (err) { }
+    } catch (e) {
+      try { _setIncludeTags([]); _setExcludeTags([]); } catch (err) { }
+    }
   }, [_setIncludeTags, _setExcludeTags]);
 
   const handleSetFilterTags = useCallback((next) => {
@@ -526,7 +528,12 @@ export default React.memo(function SharedList({
   useEffect(() => { debouncedFilterTagsRef.current = debouncedFilterTags; }, [debouncedFilterTags]);
   useEffect(() => {
     const t = setTimeout(() => {
-      try { setDebouncedFilterTags(getActiveFilters()); } catch (e) { }
+      try {
+        const active = getActiveFilters() || { include: [], exclude: [] };
+        const inc = Array.isArray(active.include) ? active.include.slice() : [];
+        const exc = Array.isArray(active.exclude) ? active.exclude.slice() : [];
+        setDebouncedFilterTags({ include: inc, exclude: exc });
+      } catch (e) { }
     }, 140);
     return () => clearTimeout(t);
   }, [_includeTags, _excludeTags, getActiveFilters]);
@@ -1541,11 +1548,15 @@ export default React.memo(function SharedList({
 
   const filterSigRaw = useMemo(() => {
     try {
-      const filterTagSig = `${(_normalizedFilterTags && _normalizedFilterTags.include) ? _normalizedFilterTags.include.join(',') : ''}|${(_normalizedFilterTags && _normalizedFilterTags.exclude) ? _normalizedFilterTags.exclude.join(',') : ''}`;
+      const rawInc = debouncedFilterTags && Array.isArray(debouncedFilterTags.include) ? JSON.stringify(debouncedFilterTags.include) : '';
+      const rawExc = debouncedFilterTags && Array.isArray(debouncedFilterTags.exclude) ? JSON.stringify(debouncedFilterTags.exclude) : '';
+      const normInc = (_normalizedFilterTags && Array.isArray(_normalizedFilterTags.include)) ? _normalizedFilterTags.include.join(',') : '';
+      const normExc = (_normalizedFilterTags && Array.isArray(_normalizedFilterTags.exclude)) ? _normalizedFilterTags.exclude.join(',') : '';
+      const filterTagSig = `${rawInc}|${rawExc}::${normInc}|${normExc}`;
       const qSig = (queryTokens && queryTokens.length) ? queryTokens.join(',') : '';
       return `${itemsSignature}|${filterTagSig}|${qSig}|${String(sortKey || '')}|${String(sortDir || '')}|${String(randomSeed || '')}`;
     } catch (e) { return '' + (itemsSignature || ''); }
-  }, [itemsSignature, _normalizedFilterTags, queryTokens, sortKey, sortDir, randomSeed]);
+  }, [itemsSignature, debouncedFilterTags, _normalizedFilterTags, queryTokens, sortKey, sortDir, randomSeed]);
 
   const debouncedFilterSig = useDebouncedValue(filterSigRaw, { minDelay: 120, maxDelay: 400, useIdle: true });
   useEffect(() => {
