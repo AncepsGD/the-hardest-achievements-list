@@ -9,7 +9,7 @@ import Background from '../components/Background';
 import { useDateFormat } from '../components/DateFormatContext';
 import { formatDate } from './formatDate';
 import sharedListManager from './sharedListManager';
-import Tag, { TAG_PRIORITY_ORDER } from '../components/Tag';
+import Tag, { TAG_PRIORITY_ORDER, sortTags } from '../components/Tag';
 import TierTag, { getTierByRank } from '../components/TierSystem';
 
 const DevModePanel = React.lazy(() => import('../components/DevModePanel'));
@@ -59,35 +59,33 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
     try { setFilterTags({ include, exclude }); } catch (e) {}
     try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) {}
   }, [setFilterTags, isMobile, setShow]);
-  const handlersRef = useRef(new Map());
-  useEffect(() => {
+  const sortedTags = useMemo(() => sortTags(allTags), [allTags]);
+  const onContainerClick = useCallback((e) => {
     try {
-      const wanted = new Set(Array.isArray(allTags) ? allTags : []);
+      const t = e && e.target && typeof e.target.closest === 'function' ? e.target.closest('.tag') : null;
+      if (!t) return;
+      const tag = t.getAttribute && t.getAttribute('data-tag');
+      if (!tag) return;
+      handlePillClick(tag);
+    } catch (err) {}
+  }, [handlePillClick]);
 
-      wanted.forEach(tag => {
-        if (!handlersRef.current.has(tag)) {
-          handlersRef.current.set(tag, (e) => { try { handlePillClick(tag); } catch (err) {} });
-        }
-      });
-
-      Array.from(handlersRef.current.keys()).forEach(k => { if (!wanted.has(k)) handlersRef.current.delete(k); });
-    } catch (e) {}
-  }, [allTags, handlePillClick]);
-
-  const sortedTags = useMemo(() => {
+  const sortedTagsMemo = sortedTags;
+  const tagElements = useMemo(() => {
     try {
-      const copy = Array.isArray(allTags) ? allTags.slice() : [];
-      copy.sort((a, b) => {
-        const ia = TAG_PRIORITY_ORDER.indexOf(String(a || '').toUpperCase());
-        const ib = TAG_PRIORITY_ORDER.indexOf(String(b || '').toUpperCase());
-        if (ia === ib) return String(a || '').localeCompare(String(b || ''));
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-      });
-      return copy;
-    } catch (e) { return Array.isArray(allTags) ? allTags.slice() : []; }
-  }, [allTags]);
+      return (sortedTagsMemo || []).map(tag => (
+        <Tag
+          key={tag}
+          tag={tag}
+          state={tagStates[tag]}
+          data-tag={tag}
+          tabIndex={0}
+          clickable={true}
+        />
+      ));
+    } catch (e) { return [];
+    }
+  }, [sortedTagsMemo, tagStates]);
 
   return (
     <div
@@ -105,16 +103,9 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       {allTags.length === 0 ? (
         <span style={{ color: '#aaa', fontSize: 13 }}>Loading tags...</span>
       ) : (
-        sortedTags.map(tag => (
-          <Tag
-            key={tag}
-            tag={tag}
-            state={tagStates[tag]}
-            onClick={handlersRef.current.get(tag)}
-            tabIndex={0}
-            clickable={true}
-          />
-        ))
+        <div onClick={onContainerClick} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {tagElements}
+        </div>
       )}
     </div>
   );
@@ -543,14 +534,7 @@ export default React.memo(function SharedList({
   const AVAILABLE_TAGS = useMemo(() => {
     try {
       const uniq = Array.from(new Set(Array.isArray(allTags) ? allTags : []));
-      return uniq.sort((a, b) => {
-        const ia = TAG_PRIORITY_ORDER.indexOf(String(a || '').toUpperCase());
-        const ib = TAG_PRIORITY_ORDER.indexOf(String(b || '').toUpperCase());
-        if (ia === ib) return String(a || '').localeCompare(String(b || ''));
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
-      });
+      return sortTags(uniq);
     } catch (e) { return Array.isArray(allTags) ? allTags.slice() : []; }
   }, [allTags]);
   const [isMobile, setIsMobile] = useState(false);
