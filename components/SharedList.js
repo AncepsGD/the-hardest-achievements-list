@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition, memo } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback, useTransition } from 'react';
 import { createPortal } from 'react-dom';
 import { FixedSizeList as ListWindow } from 'react-window';
 import Link from 'next/link';
@@ -21,7 +21,7 @@ import { enhanceAchievement, mapEnhanceArray, getThumbnailUrl, normalizeForSearc
 import useTagFilters from './useTagFilters';
 import useSearch from './useSearch';
 
-function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
+function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow, immediateApplyFilters }) {
   const filterTagsRef = useRef(filterTags);
   useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
 
@@ -56,7 +56,11 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       const idx = exclude.indexOf(tag); if (idx !== -1) exclude.splice(idx, 1);
     }
 
-    try { setFilterTags({ include, exclude }); } catch (e) { }
+    try {
+      const next = { include: include.slice(), exclude: exclude.slice() };
+      try { if (typeof immediateApplyFilters === 'function') immediateApplyFilters(next); } catch (e) { }
+      setFilterTags(next);
+    } catch (e) { }
     try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) { }
   }, [setFilterTags, isMobile, setShow]);
   const sortedTags = useMemo(() => sortTags(allTags), [allTags]);
@@ -249,21 +253,9 @@ function TimelineAchievementCardInner({ achievement, previousAchievement, onHove
   );
 }
 
-const TimelineAchievementCard = memo(TimelineAchievementCardInner, (prev, next) => {
-  const pa = prev.achievement || {};
-  const na = next.achievement || {};
-  const sameId = (pa.id && na.id) ? String(pa.id) === String(na.id) : pa === na;
-  return sameId
-    && prev.devMode === next.devMode
-    && prev.autoThumbAvailable === next.autoThumbAvailable
-    && prev.showTiers === next.showTiers
-    && prev.totalAchievements === next.totalAchievements
-    && prev.mode === next.mode
-    && prev.usePlatformers === next.usePlatformers
-    && prev.listType === next.listType;
-});
+const TimelineAchievementCard = TimelineAchievementCardInner;
 
-const AchievementCard = memo(function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave }) {
+function AchievementCard({ achievement, devMode, autoThumbAvailable, displayRank, showRank = true, totalAchievements, achievements = [], mode = '', usePlatformers = false, showTiers = false, extraLists = {}, listType = 'main', onHoverEnter, onHoverLeave }) {
   const { dateFormat } = useDateFormat();
   const isPlatformer = achievement && typeof achievement._isPlatformer === 'boolean' ? achievement._isPlatformer : ((achievement && Array.isArray(achievement.tags)) ? achievement.tags.some(t => String(t).toLowerCase() === 'platformer') : false);
   const tier = getTierByRank(achievement.rank, totalAchievements, achievements, { enable: showTiers === true, listType });
@@ -352,22 +344,7 @@ const AchievementCard = memo(function AchievementCard({ achievement, devMode, au
       </a>
     </Link>
   );
-}, (prev, next) => {
-  const pa = prev.achievement || {};
-  const na = next.achievement || {};
-  const sameId = (pa.id && na.id) ? String(pa.id) === String(na.id) : pa === na;
-  return sameId
-    && prev.devMode === next.devMode
-    && prev.autoThumbAvailable === next.autoThumbAvailable
-    && prev.displayRank === next.displayRank
-    && prev.showRank === next.showRank
-    && prev.totalAchievements === next.totalAchievements
-    && prev.mode === next.mode
-    && prev.usePlatformers === next.usePlatformers
-    && prev.showTiers === next.showTiers
-    && prev.listType === next.listType
-    && prev.onEditHandler === next.onEditHandler;
-});
+}
 function useDebouncedValue(value, opt) {
   const [debounced, setDebounced] = useState(value);
   const lastChangeRef = useRef(Date.now());
@@ -423,7 +400,7 @@ function useDebouncedValue(value, opt) {
   return debounced;
 }
 
-export default React.memo(function SharedList({
+export default function SharedList({
   dataUrl = '/achievements.json',
   dataFileName = 'achievements.json',
   storageKeySuffix = 'achievements',
@@ -1538,6 +1515,27 @@ export default React.memo(function SharedList({
       return (Array.isArray(filteredIds) ? filteredIds.map(id => achievementsMap.get(String(id))).filter(Boolean) : []);
     } catch (e) { return []; }
   }, [filteredIds, achievementsMap]);
+
+  const immediateApplyFilters = useCallback((nextFilters) => {
+    try {
+      const inc = Array.isArray(nextFilters && nextFilters.include) ? nextFilters.include.map(s => String(s || '').toUpperCase()) : [];
+      const exc = Array.isArray(nextFilters && nextFilters.exclude) ? nextFilters.exclude.map(s => String(s || '').toUpperCase()) : [];
+      const ids = (Array.isArray(achievements) ? achievements : []).filter(a => {
+        try {
+          const tags = (a.tags || []).map(t => String(t || '').toUpperCase());
+          if (inc.length && !inc.every(tag => tags.includes(tag))) return false;
+          if (exc.length && exc.some(tag => tags.includes(tag))) return false;
+          if (queryTokens && queryTokens.length) {
+            const itemTokens = getItemTokens(a);
+            if (!itemTokens || itemTokens.length === 0) return false;
+            if (!queryTokens.every(qt => itemTokens.some(t => typeof t === 'string' && t.startsWith(qt)))) return false;
+          }
+          return true;
+        } catch (e) { return false; }
+      }).map(a => (a && a.id != null) ? String(a.id) : null).filter(Boolean);
+      setFilteredIds(ids);
+    } catch (e) { }
+  }, [achievements, queryTokens, getItemTokens, setFilteredIds]);
   const prevFilterSigRef = useRef(null);
   const itemsSignature = useMemo(() => {
     try {
@@ -1691,7 +1689,7 @@ export default React.memo(function SharedList({
     });
 
     return () => { try { controller.abort(); } catch (e) { } };
-  }, [debouncedFilterSig, achievements, compareByKey, randomSeed, startTransition, debouncedSearch, _searchResults]);
+  }, [debouncedFilterTags, achievements]);
 
   useEffect(() => {
     if (!pendingSearchJumpRef.current) return;
@@ -1792,16 +1790,11 @@ export default React.memo(function SharedList({
   }, [debouncedManualSearch, filtered, searchLower]);
   const baseDev = devMode && reordered ? reordered : achievements;
 
-  const devAchievements = useMemo(() => {
-    try {
-      if (devMode && reordered && Array.isArray(reordered)) return reordered;
-      return (baseDev ? sortList(baseDev) : baseDev);
-    } catch (e) { return baseDev; }
-  }, [baseDev, sortList, devMode, reordered]);
+  const devAchievements = (devMode && reordered && Array.isArray(reordered)) ? reordered : (baseDev ? sortList(baseDev) : baseDev);
 
   const visibleList = devMode ? devAchievements : filtered;
-  const visibleListSignature = useMemo(() => toIds(visibleList).join('|'), [visibleList]);
-  const stableVisibleList = useMemo(() => visibleList, [visibleListSignature]);
+  const visibleListSignature = toIds(visibleList).join('|');
+  const stableVisibleList = visibleList;
 
   const visibleListRef = useRef(stableVisibleList);
   useEffect(() => { visibleListRef.current = stableVisibleList; }, [stableVisibleList]);
@@ -2440,7 +2433,7 @@ export default React.memo(function SharedList({
   const onRowHoverEnterStable = useStableCallback(onRowHoverEnterCb);
   const onRowHoverLeaveStable = useStableCallback(onRowHoverLeaveCb);
 
-  const listItemData = useMemo(() => ({
+  const listItemData = {
     filtered: stableVisibleList,
     isMobile,
     duplicateThumbKeys: stableDuplicateThumbKeys,
@@ -2463,9 +2456,9 @@ export default React.memo(function SharedList({
     onRowHoverEnter: onRowHoverEnterStable,
     onRowHoverLeave: onRowHoverLeaveStable,
     precomputedVisible,
-  }), [stableVisibleList, isMobile, stableDuplicateThumbKeys, mode, devMode, stableAutoThumbMap, showTiers, usePlatformers, stableExtraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName, handleMoveAchievementUpCb, handleMoveAchievementDownCb, handleEditAchievementCb, handleDuplicateAchievementCb, handleRemoveAchievementCb, onRowHoverEnterCb, onRowHoverLeaveCb, precomputedVisible]);
+  };
 
-  const ListRow = React.memo(function ListRow({ index, style, data }) {
+  function ListRow({ index, style, data }) {
     const {
       filtered, mode, devMode, showTiers,
       usePlatformers, extraLists, rankOffset, hideRank, achievements, storageKeySuffix, dataFileName,
@@ -2516,54 +2509,7 @@ export default React.memo(function SharedList({
         }
       </div>
     );
-  }, (prev, next) => {
-
-    if (prev.index !== next.index) return false;
-
-    const p = prev.data;
-    const n = next.data;
-    const pi = prev.index;
-    const ni = next.index;
-
-    const pItem = (p.filtered || [])[pi] || null;
-    const nItem = (n.filtered || [])[ni] || null;
-
-    const pId = pItem && pItem.id;
-    const nId = nItem && nItem.id;
-    if (String(pId) !== String(nId)) return false;
-    if (p.devMode !== n.devMode) return false;
-    if (p.showTiers !== n.showTiers) return false;
-    if (p.usePlatformers !== n.usePlatformers) return false;
-    if (p.mode !== n.mode) return false;
-    if (p.hideRank !== n.hideRank) return false;
-    if (p.isMobile !== n.isMobile) return false;
-    try {
-      const pPre = (p.precomputedVisible && (p.precomputedVisible[pi] || {})) || {};
-      const nPre = (n.precomputedVisible && (n.precomputedVisible[ni] || {})) || {};
-      if (!!pPre.isDup !== !!nPre.isDup) return false;
-      if (!!pPre.autoThumbAvailable !== !!nPre.autoThumbAvailable) return false;
-      if ((pPre.displayRank || 0) !== (nPre.displayRank || 0)) return false;
-    } catch (e) { }
-    try {
-      const pThumb = getThumbnailUrl(pItem, p.isMobile);
-      const nThumb = getThumbnailUrl(nItem, n.isMobile);
-      if (String((pThumb || '').trim()) !== String((nThumb || '').trim())) return false;
-    } catch (e) { }
-    if (pItem === nItem) return true;
-    try {
-      const fields = ['name', 'player', '_thumbnail', 'rank', 'date', 'length', '_lengthStr'];
-      for (const f of fields) {
-        const pv = pItem ? pItem[f] : undefined;
-        const nv = nItem ? nItem[f] : undefined;
-        if (pv !== nv) return false;
-      }
-      const pTags = Array.isArray(pItem && pItem._sortedTags) ? pItem._sortedTags : Array.isArray(pItem && pItem.tags) ? pItem.tags : [];
-      const nTags = Array.isArray(nItem && nItem._sortedTags) ? nItem._sortedTags : Array.isArray(nItem && nItem.tags) ? nItem.tags : [];
-      if (pTags.length !== nTags.length) return false;
-      if (pTags.join('|') !== nTags.join('|')) return false;
-    } catch (e) { }
-    return true;
-  });
+  }
 
   useEffect(() => {
     const items = (reordered && Array.isArray(reordered) && reordered.length) ? reordered : achievements;
@@ -3015,6 +2961,7 @@ export default React.memo(function SharedList({
                   allTags={allTags}
                   filterTags={filterTags}
                   setFilterTags={handleSetFilterTags}
+                  immediateApplyFilters={immediateApplyFilters}
                   isMobile={isMobile}
                   show={showMobileFilters}
                   setShow={setShowMobileFilters}
@@ -3105,6 +3052,7 @@ export default React.memo(function SharedList({
               allTags={allTags}
               filterTags={filterTags}
               setFilterTags={handleSetFilterTags}
+              immediateApplyFilters={immediateApplyFilters}
               isMobile={isMobile}
               show={showMobileFilters}
               setShow={setShowMobileFilters}
@@ -3188,29 +3136,30 @@ export default React.memo(function SharedList({
             </React.Suspense>
           )}
           <div style={{ position: 'relative', width: '100%' }}>
-            <ListWindow
-              ref={listRef}
-              height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
-              itemCount={(visibleList || []).length}
-              itemSize={150}
-              overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
-              width={'100%'}
-              style={{ overflowX: 'hidden' }}
-              itemData={listItemData}
-              itemKey={(index, data) => {
-                try {
-                  const it = (data && data.filtered && data.filtered[index]) || null;
-                  return (it && it.id != null) ? String(it.id) : index;
-                } catch (e) { return index; }
-              }}
-              onItemsRendered={() => { }}
-            >
-              {ListRow}
-            </ListWindow>
-
-            {!isPending && (!visibleList || visibleList.length === 0) && (
-              <div className="no-achievements" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>No achievements found.</div>
-            )}
+            <div key={JSON.stringify(filteredIds)}>
+              <ListWindow
+                ref={listRef}
+                height={Math.min(720, (typeof window !== 'undefined' ? window.innerHeight - 200 : 720))}
+                itemCount={(visibleList || []).length}
+                itemSize={150}
+                overscanCount={(typeof window !== 'undefined' && window.innerWidth <= 480) ? 20 : 8}
+                width={'100%'}
+                style={{ overflowX: 'hidden' }}
+                itemData={listItemData}
+                itemKey={(index, data) => {
+                  try {
+                    const it = (data && data.filtered && data.filtered[index]) || null;
+                    return (it && it.id != null) ? String(it.id) : index;
+                  } catch (e) { return index; }
+                }}
+                onItemsRendered={() => { }}
+              >
+                {ListRow}
+              </ListWindow>
+              {!isPending && (!visibleList || visibleList.length === 0) && (
+                <div className="no-achievements" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>No achievements found.</div>
+              )}
+            </div>
           </div>
         </section>
       </main>
@@ -3263,33 +3212,11 @@ export default React.memo(function SharedList({
       </div>
     </>
   );
-});
+}
 
-const TagFilterPills = React.memo(TagFilterPillsInner, (prev, next) => {
-  const arraysEqual = (a, b) => {
-    if (a === b) return true;
-    if (!Array.isArray(a) || !Array.isArray(b)) return false;
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (String(a[i]) !== String(b[i])) return false;
-    }
-    return true;
-  };
+const TagFilterPills = TagFilterPillsInner;
 
-  const filterTagsEqual = (fa, fb) => {
-    if (fa === fb) return true;
-    if (!fa || !fb) return false;
-    return arraysEqual(fa.include || [], fb.include || []) && arraysEqual(fa.exclude || [], fb.exclude || []);
-  };
-
-  return arraysEqual(prev.allTags, next.allTags)
-    && filterTagsEqual(prev.filterTags, next.filterTags)
-    && prev.isMobile === next.isMobile
-    && prev.show === next.show
-    && prev.setShow === next.setShow;
-});
-
-const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, visibleListRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
+function DevHoverPanelMemo({ devMode, devPanelRef, hoveredIdRef, hoverAnchor, visibleListRef, handleEditRef, handleMoveUpRef, handleMoveDownRef, handleDuplicateRef, handleRemoveRef, handleCopyRef }) {
   const onEdit = (e) => {
     try {
       if (!devMode) return;
@@ -3414,4 +3341,4 @@ const DevHoverPanelMemo = React.memo(function DevHoverPanelMemo({ devMode, devPa
   } catch (e) {
     try { return panelEl; } catch (err) { return null; }
   }
-});
+}
