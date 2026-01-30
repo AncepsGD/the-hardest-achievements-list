@@ -22,17 +22,30 @@ import useTagFilters from './useTagFilters';
 import useSearch from './useSearch';
 
 function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, show, setShow }) {
-  const tagStates = {};
-  allTags.forEach(tag => {
-    if ((filterTags && filterTags.include || []).includes(tag)) tagStates[tag] = 'include';
-    else if ((filterTags && filterTags.exclude || []).includes(tag)) tagStates[tag] = 'exclude';
-    else tagStates[tag] = 'neutral';
-  });
+  const filterTagsRef = useRef(filterTags);
+  useEffect(() => { filterTagsRef.current = filterTags; }, [filterTags]);
 
-  function handlePillClick(tag) {
-    const state = tagStates[tag];
-    const include = Array.isArray(filterTags.include) ? [...filterTags.include] : [];
-    const exclude = Array.isArray(filterTags.exclude) ? [...filterTags.exclude] : [];
+  const tagStates = useMemo(() => {
+    const states = {};
+    try {
+      const inc = Array.isArray(filterTags && filterTags.include) ? filterTags.include : [];
+      const exc = Array.isArray(filterTags && filterTags.exclude) ? filterTags.exclude : [];
+      (allTags || []).forEach(tag => {
+        if (inc.includes(tag)) states[tag] = 'include';
+        else if (exc.includes(tag)) states[tag] = 'exclude';
+        else states[tag] = 'neutral';
+      });
+    } catch (e) {}
+    return states;
+  }, [allTags, filterTags]);
+
+  const handlePillClick = useCallback((tag) => {
+    const current = filterTagsRef.current || { include: [], exclude: [] };
+    const state = (current && (Array.isArray(current.include) ? current.include : []).includes(tag)) ? 'include' : ((current && (Array.isArray(current.exclude) ? current.exclude : []).includes(tag)) ? 'exclude' : 'neutral');
+    try { console.log && console.log('handlePillClick', { tag, state }); } catch (e) {}
+
+    const include = Array.isArray(current.include) ? current.include.slice() : [];
+    const exclude = Array.isArray(current.exclude) ? current.exclude.slice() : [];
 
     if (state === 'neutral') {
       if (!include.includes(tag)) include.push(tag);
@@ -43,11 +56,23 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
       const idx = exclude.indexOf(tag); if (idx !== -1) exclude.splice(idx, 1);
     }
 
-    setFilterTags({ include, exclude });
+    try { setFilterTags({ include, exclude }); } catch (e) {}
+    try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) {}
+  }, [setFilterTags, isMobile, setShow]);
+  const handlersRef = useRef(new Map());
+  useEffect(() => {
     try {
-      if (isMobile && typeof setShow === 'function') setShow(false);
-    } catch (e) { }
-  }
+      const wanted = new Set(Array.isArray(allTags) ? allTags : []);
+
+      wanted.forEach(tag => {
+        if (!handlersRef.current.has(tag)) {
+          handlersRef.current.set(tag, (e) => { try { handlePillClick(tag); } catch (err) {} });
+        }
+      });
+
+      Array.from(handlersRef.current.keys()).forEach(k => { if (!wanted.has(k)) handlersRef.current.delete(k); });
+    } catch (e) {}
+  }, [allTags, handlePillClick]);
 
   const sortedTags = useMemo(() => {
     try {
@@ -85,7 +110,7 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
             key={tag}
             tag={tag}
             state={tagStates[tag]}
-            onClick={() => handlePillClick(tag)}
+            onClick={handlersRef.current.get(tag)}
             tabIndex={0}
             clickable={true}
           />
