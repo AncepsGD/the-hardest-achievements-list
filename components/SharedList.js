@@ -58,8 +58,8 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
 
     try {
       const next = { include: include.slice(), exclude: exclude.slice() };
+      try { setFilterTags(next); } catch (e) { }
       try { if (typeof immediateApplyFilters === 'function') immediateApplyFilters(next); } catch (e) { }
-      setFilterTags(next);
     } catch (e) { }
     try { if (isMobile && typeof setShow === 'function') setShow(false); } catch (e) { }
   }, [setFilterTags, isMobile, setShow]);
