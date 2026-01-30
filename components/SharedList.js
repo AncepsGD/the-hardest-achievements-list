@@ -81,6 +81,7 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
           data-tag={tag}
           tabIndex={0}
           clickable={true}
+          onClick={(e) => { try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); handlePillClick(tag); } catch (err) {} }}
         />
       ));
     } catch (e) { return [];
