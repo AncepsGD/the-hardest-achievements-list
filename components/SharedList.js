@@ -41,34 +41,19 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
 
   const handlePillClick = useCallback((tag) => {
     const current = filterTagsRef.current || { include: [], exclude: [] };
-    const tagNorm = String(tag || '').toUpperCase();
-    const curInc = Array.isArray(current.include) ? current.include : [];
-    const curExc = Array.isArray(current.exclude) ? current.exclude : [];
-    const state = curInc.map(s => String(s || '').toUpperCase()).includes(tagNorm) ? 'include' : (curExc.map(s => String(s || '').toUpperCase()).includes(tagNorm) ? 'exclude' : 'neutral');
+    const state = (current && (Array.isArray(current.include) ? current.include : []).includes(tag)) ? 'include' : ((current && (Array.isArray(current.exclude) ? current.exclude : []).includes(tag)) ? 'exclude' : 'neutral');
     try { console.log && console.log('handlePillClick', { tag, state }); } catch (e) { }
 
-    const include = curInc.slice();
-    const exclude = curExc.slice();
-
-    const removeCaseInsensitive = (arr, val) => {
-      const v = String(val || '').toUpperCase();
-      const idx = arr.findIndex(x => String(x || '').toUpperCase() === v);
-      if (idx !== -1) arr.splice(idx, 1);
-    };
+    const include = Array.isArray(current.include) ? current.include.slice() : [];
+    const exclude = Array.isArray(current.exclude) ? current.exclude.slice() : [];
 
     if (state === 'neutral') {
-
-      removeCaseInsensitive(include, tag);
-      removeCaseInsensitive(exclude, tag);
-      include.push(tag);
+      if (!include.includes(tag)) include.push(tag);
     } else if (state === 'include') {
-
-      removeCaseInsensitive(include, tag);
-      removeCaseInsensitive(exclude, tag);
-      exclude.push(tag);
+      const idx = include.indexOf(tag); if (idx !== -1) include.splice(idx, 1);
+      if (!exclude.includes(tag)) exclude.push(tag);
     } else if (state === 'exclude') {
-
-      removeCaseInsensitive(exclude, tag);
+      const idx = exclude.indexOf(tag); if (idx !== -1) exclude.splice(idx, 1);
     }
 
     try {
@@ -89,7 +74,7 @@ function TagFilterPillsInner({ allTags, filterTags, setFilterTags, isMobile, sho
           data-tag={tag}
           tabIndex={0}
           clickable={true}
-          onClick={(e) => { try { if (e && typeof e.preventDefault === 'function') e.preventDefault(); handlePillClick(tag); } catch (err) { } }}
+          onClick={() => { try { handlePillClick(tag); } catch (err) { } }}
         />
       ));
     } catch (e) {
